@@ -1,6 +1,12 @@
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { MsalModule, MsalGuard, MsalInterceptor } from '@azure/msal-angular';
 import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
@@ -20,11 +26,17 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
     AppRoutingModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatListModule,
+    MatMenuModule,
     MsalModule.forRoot( new PublicClientApplication({
       auth: {
         clientId: 'bd14159c-f62e-4ffe-bb05-e5a26f9715ed',
-        authority: 'https://login.microsoftonline.com/gardencityplastics.microsoft.com',
+        authority: 'https://login.microsoftonline.com/gardencityplastics.com',
         redirectUri: 'http://localhost:4200'
       },
       cache: {
@@ -39,7 +51,7 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
   }, {
     interactionType: InteractionType.Redirect, // MSAL Interceptor Configuration
     protectedResourceMap: new Map([ 
-        ['Enter_the_Graph_Endpoint_Here/v1.0/me', ['user.read']]
+        ['https://graph.microsoft.com/v1.0/me', ['user.read']]
     ])
   })
 
