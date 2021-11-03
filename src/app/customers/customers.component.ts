@@ -23,6 +23,9 @@ export class CustomersComponent implements OnInit {
   public customers$: Observable<ProfileType> | undefined;
   private loadList: boolean;
   private filters: any;
+  public displayedColumns = ['name', 'accountnumber'];
+  public selectedRegion: string;
+
 
 
 
@@ -55,7 +58,7 @@ export class CustomersComponent implements OnInit {
   }
 
   getCustomers() {
-    return this.customersService.getCustomersStartingWith(this.filters.name);
+    return this.customersService.getCustomersStartingWith(this.filters);
   }
 
   parseParams(params: Params) {
@@ -72,7 +75,6 @@ export class CustomersComponent implements OnInit {
 
 
   compareQueryStrings(prev: Params, curr: Params) {
-    console.log(prev, curr);
     if (!this.loadList && this.route.children.length === 0) {
       this.loadList = true;
       return false;
@@ -81,6 +83,11 @@ export class CustomersComponent implements OnInit {
     if (this.route.firstChild != null) return true;
     const sameName = prev.name === curr.name;
     return sameName;
+  }
+
+  setRegion(territory: any) {
+    this.selectedRegion = territory;
+    this.router.navigate(['customers'], { queryParams: {territory}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
 
