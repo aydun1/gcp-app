@@ -6,6 +6,7 @@ import { CustomersService } from './shared/customers.service';
 import { SharedModule } from '../shared/shared.module';
 import { CustomerRoutingModule } from './ customer-routing.module';
 import { CustomerViewComponent } from './customer-view/customer-view.component';
+import { PalletDialogComponent } from './shared/pallet-dialog/pallet-dialog.component';
 
 
 
@@ -13,7 +14,8 @@ import { CustomerViewComponent } from './customer-view/customer-view.component';
   declarations: [
     CustomersComponent,
     CustomerListComponent,
-    CustomerViewComponent
+    CustomerViewComponent,
+    PalletDialogComponent
   ],
   imports: [
     CommonModule,

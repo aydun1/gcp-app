@@ -1,9 +1,9 @@
 <mat-form-field appearance="outline" class="region">
   <mat-label>Select Territory</mat-label>
-  <mat-select (onSelect)="setRegion($event)">
-    <mat-option value="yellow">Yellow</mat-option>
-    <mat-option value="black">Black</mat-option>
-    <mat-option value="red">Red</mat-option>
+  <mat-select (selectionChange)="setRegion($event)">
+    <mat-option value="NSW">NSW</mat-option>
+    <mat-option value="QLD">QLD</mat-option>
+    <mat-option value="VIC">VIC</mat-option>
   </mat-select>
 </mat-form-field>
 

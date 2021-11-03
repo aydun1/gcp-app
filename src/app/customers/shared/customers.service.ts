@@ -15,7 +15,13 @@ export class CustomersService {
 
   createUrl(filters: any) {
     let url = `${this.url}/accounts?$select=name,accountnumber`;
-    if ('name' in filters) url += `&$filter=startswith(name,'${filters.name}')`;
+    const filterCount = Object.keys(filters).length;
+    if(filterCount > 0) {
+      url += '&$filter=';
+      if ('name' in filters) url += `startswith(name,'${filters.name}')`;
+      if (filterCount > 1) url += ' and ';
+      if ('territory' in filters) url += `territoryid/name eq '${filters.territory}'`;
+    }
     url += '&$top=20';
     url += `&$orderby=name`;
     return url;
@@ -26,14 +32,14 @@ export class CustomersService {
     return this.http.get(url);
   }
 
-  getCustomer() {
-    const url = `${this.url}/accounts?$select=name,accountnumber&$top=20`;
+  getCustomer(id: string) {
+    const url = `${this.url}/accounts(${id})`;
     return this.http.get(url);
   }
 
   getCustomersStartingWith(filters: any) {
     const url = this.createUrl(filters);
-    return this.http.get(url).pipe(tap(_ => console.log(_)));
+    return this.http.get(url);
   }
 
   getRegions() {

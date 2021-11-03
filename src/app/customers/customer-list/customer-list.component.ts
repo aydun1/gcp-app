@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
@@ -25,7 +26,7 @@ export class CustomerListComponent implements OnInit {
   private loadList: boolean;
   private filters: any;
   public displayedColumns = ['name', 'accountnumber'];
-  public selectedRegion: string;
+  public selectedTerritory: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -62,6 +63,10 @@ export class CustomerListComponent implements OnInit {
   parseParams(params: Params) {
     if (!params) return;
     const filters: any = {};
+    if ('territory' in params) {
+      this.selectedTerritory = params.territory;
+      filters.territory = params.territory;
+    }
     if ('name' in params) {
       this.nameFilter.patchValue(params.name);
       filters['name'] = params.name;
@@ -80,12 +85,13 @@ export class CustomerListComponent implements OnInit {
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
     const sameName = prev.name === curr.name;
-    return sameName;
+    const sameTerritory = prev.territory === curr.territory;
+    return sameName && sameTerritory;
   }
 
-  setRegion(territory: any) {
-    this.selectedRegion = territory;
-    this.router.navigate(['customers'], { queryParams: {territory}, queryParamsHandling: 'merge', replaceUrl: true});
+  setRegion(territory: MatSelectChange ) {
+    this.selectedTerritory = territory.value;
+    this.router.navigate(['customers'], { queryParams: {territory: territory.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
 
