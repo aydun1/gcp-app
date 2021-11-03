@@ -22,6 +22,8 @@ import { ProfileComponent } from './profile/profile.component';
 import { CustomersComponent } from './customers/customers.component';
 import { FailedComponent } from './failed/failed.component';
 
+import { environment } from '../environments/environment';
+
 const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
 
 
@@ -30,8 +32,8 @@ function MSALInstanceFactory(): IPublicClientApplication {
     auth: {
       clientId: 'bd14159c-f62e-4ffe-bb05-e5a26f9715ed',
       authority: 'https://login.microsoftonline.com/gardencityplastics.com',
-      redirectUri: 'http://localhost:4200/',
-      postLogoutRedirectUri: 'http://localhost:4200/'
+      redirectUri: environment.redirectUri,
+      postLogoutRedirectUri: environment.redirectUri
     },
     cache: {
       cacheLocation: BrowserCacheLocation.LocalStorage,

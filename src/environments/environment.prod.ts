@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  redirectUri: 'https://lemon-beach-0484c9a00.azurestaticapps.net/'
 };
