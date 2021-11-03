@@ -1,0 +1,21 @@
+<div class="name-filter-wrap">
+  <mat-form-field appearance="fill" class="name-filter">
+    <mat-label>Find by name</mat-label>
+    <input matInput [formControl]="nameFilter" autocomplete="off">
+    <button *ngIf="!nameFilter.value" matSuffix mat-icon-button disabled>
+      <mat-icon>search</mat-icon>
+    </button>
+    <button *ngIf="nameFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearNameFilter()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
+
+
+
+<div *ngIf="(customers$ | async) as customers">
+  <div *ngFor="let customer of customers.value">
+    <p><strong>Name: </strong> {{customer?.name}}</p>
+    <p><strong>Id: </strong> {{customer?.accountnumber}}</p>
+  </div>
+</div>

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-const GRAPH_ENDPOINT = 'https://graph.microsoft.com/v1.0/me';
+const GRAPH_ENDPOINT = 'https://graph.microsoft.com/beta/me';
 
 type ProfileType = {
   givenName?: string,
@@ -16,7 +17,7 @@ type ProfileType = {
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-  profile!: ProfileType;
+  public profile$: Observable<ProfileType> | undefined;
 
   constructor(
     private http: HttpClient
@@ -27,8 +28,6 @@ export class ProfileComponent implements OnInit {
   }
 
   getProfile() {
-    this.http.get(GRAPH_ENDPOINT).subscribe(profile => {
-      this.profile = profile;
-    });
+    this.profile$ = this.http.get(GRAPH_ENDPOINT);
   }
 }

@@ -2,9 +2,8 @@
   <a class="title" [routerLink]="['/']">{{ title }}</a>
 
   <div class="toolbar-spacer"></div>
-
+  <a mat-button [routerLink]="['customers']">Customers</a>
   <a mat-button [routerLink]="['profile']">Profile</a>
-
   <button mat-raised-button [matMenuTriggerFor]="loginMenu" *ngIf="!loginDisplay">Login</button>
   <mat-menu #loginMenu="matMenu">
     <button mat-menu-item (click)="loginRedirect()">Login using Redirect</button>
