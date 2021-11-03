@@ -2,14 +2,14 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MsalGuard } from '@azure/msal-angular';
 
-import { CustomerListComponent } from './customer-list/customer-list.component';
 import { CustomersComponent } from './customers.component';
+import { CustomerListComponent } from './customer-list/customer-list.component';
+import { CustomerViewComponent } from './customer-view/customer-view.component';
 
 const routes: Routes = [
   {
     path: '',
     component: CustomersComponent,
-    //runGuardsAndResolvers: 'always',
     canActivate: [MsalGuard],
     children: [{
       path: '',
@@ -17,7 +17,7 @@ const routes: Routes = [
       children: [
         {
           path: ':id',
-          component: CustomerListComponent
+          component: CustomerViewComponent
         }
     ]
     }]

@@ -23,7 +23,9 @@
     <!-- Position Column -->
     <ng-container matColumnDef="name">
       <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-      <mat-cell *matCellDef="let customer"> {{customer.name}} </mat-cell>
+      <mat-cell *matCellDef="let customer" [routerLink]="[customer.accountid]">
+        <a [routerLink]="[customer.accountid]" class="customer-link">{{customer.name}}</a>
+      </mat-cell>
     </ng-container>
   
     <!-- Name Column -->
@@ -35,3 +37,5 @@
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
   </mat-table>
 </div>
+
+<router-outlet></router-outlet>

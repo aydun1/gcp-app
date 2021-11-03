@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -25,9 +26,14 @@ export class CustomersService {
     return this.http.get(url);
   }
 
+  getCustomer() {
+    const url = `${this.url}/accounts?$select=name,accountnumber&$top=20`;
+    return this.http.get(url);
+  }
+
   getCustomersStartingWith(filters: any) {
     const url = this.createUrl(filters);
-    return this.http.get(url);
+    return this.http.get(url).pipe(tap(_ => console.log(_)));
   }
 
   getRegions() {
