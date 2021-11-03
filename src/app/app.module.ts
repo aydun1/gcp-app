@@ -1,17 +1,6 @@
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule, ReactiveFormsModule }   from '@angular/forms';
-
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
 
 import { MsalModule, MsalGuard, MsalInterceptor, MsalGuardConfiguration, MSAL_GUARD_CONFIG, MsalInterceptorConfiguration, MSAL_INTERCEPTOR_CONFIG, MSAL_INSTANCE, MsalService, MsalBroadcastService } from '@azure/msal-angular';
 import { BrowserCacheLocation, InteractionType, IPublicClientApplication, PublicClientApplication } from '@azure/msal-browser';
@@ -20,9 +9,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
-import { CustomersComponent } from './customers/customers.component';
 import { FailedComponent } from './failed/failed.component';
 import { environment } from '../environments/environment';
+import { CustomersModule } from './customers/customers.module';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
 
@@ -31,7 +24,7 @@ function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
     auth: {
       clientId: 'bd14159c-f62e-4ffe-bb05-e5a26f9715ed',
-      authority: 'https://login.microsoftonline.com/gardencityplastics.com',
+      authority: 'https://login.microsoftonline.com/2dcb64e0-c4e4-4c31-af32-9fe0edff2be9',
       redirectUri: environment.redirectUri,
       postLogoutRedirectUri: environment.redirectUri
     },
@@ -68,24 +61,17 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     AppComponent,
     HomeComponent,
     ProfileComponent,
-    CustomersComponent,
     FailedComponent
   ],
   imports: [
-    BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
-    MatButtonModule,
-    MatIconModule,
-    MatInputModule,
-    MatSelectModule,
-    MatTableModule,
-    MatToolbarModule,
-    MatListModule,
+    CustomersModule,
     MatMenuModule,
-    FormsModule,
-    ReactiveFormsModule
+    MatToolbarModule,
+    MatIconModule,
+    MatButtonModule
   ],
   providers: [
     {

@@ -1,0 +1,37 @@
+<mat-form-field appearance="outline" class="region">
+  <mat-label>Select Territory</mat-label>
+  <mat-select (onSelect)="setRegion($event)">
+    <mat-option value="yellow">Yellow</mat-option>
+    <mat-option value="black">Black</mat-option>
+    <mat-option value="red">Red</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field appearance="outline" class="name-filter">
+  <mat-label>Find by name</mat-label>
+  <input matInput [formControl]="nameFilter" autocomplete="off">
+  <button *ngIf="!nameFilter.value" matSuffix mat-icon-button disabled>
+    <mat-icon>search</mat-icon>
+  </button>
+  <button *ngIf="nameFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearNameFilter()">
+    <mat-icon>close</mat-icon>
+  </button>
+</mat-form-field>
+
+<div *ngIf="(customers$ | async) as customers">
+  <mat-table #table [dataSource]="customers.value">
+    <!-- Position Column -->
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+      <mat-cell *matCellDef="let customer"> {{customer.name}} </mat-cell>
+    </ng-container>
+  
+    <!-- Name Column -->
+    <ng-container matColumnDef="accountnumber">
+      <mat-header-cell *matHeaderCellDef> Account number </mat-header-cell>
+      <mat-cell *matCellDef="let customer"> {{customer.accountnumber}} </mat-cell>
+    </ng-container> 
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+</div>
