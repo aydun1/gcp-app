@@ -1,8 +1,9 @@
-<div *ngIf="customer$ | async as customer">
-  {{ customer.name }}
-  {{ customer.accountnumber }}
-
-  <div>
-    <button mat-button (click)="openPalletDialog(customer.accountnumber)" color="primary">Pallets</button>
+<div class="content">
+  <div *ngIf="customer$ | async as customer" class="inner">
+    {{ customer.name }}
+    {{ customer.accountnumber }}
+    <div>
+      <button mat-button (click)="openPalletDialog(customer.accountnumber)" color="primary">Pallets</button>
+    </div>
   </div>
 </div>

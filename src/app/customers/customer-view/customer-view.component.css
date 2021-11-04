@@ -7,3 +7,19 @@
   bottom: 0;
   position: absolute;
 }
+
+
+
+.content {
+  display: block;
+  margin: 0 auto;
+  max-width: 1024px;
+}
+
+.inner {
+  margin: 10px 10px;
+}
+
+.region {
+  margin-right: 10px;
+}

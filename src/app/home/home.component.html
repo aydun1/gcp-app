@@ -4,7 +4,7 @@
   <p>Please sign-in to see your profile information.</p>
 </div>
 
-<div *ngIf="loginDisplay">
-  <p>Login successful!</p>
-  <p>Request your profile information by clicking Profile above.</p>
+<div *ngIf="loginDisplay" class="home-cards">
+  <a [routerLink]="['customers']"><div class="home-card"><h2>Customers</h2></div></a>
+  <a [routerLink]="['profile']"><div class="home-card"><h2>Profile</h2></div></a>
 </div>

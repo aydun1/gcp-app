@@ -31,3 +31,9 @@ a.title {
   color: white;
   text-decoration: none;
 }
+
+@media (max-width: 600px) {
+  :host {
+    top: 56px;
+  }
+}

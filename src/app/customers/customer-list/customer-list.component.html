@@ -1,22 +1,23 @@
-<mat-form-field appearance="outline" class="region">
-  <mat-label>Select Territory</mat-label>
-  <mat-select [formControl]="territoryFilter" (selectionChange)="setRegion($event)">
-    <mat-option *ngFor="let t of territories$ | async" value="{{ t.name }}">{{ t.name }}</mat-option>
-  </mat-select>
-</mat-form-field>
+<div class="options inner">
+  <mat-form-field appearance="outline" class="region">
+    <mat-label>Select Territory</mat-label>
+    <mat-select [formControl]="territoryFilter" (selectionChange)="setRegion($event)">
+      <mat-option *ngFor="let t of territories$ | async" value="{{ t.name }}">{{ t.name }}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
-<mat-form-field appearance="outline" class="name-filter">
-  <mat-label>Find by name</mat-label>
-  <input matInput [formControl]="nameFilter" autocomplete="off">
-  <button *ngIf="!nameFilter.value" matSuffix mat-icon-button disabled>
-    <mat-icon>search</mat-icon>
-  </button>
-  <button *ngIf="nameFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearNameFilter()">
-    <mat-icon>close</mat-icon>
-  </button>
-</mat-form-field>
-
-<div *ngIf="(customers$ | async) as customers">
+  <mat-form-field appearance="outline" class="name-filter">
+    <mat-label>Find by name</mat-label>
+    <input matInput [formControl]="nameFilter" autocomplete="off">
+    <button *ngIf="!nameFilter.value" matSuffix mat-icon-button disabled>
+      <mat-icon>search</mat-icon>
+    </button>
+    <button *ngIf="nameFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearNameFilter()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
+<div *ngIf="(customers$ | async) as customers" class="inner">
   <mat-table #table [dataSource]="customers.value">
     <!-- Position Column -->
     <ng-container matColumnDef="name">
