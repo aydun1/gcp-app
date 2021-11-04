@@ -7,12 +7,11 @@ import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 
 const routes: Routes = [
-  { path: 'customers', loadChildren: () => import('./customers/customers.module').then(m => m.CustomersModule) },
-
   {
     path: '',
     component: HomeComponent
   },
+  { path: 'customers', loadChildren: () => import('./customers/customers.module').then(m => m.CustomersModule) },
   {
     path: 'profile',
     component: ProfileComponent,

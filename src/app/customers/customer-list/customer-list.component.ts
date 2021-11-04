@@ -34,7 +34,6 @@ export class CustomerListComponent implements OnInit {
   private loadList: boolean;
   private filters: any;
   public displayedColumns = ['name', 'accountnumber'];
-  public selectedTerritory: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -52,7 +51,7 @@ export class CustomerListComponent implements OnInit {
       ).pipe(map(s => _))),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       tap(_ => this.parseParams(_)),
-      switchMap(() => this.loadList ? this.getCustomers() : []),
+      switchMap(() => this.loadList ? this.getCustomers() : [])
     )
 
     this.nameFilter.valueChanges.pipe(
@@ -76,7 +75,6 @@ export class CustomerListComponent implements OnInit {
     if (!params) return;
     const filters: any = {};
     if ('territory' in params) {
-      this.selectedTerritory = params.territory;
       this.territoryFilter.patchValue(params.territory);
       filters['territory'] = params.territory;
     } else {
@@ -87,7 +85,7 @@ export class CustomerListComponent implements OnInit {
       this.nameFilter.patchValue(params.name);
       filters['name'] = params.name;
     } else {
-      this.nameFilter.patchValue('');
+      if (this.nameFilter.value) this.nameFilter.patchValue('');
     }
     this.filters = filters;
   }
@@ -106,7 +104,6 @@ export class CustomerListComponent implements OnInit {
   }
 
   setRegion(territory: MatSelectChange ) {
-    this.selectedTerritory = territory.value;
     this.router.navigate(['customers'], { queryParams: {territory: territory.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
