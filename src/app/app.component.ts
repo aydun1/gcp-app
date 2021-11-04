@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
-import { AuthenticationResult, InteractionStatus, PopupRequest, RedirectRequest, EventMessage, EventType } from '@azure/msal-browser';
+import { AuthenticationResult, InteractionStatus, PopupRequest, EventMessage, EventType } from '@azure/msal-browser';
 import { Subject } from 'rxjs';
-import { filter, takeUntil, tap } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -30,7 +30,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.msalBroadcastService.msalSubject$
       .pipe(
         filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED),
-        tap(_ => console.log(_))
       )
       .subscribe((result: EventMessage) => {
         if (this.authService.instance.getAllAccounts().length === 0) {
@@ -39,8 +38,6 @@ export class AppComponent implements OnInit, OnDestroy {
           this.setLoginDisplay();
         }
       });
-
-
 
     this.msalBroadcastService.inProgress$
       .pipe(
@@ -58,28 +55,14 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   checkAndSetActiveAccount(){
-    /**
-     * If no active account set but there are accounts signed in, sets first account to active account
-     * To use active account set here, subscribe to inProgress$ first in your component
-     * Note: Basic usage demonstrated. Your app may require more complicated account selection logic
-     */
     let activeAccount = this.authService.instance.getActiveAccount();
-
     if (!activeAccount && this.authService.instance.getAllAccounts().length > 0) {
       let accounts = this.authService.instance.getAllAccounts();
       this.authService.instance.setActiveAccount(accounts[0]);
     }
   }
 
-  loginRedirect() {
-    if (this.msalGuardConfig.authRequest){
-      this.authService.loginRedirect({...this.msalGuardConfig.authRequest} as RedirectRequest);
-    } else {
-      this.authService.loginRedirect();
-    }
-  }
-
-  loginPopup() {
+  login() {
     if (this.msalGuardConfig.authRequest){
       this.authService.loginPopup({...this.msalGuardConfig.authRequest} as PopupRequest)
         .subscribe((response: AuthenticationResult) => {
@@ -93,14 +76,10 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  logout(popup?: boolean) {
-    if (popup) {
-      this.authService.logoutPopup({
-        mainWindowRedirectUri: "/"
-      });
-    } else {
-      this.authService.logoutRedirect();
-    }
+  logout() {
+    this.authService.logoutPopup({
+      mainWindowRedirectUri: "/"
+    });
   }
 
   ngOnDestroy(): void {
