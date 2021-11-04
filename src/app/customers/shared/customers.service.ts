@@ -8,6 +8,7 @@ import { tap } from 'rxjs/operators';
 export class CustomersService {
 
   private url = 'https://gardencityplastics.crm6.dynamics.com/api/data/v9.2';
+  private palletTrackerUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists/38f14082-02e5-4978-bf92-f42be2220166/items';
 
   constructor(
     private http: HttpClient
@@ -45,5 +46,10 @@ export class CustomersService {
   getRegions() {
     const url = `${this.url}/territories?$select=name`;
     return this.http.get(url);
+  }
+
+  addPallets(custnmbr: string, inQty: number, outQty: number) {
+    const payload = {fields: {Title: custnmbr, In: inQty, Out: outQty}}
+    return this.http.post(this.palletTrackerUrl, payload)
   }
 }

@@ -42,8 +42,8 @@ export class CustomerViewComponent implements OnInit {
     return this.cutomersService.getCustomer(this.id);
   }
 
-  openPalletDialog() {
-    const data = {title: 'Set newbie', content: 'Set the member as a newbie.'};
+  openPalletDialog(customer: string) {
+    const data = {title: 'Set newbie', customer};
 
     const dialogRef = this.dialog.open(PalletDialogComponent, {
       width: '800px',
