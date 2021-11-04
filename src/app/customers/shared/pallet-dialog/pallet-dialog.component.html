@@ -1,2 +1,23 @@
-<p>Transferring pallets for {{ data.customer }}</p>
-<button (click)="addPallets()">ddd</button>
+<h2 mat-dialog-title>Transferring pallets for {{ data.customer }}</h2>
+
+
+<mat-button-toggle-group name="fontStyle" aria-label="Font Style">
+  <mat-button-toggle value="Loscam"><img src="assets/loscam.png" alt="Loscam pallet"></mat-button-toggle>
+  <mat-button-toggle value="Chep"><img src="assets/chep.png" alt="Chep pallet"></mat-button-toggle>
+  <mat-button-toggle value="Plain"><img src="assets/pallet.png" alt="Plain pallet"></mat-button-toggle>
+</mat-button-toggle-group>
+
+<form (ngSubmit)="addPallets()" [formGroup]="palletForm">
+  <mat-form-field appearance="outline" color="accent" class="full-width">
+    <mat-label>Pallets out</mat-label>
+    <input matInput type="number" formControlName="outQty" autocomplete="off" placeholder="Pallets left with customer">
+  </mat-form-field>
+  <mat-form-field appearance="outline" color="accent" class="full-width">
+    <mat-label>Pallets in</mat-label>
+    <input matInput type="number" formControlName="inQty" autocomplete="off" placeholder="Pallets returned to GCP">
+  </mat-form-field>
+  <div class="buttons">
+    <button mat-raised-button color="primary" [disabled]="loading">Confirm transfer</button>
+  </div>
+</form>
+

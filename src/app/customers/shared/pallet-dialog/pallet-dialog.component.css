@@ -1,0 +1,15 @@
+.mat-form-field {
+  width: 100%;
+}
+
+.mat-button-toggle-group {
+  margin-bottom: 29.5px;
+}
+
+.mat-button-toggle {
+  flex: 1;
+}
+
+img {
+  max-width: 100%;
+}

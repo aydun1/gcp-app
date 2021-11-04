@@ -1,10 +1,8 @@
 <div *ngIf="!loginDisplay">
-  <p class="welcome">Welcome to the MSAL.js v2 Angular Quickstart!</p>
-  <p>This sample demonstrates how to configure MSAL Angular to login, logout, protect a route, and acquire an access token for a protected resource such as the Microsoft Graph.</p>
-  <p>Please sign-in to see your profile information.</p>
+  <p>Please sign-in.</p>
 </div>
 
 <div *ngIf="loginDisplay" class="home-cards">
-  <a [routerLink]="['customers']"><div class="home-card"><h2>Customers</h2></div></a>
-  <a [routerLink]="['profile']"><div class="home-card"><h2>Profile</h2></div></a>
+  <app-big-button [target]="['customers']">Customers</app-big-button>
+  <app-big-button [target]="['profile']">Profile</app-big-button>
 </div>

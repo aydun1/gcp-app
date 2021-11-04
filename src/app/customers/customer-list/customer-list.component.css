@@ -4,10 +4,32 @@
   max-width: 1024px;
 }
 
+.mat-form-field {
+  font-size: 14px;
+}
+
+.options {
+  display: flex;
+}
+
+.name-filter {
+  flex: 1;
+}
+
 .inner {
   margin: 10px 10px;
 }
 
 .region {
   margin-right: 10px;
+}
+
+@media (max-width: 800px) {
+  .options {
+    flex-direction: column;
+  }
+
+  .region {
+    margin: 0;
+  }
 }

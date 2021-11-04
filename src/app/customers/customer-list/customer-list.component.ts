@@ -75,15 +75,15 @@ export class CustomerListComponent implements OnInit {
     if (!params) return;
     const filters: any = {};
     if ('territory' in params) {
-      this.territoryFilter.patchValue(params.territory);
-      filters['territory'] = params.territory;
+      this.territoryFilter.patchValue(params['territory']);
+      filters['territory'] = params['territory'];
     } else {
       this.territoryFilter.patchValue('');
     }
 
     if ('name' in params) {
-      this.nameFilter.patchValue(params.name);
-      filters['name'] = params.name;
+      this.nameFilter.patchValue(params['name']);
+      filters['name'] = params['name'];
     } else {
       if (this.nameFilter.value) this.nameFilter.patchValue('');
     }
@@ -98,8 +98,8 @@ export class CustomerListComponent implements OnInit {
     }
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
-    const sameName = prev.name === curr.name;
-    const sameTerritory = prev.territory === curr.territory;
+    const sameName = prev['name'] === curr['name'];
+    const sameTerritory = prev['territory'] === curr['territory'];
     return sameName && sameTerritory;
   }
 

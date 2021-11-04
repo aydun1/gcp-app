@@ -3,7 +3,7 @@
     {{ customer.name }}
     {{ customer.accountnumber }}
     <div>
-      <button mat-button (click)="openPalletDialog(customer.accountnumber)" color="primary">Pallets</button>
+      <app-big-button [target]="[]" (click)="openPalletDialog(customer.accountnumber)">Transfer Pallets</app-big-button>
     </div>
   </div>
 </div>

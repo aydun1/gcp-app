@@ -1,6 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { catchError, tap, throwError } from 'rxjs';
 import { CustomersService } from '../customers.service';
 
 @Component({
@@ -9,24 +11,38 @@ import { CustomersService } from '../customers.service';
   styleUrls: ['./pallet-dialog.component.css']
 })
 export class PalletDialogComponent implements OnInit {
+  public palletForm: FormGroup;
+  public loading: boolean;
 
   constructor(
       public dialogRef: MatDialogRef<PalletDialogComponent>,
       @Inject(MAT_DIALOG_DATA) public data: any,
       private customersService: CustomersService,
-      private snackBar: MatSnackBar
+      private snackBar: MatSnackBar,
+      private fb: FormBuilder
   ) { }
 
   ngOnInit(): void {
+    this.palletForm = this.fb.group({
+      inQty: ['', Validators.required],
+      outQty: ['', Validators.required]
+    });
+
   }
 
   addPallets() {
-    const inQty = 1;
-    const outQty = 8;
-    this.customersService.addPallets(this.data.customer, inQty, outQty).toPromise().then(
-      _ => this.dialogRef.close()
-    ).catch(
-      _ => {console.log(_);this.snackBar.open(_.error?.error?.message, '', {duration: 3000})}
-    )
+    if (this.palletForm.invalid) return;
+    this.loading = true;
+    this.customersService.addPallets(this.data.custnmbr, this.palletForm.value).pipe(
+      tap(_ => {
+        this.dialogRef.close();
+        this.snackBar.open('Successfully transferred pallets', '', {duration: 3000});
+      }),
+      catchError(err => {
+        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
+        this.loading = false;
+        return throwError(() => new Error(err));
+      })
+    ).subscribe()
   }
 }

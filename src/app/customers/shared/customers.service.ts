@@ -48,8 +48,8 @@ export class CustomersService {
     return this.http.get(url);
   }
 
-  addPallets(custnmbr: string, inQty: number, outQty: number) {
-    const payload = {fields: {Title: custnmbr, In: inQty, Out: outQty}}
-    return this.http.post(this.palletTrackerUrl, payload)
+  addPallets(custnmbr: string, v: any) {
+    const payload = {fields: {Title: v.custnmbr, In: v.inQty, Out: v.outQty}};
+    return this.http.post(this.palletTrackerUrl, payload);
   }
 }
