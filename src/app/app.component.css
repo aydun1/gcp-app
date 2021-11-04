@@ -19,6 +19,7 @@
 }
 
 .container {
+  height: 100%;
   overflow-y: scroll;
 }
 
@@ -28,4 +29,5 @@
 
 a.title {
   color: white;
+  text-decoration: none;
 }

@@ -39,7 +39,7 @@ function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
   protectedResourceMap.set('https://graph.microsoft.com/beta/financials', ['Financials.ReadWrite.All']);
   protectedResourceMap.set('https://graph.microsoft.com/beta/me', ['user.read']);
-  protectedResourceMap.set('https://gardencityplastics.crm6.dynamics.com/api/data/v9.2/accounts', ['https://gardencityplastics.crm6.dynamics.com//user_impersonation']);
+  protectedResourceMap.set('https://gardencityplastics.crm6.dynamics.com/api/data/v9.2', ['https://gardencityplastics.crm6.dynamics.com//user_impersonation']);
   return {
     interactionType: InteractionType.Redirect,
     protectedResourceMap

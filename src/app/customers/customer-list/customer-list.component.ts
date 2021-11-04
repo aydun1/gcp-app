@@ -7,12 +7,17 @@ import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, 
 import { CustomersService } from '../shared/customers.service';
 
 
-type ProfileType = {
-  givenName?: string,
-  surname?: string,
-  userPrincipalName?: string,
-  id?: string,
-  value?: any[]
+type Profile = {
+  givenName: string,
+  surname: string,
+  userPrincipalName: string,
+  id: string,
+  value: any[]
+};
+
+type Territory = {
+  name?: string,
+  territoryid?: string
 };
 
 @Component({
@@ -22,7 +27,10 @@ type ProfileType = {
 })
 export class CustomerListComponent implements OnInit {
   public nameFilter = new FormControl('');
-  public customers$: Observable<ProfileType>;
+  public territoryFilter = new FormControl('');
+  public customers$: Observable<Profile>;
+  public territories$: Observable<Territory[]>;
+
   private loadList: boolean;
   private filters: any;
   public displayedColumns = ['name', 'accountnumber'];
@@ -53,7 +61,11 @@ export class CustomerListComponent implements OnInit {
       tap(_ => this.router.navigate(['customers'], { queryParams: {'name': _}, queryParamsHandling: 'merge', replaceUrl: true}))
     ).subscribe();
 
+    this.territories$ = this.getTerritories();
+  }
 
+  getTerritories(): Observable<Territory[]> {
+    return this.customersService.getRegions().pipe(map((_: any) => _.value), tap(_ => console.log(_)));
   }
 
   getCustomers() {
@@ -65,8 +77,12 @@ export class CustomerListComponent implements OnInit {
     const filters: any = {};
     if ('territory' in params) {
       this.selectedTerritory = params.territory;
-      filters.territory = params.territory;
+      this.territoryFilter.patchValue(params.territory);
+      filters['territory'] = params.territory;
+    } else {
+      this.territoryFilter.patchValue('');
     }
+
     if ('name' in params) {
       this.nameFilter.patchValue(params.name);
       filters['name'] = params.name;

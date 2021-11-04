@@ -10,7 +10,7 @@ import { filter, takeUntil, tap } from 'rxjs/operators';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
-  title = 'gcp-app';
+  title = 'Garden City Plastics';
   isIframe = false;
   loginDisplay = false;
   private readonly _destroying$ = new Subject<void>();

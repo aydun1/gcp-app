@@ -1,9 +1,7 @@
 <mat-form-field appearance="outline" class="region">
   <mat-label>Select Territory</mat-label>
-  <mat-select (selectionChange)="setRegion($event)">
-    <mat-option value="NSW">NSW</mat-option>
-    <mat-option value="QLD">QLD</mat-option>
-    <mat-option value="VIC">VIC</mat-option>
+  <mat-select [formControl]="territoryFilter" (selectionChange)="setRegion($event)">
+    <mat-option *ngFor="let t of territories$ | async" value="{{ t.name }}">{{ t.name }}</mat-option>
   </mat-select>
 </mat-form-field>
 
