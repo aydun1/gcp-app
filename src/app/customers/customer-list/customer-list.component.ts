@@ -64,7 +64,9 @@ export class CustomerListComponent implements OnInit {
   }
 
   getTerritories(): Observable<Territory[]> {
-    return this.customersService.getRegions().pipe(map((_: any) => _.value), tap(_ => console.log(_)));
+    return this.customersService.getRegions().pipe(
+      map((_: any) => _.value)
+    );
   }
 
   getCustomers() {
