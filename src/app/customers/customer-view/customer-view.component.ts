@@ -6,6 +6,7 @@ import { Observable, Subscription } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { CustomersService } from '../shared/customers.service';
 import { PalletDialogComponent } from '../shared/pallet-dialog/pallet-dialog.component';
+import { RecyclingDialogComponent } from '../shared/recycling-dialog/recycling-dialog.component';
 
 @Component({
   selector: 'app-customer-view',
@@ -69,6 +70,19 @@ export class CustomerViewComponent implements OnInit {
       if (!result) return;
     });
   }
+
+  openRecyclingDialog(customer: string) {
+    const data = {customer};
+
+    const dialogRef = this.dialog.open(RecyclingDialogComponent, {
+      width: '600px',
+      data
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) return;
+    });
+  }
+
 
   goBack() {
     this.location.back();
