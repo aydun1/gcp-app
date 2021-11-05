@@ -8,7 +8,9 @@
   position: absolute;
 }
 
-
+.top-buttons {
+  margin: 10px;
+}
 
 .content {
   display: block;

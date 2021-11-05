@@ -24,6 +24,7 @@ export class PalletDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.palletForm = this.fb.group({
+      palletType: ['', Validators.required],
       inQty: ['', Validators.required],
       outQty: ['', Validators.required]
     });
@@ -33,7 +34,7 @@ export class PalletDialogComponent implements OnInit {
   addPallets() {
     if (this.palletForm.invalid) return;
     this.loading = true;
-    this.customersService.addPallets(this.data.custnmbr, this.palletForm.value).pipe(
+    this.customersService.addPallets(this.data.customer, this.palletForm.value).pipe(
       tap(_ => {
         this.dialogRef.close();
         this.snackBar.open('Successfully transferred pallets', '', {duration: 3000});

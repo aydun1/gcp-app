@@ -13,3 +13,7 @@
 img {
   max-width: 100%;
 }
+
+.ng-submitted .mat-button-toggle-group.ng-invalid {
+  border: red 2px solid;
+}

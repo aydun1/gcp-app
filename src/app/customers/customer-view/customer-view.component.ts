@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
@@ -19,6 +20,7 @@ export class CustomerViewComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location,
     private dialog: MatDialog,
     private cutomersService: CustomersService
   ) { }
@@ -43,17 +45,18 @@ export class CustomerViewComponent implements OnInit {
   }
 
   openPalletDialog(customer: string) {
-    const data = {title: 'Set newbie', customer};
+    const data = {customer};
 
     const dialogRef = this.dialog.open(PalletDialogComponent, {
-      width: '800px',
+      width: '600px',
       data
     });
-
     dialogRef.afterClosed().subscribe(result => {
       if (!result) return;
-      //this.loading = true;
-      //this.memberService.setMemberAsNewbie(this.id).then(_ => this.onComplete(_)).catch(_ => this.onComplete(_));
     });
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

@@ -10,10 +10,11 @@ import { filter, takeUntil } from 'rxjs/operators';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
-  title = 'Garden City Plastics';
-  isIframe = false;
-  loginDisplay = false;
   private readonly _destroying$ = new Subject<void>();
+  public title = 'Garden City Plastics';
+  public userName: string;
+  public loginDisplay: boolean;
+  public isIframe: boolean;
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -51,7 +52,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   setLoginDisplay() {
-    this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
+    const accounts = this.authService.instance.getAllAccounts();
+    this.userName = accounts[0]?.username;
+    this.loginDisplay = accounts.length > 0;
   }
 
   checkAndSetActiveAccount(){
@@ -77,9 +80,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   logout() {
-    this.authService.logoutPopup({
-      mainWindowRedirectUri: "/"
-    });
+    this.authService.logout();
   }
 
   ngOnDestroy(): void {

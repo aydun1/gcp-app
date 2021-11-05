@@ -1,7 +1,10 @@
 <div class="content">
+  <div class="top-buttons">
+    <a mat-stroked-button (click)="goBack()" [routerLink]="['/customers']"><mat-icon>arrow_back</mat-icon>Back to customers</a>
+  </div>
   <div *ngIf="customer$ | async as customer" class="inner">
-    {{ customer.name }}
-    {{ customer.accountnumber }}
+    <h2>{{ customer.name || 'Unnamed customer' }}</h2>
+    <p>{{ customer.accountnumber }}</p>
     <div>
       <app-big-button [target]="[]" (click)="openPalletDialog(customer.accountnumber)">Transfer Pallets</app-big-button>
     </div>

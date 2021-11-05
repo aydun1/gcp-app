@@ -4,7 +4,8 @@
 }
 
 @media (max-width: 800px) {
-  .inner {
-    width: 100%;
+  .home-cards {
+    width: calc(100% - 20px);
+    margin: 0 10px;
   }
 }

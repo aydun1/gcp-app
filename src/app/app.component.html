@@ -1,9 +1,12 @@
-<mat-toolbar color="primary">
+<mat-toolbar>
   <a class="title" [routerLink]="['/']">{{ title }}</a>
-
   <div class="toolbar-spacer"></div>
-  <button mat-raised-button *ngIf="!loginDisplay" (click)="login()">Login</button>
-  <button mat-button *ngIf="loginDisplay" (click)="logout()">Logout</button>
+  <button *ngIf="!loginDisplay" mat-raised-button (click)="login()">Login</button>
+  <button *ngIf="loginDisplay" mat-button [matMenuTriggerFor]="menu"><mat-icon>arrow_drop_down</mat-icon></button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item disabled>{{ userName }}</button>
+    <button mat-menu-item (click)="logout()">Logout</button>
+  </mat-menu>
 </mat-toolbar>
 <div class="container">
   <!--This is to avoid reload during acquireTokenSilent() because of hidden iframe -->
