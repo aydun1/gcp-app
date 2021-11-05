@@ -6,6 +6,15 @@
     <h2>{{ customer.name || 'Unnamed customer' }}</h2>
     <p>{{ customer.accountnumber }}</p>
     <div>
+      Loscams: {{ customer.loscams }}
+    </div>
+    <div>
+      Cheps: {{ customer.cheps }}
+    </div>
+    <div>
+      Plains: {{ customer.plains }}
+    </div>
+    <div>
       <app-big-button [target]="[]" (click)="openPalletDialog(customer.accountnumber)">Transfer Pallets</app-big-button>
     </div>
   </div>

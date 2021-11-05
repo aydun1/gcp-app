@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
-import { filter, tap } from 'rxjs/operators';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { CustomersService } from '../shared/customers.service';
 import { PalletDialogComponent } from '../shared/pallet-dialog/pallet-dialog.component';
 
@@ -41,7 +41,21 @@ export class CustomerViewComponent implements OnInit {
 
   getCustomer() {
     this.id = this.route.snapshot.paramMap.get('id');
-    return this.cutomersService.getCustomer(this.id);
+    return this.cutomersService.getCustomer(this.id).pipe(
+      switchMap(customer => this.cutomersService.getPallets(customer.accountnumber).pipe(
+        map(pallets => {
+          customer['pallets'] = pallets;
+          console.log(customer['loscam'])
+          customer['loscams'] = pallets.filter(_ => _.fields.Pallet === 'Loscam').reduce((acc, curr) => acc + parseInt(curr.fields.Change), 0);
+          customer['cheps'] = pallets.filter(_ => _.fields.Pallet === 'Chep').reduce((acc, curr) => acc + parseInt(curr.fields.Change), 0);
+          customer['plains'] = pallets.filter(_ => _.fields.Pallet === 'Plain').reduce((acc, curr) => acc + parseInt(curr.fields.Change), 0);
+          console.log(customer['loscams'])
+
+          return customer;
+        })
+      )),
+      tap(_ => console.log(_))
+    );
   }
 
   openPalletDialog(customer: string) {

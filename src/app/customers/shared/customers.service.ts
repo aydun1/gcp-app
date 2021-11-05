@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { map, Observable, tap } from 'rxjs';
+import { Customer } from './customer';
 
 @Injectable({
   providedIn: 'root'
@@ -32,9 +34,9 @@ export class CustomersService {
     return this.http.get(url);
   }
 
-  getCustomer(id: string) {
+  getCustomer(id: string): Observable<Customer> {
     const url = `${this.url}/accounts(${id})`;
-    return this.http.get(url);
+    return this.http.get(url) as Observable<Customer>;
   }
 
   getCustomersStartingWith(filters: any) {
@@ -51,4 +53,10 @@ export class CustomersService {
     const payload = {fields: {Title: custnmbr, Pallet: v.palletType, In: v.inQty, Out: v.outQty}};
     return this.http.post(this.palletTrackerUrl, payload);
   }
+
+  getPallets(custnmbr: string) {
+    const url = this.palletTrackerUrl + `?expand=fields(select=Title,Pallet,In,Out,Change)&filter=fields/Title eq '${custnmbr}'`
+    return this.http.get(url).pipe(map((_: any) => _.value));
+  }
+
 }
