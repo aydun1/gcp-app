@@ -1,1 +1,29 @@
-<p>recycling-dialog works!</p>
+
+<h2 mat-dialog-title>Manage cages for {{ data.customer }}</h2>
+
+<mat-accordion>
+  <mat-expansion-panel *ngFor="let cage of cages$ | async">
+    <mat-expansion-panel-header>
+      <mat-panel-title>{{ cage.fields.AssetType }}</mat-panel-title>
+      <mat-panel-description>{{ cage.fields.Status }}</mat-panel-description>
+    </mat-expansion-panel-header>
+    <mat-list>
+      <mat-list-item *ngIf="cage.fields.DueDate">
+        <div mat-line>{{ cage.fields.DueDate }}</div>
+        <div mat-line>Delivery date (to customer)</div>
+      </mat-list-item>
+      <mat-list-item *ngIf="cage.fields.CollectionDate">
+        <div mat-line>{{ cage.fields.CollectionDate }}</div>
+        <div mat-line>Collection date (from customer)</div>
+      </mat-list-item>
+      <mat-list-item *ngIf="cage.fields.PurchaseDate">
+        <div mat-line>{{ cage.fields.PurchaseDate }}</div>
+        <div mat-line>Transfer date (to Polymer)</div>
+      </mat-list-item>
+      <mat-list-item *ngIf="cage.fields.EmptyReceivedDate">
+        <div mat-line>{{ cage.fields.EmptyReceivedDate }}</div>
+        <div mat-line>Received date (empty)</div>
+      </mat-list-item>
+    </mat-list>
+  </mat-expansion-panel>
+</mat-accordion>

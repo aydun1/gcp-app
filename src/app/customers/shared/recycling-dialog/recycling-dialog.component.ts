@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Observable } from 'rxjs';
+import { Cage } from '../cage';
 import { CustomersService } from '../customers.service';
 
 @Component({
@@ -11,13 +11,18 @@ import { CustomersService } from '../customers.service';
 })
 export class RecyclingDialogComponent implements OnInit {
   public loading: boolean;
-
+  public cages$: Observable<Cage[]>;
   constructor(
       public dialogRef: MatDialogRef<RecyclingDialogComponent>,
       @Inject(MAT_DIALOG_DATA) public data: any,
+      private customersService: CustomersService
   ) { }
 
   ngOnInit(): void {
+    this.getContainers();
   }
 
+  getContainers() {
+    this.cages$ = this.customersService.getCagesWithCustomer(this.data.customer);
+  }
 }

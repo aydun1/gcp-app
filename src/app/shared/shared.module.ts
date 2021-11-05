@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -28,6 +29,7 @@ import { BigButtonComponent } from './big-button/big-button.component';
     MatButtonModule,
     MatButtonToggleModule,
     MatDialogModule,
+    MatExpansionModule,
     MatIconModule,
     MatInputModule,
     MatSelectModule,

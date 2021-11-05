@@ -57,7 +57,12 @@ export class CustomersService {
   }
 
   getPallets(custnmbr: string) {
-    const url = this.palletTrackerUrl + `?expand=fields(select=Title,Pallet,In,Out,Change)&filter=fields/Title eq '${encodeURIComponent(custnmbr)}'`
+    const url = this.palletTrackerUrl + `?expand=fields(select=Title,Pallet,In,Out,Change)&filter=fields/Title eq '${encodeURIComponent(custnmbr)}'`;
+    return this.http.get(url).pipe(map((_: any) => _.value));
+  }
+
+  getCagesWithCustomer(custnmbr: string) {
+    const url = this.cageTrackerUrl + `?expand=fields&filter=fields/CustomerNumber eq '${encodeURIComponent(custnmbr)}'`;
     return this.http.get(url).pipe(map((_: any) => _.value));
   }
 
