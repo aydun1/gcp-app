@@ -2,3 +2,8 @@
   height: 40px;
   width: 40px;
 }
+
+.mat-accordion {
+  display: block;
+  margin: 10px 0;
+}

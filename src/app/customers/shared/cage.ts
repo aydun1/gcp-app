@@ -1,20 +1,20 @@
 export interface Cage {
-  createdDateTime: string,
-  lastModifiedDateTime: string,
+  createdDateTime: string | Date,
+  lastModifiedDateTime: string | Date,
   fields : {
     Branch: string,
     BinNumber2: number,
     Status: string,
     AssetType: string,
-    EmptyReceivedDate: string,
-    PurchaseDate: string,
-    DueDate: string,
-    CollectionDate: string,
+    EmptyReceivedDate: string | Date,
+    PurchaseDate: string | Date,
+    DueDate: string | Date,
+    CollectionDate: string | Date,
     CustomerNumber: string,
     Customer: string,
     id: string,
-    Modified: any,
-    Created: any,
+    Modified: string | Date,
+    Created: string | Date,
     Edit: string
   }
 }

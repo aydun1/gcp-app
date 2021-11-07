@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable, tap } from 'rxjs';
+import { Cage } from './cage';
 import { Customer } from './customer';
 
 @Injectable({
@@ -61,9 +62,9 @@ export class CustomersService {
     return this.http.get(url).pipe(map((_: any) => _.value));
   }
 
-  getCagesWithCustomer(custnmbr: string) {
+  getCagesWithCustomer(custnmbr: string): Observable<Cage[]> {
     const url = this.cageTrackerUrl + `?expand=fields&filter=fields/CustomerNumber eq '${encodeURIComponent(custnmbr)}'`;
-    return this.http.get(url).pipe(map((_: any) => _.value));
+    return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value));
   }
 
 }
