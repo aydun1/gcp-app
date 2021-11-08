@@ -12,9 +12,9 @@ import { filter, takeUntil } from 'rxjs/operators';
 export class AppComponent implements OnInit, OnDestroy {
   private readonly _destroying$ = new Subject<void>();
   public title = 'Garden City Plastics';
-  public userName: string;
   public loginDisplay: boolean;
   public isIframe: boolean;
+  public account: any;
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -53,7 +53,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   setLoginDisplay() {
     const accounts = this.authService.instance.getAllAccounts();
-    this.userName = accounts[0]?.username;
+    this.account = accounts[0];
     this.loginDisplay = accounts.length > 0;
   }
 

@@ -34,6 +34,19 @@ a.title {
   text-decoration: none;
 }
 
+::ng-deep .mat-menu-content{
+  padding-bottom: 0!important;
+  padding-top: 0!important;
+}
+
+.menu-grid {
+  display: grid;
+}
+
+.logout {
+  margin-left: auto;
+}
+
 @media (max-width: 600px) {
   :host {
     top: 56px;

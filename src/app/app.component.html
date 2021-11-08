@@ -3,11 +3,18 @@
   <div class="toolbar-spacer"></div>
   <button *ngIf="!loginDisplay" mat-raised-button (click)="login()">Login</button>
   <button *ngIf="loginDisplay" mat-button [matMenuTriggerFor]="menu"><mat-icon>arrow_drop_down</mat-icon></button>
-  <mat-menu #menu="matMenu">
-    <button mat-menu-item disabled>{{ userName }}</button>
-    <button mat-menu-item (click)="logout()">Logout</button>
-  </mat-menu>
 </mat-toolbar>
+<mat-menu #menu="matMenu">
+  <div class="menu-grid">
+    <button mat-button (click)="logout()" class="logout">Logout</button>
+  </div>
+  <mat-list>
+    <mat-list-item>
+      <div mat-line>{{ account?.name }}</div>
+      <div mat-line>{{ account?.username }}</div>
+    </mat-list-item>
+  </mat-list>   
+</mat-menu>
 <div class="container">
   <!--This is to avoid reload during acquireTokenSilent() because of hidden iframe -->
   <router-outlet *ngIf="!isIframe"></router-outlet>
