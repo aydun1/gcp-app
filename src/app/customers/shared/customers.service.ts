@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, forkJoin, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, forkJoin, map, Observable, switchMap, take, tap } from 'rxjs';
 import { Cage } from './cage';
 import { Customer } from './customer';
 
@@ -19,8 +19,6 @@ export class CustomersService {
   constructor(
     private http: HttpClient
   ) { }
-
-  private filters: any;
 
   createUrl(filters: any) {
     let url = `${this.url}/accounts?$select=name,accountnumber`;
@@ -53,8 +51,6 @@ export class CustomersService {
 
   getNextPage() {
     if (!this.nextPage || this.loadingCustomers) return null;
-    this.loadingCustomers = true;
-
     this.customersSubject$.pipe(
       take(1),
       switchMap(acc => this.getCustomers(this.nextPage).pipe(map(
@@ -64,6 +60,7 @@ export class CustomersService {
   }
 
   getCustomers(url: string) {
+    this.loadingCustomers = true;
     return this.http.get(url, {headers: {Prefer: 'odata.maxpagesize=25'}}).pipe(
       tap(_ => {
         this.nextPage = _['@odata.nextLink'];
@@ -141,6 +138,5 @@ export class CustomersService {
   getAvailableCages() {
     const url = this.cageTrackerUrl + `?expand=fields&orderby=fields/BinNumber2 desc&filter=fields/Status eq 'Available'`;
     return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value.reverse()));
-
   }
 }

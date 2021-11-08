@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
@@ -24,17 +24,22 @@ export class CustomerListComponent implements OnInit {
   public territories$: Observable<Territory[]>;
 
   private loadList: boolean;
-  private filters: any;
   public displayedColumns = ['name', 'accountnumber'];
 
   constructor(
+    private el: ElementRef,
     private route: ActivatedRoute,
     private router: Router,
     private customersService: CustomersService
   ) { }
 
+  @HostListener('scroll', ['$event'])
+  onScroll(e: any) {
+    const bottomPosition = this.el.nativeElement.offsetHeight + this.el.nativeElement.scrollTop - this.el.nativeElement.scrollHeight;
+    if (bottomPosition >= -250) this.getNextPage();
+  }
+  
   ngOnInit() {
-
     this.customers$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
@@ -46,7 +51,7 @@ export class CustomerListComponent implements OnInit {
       tap(_ => this.requestFirstPage(_)),
       switchMap(() => this.loadList ? this.getCustomerList() : [])
     )
-
+  
     this.nameFilter.valueChanges.pipe(
       debounceTime(200),
       map(_ => _.length > 0 ? _ : null),
@@ -92,7 +97,6 @@ export class CustomerListComponent implements OnInit {
     } else {
       if (this.nameFilter.value) this.nameFilter.patchValue('');
     }
-    this.filters = filters;
   }
 
 
@@ -105,7 +109,7 @@ export class CustomerListComponent implements OnInit {
     if (this.route.firstChild != null) return true;
     const sameName = prev['name'] === curr['name'];
     const sameTerritory = prev['territory'] === curr['territory'];
-    return sameName && sameTerritory;
+    return sameName && sameTerritory && this.loadList;
   }
 
   setRegion(territory: MatSelectChange ) {

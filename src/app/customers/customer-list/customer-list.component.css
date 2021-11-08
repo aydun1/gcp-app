@@ -2,6 +2,8 @@
   display: block;
   margin: 0 auto;
   max-width: 1024px;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .mat-form-field {
