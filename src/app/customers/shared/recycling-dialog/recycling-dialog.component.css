@@ -1,9 +1,28 @@
-.mat-list-base .mat-list-item .mat-list-icon {
-  height: 40px;
-  width: 40px;
-}
-
 .mat-accordion {
   display: block;
   margin: 10px 0;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+}
+
+.weight-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+}
+
+.mat-dialog-title {
+  flex: 1;
+  margin: 0;
+}
+
+::ng-deep .mat-list-base .mat-list-item .mat-list-item-content {
+  flex-direction: row-reverse!important;
 }

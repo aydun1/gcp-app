@@ -1,6 +1,7 @@
 export interface Cage {
   createdDateTime: string | Date,
   lastModifiedDateTime: string | Date,
+  id: string,
   fields : {
     Branch: string,
     BinNumber2: number,
@@ -15,6 +16,7 @@ export interface Cage {
     id: string,
     Modified: string | Date,
     Created: string | Date,
-    Edit: string
+    Edit: string,
+    Weight: number
   }
 }
