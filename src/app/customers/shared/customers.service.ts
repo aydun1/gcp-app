@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { forkJoin, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, forkJoin, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
 import { Cage } from './cage';
 import { Customer } from './customer';
 
@@ -13,10 +13,14 @@ export class CustomersService {
   private dataGroupUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists';
   private palletTrackerUrl = `${this.dataGroupUrl}/38f14082-02e5-4978-bf92-f42be2220166/items`;
   private cageTrackerUrl = `${this.dataGroupUrl}/afec6ed4-8ce3-45e7-8ac7-90428d664fc7/items`;
-
+  private nextPage: string;
+  private customersSubject$ = new BehaviorSubject<Customer[]>([]);
+  private loadingCustomers: boolean;
   constructor(
     private http: HttpClient
   ) { }
+
+  private filters: any;
 
   createUrl(filters: any) {
     let url = `${this.url}/accounts?$select=name,accountnumber`;
@@ -27,14 +31,8 @@ export class CustomersService {
       if (filterCount > 1) url += ' and ';
       if ('territory' in filters) url += `territoryid/name eq '${filters.territory}'`;
     }
-    url += '&$top=20';
     url += `&$orderby=name`;
     return url;
-  }
-
-  getCustomers() {
-    const url = `${this.url}/accounts?$select=name,accountnumber&$top=20`;
-    return this.http.get(url);
   }
 
   getCustomer(id: string): Observable<Customer> {
@@ -42,9 +40,37 @@ export class CustomersService {
     return this.http.get(url) as Observable<Customer>;
   }
 
-  getCustomersStartingWith(filters: any) {
+  getCustomerList() {
+    return this.customersSubject$;
+  }
+
+  getFirstPage(filters: any) {
+    this.nextPage = '';
+    this.loadingCustomers = false;
     const url = this.createUrl(filters);
-    return this.http.get(url);
+    this.getCustomers(url).subscribe(_ => this.customersSubject$.next(_));
+  }
+
+  getNextPage() {
+    if (!this.nextPage || this.loadingCustomers) return null;
+    this.loadingCustomers = true;
+
+    this.customersSubject$.pipe(
+      take(1),
+      switchMap(acc => this.getCustomers(this.nextPage).pipe(map(
+        curr => [...acc, ...curr]
+      )))
+    ).subscribe(_ => this.customersSubject$.next(_))
+  }
+
+  getCustomers(url: string) {
+    return this.http.get(url, {headers: {Prefer: 'odata.maxpagesize=25'}}).pipe(
+      tap(_ => {
+        this.nextPage = _['@odata.nextLink'];
+        this.loadingCustomers = false;
+      }),
+      map((_: {value: Customer[]}) => _.value as Customer[])
+    );
   }
 
   getRegions() {
@@ -63,7 +89,7 @@ export class CustomersService {
   }
 
   getCagesWithCustomer(custnmbr: string): Observable<Cage[]> {
-    const url = this.cageTrackerUrl + `?expand=fields&orderby=createdDateTime desc&filter=fields/CustomerNumber eq '${encodeURIComponent(custnmbr)}'`;
+    const url = this.cageTrackerUrl + `?expand=fields&top=1&orderby=createdDateTime desc&filter=fields/CustomerNumber eq '${encodeURIComponent(custnmbr)}'`;
     return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value.reverse()));
   }
 

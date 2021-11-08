@@ -26,18 +26,10 @@
     <button mat-raised-button color="primary" (click)="assigning=true">Assign a cage</button>
   </div>
   <mat-dialog-content>
-    <mat-accordion *ngIf="assigning">
-      <mat-expansion-panel *ngFor="let cage of availableCages$ | async;trackBy: trackByFn">
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ cage.fields.AssetType }}</mat-panel-title>
-          <mat-panel-description>{{ cage.fields.BinNumber2 }}</mat-panel-description>
-        </mat-expansion-panel-header>
-        <div class="actions">
-          <button mat-raised-button color="primary" (click)="markWithCustomer(cage.id)">Assign to customer</button>
-        </div>
-      </mat-expansion-panel>
-    </mat-accordion>
-    <mat-accordion *ngIf="!assigning">
+    <p *ngIf="noCages" class="note">
+      No cages with customer
+    </p>
+    <mat-accordion>
       <mat-expansion-panel *ngFor="let cage of cages$ | async;trackBy: trackByFn">
         <mat-expansion-panel-header>
           <mat-panel-title>{{ cage.fields.AssetType }}</mat-panel-title>

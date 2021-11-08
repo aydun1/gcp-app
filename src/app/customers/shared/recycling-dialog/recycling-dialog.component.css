@@ -1,3 +1,7 @@
+.mat-dialog-content {
+  height: 65vh;
+}
+
 .mat-accordion {
   display: block;
   margin: 10px 0;
@@ -20,9 +24,11 @@
 
 .mat-dialog-title {
   flex: 1;
+  line-height: 40px;
   margin: 0;
 }
 
-::ng-deep .mat-list-base .mat-list-item .mat-list-item-content {
-  flex-direction: row-reverse!important;
+.note {
+  margin: 60px;
+  text-align: center;
 }

@@ -12,6 +12,7 @@ import { CustomersService } from '../customers.service';
 })
 export class RecyclingDialogComponent implements OnInit {
   public loading: boolean;
+  public noCages: boolean;
   public cages$ = new BehaviorSubject<Cage[]>([]);
   public weightForm: FormGroup;
   public assigning: boolean;
@@ -34,7 +35,10 @@ export class RecyclingDialogComponent implements OnInit {
 
   getContainers() {
     return this.customersService.getCagesWithCustomer(this.data.customer).subscribe(
-      _ => this.cages$.next(_)
+      _ => {
+        this.noCages = _.length === 0;
+        this.cages$.next(_)
+      }
     );
   }
 

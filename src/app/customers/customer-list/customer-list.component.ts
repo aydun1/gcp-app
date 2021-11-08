@@ -4,16 +4,8 @@ import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
+import { Customer } from '../shared/customer';
 import { CustomersService } from '../shared/customers.service';
-
-
-type Profile = {
-  givenName: string,
-  surname: string,
-  userPrincipalName: string,
-  id: string,
-  value: any[]
-};
 
 type Territory = {
   name?: string,
@@ -28,7 +20,7 @@ type Territory = {
 export class CustomerListComponent implements OnInit {
   public nameFilter = new FormControl('');
   public territoryFilter = new FormControl('');
-  public customers$: Observable<Profile>;
+  public customers$: Observable<Customer[]>;
   public territories$: Observable<Territory[]>;
 
   private loadList: boolean;
@@ -51,7 +43,8 @@ export class CustomerListComponent implements OnInit {
       ).pipe(map(s => _))),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       tap(_ => this.parseParams(_)),
-      switchMap(() => this.loadList ? this.getCustomers() : [])
+      tap(_ => this.requestFirstPage(_)),
+      switchMap(() => this.loadList ? this.getCustomerList() : [])
     )
 
     this.nameFilter.valueChanges.pipe(
@@ -61,6 +54,7 @@ export class CustomerListComponent implements OnInit {
     ).subscribe();
 
     this.territories$ = this.getTerritories();
+
   }
 
   getTerritories(): Observable<Territory[]> {
@@ -69,8 +63,17 @@ export class CustomerListComponent implements OnInit {
     );
   }
 
-  getCustomers() {
-    return this.customersService.getCustomersStartingWith(this.filters);
+  getCustomerList() {
+    console.log('Getting customer list');
+    return this.customersService.getCustomerList();
+  }
+
+  requestFirstPage(_: any) {
+    return this.customersService.getFirstPage(_);
+  }
+
+  getNextPage() {
+    return this.customersService.getNextPage();
   }
 
   parseParams(params: Params) {
