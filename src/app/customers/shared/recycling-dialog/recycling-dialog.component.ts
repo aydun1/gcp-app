@@ -2,7 +2,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Cage } from '../cage';
+import { RecyclingService } from 'src/app/recycling/shared/recycling.service';
+import { Cage } from '../../../recycling/shared/cage';
 import { CustomersService } from '../customers.service';
 
 @Component({
@@ -22,6 +23,8 @@ export class RecyclingDialogComponent implements OnInit {
       public dialogRef: MatDialogRef<RecyclingDialogComponent>,
       @Inject(MAT_DIALOG_DATA) public data: any,
       private customersService: CustomersService,
+      private recyclingService: RecyclingService,
+
       private fb: FormBuilder,
   ) { }
 
@@ -30,11 +33,11 @@ export class RecyclingDialogComponent implements OnInit {
       weight: ['', Validators.required]
     });
     this.getContainers();
-    this.availableCages$ = this.customersService.getAvailableCages();
+    this.availableCages$ = this.recyclingService.getAvailableCages();
   }
 
   getContainers() {
-    return this.customersService.getCagesWithCustomer(this.data.customer).subscribe(
+    return this.recyclingService.getCagesWithCustomer(this.data.customer).subscribe(
       _ => {
         this.noCages = _.length === 0;
         this.cages$.next(_)
@@ -43,32 +46,32 @@ export class RecyclingDialogComponent implements OnInit {
   }
 
   markWithCustomer(id: string) {
-    this.customersService.markCageWithCustomer(id).subscribe(() => this.getContainers());
+    this.recyclingService.markCageWithCustomer(id).subscribe(() => this.getContainers());
   }
 
   markAsCollected(id: string) {
-    this.customersService.markCageAsCollected(id).subscribe(() => this.getContainers());
+    this.recyclingService.markCageAsCollected(id).subscribe(() => this.getContainers());
   }
 
   markWithPolymer(id: string) {
-    this.customersService.markCageWithPolymer(id).subscribe(() => this.getContainers());
+    this.recyclingService.markCageWithPolymer(id).subscribe(() => this.getContainers());
   }
 
   markReturnedEmpty(id: string) {
-    this.customersService.markCageReturnedEmpty(id).subscribe(() => this.getContainers());
+    this.recyclingService.markCageReturnedEmpty(id).subscribe(() => this.getContainers());
   }
 
   markAvailable(id: string, binNumber: number, branch: string, assetType: string) {
-    this.customersService.markCageAvailable(id, binNumber, branch, assetType).subscribe(() => this.getContainers());
+    this.recyclingService.markCageAvailable(id, binNumber, branch, assetType).subscribe(() => this.getContainers());
   }
 
   assignToCustomer(id: string) {
-    this.customersService.assignCageToCustomer(id, this.data.customer).subscribe(() => this.closeAssigningPage());
+    this.recyclingService.assignCageToCustomer(id, this.data.customer).subscribe(() => this.closeAssigningPage());
   }
 
   saveWeight(id: string) {
     if (this.weightForm.invalid) return;
-    this.customersService.setCageWeight(id, this.weightForm.value.weight).subscribe(() => this.getContainers());
+    this.recyclingService.setCageWeight(id, this.weightForm.value.weight).subscribe(() => this.getContainers());
   }
 
   closeAssigningPage() {

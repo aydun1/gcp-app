@@ -7,6 +7,7 @@ import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { CustomersService } from '../shared/customers.service';
 import { PalletDialogComponent } from '../shared/pallet-dialog/pallet-dialog.component';
 import { RecyclingDialogComponent } from '../shared/recycling-dialog/recycling-dialog.component';
+import { RecyclingService } from 'src/app/recycling/shared/recycling.service';
 
 @Component({
   selector: 'app-customer-view',
@@ -27,7 +28,8 @@ export class CustomerViewComponent implements OnInit {
     private router: Router,
     private location: Location,
     private dialog: MatDialog,
-    private cutomersService: CustomersService
+    private cutomersService: CustomersService,
+    private recyclingService: RecyclingService
   ) { }
 
   ngOnInit(): void {
@@ -44,7 +46,7 @@ export class CustomerViewComponent implements OnInit {
     ).subscribe(pallets => this.pallets = pallets);
 
     this.cagesSubject$.pipe(
-      switchMap(id => this.cutomersService.getCagesWithCustomer(id)),
+      switchMap(id => this.recyclingService.getCagesWithCustomer(id)),
       map(cages => {
         const weight = cages.map(_ => _.fields.Weight || 0).reduce((acc, curr) => acc + curr, 0);
         console.log(cages.map(_ => _.fields.Status));
