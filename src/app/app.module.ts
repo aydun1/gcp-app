@@ -17,6 +17,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { SharedModule } from './shared/shared.module';
+import { RecyclingComponent } from './recycling/recycling.component';
 
 
 
@@ -61,7 +62,8 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     AppComponent,
     HomeComponent,
     ProfileComponent,
-    FailedComponent
+    FailedComponent,
+    RecyclingComponent
   ],
   imports: [
     BrowserAnimationsModule,
