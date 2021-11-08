@@ -40,7 +40,7 @@ export class CustomerViewComponent implements OnInit {
       map(pallets => {
         const loscams = pallets.filter(_ => _.fields.Pallet === 'Loscam').reduce((acc, curr) => acc + parseInt(curr.fields.Change), 0);
         const cheps = pallets.filter(_ => _.fields.Pallet === 'Chep').reduce((acc, curr) => acc + parseInt(curr.fields.Change), 0);
-        const plains =pallets.filter(_ => _.fields.Pallet === 'Plain').reduce((acc, curr) => acc + parseInt(curr.fields.Change), 0);
+        const plains = pallets.filter(_ => _.fields.Pallet === 'Plain').reduce((acc, curr) => acc + parseInt(curr.fields.Change), 0);
         return {pallets, loscams, cheps, plains};
       })
     ).subscribe(pallets => this.pallets = pallets);
@@ -93,7 +93,7 @@ export class CustomerViewComponent implements OnInit {
 
   openRecyclingDialog(customer: string) {
     const data = {customer};
-    const dialogRef = this.dialog.open(RecyclingDialogComponent, {width: '600px', data});
+    const dialogRef = this.dialog.open(RecyclingDialogComponent, {width: '800px', data});
     dialogRef.afterClosed().subscribe(result => {
       this.refreshCages(data.customer);
       if (!result) return;

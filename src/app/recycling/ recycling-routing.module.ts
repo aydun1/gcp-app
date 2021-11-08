@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MsalGuard } from '@azure/msal-angular';
 import { RecyclingListComponent } from './recycling-list/recycling-list.component';
+import { RecyclingViewComponent } from './recycling-view/recycling-view.component';
 
 import { RecyclingComponent } from './recycling.component';
 
@@ -13,7 +14,13 @@ const routes: Routes = [
     canActivate: [MsalGuard],
     children: [{
       path: '',
-      component: RecyclingListComponent
+      component: RecyclingListComponent,
+      children: [
+        {
+          path: ':id',
+          component: RecyclingViewComponent
+        }
+      ]
     }]
   }
 ]

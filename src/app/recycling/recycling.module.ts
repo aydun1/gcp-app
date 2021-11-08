@@ -7,6 +7,7 @@ import { RecyclingRoutingModule } from './ recycling-routing.module';
 import { RecyclingComponent } from './recycling.component';
 import { RecyclingDialogComponent } from './shared/recycling-dialog/recycling-dialog.component';
 import { RecyclingListComponent } from './recycling-list/recycling-list.component';
+import { RecyclingViewComponent } from './recycling-view/recycling-view.component';
 
 
 
@@ -14,7 +15,8 @@ import { RecyclingListComponent } from './recycling-list/recycling-list.componen
   declarations: [
     RecyclingComponent,
     RecyclingDialogComponent,
-    RecyclingListComponent
+    RecyclingListComponent,
+    RecyclingViewComponent
   ],
   imports: [
     CommonModule,

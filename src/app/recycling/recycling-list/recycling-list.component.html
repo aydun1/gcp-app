@@ -1,1 +1,6 @@
-<p>recycling-list works!</p>
+<mat-list>
+  <mat-list-item *ngFor="let cage of cages$ | async" [routerLink]="[cage.id]">
+    <div mat-line>{{ cage.fields.Status}}, {{ cage.fields.AssetType }}</div>
+    <div *ngIf="cage.fields.BinNumber2" mat-line>Cage number: {{ cage.fields.BinNumber2 }}</div>
+  </mat-list-item>
+</mat-list>

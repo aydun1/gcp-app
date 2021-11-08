@@ -16,6 +16,11 @@ export class RecyclingService {
     private http: HttpClient
   ) { }
 
+  getCages(): Observable<Cage[]> {
+    const url = this.cageTrackerUrl + `?expand=fields&orderby=createdDateTime desc`;
+    return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value.reverse()));
+  }
+
   getCagesWithCustomer(custnmbr: string): Observable<Cage[]> {
     const url = this.cageTrackerUrl + `?expand=fields&orderby=createdDateTime desc&filter=fields/CustomerNumber eq '${encodeURIComponent(custnmbr)}'`;
     return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value.reverse()));
