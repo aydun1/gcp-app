@@ -5,6 +5,7 @@ import { FailedComponent } from './failed/failed.component';
 
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
+import { RecyclingComponent } from './recycling/recycling.component';
 
 const routes: Routes = [
   {
@@ -12,6 +13,8 @@ const routes: Routes = [
     component: HomeComponent
   },
   { path: 'customers', loadChildren: () => import('./customers/customers.module').then(m => m.CustomersModule) },
+  { path: 'recycling', loadChildren: () => import('./recycling/recycling.module').then(m => m.RecyclingModule) },
+
   {
     path: 'profile',
     component: ProfileComponent,
