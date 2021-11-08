@@ -17,8 +17,10 @@ export class CustomerViewComponent implements OnInit {
   private id: string;
   private navigationSubscription: Subscription;
   private palletsSubject$ = new Subject<string>();
+  private cagesSubject$ = new Subject<string>();
   public customer$: Observable<any>;
   public pallets: any;
+  public cages: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -41,6 +43,16 @@ export class CustomerViewComponent implements OnInit {
       })
     ).subscribe(pallets => this.pallets = pallets);
 
+    this.cagesSubject$.pipe(
+      switchMap(id => this.cutomersService.getCagesWithCustomer(id)),
+      map(cages => {
+        const weight = cages.map(_ => _.fields.Weight || 0).reduce((acc, curr) => acc + curr, 0);
+        console.log(cages.map(_ => _.fields.Status));
+        return {weight};
+      })
+    ).subscribe(cages => this.cages = cages);
+
+
     this.navigationSubscription = this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
       tap(_ => {if (this.id !==  this.route.snapshot.paramMap.get('id')) this.customer$ = this.getCustomer()})
@@ -55,12 +67,17 @@ export class CustomerViewComponent implements OnInit {
   getCustomer() {
     this.id = this.route.snapshot.paramMap.get('id');
     return this.cutomersService.getCustomer(this.id).pipe(
-      tap(_ => this.refreshPallets(_.accountnumber))
+      tap(_ => this.refreshPallets(_.accountnumber)),
+      tap(_ => this.refreshCages(_.accountnumber))
     );
   }
 
   refreshPallets(id: string) {
     this.palletsSubject$.next(id);
+  }
+
+  refreshCages(id: string) {
+    this.cagesSubject$.next(id);
   }
 
   openPalletDialog(customer: string) {
@@ -76,6 +93,7 @@ export class CustomerViewComponent implements OnInit {
     const data = {customer};
     const dialogRef = this.dialog.open(RecyclingDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().subscribe(result => {
+      this.refreshCages(data.customer);
       if (!result) return;
     });
   }

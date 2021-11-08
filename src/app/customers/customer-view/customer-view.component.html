@@ -4,19 +4,35 @@
   </div>
   <div *ngIf="customer$ | async as customer" class="inner">
     <h2>{{ customer.name || 'Unnamed customer' }}</h2>
+
+
     <p>{{ customer.accountnumber }}</p>
-    <div>
-      Pallets with customer:
+
+    <div class="cards">
+      <div class="status-card">
+        <h3>
+          Pallets with customer
+        </h3>
+        <dl>
+          <dt>Loscams</dt>
+          <dd>{{ pallets ? pallets.loscams  : '...' }}</dd>
+          <dt>Cheps</dt>
+          <dd>{{ pallets ? pallets.cheps  : '...' }}</dd>
+          <dt>Plains</dt>
+          <dd>{{ pallets ? pallets.plains  : '...' }}</dd>
+        </dl>
+      </div>
+      <div class="status-card">
+        <h3>
+          Cages
+        </h3>
+        <dl>
+          <dt>Weight</dt>
+          <dd>{{ cages ? cages.weight +' kg'  : '...' }}</dd>
+        </dl>
+      </div>
     </div>
-    <div>
-      Loscams: {{ pallets? pallets.loscams  : '...' }}
-    </div>
-    <div>
-      Cheps: {{ pallets? pallets.cheps  : '...' }}
-    </div>
-    <div>
-      Plains: {{ pallets? pallets.plains  : '...' }}
-    </div>
+
     <div>
       <app-big-button [target]="[]" (click)="openPalletDialog(customer.accountnumber)">Transfer Pallets</app-big-button>
       <app-big-button [target]="[]" (click)="openRecyclingDialog(customer.accountnumber)">Manage Recycling</app-big-button>

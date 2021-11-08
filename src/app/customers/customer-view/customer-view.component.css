@@ -25,3 +25,7 @@
 .region {
   margin-right: 10px;
 }
+
+dt {
+  font-weight: bold;
+}
