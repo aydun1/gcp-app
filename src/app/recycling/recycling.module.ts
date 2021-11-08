@@ -5,12 +5,14 @@ import { SharedModule } from '../shared/shared.module';
 import { RecyclingService } from './shared/recycling.service';
 import { RecyclingRoutingModule } from './ recycling-routing.module';
 import { RecyclingComponent } from './recycling.component';
+import { RecyclingDialogComponent } from './shared/recycling-dialog/recycling-dialog.component';
 
 
 
 @NgModule({
   declarations: [
-    RecyclingComponent
+    RecyclingComponent,
+    RecyclingDialogComponent
   ],
   imports: [
     CommonModule,

@@ -4,7 +4,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { RecyclingService } from 'src/app/recycling/shared/recycling.service';
 import { Cage } from '../../../recycling/shared/cage';
-import { CustomersService } from '../customers.service';
 
 @Component({
   selector: 'app-recycling-dialog',
@@ -22,7 +21,6 @@ export class RecyclingDialogComponent implements OnInit {
   constructor(
       public dialogRef: MatDialogRef<RecyclingDialogComponent>,
       @Inject(MAT_DIALOG_DATA) public data: any,
-      private customersService: CustomersService,
       private recyclingService: RecyclingService,
 
       private fb: FormBuilder,

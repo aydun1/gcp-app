@@ -7,7 +7,6 @@ import { SharedModule } from '../shared/shared.module';
 import { CustomerRoutingModule } from './ customer-routing.module';
 import { CustomerViewComponent } from './customer-view/customer-view.component';
 import { PalletDialogComponent } from './shared/pallet-dialog/pallet-dialog.component';
-import { RecyclingDialogComponent } from './shared/recycling-dialog/recycling-dialog.component';
 
 
 
@@ -17,7 +16,6 @@ import { RecyclingDialogComponent } from './shared/recycling-dialog/recycling-di
     CustomerListComponent,
     CustomerViewComponent,
     PalletDialogComponent,
-    RecyclingDialogComponent
   ],
   imports: [
     CommonModule,

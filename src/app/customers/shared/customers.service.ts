@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, forkJoin, map, Observable, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, switchMap, take, tap } from 'rxjs';
 import { Customer } from './customer';
 
 @Injectable({
@@ -11,7 +11,6 @@ export class CustomersService {
   private url = 'https://gardencityplastics.crm6.dynamics.com/api/data/v9.2';
   private dataGroupUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists';
   private palletTrackerUrl = `${this.dataGroupUrl}/38f14082-02e5-4978-bf92-f42be2220166/items`;
-  private cageTrackerUrl = `${this.dataGroupUrl}/afec6ed4-8ce3-45e7-8ac7-90428d664fc7/items`;
   private nextPage: string;
   private customersSubject$ = new BehaviorSubject<Customer[]>([]);
   private loadingCustomers: boolean;

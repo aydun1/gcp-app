@@ -6,7 +6,7 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { CustomersService } from '../shared/customers.service';
 import { PalletDialogComponent } from '../shared/pallet-dialog/pallet-dialog.component';
-import { RecyclingDialogComponent } from '../shared/recycling-dialog/recycling-dialog.component';
+import { RecyclingDialogComponent } from '../../recycling/shared/recycling-dialog/recycling-dialog.component';
 import { RecyclingService } from 'src/app/recycling/shared/recycling.service';
 
 @Component({
