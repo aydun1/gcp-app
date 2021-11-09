@@ -14,10 +14,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private readonly _destroying$ = new Subject<void>();
   public title = 'Garden City Plastics';
   public loginDisplay: boolean;
-  public isIframe: boolean;
   public accounts: AccountInfo[];
   public photo$: any;
-
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -27,32 +25,26 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.isIframe = window !== window.parent && !window.opener; // Remove this line to use Angular Universal
     this.setLoginDisplay();
+    this.authService.instance.enableAccountStorageEvents();
 
-
-    this.authService.instance.enableAccountStorageEvents(); // Optional - This will enable ACCOUNT_ADDED and ACCOUNT_REMOVED events emitted when a user logs in or out of another tab or window
-    this.msalBroadcastService.msalSubject$
-      .pipe(
-        filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED),
-      )
-      .subscribe((result: EventMessage) => {
-        if (this.authService.instance.getAllAccounts().length === 0) {
-          window.location.pathname = "/";
-        } else {
-          this.setLoginDisplay();
-        }
-      });
-
-    this.msalBroadcastService.inProgress$
-      .pipe(
-        filter((status: InteractionStatus) => status === InteractionStatus.None),
-        takeUntil(this._destroying$)
-      )
-      .subscribe(() => {
+    this.msalBroadcastService.msalSubject$.pipe(
+      filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED)
+    ).subscribe((result: EventMessage) => {
+      if (this.authService.instance.getAllAccounts().length === 0) {
+        window.location.pathname = '/';
+      } else {
         this.setLoginDisplay();
-        this.checkAndSetActiveAccount();
-      })
+      }
+    });
+
+    this.msalBroadcastService.inProgress$.pipe(
+      filter((status: InteractionStatus) => status === InteractionStatus.None),
+      takeUntil(this._destroying$)
+    ).subscribe(() => {
+      this.setLoginDisplay();
+      this.checkAndSetActiveAccount();
+    })
   }
 
   setLoginDisplay() {
@@ -75,16 +67,15 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   login() {
-    if (this.msalGuardConfig.authRequest){
-      this.authService.loginPopup({...this.msalGuardConfig.authRequest} as PopupRequest)
-        .subscribe((response: AuthenticationResult) => {
-          this.authService.instance.setActiveAccount(response.account);
-        });
-      } else {
-        this.authService.loginPopup()
-          .subscribe((response: AuthenticationResult) => {
-            this.authService.instance.setActiveAccount(response.account);
-      });
+    if (this.msalGuardConfig.authRequest) {
+      this.authService.loginPopup({...this.msalGuardConfig.authRequest} as PopupRequest).subscribe(
+        (response: AuthenticationResult) => 
+          this.authService.instance.setActiveAccount(response.account)
+      );
+    } else {
+      this.authService.loginPopup().subscribe((response: AuthenticationResult) => 
+        this.authService.instance.setActiveAccount(response.account)
+      );
     }
   }
 

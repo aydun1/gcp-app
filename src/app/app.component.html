@@ -2,28 +2,26 @@
   <a class="title" [routerLink]="['/']">{{ title }}</a>
   <div class="toolbar-spacer"></div>
   <button *ngIf="!loginDisplay" mat-raised-button (click)="login()">Login</button>
-
-
-
   <div *ngIf="photo$ | async as photo; else noPic" class="photo-button" mat-button [matMenuTriggerFor]="menu"> <img [src]="photo"></div>
   <ng-template #noPic>
     <button  *ngIf="loginDisplay" mat-button [matMenuTriggerFor]="menu"><mat-icon>arrow_drop_down</mat-icon></button>
   </ng-template>
-
-
 </mat-toolbar>
+
 <mat-menu #menu="matMenu">
-  <div class="menu-grid">
-    <button mat-button (click)="logout()" class="logout">Logout</button>
+  <div class="menu-upper">
+    <div class="menu-company">Garden City Plastics</div>
+    <button mat-button (click)="logout()" class="menu-logout">Logout</button>
   </div>
   <mat-list>
-    <mat-list-item *ngFor="let account of accounts">
+    <mat-list-item class="menu-accounts" *ngFor="let account of accounts">
       <div mat-line>{{ account.name }}</div>
       <div mat-line>{{ account.username }}</div>
     </mat-list-item>
-  </mat-list>   
+  </mat-list>
 </mat-menu>
+
 <div class="container">
   <!--This is to avoid reload during acquireTokenSilent() because of hidden iframe -->
-  <router-outlet *ngIf="!isIframe"></router-outlet>
+  <router-outlet></router-outlet>
 </div>

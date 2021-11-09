@@ -35,6 +35,7 @@
   overflow: hidden;
   width: 36px;
 }
+
 .photo-button img {
   height: 100%;
   max-width: 100%;
@@ -52,12 +53,15 @@ a.title {
   padding-top: 0!important;
 }
 
-.menu-grid {
-  display: grid;
+.menu-upper {
+  display: flex;
+  align-items: baseline;
 }
 
-.logout {
-  margin-left: auto;
+.menu-company {
+  flex: 1;
+  font-size: 14px;
+  padding: 0 16px;
 }
 
 @media (max-width: 600px) {
