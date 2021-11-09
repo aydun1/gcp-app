@@ -7,3 +7,17 @@
   bottom: 0;
   position: absolute;
 }
+
+.top-buttons {
+  margin: 10px;
+}
+
+.content {
+  display: block;
+  margin: 0 auto;
+  max-width: 1024px;
+}
+
+.inner {
+  margin: 10px 10px;
+}

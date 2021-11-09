@@ -80,6 +80,16 @@ export class RecyclingService {
     );
   }
 
+  getCageHistory(id: number) {
+    const url = this._cageTrackerUrl + `/items?expand=fields&orderby=createdDateTime desc&filter=fields/Status eq 'Complete' and fields/BinNumber2 eq ${id}`;
+    return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value));
+  }
+
+  getCage(id: string) {
+    const url = this._cageTrackerUrl + `/items('${id}')`;
+    return this.http.get(url);
+  }
+
   getCagesWithCustomer(custnmbr: string): Observable<Cage[]> {
     const url = this._cageTrackerUrl + `/items?expand=fields&orderby=createdDateTime desc&filter=fields/CustomerNumber eq '${encodeURIComponent(custnmbr)}'`;
     return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value.reverse()));

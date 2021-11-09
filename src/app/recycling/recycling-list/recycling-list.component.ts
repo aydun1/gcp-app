@@ -15,6 +15,7 @@ import { RecyclingService } from '../shared/recycling.service';
 export class RecyclingListComponent implements OnInit {
   public cages$: Observable<Cage[]>;
   public binFilter = new FormControl('');
+  public branchFilter = new FormControl('');
   public statusFilter = new FormControl('');
   public assetTypeFilter = new FormControl('');
   public customers$: Observable<any[]>;
@@ -44,7 +45,8 @@ export class RecyclingListComponent implements OnInit {
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, null, null)),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-      ).pipe(map(() => _))),
+        map(() => _)
+      )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       tap(_ => this.parseParams(_)),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : [])
@@ -103,6 +105,10 @@ export class RecyclingListComponent implements OnInit {
     const sameAssetType = prev['assetType'] === curr['assetType'];
     const sameStatus = prev['status'] === curr['status'];
     return sameBin && sameAssetType && sameStatus && this._loadList;
+  }
+
+  setBranch(branch: MatSelectChange ) {
+    this.router.navigate(['recycling'], { queryParams: {status: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setStatus(status: MatSelectChange ) {

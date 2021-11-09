@@ -1,1 +1,16 @@
-<p>recycling-view works!</p>
+<div class="content">
+  <div class="top-buttons">
+    <a mat-stroked-button (click)="goBack()" [routerLink]="['/recycling']"><mat-icon>arrow_back</mat-icon>Back to Cages</a>
+  </div>
+  <div *ngIf="cage$ | async as cage" class="inner">
+    <h2>Cage number: {{ cage.fields.BinNumber2 }}</h2>
+    {{ cage.fields.AssetType }}
+  </div>
+
+  <mat-list class="inner">
+    <div>History</div>
+    <mat-list-item *ngFor="let cage of cageHistory$ | async">
+      {{ cage.fields.Customer }} ({{ cage.fields.CustomerNumber }})
+    </mat-list-item>
+  </mat-list>
+</div>
