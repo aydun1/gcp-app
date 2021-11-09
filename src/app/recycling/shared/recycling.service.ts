@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { forkJoin, map, Observable } from 'rxjs';
+import { BehaviorSubject, forkJoin, map, Observable, switchMap, take, tap } from 'rxjs';
 
 import { Cage } from './cage';
 
@@ -9,6 +9,9 @@ import { Cage } from './cage';
   providedIn: 'root'
 })
 export class RecyclingService {
+  private _loadingCages: boolean;
+  private _nextPage: string;
+  private _cagesSubject$ = new BehaviorSubject<Cage[]>([]);
 
   private dataGroupUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists';
   private cageTrackerUrl = `${this.dataGroupUrl}/afec6ed4-8ce3-45e7-8ac7-90428d664fc7/items`;
@@ -16,9 +19,33 @@ export class RecyclingService {
     private http: HttpClient
   ) { }
 
-  getCages(): Observable<Cage[]> {
-    const url = this.cageTrackerUrl + `?expand=fields&orderby=createdDateTime desc`;
-    return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value.reverse()));
+  getFirstPage(filters: any) {
+    this._nextPage = '';
+    this._loadingCages = false;
+    const url = this.cageTrackerUrl + `?expand=fields&orderby=createdDateTime desc&top=25`;
+    this.getCages(url).subscribe(_ => this._cagesSubject$.next(_));
+    return this._cagesSubject$;
+  }
+
+  getNextPage() {
+    if (!this._nextPage || this._loadingCages) return null;
+    this._cagesSubject$.pipe(
+      take(1),
+      switchMap(acc => this.getCages(this._nextPage).pipe(map(
+        curr => [...acc, ...curr]
+      )))
+    ).subscribe(_ => this._cagesSubject$.next(_));
+  }
+
+  getCages(url: string) {
+    this._loadingCages = true;
+    return this.http.get(url).pipe(
+      tap(_ => {
+        this._nextPage = _['@odata.nextLink'];
+        this._loadingCages = false;
+      }),
+      map((res: {value: Cage[]}) => res.value.reverse())
+    );
   }
 
   getCagesWithCustomer(custnmbr: string): Observable<Cage[]> {
