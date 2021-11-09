@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, forkJoin, map, Observable, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
 import { Cage } from './cage';
 
@@ -14,26 +14,40 @@ export class RecyclingService {
   private _cagesSubject$ = new BehaviorSubject<Cage[]>([]);
   private _dataGroupUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists';
   private _cageTrackerUrl = `${this._dataGroupUrl}/afec6ed4-8ce3-45e7-8ac7-90428d664fc7`;
+  private _columns: any;
 
   constructor(
     private http: HttpClient
   ) { }
 
   getColumns() {
+    if (this._columns) return of(this._columns);
     let url = `${this._cageTrackerUrl}/columns`;
-    return this.http.get(url);
+    return this.http.get(url).pipe(
+      map((_: any) => _.value),
+      map(_ => _.reduce((a, v) => ({ ...a, [v.name]: v}), {})),
+      tap(_ => this._columns = _)
+    );
   }
 
   createUrl(filters: any) {
     let url = `${this._cageTrackerUrl}/items?expand=fields`;
-    const filterCount = Object.keys(filters).length;
-    if(filterCount > 0) {
-      url += '&filter=';
-      if ('name' in filters) url += `(startswith(name,'${filters.name}') or startswith(accountnumber,'${filters.name}'))`;
-      if (filterCount > 1) url += ' and ';
-      if ('status' in filters) url += `fields/Status eq '${filters.status}'`;
-    }
-    url += `&top=25`;
+
+    const parsed = Object.keys(filters).map(key => {
+      switch (key) {
+        case 'bin':
+          return `fields/BinNumber2 eq ${filters.bin}`;
+        case 'status':
+          return `fields/Status eq '${filters.status}'`;
+        case 'assetType':
+          return `fields/AssetType eq '${filters.assetType}'`;
+        default:
+          return '';
+      }
+    }).filter(_ => _);
+
+    if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
+    url += `&orderby=fields/BinNumber2 asc&top=25`;
     return url;
   }
 
@@ -62,7 +76,7 @@ export class RecyclingService {
         this._nextPage = _['@odata.nextLink'];
         this._loadingCages = false;
       }),
-      map((res: {value: Cage[]}) => res.value.reverse())
+      map((res: {value: Cage[]}) => res.value)
     );
   }
 
