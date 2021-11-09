@@ -45,11 +45,11 @@ export class CustomerListComponent implements OnInit {
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, null, null)),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-      ).pipe(map(s => _))),
+        map(() => _)
+      )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       tap(_ => this.parseParams(_)),
-      tap(_ => this.requestFirstPage(_)),
-      switchMap(() => this.loadList ? this.getCustomerList() : [])
+      switchMap(_ => this.loadList ? this.getFirstPage(_) : [])
     )
   
     this.nameFilter.valueChanges.pipe(
@@ -68,12 +68,7 @@ export class CustomerListComponent implements OnInit {
     );
   }
 
-  getCustomerList() {
-    console.log('Getting customer list');
-    return this.customersService.getCustomerList();
-  }
-
-  requestFirstPage(_: any) {
+  getFirstPage(_: any) {
     return this.customersService.getFirstPage(_);
   }
 

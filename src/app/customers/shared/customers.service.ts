@@ -36,15 +36,12 @@ export class CustomersService {
     return this.http.get(url) as Observable<Customer>;
   }
 
-  getCustomerList() {
-    return this.customersSubject$;
-  }
-
   getFirstPage(filters: any) {
     this.nextPage = '';
     this.loadingCustomers = false;
     const url = this.createUrl(filters);
     this.getCustomers(url).subscribe(_ => this.customersSubject$.next(_));
+    return this.customersSubject$;
   }
 
   getNextPage() {
