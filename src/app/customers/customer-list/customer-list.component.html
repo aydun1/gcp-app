@@ -20,7 +20,7 @@
   </div>
 
   <div *ngIf="(customers$ | async) as customers" class="inner">
-    <mat-table #table [dataSource]="customers">
+    <mat-table #table [dataSource]="customers" [trackBy]="trackByFn">
       <!-- Position Column -->
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>

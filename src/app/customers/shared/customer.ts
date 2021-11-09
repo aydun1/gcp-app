@@ -1,3 +1,5 @@
 export interface Customer {
-  accountnumber: string;
+  accountid: string,
+  accountnumber: string,
+  name: string
 }

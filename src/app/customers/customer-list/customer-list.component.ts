@@ -111,8 +111,11 @@ export class CustomerListComponent implements OnInit {
     this.router.navigate(['customers'], { queryParams: {territory: territory.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-
   clearNameFilter() {
     this.nameFilter.patchValue('');
+  }
+
+  trackByFn(index: number, item: Customer) {
+    return item.accountid;
   }
 }
