@@ -9,7 +9,7 @@
 
     <mat-form-field appearance="outline" class="name-filter">
       <mat-label>Find by name</mat-label>
-      <input matInput [formControl]="nameFilter" autocomplete="off">
+      <input matInput [formControl]="nameFilter" type="text" autocomplete="off" placeholder="Type to search...">
       <button *ngIf="!nameFilter.value" matSuffix mat-icon-button disabled>
         <mat-icon>search</mat-icon>
       </button>
@@ -18,6 +18,7 @@
       </button>
     </mat-form-field>
   </div>
+
   <div *ngIf="(customers$ | async) as customers" class="inner">
     <mat-table #table [dataSource]="customers">
       <!-- Position Column -->
