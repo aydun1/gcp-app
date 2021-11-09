@@ -28,10 +28,10 @@ export class RecyclingService {
     let url = `${this._cageTrackerUrl}/items?expand=fields`;
     const filterCount = Object.keys(filters).length;
     if(filterCount > 0) {
-      url += '&$filter=';
+      url += '&filter=';
       if ('name' in filters) url += `(startswith(name,'${filters.name}') or startswith(accountnumber,'${filters.name}'))`;
       if (filterCount > 1) url += ' and ';
-      if ('territory' in filters) url += `territoryid/name eq '${filters.territory}'`;
+      if ('status' in filters) url += `fields/Status eq '${filters.status}'`;
     }
     url += `&top=25`;
     return url;

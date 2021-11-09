@@ -1,8 +1,10 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { Cage } from '../shared/cage';
+import { Column } from '../shared/columns';
 import { RecyclingService } from '../shared/recycling.service';
 
 @Component({
@@ -13,10 +15,12 @@ import { RecyclingService } from '../shared/recycling.service';
 export class RecyclingListComponent implements OnInit {
   public cages$: Observable<Cage[]>;
   public nameFilter = new FormControl('');
-  public territoryFilter = new FormControl('');
+  public statusFilter = new FormControl('');
   public customers$: Observable<any[]>;
-  public territories$: Observable<any[]>;
   private _loadList: boolean;
+
+  public choices: any;
+  public Status: Column;
 
   constructor(
     private el: ElementRef,
@@ -32,6 +36,7 @@ export class RecyclingListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getOptions();
     this.cages$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
@@ -42,6 +47,14 @@ export class RecyclingListComponent implements OnInit {
       tap(_ => this.parseParams(_)),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : [])
     )
+  }
+
+  getOptions(): void {
+    this.recyclingService.getColumns().pipe(
+      map((_: any) => _.value),
+      map(_ => _.reduce((a, v) => ({ ...a, [v.name]: v}), {})),
+      tap(_ => this.choices = _)
+    ).subscribe(_ => console.log(_));
   }
 
   getFirstPage(_: any) {
@@ -55,11 +68,11 @@ export class RecyclingListComponent implements OnInit {
   parseParams(params: Params) {
     if (!params) return;
     const filters: any = {};
-    if ('territory' in params) {
-      this.territoryFilter.patchValue(params['territory']);
-      filters['territory'] = params['territory'];
+    if ('status' in params) {
+      this.statusFilter.patchValue(params['status']);
+      filters['status'] = params['status'];
     } else {
-      this.territoryFilter.patchValue('');
+      this.statusFilter.patchValue('');
     }
 
     if ('name' in params) {
@@ -78,12 +91,12 @@ export class RecyclingListComponent implements OnInit {
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
     const sameName = prev['name'] === curr['name'];
-    const sameTerritory = prev['territory'] === curr['territory'];
-    return sameName && sameTerritory && this._loadList;
+    const sameStatus = prev['status'] === curr['status'];
+    return sameName && sameStatus && this._loadList;
   }
 
-  setRegion(e: any) {
-
+  setStatus(status: MatSelectChange ) {
+    this.router.navigate(['recycling'], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   clearNameFilter() {

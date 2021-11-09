@@ -1,11 +1,10 @@
 <div class="options inner">
   <mat-form-field appearance="outline" class="region">
-    <mat-label>Select Territory</mat-label>
-    <mat-select [formControl]="territoryFilter" (selectionChange)="setRegion($event)">
-      <mat-option *ngFor="let t of territories$ | async" value="{{ t.name }}">{{ t.name }}</mat-option>
+    <mat-label>{{ choices?.Status.name }}</mat-label>
+    <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event)">
+      <mat-option *ngFor="let s of choices?.Status.choice.choices" value="{{ s }}">{{ s }}</mat-option>
     </mat-select>
   </mat-form-field>
-
   <mat-form-field appearance="outline" class="name-filter">
     <mat-label>Find by name</mat-label>
     <input matInput [formControl]="nameFilter" type="text" autocomplete="off" placeholder="Type to search...">
