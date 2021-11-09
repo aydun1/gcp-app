@@ -19,6 +19,7 @@ export class RecyclingListComponent implements OnInit {
   public assetTypeFilter = new FormControl('');
   public customers$: Observable<any[]>;
   private _loadList: boolean;
+  public displayedColumns = ['assetType', 'status'];
 
   public choices: any;
   public Status: Column;

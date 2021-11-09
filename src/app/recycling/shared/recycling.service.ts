@@ -30,7 +30,7 @@ export class RecyclingService {
     );
   }
 
-  createUrl(filters: any) {
+  createUrl(filters: any): string {
     let url = `${this._cageTrackerUrl}/items?expand=fields`;
 
     const parsed = Object.keys(filters).map(key => {
@@ -51,7 +51,7 @@ export class RecyclingService {
     return url;
   }
 
-  getFirstPage(filters: any) {
+  getFirstPage(filters: any): BehaviorSubject<Cage[]> {
     this._nextPage = '';
     this._loadingCages = false;
     const url = this.createUrl(filters);
@@ -59,17 +59,17 @@ export class RecyclingService {
     return this._cagesSubject$;
   }
 
-  getNextPage() {
+  getNextPage(): void {
     if (!this._nextPage || this._loadingCages) return null;
     this._cagesSubject$.pipe(
       take(1),
-      switchMap(acc => this.getCages(this._nextPage).pipe(map(
-        curr => [...acc, ...curr]
-      )))
+      switchMap(acc => this.getCages(this._nextPage).pipe(
+        map(curr => [...acc, ...curr])
+      ))
     ).subscribe(_ => this._cagesSubject$.next(_));
   }
 
-  getCages(url: string) {
+  getCages(url: string): Observable<Cage[]> {
     this._loadingCages = true;
     return this.http.get(url).pipe(
       tap(_ => {
@@ -85,37 +85,37 @@ export class RecyclingService {
     return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value.reverse()));
   }
 
-  markCageWithCustomer(id: string) {
+  markCageWithCustomer(id: string): Observable<any> {
     const payload = {fields: {Status: 'In Use - At Customer', DueDate: new Date()}};
     const url = this._cageTrackerUrl + `/items('${id}')`;
     return this.http.patch(url, payload);
   }
 
-  markCageAsCollected(id: string) {
+  markCageAsCollected(id: string): Observable<any> {
     const payload = {fields: {Status: 'In Use - At GCP Branch', CollectionDate: new Date()}};
     const url = this._cageTrackerUrl + `/items('${id}')`;
     return this.http.patch(url, payload);
   }
 
-  markCageWithPolymer(id: string) {
+  markCageWithPolymer(id: string): Observable<any> {
     const payload = {fields: {Status: 'In Use - At Polymer', PurchaseDate: new Date()}};
     const url = this._cageTrackerUrl + `/items('${id}')`;
     return this.http.patch(url, payload);
   }
 
-  markCageReturnedEmpty(id: string) {
+  markCageReturnedEmpty(id: string): Observable<any> {
     const payload = {fields: {Status: 'In Use - At GCP Branch', EmptyReceivedDate: new Date()}};
     const url = this._cageTrackerUrl + `/items('${id}')`;
     return this.http.patch(url, payload);
   }
 
-  setCageWeight(id: string, weight: number) {
+  setCageWeight(id: string, weight: number): Observable<any> {
     const payload = {fields: {Weight: weight}};
     const url = this._cageTrackerUrl + `/items('${id}')`;
     return this.http.patch(url, payload);
   }
 
-  markCageAvailable(id: string, binNumber: number, branch: string, assetType: string) {
+  markCageAvailable(id: string, binNumber: number, branch: string, assetType: string): Observable<any> {
     const url = this._cageTrackerUrl + `/items('${id}')`;
     const patchPayload = {fields: {Status: 'Complete'}};
     const patchRequest = this.http.patch(url, patchPayload);
@@ -124,14 +124,14 @@ export class RecyclingService {
     return forkJoin([patchRequest, newRequest]);
   }
 
-  assignCageToCustomer(id: string, custnmbr: string) {
+  assignCageToCustomer(id: string, custnmbr: string): Observable<any> {
     const payload = {fields: {Status: 'In Use - At GCP Branch', CustomerNumber: custnmbr}};
     const url = this._cageTrackerUrl + `/items('${id}')`;
     return this.http.patch(url, payload);
   }
 
-  getAvailableCages() {
-    const url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/BinNumber2 desc&filter=fields/Status eq 'Available'`;
-    return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value.reverse()));
+  getAvailableCages(): Observable<Cage[]> {
+    const url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/BinNumber2 asc&filter=fields/Status eq 'Available'`;
+    return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value));
   }
 }
