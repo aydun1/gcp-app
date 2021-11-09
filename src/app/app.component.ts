@@ -1,8 +1,9 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
-import { AuthenticationResult, InteractionStatus, PopupRequest, EventMessage, EventType } from '@azure/msal-browser';
+import { AuthenticationResult, InteractionStatus, PopupRequest, EventMessage, EventType, AccountInfo } from '@azure/msal-browser';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
+import { SharedService } from './shared.service';
 
 @Component({
   selector: 'app-root',
@@ -14,12 +15,15 @@ export class AppComponent implements OnInit, OnDestroy {
   public title = 'Garden City Plastics';
   public loginDisplay: boolean;
   public isIframe: boolean;
-  public account: any;
+  public accounts: AccountInfo[];
+  public photo$: any;
+
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
     private authService: MsalService,
-    private msalBroadcastService: MsalBroadcastService
+    private msalBroadcastService: MsalBroadcastService,
+    private sharedService: SharedService
   ) {}
 
   ngOnInit(): void {
@@ -53,8 +57,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
   setLoginDisplay() {
     const accounts = this.authService.instance.getAllAccounts();
-    this.account = accounts[0];
+    this.accounts = accounts;
     this.loginDisplay = accounts.length > 0;
+    if (this.loginDisplay) this.getPhoto();
+  }
+
+  getPhoto() {
+    this.photo$ = this.sharedService.getPhoto();
   }
 
   checkAndSetActiveAccount(){

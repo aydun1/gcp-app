@@ -29,6 +29,19 @@
   flex: 1 1 auto;
 }
 
+.photo-button {
+  border-radius: 50%;
+  height: 36px;
+  overflow: hidden;
+  width: 36px;
+}
+.photo-button img {
+  height: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
 a.title {
   color: white;
   text-decoration: none;
