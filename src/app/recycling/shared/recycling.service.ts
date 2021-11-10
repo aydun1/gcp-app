@@ -38,9 +38,10 @@ export class RecyclingService {
   }
 
   createUrl(filters: any): string {
+    const filterKeys = Object.keys(filters);
     let url = `${this._cageTrackerUrl}/items?expand=fields`;
 
-    const parsed = Object.keys(filters).map(key => {
+    const parsed = filterKeys.map(key => {
       switch (key) {
         case 'bin':
           return `fields/BinNumber2 eq ${filters.bin}`;
@@ -54,6 +55,9 @@ export class RecyclingService {
           return '';
       }
     }).filter(_ => _);
+
+    if (!filterKeys.includes('assetType')) parsed.push(`fields/BinNumber2 gt 0`);
+    if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Complete'`);
 
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
     url += `&orderby=fields/BinNumber2 asc&top=25`;
