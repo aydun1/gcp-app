@@ -68,4 +68,8 @@ export class RecyclingNewComponent implements OnInit {
       })
     ).subscribe(_ => console.log(_));
   }
+
+  goBack() {
+    this.location.back();
+  }
 }

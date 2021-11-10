@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
@@ -29,6 +30,7 @@ import { BigButtonComponent } from './big-button/big-button.component';
   exports: [
     MatButtonModule,
     MatButtonToggleModule,
+    MatCardModule,
     MatDialogModule,
     MatExpansionModule,
     MatIconModule,

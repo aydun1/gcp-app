@@ -27,7 +27,7 @@
   </div>
   <mat-dialog-content>
     <p *ngIf="noCages" class="note">
-      No cages with customer
+      No cage
     </p>
     <mat-accordion>
       <mat-expansion-panel *ngFor="let cage of cages$ | async;trackBy: trackByFn">

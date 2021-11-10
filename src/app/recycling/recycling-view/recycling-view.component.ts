@@ -13,6 +13,9 @@ export class RecyclingViewComponent implements OnInit {
   private id: string;
   public cage$: Observable<any>;
   public cageHistory$: Observable<any>;
+  public noHistory: boolean;
+  public displayedColumns = ['updated', 'customer', 'weight'];
+  public weight: number;
 
   constructor(
     private route: ActivatedRoute,
@@ -21,7 +24,7 @@ export class RecyclingViewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.cage$ = this.getCage();
+    this.cage$ = this.getCage().pipe(tap(_ => console.log(_)));
   }
 
   getCage() {
@@ -32,11 +35,13 @@ export class RecyclingViewComponent implements OnInit {
   }
 
   getCageHistory(bin: number) {
-    this.cageHistory$ = this.recyclingService.getCageHistory(bin);
+    this.cageHistory$ = this.recyclingService.getCageHistory(bin).pipe(
+      tap(cages => this.weight = cages.map(_ => _.fields.Weight).filter(_ => _).reduce((acc, val) => acc + val, 0)),
+      tap(_ => this.noHistory = _.length === 0)   
+    );
   }
 
   goBack() {
     this.location.back();
-    return null;
   }
 }

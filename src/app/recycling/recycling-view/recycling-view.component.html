@@ -5,13 +5,82 @@
   <div *ngIf="cage$ | async as cage" class="inner">
     <h2>Cage number: {{ cage.fields.BinNumber2 }}</h2>
     <p>{{ cage.fields.AssetType }}</p>
-    <p>{{ cage.fields.Status }}</p>
+
+    <mat-card>
+      <mat-list>
+        <div mat-subheader>Details</div>
+        <mat-list-item *ngIf="cage.fields.Customer">
+          <mat-icon mat-list-icon>business</mat-icon>
+          <div mat-line>{{ cage.fields.Customer }}</div>
+          <div mat-line>Allocated to</div>
+        </mat-list-item>
+        <mat-list-item *ngIf="cage.fields.Status">
+          <mat-icon mat-list-icon>timeline</mat-icon>
+          <div mat-line>{{ cage.fields.Status }}</div>
+          <div mat-line>Status</div>
+        </mat-list-item>
+        <mat-list-item *ngIf="cage.fields.Weight">
+          <mat-icon mat-list-icon>scale</mat-icon>
+          <div mat-line>{{ cage.fields.Weight }} kg</div>
+          <div mat-line>Net weight</div>
+        </mat-list-item>
+        <div mat-subheader>Dates</div>
+        <mat-list-item *ngIf="cage.fields.EmptyReceivedDate">
+          <div mat-line>{{ cage.fields.EmptyReceivedDate | date: 'dd/MM/yyyy' }}</div>
+          <div mat-line>Received date (empty)</div>
+        </mat-list-item>
+        <mat-list-item *ngIf="cage.fields.PurchaseDate">
+          <div mat-line>{{ cage.fields.PurchaseDate | date: 'dd/MM/yyyy' }}</div>
+          <div mat-line>Transfer date (to Polymer)</div>
+        </mat-list-item>
+        <mat-list-item *ngIf="cage.fields.CollectionDate">
+          <div mat-line>{{ cage.fields.CollectionDate | date: 'dd/MM/yyyy' }}</div>
+          <div mat-line>Collection date (from customer)</div>
+        </mat-list-item>
+        <mat-list-item *ngIf="cage.fields.DueDate">
+          <div mat-line>{{ cage.fields.DueDate | date: 'dd/MM/yyyy' }}</div>
+          <div mat-line>Delivery date (to customer)</div>
+        </mat-list-item>
+      </mat-list>
+    </mat-card>
+
   </div>
 
-  <mat-list class="inner">
-    <div mat-subheader>History</div>
-    <mat-list-item *ngFor="let cage of cageHistory$ | async">
-      {{ cage.fields.Customer }} ({{ cage.fields.CustomerNumber }}), ({{ cage.fields.Weight }})
-    </mat-list-item>
-  </mat-list>
+
+
+  <div class="inner">
+    <h3>Cage history</h3>
+
+    <mat-table #table [dataSource]="cageHistory$" >
+      <ng-container matColumnDef="updated">
+        <mat-header-cell *matHeaderCellDef> Last activity </mat-header-cell>
+        <mat-cell *matCellDef="let cage">
+          {{ cage.fields.Modified | date: 'dd/MM/yyyy'  }}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="customer">
+        <mat-header-cell *matHeaderCellDef> Customer </mat-header-cell>
+        <mat-cell *matCellDef="let cage">
+          {{ cage.fields.Customer }}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="weight">
+        <mat-header-cell *matHeaderCellDef> Weight </mat-header-cell>
+        <mat-cell *matCellDef="let cage">
+          {{ cage.fields.Weight || 0 }} kg
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef> {{ weight || 0 }} kg </mat-footer-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+    </mat-table>
+    <div *ngIf="noHistory" class="note">
+      No cage history
+    </div>
+  </div>
 </div>

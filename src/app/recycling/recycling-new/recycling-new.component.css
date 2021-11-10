@@ -18,6 +18,10 @@
   margin-right: 10px;
 }
 
+.top-buttons {
+  margin: 10px;
+}
+
 .buttons {
   display: flex;
   justify-content: flex-end;
