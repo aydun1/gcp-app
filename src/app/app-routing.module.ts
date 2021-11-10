@@ -14,6 +14,7 @@ const routes: Routes = [
   },
   { path: 'customers', loadChildren: () => import('./customers/customers.module').then(m => m.CustomersModule) },
   { path: 'recycling', loadChildren: () => import('./recycling/recycling.module').then(m => m.RecyclingModule) },
+  { path: 'pallets', loadChildren: () => import('./pallets/pallets.module').then(m => m.PalletsModule) },
 
   {
     path: 'profile',

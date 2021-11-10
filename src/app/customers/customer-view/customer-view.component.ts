@@ -5,9 +5,10 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { CustomersService } from '../shared/customers.service';
-import { PalletDialogComponent } from '../shared/pallet-dialog/pallet-dialog.component';
+import { PalletDialogComponent } from '../../pallets/shared/pallet-dialog/pallet-dialog.component';
 import { RecyclingDialogComponent } from '../../recycling/shared/recycling-dialog/recycling-dialog.component';
 import { RecyclingService } from 'src/app/recycling/shared/recycling.service';
+import { PalletsService } from 'src/app/pallets/shared/pallets.service';
 
 @Component({
   selector: 'app-customer-view',
@@ -29,14 +30,15 @@ export class CustomerViewComponent implements OnInit {
     private location: Location,
     private dialog: MatDialog,
     private cutomersService: CustomersService,
-    private recyclingService: RecyclingService
+    private recyclingService: RecyclingService,
+    private palletsService: PalletsService
   ) { }
 
   ngOnInit(): void {
     this.customer$ = this.getCustomer();
 
     this.palletsSubject$.pipe(
-      switchMap(id => this.cutomersService.getPallets(id)),
+      switchMap(id => this.palletsService.getPallets(id)),
       map(pallets => {
         const loscams = pallets.filter(_ => _.fields.Pallet === 'Loscam').reduce((acc, curr) => acc + parseInt(curr.fields.Change), 0);
         const cheps = pallets.filter(_ => _.fields.Pallet === 'Chep').reduce((acc, curr) => acc + parseInt(curr.fields.Change), 0);
