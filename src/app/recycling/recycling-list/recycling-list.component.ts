@@ -23,7 +23,7 @@ export class RecyclingListComponent implements OnInit {
   private _loadList: boolean;
   public displayedColumns = ['binNumber', 'assetType', 'status', 'weight'];
 
-  public choices: any;
+  public choices$: Observable<any>;
   public Status: Column;
 
   constructor(
@@ -63,7 +63,7 @@ export class RecyclingListComponent implements OnInit {
   }
 
   getOptions(): void {
-    this.recyclingService.getColumns().subscribe(_ => this.choices = _);
+    this.choices$ = this.recyclingService.getColumns().pipe(tap(_ => console.log(_)));
   }
 
   getFirstPage(_: any) {

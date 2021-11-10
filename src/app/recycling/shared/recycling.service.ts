@@ -12,22 +12,29 @@ export class RecyclingService {
   private _loadingCages: boolean;
   private _nextPage: string;
   private _cagesSubject$ = new BehaviorSubject<Cage[]>([]);
+  private _columns$ = new BehaviorSubject<any>(null);
   private _dataGroupUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists';
   private _cageTrackerUrl = `${this._dataGroupUrl}/afec6ed4-8ce3-45e7-8ac7-90428d664fc7`;
-  private _columns: any;
+
 
   constructor(
     private http: HttpClient
   ) { }
 
   getColumns() {
-    if (this._columns) return of(this._columns);
-    let url = `${this._cageTrackerUrl}/columns`;
-    return this.http.get(url).pipe(
-      map((_: any) => _.value),
-      map(_ => _.reduce((a, v) => ({ ...a, [v.name]: v}), {})),
-      tap(_ => this._columns = _)
-    );
+    this._columns$.pipe(
+      take(1),
+      map(_ => {
+        if (_) return of(_);
+        return this.http.get(`${this._cageTrackerUrl}/columns`).pipe(
+          map((_: any) => _.value),
+          map(_ => _.reduce((a, v) => ({ ...a, [v.name]: v}), {})),
+          tap(_ => this._columns$.next(_))
+        );
+      }),
+      switchMap(_ => _)
+    ).subscribe();
+    return this._columns$;
   }
 
   createUrl(filters: any): string {
@@ -121,18 +128,27 @@ export class RecyclingService {
     return this.http.patch(url, payload);
   }
 
+  markCageComplete(id: string) {
+    const payload = {fields: {Status: 'Complete'}};
+    const url = this._cageTrackerUrl + `/items('${id}')`;
+    return this.http.patch(url, payload);
+  }
+
   setCageWeight(id: string, weight: number): Observable<any> {
     const payload = {fields: {Weight: weight}};
     const url = this._cageTrackerUrl + `/items('${id}')`;
     return this.http.patch(url, payload);
   }
 
+  addNewCage(binNumber: number, branch: string, assetType: string): Observable<any> {
+    const url = this._cageTrackerUrl + `/items`;
+    const payload = {fields: {Status: 'Available', BinNumber2: binNumber, Branch: branch, AssetType: assetType}};
+    return this.http.post(url, payload);
+  }
+
   markCageAvailable(id: string, binNumber: number, branch: string, assetType: string): Observable<any> {
-    const url = this._cageTrackerUrl + `/items('${id}')`;
-    const patchPayload = {fields: {Status: 'Complete'}};
-    const patchRequest = this.http.patch(url, patchPayload);
-    const newPayload = {fields: {Status: 'Available', BinNumber2: binNumber, Branch: branch, AssetType: assetType}};
-    const newRequest = this.http.post(`${this._cageTrackerUrl}/items`, newPayload);
+    const patchRequest = this.markCageComplete(id);
+    const newRequest = this.addNewCage(binNumber, branch, assetType);
     return forkJoin([patchRequest, newRequest]);
   }
 

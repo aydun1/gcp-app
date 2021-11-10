@@ -7,3 +7,22 @@
   bottom: 0;
   position: absolute;
 }
+
+.outer {
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.inner {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mat-form-field {
+  width: 100%;
+}
