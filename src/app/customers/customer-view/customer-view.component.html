@@ -1,6 +1,6 @@
 <div class="content">
   <div class="top-buttons">
-    <a mat-stroked-button (click)="goBack()" [routerLink]="['/customers']"><mat-icon>arrow_back</mat-icon>Back to customers</a>
+    <a mat-stroked-button (click)="goBack()"><mat-icon>arrow_back</mat-icon>Back to customers</a>
   </div>
   <div *ngIf="customer$ | async as customer" class="inner">
     <h2>{{ customer.name || 'Unnamed customer' }}</h2>
@@ -35,7 +35,7 @@
 
     <div>
       <app-big-button [target]="[]" (click)="openPalletDialog(customer.accountnumber)">Transfer Pallets</app-big-button>
-      <app-big-button [target]="[]" (click)="openRecyclingDialog(customer.accountnumber)">Manage Recycling</app-big-button>
+      <app-big-button [target]="[]" (click)="openRecyclingDialog(customer)">Manage Recycling</app-big-button>
 
     </div>
   </div>

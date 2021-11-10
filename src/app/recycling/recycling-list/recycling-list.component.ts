@@ -19,8 +19,9 @@ export class RecyclingListComponent implements OnInit {
   public statusFilter = new FormControl('');
   public assetTypeFilter = new FormControl('');
   public customers$: Observable<any[]>;
+  public weight: number;
   private _loadList: boolean;
-  public displayedColumns = ['assetType', 'status'];
+  public displayedColumns = ['binNumber', 'assetType', 'status', 'weight'];
 
   public choices: any;
   public Status: Column;
@@ -49,7 +50,9 @@ export class RecyclingListComponent implements OnInit {
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       tap(_ => this.parseParams(_)),
-      switchMap(_ => this._loadList ? this.getFirstPage(_) : [])
+      tap(() => this.weight = 0),
+      switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
+      tap(cages => this.weight = cages.map(_ => _.fields.Weight).filter(_ => _).reduce((acc, val) => acc + val, 0))
     )
 
     this.binFilter.valueChanges.pipe(
@@ -74,6 +77,12 @@ export class RecyclingListComponent implements OnInit {
   parseParams(params: Params) {
     if (!params) return;
     const filters: any = {};
+    if ('branch' in params) {
+      this.branchFilter.patchValue(params['branch']);
+      filters['branch'] = params['branch'];
+    } else {
+      this.branchFilter.patchValue('');
+    }
     if ('status' in params) {
       this.statusFilter.patchValue(params['status']);
       filters['status'] = params['status'];
@@ -101,14 +110,15 @@ export class RecyclingListComponent implements OnInit {
     }
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
+    const sameBranch = prev['branch'] === curr['branch'];
     const sameBin = prev['bin'] === curr['bin'];
     const sameAssetType = prev['assetType'] === curr['assetType'];
     const sameStatus = prev['status'] === curr['status'];
-    return sameBin && sameAssetType && sameStatus && this._loadList;
+    return sameBranch && sameBin && sameAssetType && sameStatus && this._loadList;
   }
 
   setBranch(branch: MatSelectChange ) {
-    this.router.navigate(['recycling'], { queryParams: {status: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate(['recycling'], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setStatus(status: MatSelectChange ) {

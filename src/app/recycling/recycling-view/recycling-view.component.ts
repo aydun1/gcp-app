@@ -37,5 +37,6 @@ export class RecyclingViewComponent implements OnInit {
 
   goBack() {
     this.location.back();
+    return null;
   }
 }

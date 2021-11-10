@@ -37,6 +37,8 @@ export class RecyclingService {
       switch (key) {
         case 'bin':
           return `fields/BinNumber2 eq ${filters.bin}`;
+        case 'branch':
+          return `fields/Branch eq '${filters.branch}'`;
         case 'status':
           return `fields/Status eq '${filters.status}'`;
         case 'assetType':
@@ -80,8 +82,8 @@ export class RecyclingService {
     );
   }
 
-  getCageHistory(id: number) {
-    const url = this._cageTrackerUrl + `/items?expand=fields&orderby=createdDateTime desc&filter=fields/Status eq 'Complete' and fields/BinNumber2 eq ${id}`;
+  getCageHistory(binNumber: number) {
+    const url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/Modified desc&filter=fields/Status eq 'Complete' and fields/BinNumber2 eq ${binNumber}`;
     return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value));
   }
 
@@ -91,8 +93,8 @@ export class RecyclingService {
   }
 
   getCagesWithCustomer(custnmbr: string): Observable<Cage[]> {
-    const url = this._cageTrackerUrl + `/items?expand=fields&orderby=createdDateTime desc&filter=fields/CustomerNumber eq '${encodeURIComponent(custnmbr)}'`;
-    return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value.reverse()));
+    const url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/Modified desc&filter=fields/CustomerNumber eq '${encodeURIComponent(custnmbr)}'`;
+    return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value));
   }
 
   markCageWithCustomer(id: string): Observable<any> {
@@ -134,8 +136,8 @@ export class RecyclingService {
     return forkJoin([patchRequest, newRequest]);
   }
 
-  assignCageToCustomer(id: string, custnmbr: string): Observable<any> {
-    const payload = {fields: {Status: 'In Use - At GCP Branch', CustomerNumber: custnmbr}};
+  assignCageToCustomer(id: string, custnmbr: string, customerName: string): Observable<any> {
+    const payload = {fields: {Status: 'In Use - At GCP Branch', CustomerNumber: custnmbr, Customer: customerName}};
     const url = this._cageTrackerUrl + `/items('${id}')`;
     return this.http.patch(url, payload);
   }

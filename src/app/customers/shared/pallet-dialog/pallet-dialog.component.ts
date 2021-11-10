@@ -26,7 +26,8 @@ export class PalletDialogComponent implements OnInit {
     this.palletForm = this.fb.group({
       palletType: ['', Validators.required],
       inQty: ['', Validators.required],
-      outQty: ['', Validators.required]
+      outQty: ['', Validators.required],
+      notes: ['']
     });
 
   }

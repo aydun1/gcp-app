@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Customer } from 'src/app/customers/shared/customer';
 import { RecyclingService } from 'src/app/recycling/shared/recycling.service';
 import { Cage } from '../../../recycling/shared/cage';
 
@@ -20,7 +21,7 @@ export class RecyclingDialogComponent implements OnInit {
 
   constructor(
       public dialogRef: MatDialogRef<RecyclingDialogComponent>,
-      @Inject(MAT_DIALOG_DATA) public data: any,
+      @Inject(MAT_DIALOG_DATA) public data: {customer: Customer},
       private recyclingService: RecyclingService,
 
       private fb: FormBuilder,
@@ -35,7 +36,7 @@ export class RecyclingDialogComponent implements OnInit {
   }
 
   getContainers() {
-    return this.recyclingService.getCagesWithCustomer(this.data.customer).subscribe(
+    return this.recyclingService.getCagesWithCustomer(this.data.customer.accountnumber).subscribe(
       _ => {
         this.noCages = _.length === 0;
         this.cages$.next(_)
@@ -64,7 +65,7 @@ export class RecyclingDialogComponent implements OnInit {
   }
 
   assignToCustomer(id: string) {
-    this.recyclingService.assignCageToCustomer(id, this.data.customer).subscribe(() => this.closeAssigningPage());
+    this.recyclingService.assignCageToCustomer(id, this.data.customer.accountnumber, this.data.customer.name).subscribe(() => this.closeAssigningPage());
   }
 
   saveWeight(id: string) {

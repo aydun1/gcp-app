@@ -71,7 +71,7 @@ export class CustomersService {
   }
 
   addPallets(custnmbr: string, v: any) {
-    const payload = {fields: {Title: custnmbr, Pallet: v.palletType, In: v.inQty, Out: v.outQty}};
+    const payload = {fields: {Title: custnmbr, Pallet: v.palletType, In: v.inQty, Out: v.outQty, Notes: v.notes}};
     return this.http.post(this.palletTrackerUrl, payload);
   }
 

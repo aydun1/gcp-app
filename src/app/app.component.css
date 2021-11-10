@@ -64,8 +64,31 @@ a.title {
   padding: 0 16px;
 }
 
+.print-heading {
+  display: none;
+}
+
 @media (max-width: 600px) {
   :host {
     top: 56px;
+  }
+}
+
+@media print {
+  :host {
+    top: 0;
+  }
+
+  .mat-toolbar {
+    display: none;
+  }
+
+  .container {
+    height: auto;
+    overflow-y: inherit;
+  }
+
+  .print-heading {
+    display: block;
   }
 }

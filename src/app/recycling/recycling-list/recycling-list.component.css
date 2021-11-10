@@ -14,6 +14,30 @@
   margin-right: 10px;
 }
 
+.mat-footer-row {
+  font-weight: bold;
+}
+
 .inner {
   margin: 10px 10px;
+}
+
+.cage-link {
+  text-decoration: none;
+}
+
+.mat-drawer-container {
+  min-height: 100%;
+  position: inherit;
+
+}
+
+.mat-drawer-content, .mat-drawer.mat-drawer-side {
+  z-index: 0;
+}
+
+@media print {
+  .options {
+    display: none;
+  }
 }

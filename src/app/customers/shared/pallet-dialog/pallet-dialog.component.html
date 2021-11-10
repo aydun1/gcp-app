@@ -14,6 +14,10 @@
     <mat-label>Pallets in</mat-label>
     <input matInput type="number" formControlName="inQty" autocomplete="off" placeholder="Pallets returned to GCP">
   </mat-form-field>
+  <mat-form-field appearance="outline" color="accent" class="full-width">
+    <mat-label>Notes</mat-label>
+    <input matInput type="text" formControlName="notes" autocomplete="off" placeholder="Optional">
+  </mat-form-field>
   <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close tabindex=-1>Cancel</button>
     <button mat-raised-button color="primary" [disabled]="loading">Confirm transfer</button>

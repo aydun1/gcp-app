@@ -22,7 +22,7 @@
 
 <ng-container *ngIf="!assigning">
   <div class="buttons">
-    <h2 mat-dialog-title>Manage cages for {{ data.customer }}</h2>
+    <h2 mat-dialog-title>Manage cages for {{ data.customer.accountnumber }}</h2>
     <button mat-raised-button color="primary" (click)="assigning=true">Assign a cage</button>
   </div>
   <mat-dialog-content>
@@ -51,7 +51,7 @@
 
         </div>
         <mat-list>
-          <mat-list-item *ngIf="cage.fields.Weight">
+          <mat-list-item>
             <mat-icon mat-list-icon>tag</mat-icon>
             <div mat-line>{{ cage.fields.BinNumber2 }}</div>
             <div mat-line>Cage number</div>
