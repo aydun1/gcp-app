@@ -16,6 +16,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { FailedComponent } from './failed/failed.component';
 import { environment } from '../environments/environment';
 import { SharedModule } from './shared/shared.module';
+import { MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
 
 
 
@@ -73,6 +74,7 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     SharedModule
   ],
   providers: [
+    {provide: MAT_DATE_LOCALE, useValue: 'en-AU'},
     {
       provide: HTTP_INTERCEPTORS,
       useClass: MsalInterceptor,
@@ -92,7 +94,8 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     },
     MsalService,
     MsalGuard,
-    MsalBroadcastService
+    MsalBroadcastService,
+    NativeDateAdapter
   ],
   bootstrap: [AppComponent]
 })

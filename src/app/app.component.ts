@@ -59,9 +59,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   checkAndSetActiveAccount(){
-    let activeAccount = this.authService.instance.getActiveAccount();
+    const activeAccount = this.authService.instance.getActiveAccount();
     if (!activeAccount && this.authService.instance.getAllAccounts().length > 0) {
-      let accounts = this.authService.instance.getAllAccounts();
+      const accounts = this.authService.instance.getAllAccounts();
       this.authService.instance.setActiveAccount(accounts[0]);
     }
   }

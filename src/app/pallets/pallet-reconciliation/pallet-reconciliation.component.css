@@ -1,0 +1,21 @@
+.outer {
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.mat-card {
+  margin: 10px;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.sum {
+  font-weight: bold;
+}
+
+.spacer {
+  margin-bottom: 20px;
+}

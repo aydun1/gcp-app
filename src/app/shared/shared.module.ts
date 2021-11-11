@@ -4,7 +4,9 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
+import { MatDatepickerModule,  } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -18,6 +20,7 @@ import { MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BigButtonComponent } from './big-button/big-button.component';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -31,8 +34,11 @@ import { BigButtonComponent } from './big-button/big-button.component';
     MatButtonModule,
     MatButtonToggleModule,
     MatCardModule,
+    MatDatepickerModule,
     MatDialogModule,
+    MatDividerModule,
     MatExpansionModule,
+    MatNativeDateModule,
     MatIconModule,
     MatInputModule,
     MatSelectModule,

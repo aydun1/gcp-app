@@ -1,6 +1,7 @@
 import { HttpClient,  } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { MsalService } from '@azure/msal-angular';
 import { map, Observable, switchMap, tap } from 'rxjs';
 
 @Injectable({
@@ -10,7 +11,8 @@ export class SharedService {
 
   constructor(
     private http: HttpClient,
-    private dom: DomSanitizer
+    private dom: DomSanitizer,
+    private authService: MsalService,
   ) { }
 
 
@@ -21,5 +23,10 @@ export class SharedService {
       map(_ => URL.createObjectURL(_)),
       map(_ => this.dom.bypassSecurityTrustUrl(_))
     );
+  }
+
+  getName(): string {
+    const activeAccount = this.authService.instance.getActiveAccount();
+    return activeAccount.name;
   }
 }
