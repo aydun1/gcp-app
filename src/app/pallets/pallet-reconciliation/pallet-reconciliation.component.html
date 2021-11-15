@@ -22,7 +22,7 @@
     <mat-card>
       <mat-card-title>Invoice stocktake</mat-card-title>
       <mat-form-field appearance="outline">
-        <mat-label>Loscam invoice closing balance</mat-label>
+        <mat-label>Pallet invoice closing balance</mat-label>
         <input matInput type="number" formControlName="invClosing" autocomplete="off">
       </mat-form-field>
       <div class="spacer">
@@ -30,13 +30,13 @@
       </div>
       <mat-form-field appearance="outline">
         <mat-label>Un-invoiced transfers off</mat-label>
-        <mat-icon matSuffix>remove</mat-icon>
-        <input matInput type="number" formControlName="invUnTransfersOff" autocomplete="off">
+        <mat-icon matPrefix>remove</mat-icon>
+        <input matInput type="number" formControlName="invUnTransfersOff" autocomplete="off" min="0">
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>Un-invoiced transfers on</mat-label>
-        <mat-icon matSuffix>add</mat-icon>
-        <input matInput type="number" formControlName="invUnTransfersOn" autocomplete="off">
+        <mat-icon matPrefix>add</mat-icon>
+        <input matInput type="number" formControlName="invUnTransfersOn" autocomplete="off" min="0">
       </mat-form-field>
       <div class="spacer">
         <mat-divider></mat-divider>
@@ -50,33 +50,33 @@
     <mat-card>
       <mat-card-title>Physical stocktake</mat-card-title>
       <mat-form-field appearance="outline">
-        <mat-label>Physical equipment count - on site</mat-label>
-        <input matInput type="number" formControlName="phyOnSite" autocomplete="off">
+        <mat-label>Physical pallet count - on site</mat-label>
+        <input matInput type="number" formControlName="phyOnSite" autocomplete="off" min="0">
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <mat-label>Physical equipment count - off site</mat-label>
-        <input matInput type="number" formControlName="phyOffSite" autocomplete="off">
-      </mat-form-field>
-      <div class="spacer">
-        <mat-divider></mat-divider>
-      </div>
-      <mat-form-field appearance="outline">
-        <mat-label>IOUs - equipment to be collected</mat-label>
-        <mat-icon matSuffix>add</mat-icon>
-        <input matInput type="number" formControlName="phyToBeCollected" autocomplete="off">
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>IOUs - equipment to be repaid</mat-label>
-        <mat-icon matSuffix>remove</mat-icon>
-        <input matInput type="number" formControlName="phyToBeRepaid" autocomplete="off">
+        <mat-label>Physical pallet count - off site</mat-label>
+        <input matInput type="number" formControlName="phyOffSite" autocomplete="off" min="0">
       </mat-form-field>
       <div class="spacer">
         <mat-divider></mat-divider>
       </div>
       <mat-form-field appearance="outline">
-        <mat-label>Equipment in transit</mat-label>
-        <mat-icon matSuffix>add</mat-icon>
-        <input matInput type="number" formControlName="phyInTransit" autocomplete="off">
+        <mat-label>IOUs - pallets to be collected</mat-label>
+        <mat-icon matPrefix>add</mat-icon>
+        <input matInput type="number" formControlName="phyToBeCollected" autocomplete="off" min="0">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>IOUs - pallets to be repaid</mat-label>
+        <mat-icon matPrefix>remove</mat-icon>
+        <input matInput type="number" formControlName="phyToBeRepaid" autocomplete="off" min="0">
+      </mat-form-field>
+      <div class="spacer">
+        <mat-divider></mat-divider>
+      </div>
+      <mat-form-field appearance="outline">
+        <mat-label>Pallets in transit</mat-label>
+        <mat-icon matPrefix>add</mat-icon>
+        <input matInput type="number" formControlName="phyInTransit" autocomplete="off" min="0">
       </mat-form-field>
       <div class="spacer">
         <mat-divider></mat-divider>
