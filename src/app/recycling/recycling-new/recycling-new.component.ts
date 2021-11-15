@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { catchError, debounceTime, map, mergeMap, Observable, of, tap, throwError } from 'rxjs';
 
 import { RecyclingService } from '../shared/recycling.service';
 
@@ -44,8 +44,21 @@ export class RecyclingNewComponent implements OnInit {
         cageNumber.clearValidators();
       }
       cageNumber.updateValueAndValidity();
-  });
 
+      this.cageForm.get('cageNumber').valueChanges.pipe(
+        debounceTime(200),
+        mergeMap(_ => _ ? this.recyclingService.checkCageNumber(_) : of(null)),
+        tap(_ => {
+          const control = this.cageForm.get('cageNumber');
+          if (_) {
+            control.setErrors({duplicate: true});
+          } else {
+            if (control.hasError('duplicate')) delete control.errors['duplicate'];
+            if (control.errors && Object.keys(control.errors).length === 0) control.setErrors(null);
+          }
+        })
+      ).subscribe();
+    });
   }
 
   getOptions(): void {

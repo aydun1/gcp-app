@@ -166,4 +166,10 @@ export class RecyclingService {
     const url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/BinNumber2 asc&filter=fields/Status eq 'Available'`;
     return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value));
   }
+
+  checkCageNumber(cageNumber: string): Observable<Cage> {
+    const url = this._cageTrackerUrl + `/items?expand=fields&filter=fields/BinNumber2 eq ${cageNumber} and fields/Status ne 'Complete'`;
+    return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value[0]));
+  }
+
 }

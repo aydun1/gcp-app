@@ -63,7 +63,7 @@ export class RecyclingListComponent implements OnInit {
   }
 
   getOptions(): void {
-    this.choices$ = this.recyclingService.getColumns().pipe(tap(_ => console.log(_)));
+    this.choices$ = this.recyclingService.getColumns();
   }
 
   getFirstPage(_: any) {

@@ -12,9 +12,12 @@
         <mat-option *ngFor="let s of (choices$ | async)?.AssetType.choice.choices" value="{{ s }}">{{ s }}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline" color="accent" class="full-width" *ngIf="cageForm.value.assetType?.startsWith('Cage')">
+    <mat-form-field appearance="outline" class="full-width" *ngIf="cageForm.value.assetType?.startsWith('Cage')">
       <mat-label>Cage number</mat-label>
       <input matInput type="number" formControlName="cageNumber" autocomplete="off" placeholder="The number of the cage">
+      <mat-error *ngIf="cageForm.get('cageNumber').hasError('duplicate')">
+        Cage number is already assigned
+      </mat-error>
     </mat-form-field>
     <mat-form-field appearance="outline" class="branch">
       <mat-label>{{ (choices$ | async)?.Branch.name }}</mat-label>
