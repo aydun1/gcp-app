@@ -97,5 +97,9 @@
         <input matInput type="number" autocomplete="off" disabled  [ngModel]="surplus" [ngModelOptions]="{standalone: true}">
       </mat-form-field>
     </mat-card>
+    <div class="buttons">
+      <button mat-button mat-dialog-close (click)="reset()" tabindex=-1>Reset</button>
+      <button mat-raised-button color="primary" (click)="submit()">Confirm</button>
+    </div>
   </form>
 </div>

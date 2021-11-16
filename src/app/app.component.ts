@@ -1,4 +1,5 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { AuthenticationResult, InteractionStatus, PopupRequest, EventMessage, EventType, AccountInfo } from '@azure/msal-browser';
 import { Subject } from 'rxjs';
@@ -21,6 +22,7 @@ export class AppComponent implements OnInit, OnDestroy {
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
     private authService: MsalService,
     private msalBroadcastService: MsalBroadcastService,
+    private router: Router,
     private sharedService: SharedService
   ) {}
 
@@ -81,6 +83,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
   logout() {
     this.authService.logout();
+  }
+
+  urlActive(url: string) {
+    console.log(url, this.router.url)
+    return url === this.router.url;
   }
 
   ngOnDestroy(): void {

@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { tap } from 'rxjs';
 import { SharedService } from 'src/app/shared.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-pallet-reconciliation',
@@ -17,6 +18,7 @@ export class PalletReconciliationComponent implements OnInit {
   public pallets = ['Loscam', 'Chep', 'Plain'];
   constructor(
     private fb: FormBuilder,
+    private snackBar: MatSnackBar,
     private sharedService: SharedService
   ) { }
 
@@ -52,6 +54,16 @@ export class PalletReconciliationComponent implements OnInit {
         this.stocktakeResult = this.adjInvBalance - this.adjPhyBalance;
       })
     ).subscribe();
+  }
+
+  reset() {
+    this.palletRecForm.reset();
+  }
+
+  submit() {
+    if (this.palletRecForm.invalid) return;
+    this.snackBar.open('Added pallet stocktake', '', {duration: 3000});
+    this.palletRecForm.reset();
   }
 
   addPalletRec() {

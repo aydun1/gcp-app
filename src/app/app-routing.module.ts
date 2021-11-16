@@ -5,17 +5,12 @@ import { FailedComponent } from './failed/failed.component';
 
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
-import { RecyclingComponent } from './recycling/recycling.component';
 
 const routes: Routes = [
   {
     path: '',
     component: HomeComponent
   },
-  { path: 'customers', loadChildren: () => import('./customers/customers.module').then(m => m.CustomersModule) },
-  { path: 'recycling', loadChildren: () => import('./recycling/recycling.module').then(m => m.RecyclingModule) },
-  { path: 'pallets', loadChildren: () => import('./pallets/pallets.module').then(m => m.PalletsModule) },
-
   {
     path: 'profile',
     component: ProfileComponent,
@@ -24,7 +19,10 @@ const routes: Routes = [
   {
     path: 'login-failed',
     component: FailedComponent
-  }
+  },
+  { path: 'customers', canActivate: [MsalGuard], loadChildren: () => import('./customers/customers.module').then(m => m.CustomersModule) },
+  { path: 'recycling', canActivate: [MsalGuard], loadChildren: () => import('./recycling/recycling.module').then(m => m.RecyclingModule) },
+  { path: 'pallets', canActivate: [MsalGuard], loadChildren: () => import('./pallets/pallets.module').then(m => m.PalletsModule) },
 ];
 
 @NgModule({

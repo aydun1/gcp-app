@@ -23,3 +23,9 @@ h2 {
 .spacer {
   margin-bottom: 20px;
 }
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin: 30px 10px;
+}

@@ -26,7 +26,7 @@
       </mat-select>
     </mat-form-field>
     <div class="buttons">
-      <button mat-button tabindex=-1 type="button">Cancel</button>
+      <button mat-button tabindex=-1 type="button" (click)="goBack()">Cancel</button>
       <button mat-raised-button color="primary" [disabled]="loading">Add cage</button>
     </div>
   </form>

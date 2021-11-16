@@ -1,36 +1,39 @@
 <div class="outer">
   <div class="options inner">
-    <mat-form-field appearance="outline" class="branch">
-      <mat-label>{{ (choices$ | async)?.Branch?.name }}</mat-label>
-      <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
-        <mat-option>All</mat-option>
-        <mat-option *ngFor="let s of (choices$ | async)?.Branch?.choice.choices" value="{{ s }}">{{ s }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="status">
-      <mat-label>{{ (choices$ | async)?.Status?.name }}</mat-label>
-      <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event)">
-        <mat-option>All</mat-option>
-        <mat-option *ngFor="let s of (choices$ | async)?.Status?.choice.choices" value="{{ s }}">{{ s }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="asset-type">
-      <mat-label>{{ (choices$ | async)?.AssetType?.name }}</mat-label>
-      <mat-select [formControl]="assetTypeFilter" (selectionChange)="setAssetType($event)">
-        <mat-option>All</mat-option>
-        <mat-option *ngFor="let s of (choices$ | async)?.AssetType?.choice.choices" value="{{ s }}">{{ s }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="bin-filter">
-      <mat-label>Cage number</mat-label>
-      <input matInput [formControl]="binFilter" type="number" autocomplete="off" placeholder="Type to search...">
-      <button *ngIf="!binFilter.value" matSuffix mat-icon-button disabled>
-        <mat-icon>search</mat-icon>
-      </button>
-      <button *ngIf="binFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearBinFilter()">
-        <mat-icon>close</mat-icon>
-      </button>
-    </mat-form-field>
+    <div class="buttons">
+      <mat-form-field appearance="outline" class="branch">
+        <mat-label>{{ (choices$ | async)?.Branch?.name }}</mat-label>
+        <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
+          <mat-option>All</mat-option>
+          <mat-option *ngFor="let s of (choices$ | async)?.Branch?.choice.choices" value="{{ s }}">{{ s }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="status">
+        <mat-label>{{ (choices$ | async)?.Status?.name }}</mat-label>
+        <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event)">
+          <mat-option>All</mat-option>
+          <mat-option *ngFor="let s of (choices$ | async)?.Status?.choice.choices" value="{{ s }}">{{ s }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="asset-type">
+        <mat-label>{{ (choices$ | async)?.AssetType?.name }}</mat-label>
+        <mat-select [formControl]="assetTypeFilter" (selectionChange)="setAssetType($event)">
+          <mat-option>All</mat-option>
+          <mat-option *ngFor="let s of (choices$ | async)?.AssetType?.choice.choices" value="{{ s }}">{{ s }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="bin-filter">
+        <mat-label>Cage number</mat-label>
+        <input matInput [formControl]="binFilter" type="number" autocomplete="off" placeholder="Type to search...">
+        <button *ngIf="!binFilter.value" matSuffix mat-icon-button disabled>
+          <mat-icon>search</mat-icon>
+        </button>
+        <button *ngIf="binFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearBinFilter()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+    <a mat-raised-button [routerLink]="['/recycling', 'new']" color="primary" class="add-cage">Add New Cage</a>
   </div>
 
   <div *ngIf="(cages$ | async) as cages" class="inner">
