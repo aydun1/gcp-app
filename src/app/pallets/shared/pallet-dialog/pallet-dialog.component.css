@@ -25,3 +25,9 @@ img {
 .ng-submitted .mat-button-toggle-group.ng-invalid {
   border: red 2px solid;
 }
+
+.close-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+}

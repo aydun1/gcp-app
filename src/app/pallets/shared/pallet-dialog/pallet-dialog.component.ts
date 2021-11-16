@@ -48,4 +48,8 @@ export class PalletDialogComponent implements OnInit {
       })
     ).subscribe()
   }
+
+  closeDialog() {
+    this.dialogRef.close();
+  }
 }
