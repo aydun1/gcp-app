@@ -9,8 +9,8 @@ import { RecyclingDialogComponent } from './shared/recycling-dialog/recycling-di
 import { RecyclingListComponent } from './recycling-list/recycling-list.component';
 import { RecyclingViewComponent } from './recycling-view/recycling-view.component';
 import { RecyclingNewComponent } from './recycling-new/recycling-new.component';
-
-
+import { ActionButtonComponent } from './shared/action-button/action-button.component';
+import { CageDetailsComponent } from './shared/cage-details/cage-details.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +18,9 @@ import { RecyclingNewComponent } from './recycling-new/recycling-new.component';
     RecyclingDialogComponent,
     RecyclingListComponent,
     RecyclingViewComponent,
-    RecyclingNewComponent
+    RecyclingNewComponent,
+    ActionButtonComponent,
+    CageDetailsComponent,
   ],
   imports: [
     CommonModule,

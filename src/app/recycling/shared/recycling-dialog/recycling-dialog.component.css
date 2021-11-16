@@ -12,11 +12,6 @@
   flex-direction: column;
 }
 
-.weight-form {
-  display: flex;
-  flex-direction: column;
-}
-
 .buttons {
   display: flex;
   align-items: center;
@@ -28,7 +23,17 @@
   margin: 0;
 }
 
+.section-title {
+  flex: 1;
+}
+
 .note {
   margin: 60px;
   text-align: center;
+}
+
+.close-button {
+  position: absolute;
+  right: 0;
+  top: 0;
 }

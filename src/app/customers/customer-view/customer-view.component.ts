@@ -4,11 +4,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
+
+import { Customer } from '../shared/customer';
 import { CustomersService } from '../shared/customers.service';
 import { PalletDialogComponent } from '../../pallets/shared/pallet-dialog/pallet-dialog.component';
 import { RecyclingDialogComponent } from '../../recycling/shared/recycling-dialog/recycling-dialog.component';
-import { RecyclingService } from 'src/app/recycling/shared/recycling.service';
-import { PalletsService } from 'src/app/pallets/shared/pallets.service';
+import { RecyclingService } from '../../recycling/shared/recycling.service';
+import { PalletsService } from '../../pallets/shared/pallets.service';
 
 @Component({
   selector: 'app-customer-view',
@@ -51,11 +53,9 @@ export class CustomerViewComponent implements OnInit {
       switchMap(id => this.recyclingService.getCagesWithCustomer(id)),
       map(cages => {
         const weight = cages.map(_ => _.fields.Weight || 0).reduce((acc, curr) => acc + curr, 0);
-        console.log(cages.map(_ => _.fields.Status));
         return {weight};
       })
     ).subscribe(cages => this.cages = cages);
-
 
     this.navigationSubscription = this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
@@ -93,11 +93,11 @@ export class CustomerViewComponent implements OnInit {
     });
   }
 
-  openRecyclingDialog(customer: string) {
+  openRecyclingDialog(customer: Customer) {
     const data = {customer};
     const dialogRef = this.dialog.open(RecyclingDialogComponent, {width: '800px', data});
     dialogRef.afterClosed().subscribe(result => {
-      this.refreshCages(data.customer);
+      this.refreshCages(data.customer.accountnumber);
       if (!result) return;
     });
   }

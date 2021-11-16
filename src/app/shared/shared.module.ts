@@ -21,6 +21,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BigButtonComponent } from './big-button/big-button.component';
 import { MatNativeDateModule } from '@angular/material/core';
+import { PipeModule } from './pipe.module';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { MatNativeDateModule } from '@angular/material/core';
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
-    BigButtonComponent
+    BigButtonComponent,
+    PipeModule
   ]
 })
 export class SharedModule {

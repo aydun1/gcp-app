@@ -3,6 +3,10 @@
   max-width: 800px;
 }
 
+h2 {
+  margin-left: 10px;
+}
+
 .mat-card {
   margin: 10px;
 }

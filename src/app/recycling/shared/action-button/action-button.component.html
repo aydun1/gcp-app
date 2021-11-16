@@ -1,0 +1,12 @@
+  <button mat-raised-button color="primary" *ngIf="!cage.fields.DueDate" (click)="markWithCustomer(cage.id)">Deliver to customer</button>
+  <button mat-raised-button color="primary" *ngIf="cage.fields.DueDate && !cage.fields.CollectionDate" (click)="markAsCollected(cage.id)">Collect from customer</button>
+  <form *ngIf="cage.fields.CollectionDate && !cage.fields.Weight" (ngSubmit)="saveWeight(cage.id)" [formGroup]="weightForm" class="weight-form">
+    <mat-form-field class="weight-field">
+      <mat-label>Weight</mat-label>
+      <input matInput type="number" formControlName="weight" placeholder="Net kg">
+    </mat-form-field>
+    <button mat-raised-button color="primary">Save weight</button>
+  </form>
+  <button mat-raised-button color="primary" *ngIf="cage.fields.Weight && !cage.fields.PurchaseDate" (click)="markWithPolymer(cage.id)">Send to Polymer</button>
+  <button mat-raised-button color="primary" *ngIf="cage.fields.PurchaseDate && !cage.fields.EmptyReceivedDate" (click)="markReturnedEmpty(cage.id)">Return from Polymer</button>
+  <button mat-raised-button color="primary" *ngIf="cage.fields.EmptyReceivedDate && cage.fields.Status !== 'Complete'" (click)="markAvailable(cage.id, cage.fields.BinNumber2, cage.fields.Branch, cage.fields.AssetType)">Set cage as available</button>

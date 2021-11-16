@@ -98,9 +98,9 @@ export class RecyclingService {
     return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value));
   }
 
-  getCage(id: string) {
+  getCage(id: string): Observable<Cage> {
     const url = this._cageTrackerUrl + `/items('${id}')`;
-    return this.http.get(url);
+    return this.http.get(url).pipe(map((res: Cage) => res));
   }
 
   getCagesWithCustomer(custnmbr: string): Observable<Cage[]> {

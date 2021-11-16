@@ -22,7 +22,8 @@
 
 .container {
   height: 100%;
-  overflow-y: auto;
+  overflow-y: hidden;
+  position: relative;
 }
 
 .toolbar-spacer {
@@ -68,6 +69,36 @@ a.title {
   display: none;
 }
 
+.mat-drawer-container {
+  height: 100%;
+  position: static;
+}
+
+.mat-drawer-content {
+  height: 100%;
+  overflow-y: auto;
+  position: inherit;
+}
+
+.mat-nav-list {
+  overflow: hidden;
+}
+
+.menu-label {
+  margin-left: 14px;
+}
+
+.active {
+  background-color: #f3f2f1;
+  border-left: 2px solid red;
+}
+
+@media (max-width: 800px) {
+  .menu-label {
+    display: none;
+  }
+}
+
 @media (max-width: 600px) {
   :host {
     top: 56px;
@@ -90,5 +121,13 @@ a.title {
 
   .print-heading {
     display: block;
+  }
+
+  .mat-drawer {
+    display: none;
+  }
+
+  .mat-drawer-content {
+    margin-left: 0!important;
   }
 }

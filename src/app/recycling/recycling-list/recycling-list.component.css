@@ -26,25 +26,7 @@
   text-decoration: none;
 }
 
-.mat-drawer-container {
-  min-height: 100%;
-  position: inherit;
-
-}
-
-.mat-drawer-content, .mat-drawer.mat-drawer-side {
-  z-index: 0;
-}
-
 @media print {
-  .mat-drawer {
-    display: none;
-  }
-
-  .mat-drawer-content {
-    margin-left: 0!important;
-  }
-
   .options {
     display: none;
   }

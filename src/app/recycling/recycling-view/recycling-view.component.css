@@ -1,12 +1,13 @@
 :host {
-  right: 0;
   background: white;
+  bottom: 0;
   display: block;
   left: 0;
-  top: 0;
-  bottom: 0;
-  position: absolute;
   overflow-y: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 4;
 }
 
 .top-buttons {
@@ -37,4 +38,12 @@
   right: 0;
   text-align: center;
   top: 97px;
+}
+
+.mat-subheader {
+  display: flex;
+}
+
+.mat-subheader > span {
+  flex: 1;
 }

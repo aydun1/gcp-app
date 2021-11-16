@@ -13,7 +13,8 @@ import { Cage } from '../../../recycling/shared/cage';
 })
 export class RecyclingDialogComponent implements OnInit {
   public loading: boolean;
-  public noCages: boolean;
+  public noActiveCages: boolean;
+  public noCageHistory: boolean;
   public cages$ = new BehaviorSubject<Cage[]>([]);
   public weightForm: FormGroup;
   public assigning: boolean;
@@ -38,44 +39,25 @@ export class RecyclingDialogComponent implements OnInit {
   getContainers() {
     return this.recyclingService.getCagesWithCustomer(this.data.customer.accountnumber).subscribe(
       _ => {
-        this.noCages = _.length === 0;
+        this.noActiveCages = _.filter(c => c['fields']['Status'] !== 'Complete').length === 0;
+        this.noCageHistory = _.filter(c => c['fields']['Status'] === 'Complete').length === 0;
+
         this.cages$.next(_)
       }
     );
-  }
-
-  markWithCustomer(id: string) {
-    this.recyclingService.markCageWithCustomer(id).subscribe(() => this.getContainers());
-  }
-
-  markAsCollected(id: string) {
-    this.recyclingService.markCageAsCollected(id).subscribe(() => this.getContainers());
-  }
-
-  markWithPolymer(id: string) {
-    this.recyclingService.markCageWithPolymer(id).subscribe(() => this.getContainers());
-  }
-
-  markReturnedEmpty(id: string) {
-    this.recyclingService.markCageReturnedEmpty(id).subscribe(() => this.getContainers());
-  }
-
-  markAvailable(id: string, binNumber: number, branch: string, assetType: string) {
-    this.recyclingService.markCageAvailable(id, binNumber, branch, assetType).subscribe(() => this.getContainers());
   }
 
   assignToCustomer(id: string) {
     this.recyclingService.assignCageToCustomer(id, this.data.customer.accountnumber, this.data.customer.name).subscribe(() => this.closeAssigningPage());
   }
 
-  saveWeight(id: string) {
-    if (this.weightForm.invalid) return;
-    this.recyclingService.setCageWeight(id, this.weightForm.value.weight).subscribe(() => this.getContainers());
-  }
-
   closeAssigningPage() {
     this.assigning = false;
     this.getContainers();
+  }
+
+  closeDialog() {
+    this.dialogRef.close();
   }
 
   trackByFn(index: number, item: Cage) {

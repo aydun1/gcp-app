@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { RecyclingService } from '../shared/recycling.service';
-import { Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-recycling-view',
@@ -11,6 +11,8 @@ import { Observable, tap } from 'rxjs';
 })
 export class RecyclingViewComponent implements OnInit {
   private id: string;
+  private cageSource$: Subject<string>;
+
   public cage$: Observable<any>;
   public cageHistory$: Observable<any>;
   public noHistory: boolean;
@@ -24,14 +26,16 @@ export class RecyclingViewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.cage$ = this.getCage().pipe(tap(_ => console.log(_)));
+    this.id = this.route.snapshot.paramMap.get('id');
+    this.cageSource$ = new BehaviorSubject(this.id);
+    this.cage$ = this.cageSource$.pipe(
+      switchMap(_ => this.recyclingService.getCage(_)),
+      tap(_ => this.getCageHistory(_.fields.BinNumber2))
+    );
   }
 
   getCage() {
-    this.id = this.route.snapshot.paramMap.get('id');
-    return this.recyclingService.getCage(this.id).pipe(
-      tap((_: any) => this.getCageHistory(_.fields.BinNumber2))
-    );
+    this.cageSource$.next(this.id);
   }
 
   getCageHistory(bin: number) {

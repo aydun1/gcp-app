@@ -1,8 +1,6 @@
 <ng-container *ngIf="assigning">
   <div class="buttons">
-    <button mat-icon-button (click)="closeAssigningPage()">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
+    <button mat-icon-button (click)="closeAssigningPage()"><mat-icon>arrow_back</mat-icon></button>
     <h2 mat-dialog-title>Available cages</h2>
   </div>
   <mat-dialog-content>
@@ -13,73 +11,56 @@
           <mat-panel-description>{{ cage.fields.BinNumber2 }}</mat-panel-description>
         </mat-expansion-panel-header>
         <div class="actions">
-          <button mat-raised-button color="primary" (click)="assignToCustomer(cage.id)">Assign to customer</button>
+          <button mat-raised-button color="primary" (click)="assignToCustomer(cage.id)">Assign to {{ data.customer.name || data.customer.accountnumber }}</button>
         </div>
       </mat-expansion-panel>
     </mat-accordion>
   </mat-dialog-content>
 </ng-container>
+
+<button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>
 
 <ng-container *ngIf="!assigning">
-  <div class="buttons">
-    <h2 mat-dialog-title>Manage cages for {{ data.customer.accountnumber }}</h2>
-    <button mat-raised-button color="primary" (click)="assigning=true">Assign a cage</button>
-  </div>
+  <h2 mat-dialog-title>Manage cages for {{ data.customer.accountnumber }}</h2>
   <mat-dialog-content>
-    <p *ngIf="noCages" class="note">
-      No cage
-    </p>
-    <mat-accordion>
-      <mat-expansion-panel *ngFor="let cage of cages$ | async;trackBy: trackByFn">
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ cage.fields.AssetType }}</mat-panel-title>
-          <mat-panel-description>{{ cage.fields.Status }}</mat-panel-description>
-        </mat-expansion-panel-header>
-        <div class="actions">
-          <button mat-raised-button color="primary" *ngIf="!cage.fields.DueDate" (click)="markWithCustomer(cage.id)">Deliver to customer</button>
-          <button mat-raised-button color="primary" *ngIf="cage.fields.DueDate && !cage.fields.CollectionDate" (click)="markAsCollected(cage.id)">Collect from customer</button>
-          <form *ngIf="cage.fields.CollectionDate && !cage.fields.Weight" (ngSubmit)="saveWeight(cage.id)" [formGroup]="weightForm" class="weight-form">
-            <mat-form-field class="weight-field">
-              <mat-label>Weight</mat-label>
-              <input matInput type="number" formControlName="weight" placeholder="Net kg">
-            </mat-form-field>
-            <button mat-raised-button color="primary">Save weight</button>
-          </form>
-          <button mat-raised-button color="primary" *ngIf="cage.fields.Weight && !cage.fields.PurchaseDate" (click)="markWithPolymer(cage.id)">Send to Polymer</button>
-          <button mat-raised-button color="primary" *ngIf="cage.fields.PurchaseDate && !cage.fields.EmptyReceivedDate" (click)="markReturnedEmpty(cage.id)">Return from Polymer</button>
-          <button mat-raised-button color="primary" *ngIf="cage.fields.EmptyReceivedDate && cage.fields.Status !== 'Complete'" (click)="markAvailable(cage.id, cage.fields.BinNumber2, cage.fields.Branch, cage.fields.AssetType)">Set cage as available</button>
+    <ng-container *ngIf="(cages$ | async | groupBy:'Complete') as groups">
+      <div class="buttons">
+        <h3 class="section-title">Active cages</h3>
+        <button mat-raised-button color="primary" (click)="assigning=true">Assign a cage</button>
+      </div>
 
-        </div>
-        <mat-list>
-          <mat-list-item>
-            <mat-icon mat-list-icon>tag</mat-icon>
-            <div mat-line>{{ cage.fields.BinNumber2 }}</div>
-            <div mat-line>Cage number</div>
-          </mat-list-item>
-          <mat-list-item *ngIf="cage.fields.Weight">
-            <mat-icon mat-list-icon>scale</mat-icon>
-            <div mat-line>{{ cage.fields.Weight }} kg</div>
-            <div mat-line>Net weight</div>
-          </mat-list-item>
-          <div mat-subheader>Dates</div>
-          <mat-list-item *ngIf="cage.fields.EmptyReceivedDate">
-            <div mat-line>{{ cage.fields.EmptyReceivedDate | date: 'dd/MM/yyyy' }}</div>
-            <div mat-line>Received date (empty)</div>
-          </mat-list-item>
-          <mat-list-item *ngIf="cage.fields.PurchaseDate">
-            <div mat-line>{{ cage.fields.PurchaseDate | date: 'dd/MM/yyyy' }}</div>
-            <div mat-line>Transfer date (to Polymer)</div>
-          </mat-list-item>
-          <mat-list-item *ngIf="cage.fields.CollectionDate">
-            <div mat-line>{{ cage.fields.CollectionDate | date: 'dd/MM/yyyy' }}</div>
-            <div mat-line>Collection date (from customer)</div>
-          </mat-list-item>
-          <mat-list-item *ngIf="cage.fields.DueDate">
-            <div mat-line>{{ cage.fields.DueDate | date: 'dd/MM/yyyy' }}</div>
-            <div mat-line>Delivery date (to customer)</div>
-          </mat-list-item>
-        </mat-list>
-      </mat-expansion-panel>
-    </mat-accordion>
+      <p *ngIf="noActiveCages" class="note">
+        No active cages
+      </p>
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let cage of groups[1];trackBy: trackByFn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ cage.fields.AssetType }}</mat-panel-title>
+            <mat-panel-description>{{ cage.fields.Status }}</mat-panel-description>
+          </mat-expansion-panel-header>
+          <app-action-button [cage]="cage" (updated)="getContainers()" class="actions"></app-action-button>
+          <app-cage-details [cage]="cage"></app-cage-details>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <h3>History</h3>
+      <p *ngIf="noCageHistory" class="note">
+        No cage history
+      </p>
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let cage of groups[0];trackBy: trackByFn">
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ cage.fields.AssetType }}</mat-panel-title>
+            <mat-panel-description>{{ cage.fields.Status }}</mat-panel-description>
+          </mat-expansion-panel-header>
+          <app-action-button [cage]="cage" (updated)="getContainers()" class="actions"></app-action-button>
+          <app-cage-details [cage]="cage"></app-cage-details>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </ng-container>
+
   </mat-dialog-content>
 </ng-container>
+
+<ng-template>
+
+</ng-template>
