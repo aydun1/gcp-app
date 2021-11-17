@@ -3,7 +3,7 @@
     <mat-form-field appearance="outline" class="region">
       <mat-label>Select Territory</mat-label>
       <mat-select [formControl]="territoryFilter" (selectionChange)="setRegion($event)">
-        <mat-option *ngFor="let t of territories$ | async" value="{{ t.name }}">{{ t.name }}</mat-option>
+        <mat-option *ngFor="let t of territories" value="{{ t }}">{{ t }}</mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -33,7 +33,8 @@
       <ng-container matColumnDef="accountnumber">
         <mat-header-cell *matHeaderCellDef> Account number </mat-header-cell>
         <mat-cell *matCellDef="let customer"> {{customer.accountnumber}} </mat-cell>
-      </ng-container> 
+      </ng-container>
+
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>

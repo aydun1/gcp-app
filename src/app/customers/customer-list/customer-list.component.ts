@@ -4,6 +4,8 @@ import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
+
+import { SharedService } from '../../shared.service';
 import { Customer } from '../shared/customer';
 import { CustomersService } from '../shared/customers.service';
 
@@ -23,6 +25,10 @@ export class CustomerListComponent implements OnInit {
   public customers$: Observable<Customer[]>;
   public territories$: Observable<Territory[]>;
 
+  public territories = [
+    'ACT', 'NSW', 'QLD', 'SA', 'TAS', 'VIC', 'WA', 'INT', 'MISC', 'NATIONAL', 'NT', 'NZ', 'OTHER', 'PRIMARY', 'WHOLESALE'
+  ];
+
   private loadList: boolean;
   public displayedColumns = ['name', 'accountnumber'];
 
@@ -30,6 +36,7 @@ export class CustomerListComponent implements OnInit {
     private el: ElementRef,
     private route: ActivatedRoute,
     private router: Router,
+    private sharedService: SharedService,
     private customersService: CustomersService
   ) { }
 
@@ -40,6 +47,7 @@ export class CustomerListComponent implements OnInit {
   }
   
   ngOnInit() {
+    const state$ = this.sharedService.getState();
     this.customers$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
@@ -48,6 +56,7 @@ export class CustomerListComponent implements OnInit {
         map(() => _)
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
+      switchMap(_ => state$.pipe(map(state => !_['territory'] ? {..._, territory: state} : _))),
       tap(_ => this.parseParams(_)),
       switchMap(_ => this.loadList ? this.getFirstPage(_) : [])
     )
@@ -59,7 +68,6 @@ export class CustomerListComponent implements OnInit {
     ).subscribe();
 
     this.territories$ = this.getTerritories();
-
   }
 
   getTerritories(): Observable<Territory[]> {
@@ -93,7 +101,6 @@ export class CustomerListComponent implements OnInit {
       if (this.nameFilter.value) this.nameFilter.patchValue('');
     }
   }
-
 
   compareQueryStrings(prev: Params, curr: Params) {
     if (!this.loadList && this.route.children.length === 0) {

@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
+import { SharedService } from 'src/app/shared.service';
 import { Cage } from '../shared/cage';
 import { Column } from '../shared/columns';
 import { RecyclingService } from '../shared/recycling.service';
@@ -30,7 +31,8 @@ export class RecyclingListComponent implements OnInit {
     private el: ElementRef,
     private route: ActivatedRoute,
     private router: Router,
-    private recyclingService: RecyclingService
+    private recyclingService: RecyclingService,
+    private sharedService: SharedService
   ) { }
 
   @HostListener('scroll', ['$event'])
@@ -67,7 +69,10 @@ export class RecyclingListComponent implements OnInit {
   }
 
   getFirstPage(_: any) {
+    this.sharedService.getState().subscribe(_ => console.log(_))
+
     return this.recyclingService.getFirstPage(_);
+
   }
 
   getNextPage() {

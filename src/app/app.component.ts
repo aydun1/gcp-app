@@ -15,6 +15,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private readonly _destroying$ = new Subject<void>();
   public title = 'Garden City Plastics';
   public loginDisplay: boolean;
+  public loginDisplay$ = new Subject<boolean>();
   public accounts: AccountInfo[];
   public photo$: any;
 
@@ -86,7 +87,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   urlActive(url: string) {
-    console.log(url, this.router.url)
     return url === this.router.url;
   }
 

@@ -12,18 +12,31 @@ export class CustomersService {
   private nextPage: string;
   private customersSubject$ = new BehaviorSubject<Customer[]>([]);
   private loadingCustomers: boolean;
+  public territories = {
+    'NSW': ['NSW', 'NSWSALES'],
+    'QLD': ['QLD', 'QLDSALES'],
+    'SA': ['SA', 'SASALES'],
+    'VIC': ['VIC', 'VICSALES', 'HEATH'],
+    'WA': ['WA', 'WASALES']
+  };
+
   constructor(
     private http: HttpClient
   ) { }
 
   createUrl(filters: any) {
-    let url = `${this.url}/accounts?$select=name,accountnumber`;
+    let url = `${this.url}/accounts?$select=name,accountnumber,territoryid`;
     const filterCount = Object.keys(filters).length;
     if(filterCount > 0) {
       url += '&$filter=';
       if ('name' in filters) url += `(startswith(name,'${filters.name}') or startswith(accountnumber,'${filters.name}'))`;
       if (filterCount > 1) url += ' and ';
-      if ('territory' in filters) url += `territoryid/name eq '${filters.territory}'`;
+      if ('territory' in filters) {
+        if (filters.territory in this.territories) {
+          url += '(' + this.territories[filters.territory].map(_ => `territoryid/name eq '${_}'`).join(' or ') + ')'
+        } else {
+          url += `territoryid/name eq '${filters.territory}'`
+        } };
     }
     url += `&$orderby=name`;
     return url;
