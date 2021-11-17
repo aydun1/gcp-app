@@ -40,7 +40,7 @@ export class CustomerViewComponent implements OnInit {
     this.customer$ = this.getCustomer();
 
     this.palletsSubject$.pipe(
-      switchMap(id => this.palletsService.getPallets(id)),
+      switchMap(id => this.palletsService.getCustomerPallets(id)),
       map(pallets => {
         const loscams = pallets.filter(_ => _.fields.Pallet === 'Loscam').reduce((acc, curr) => acc + parseInt(curr.fields.Change), 0);
         const cheps = pallets.filter(_ => _.fields.Pallet === 'Chep').reduce((acc, curr) => acc + parseInt(curr.fields.Change), 0);

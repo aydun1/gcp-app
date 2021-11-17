@@ -30,7 +30,14 @@
     <mat-drawer *ngIf="loginDisplay" mode="side" opened>
       <mat-nav-list>
         <a mat-list-item routerLink="/customers" routerLinkActive="active"><mat-icon>groups</mat-icon><span class="menu-label">Customers</span></a>
-        <a mat-list-item routerLink="/pallets" routerLinkActive="active"><mat-icon>view_list</mat-icon><span class="menu-label">Pallet Stocktake</span></a>
+        <mat-divider></mat-divider>
+        <a mat-list-item routerLink="/pallets" routerLinkActive="active"><mat-icon>view_list</mat-icon><span class="menu-label">Pallets</span></a>
+        <ng-container *ngIf="urlActive('/pallets')">
+          <a mat-list-item routerLink="/pallets/stocktake" routerLinkActive="active" class="sub-item"><span class="menu-label">Stocktake</span></a>
+          <a mat-list-item routerLink="/pallets/transfer" routerLinkActive="active" class="sub-item"><span class="menu-label">Transfer</span></a>
+
+        </ng-container>
+        <mat-divider></mat-divider>
         <a mat-list-item routerLink="/recycling" routerLinkActive="active"><mat-icon>recycling</mat-icon><span class="menu-label">Recycling Cages</span></a>
         <ng-container *ngIf="urlActive('/recycling')">
         </ng-container>

@@ -90,11 +90,9 @@ export class RecyclingService {
   }
 
   private getCages(url: string, paginate = false): Observable<Cage[]> {
-    if (paginate) this._loadingCages = true;
     return this.http.get(url).pipe(
       tap(_ => {
         if (paginate) this._nextPage = _['@odata.nextLink'];
-        if (paginate) this._loadingCages = false;
       }),
       map((res: {value: Cage[]}) => res.value.map(cage => this.assignStatus(cage)))
     );
@@ -104,16 +102,22 @@ export class RecyclingService {
     this._nextPage = '';
     this._loadingCages = false;
     const url = this.createUrl(filters);
-    this.getCages(url, true).subscribe(_ => this._cagesSubject$.next(_));
+    this._loadingCages = true;
+    this.getCages(url, true).subscribe(_ => {
+      this._cagesSubject$.next(_);
+      this._loadingCages = false;
+    });
     return this._cagesSubject$;
   }
 
   getNextPage(): void {
     if (!this._nextPage || this._loadingCages) return null;
+    this._loadingCages = true;
     this._cagesSubject$.pipe(
       take(1),
       switchMap(acc => this.getCages(this._nextPage, true).pipe(
-        map(curr => [...acc, ...curr])
+        map(curr => [...acc, ...curr]),
+        tap(() => this._loadingCages = false)
       ))
     ).subscribe(_ => this._cagesSubject$.next(_));
   }

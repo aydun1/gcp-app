@@ -4,17 +4,16 @@ import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { SharedService } from 'src/app/shared.service';
-import { Cage } from '../shared/cage';
-import { Column } from '../../shared/column';
-import { RecyclingService } from '../shared/recycling.service';
+import { Pallet } from '../shared/pallet';
+import { PalletsService } from '../shared/pallets.service';
 
 @Component({
-  selector: 'app-recycling-list',
-  templateUrl: './recycling-list.component.html',
-  styleUrls: ['./recycling-list.component.css']
+  selector: 'app-pallet-list',
+  templateUrl: './pallet-list.component.html',
+  styleUrls: ['./pallet-list.component.css']
 })
-export class RecyclingListComponent implements OnInit {
-  public cages$: Observable<Cage[]>;
+export class PalletListComponent implements OnInit {
+  public pallets$: Observable<Pallet[]>;
   public binFilter = new FormControl('');
   public branchFilter = new FormControl('');
   public statusFilter = new FormControl('');
@@ -22,16 +21,16 @@ export class RecyclingListComponent implements OnInit {
   public customers$: Observable<any[]>;
   public weight: number;
   private _loadList: boolean;
-  public displayedColumns = ['binNumber', 'assetType', 'status', 'weight'];
+  public displayedColumns = ['date', 'customer', 'pallet', 'out', 'in', 'count'];
 
   public choices$: Observable<any>;
-  public Status: Column;
+  public Status: any;
 
   constructor(
     private el: ElementRef,
     private route: ActivatedRoute,
     private router: Router,
-    private recyclingService: RecyclingService,
+    private palletsService: PalletsService,
     private sharedService: SharedService
   ) { }
 
@@ -43,7 +42,7 @@ export class RecyclingListComponent implements OnInit {
 
   ngOnInit(): void {
     this.getOptions();
-    this.cages$ = this.route.queryParams.pipe(
+    this.pallets$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, null, null)),
@@ -54,29 +53,24 @@ export class RecyclingListComponent implements OnInit {
       tap(_ => this.parseParams(_)),
       tap(() => this.weight = 0),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
-      tap(cages => this.weight = cages.map(_ => _.fields.Weight).filter(_ => _).reduce((acc, val) => acc + val, 0))
+      tap(pallets => this.weight = pallets.map(_ => _.fields.Weight).filter(_ => _).reduce((acc, val) => acc + val, 0))
     )
 
-    this.binFilter.valueChanges.pipe(
-      debounceTime(200),
-      map(_ => _ > 0 ? _ : null),
-      tap(_ => this.router.navigate(['recycling'], { queryParams: {'bin': _}, queryParamsHandling: 'merge', replaceUrl: true}))
-    ).subscribe();
   }
 
   getOptions(): void {
-    this.choices$ = this.recyclingService.getColumns();
+    //this.choices$ = this.palletsService.getColumns();
   }
 
   getFirstPage(_: any) {
     this.sharedService.getState().subscribe(_ => console.log(_))
 
-    return this.recyclingService.getFirstPage(_);
+    return this.palletsService.getFirstPage(_);
 
   }
 
   getNextPage() {
-    return this.recyclingService.getNextPage();
+    return this.palletsService.getNextPage();
   }
 
   parseParams(params: Params) {
@@ -123,22 +117,22 @@ export class RecyclingListComponent implements OnInit {
   }
 
   setBranch(branch: MatSelectChange ) {
-    this.router.navigate(['recycling'], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate(['pallets'], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setStatus(status: MatSelectChange ) {
-    this.router.navigate(['recycling'], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate(['pallets'], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setAssetType(assetType: MatSelectChange ) {
-    this.router.navigate(['recycling'], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate(['pallets'], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   clearBinFilter() {
     this.binFilter.patchValue('');
   }
 
-  trackByFn(index: number, item: Cage) {
+  trackByFn(index: number, item: Pallet) {
     return item.id;
   }
 }

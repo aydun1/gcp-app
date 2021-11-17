@@ -87,7 +87,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   urlActive(url: string) {
-    return url === this.router.url;
+    return this.router.url.startsWith(url);
   }
 
   ngOnDestroy(): void {

@@ -33,7 +33,7 @@ export class PalletDialogComponent implements OnInit {
 
   }
 
-  addPallets() {
+  addPallets(): void {
     if (this.palletForm.invalid) return;
     this.loading = true;
     this.palletsService.addPallets(this.data.customer, this.palletForm.value).pipe(
@@ -49,7 +49,7 @@ export class PalletDialogComponent implements OnInit {
     ).subscribe()
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close();
   }
 }

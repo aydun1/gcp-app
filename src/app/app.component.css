@@ -93,6 +93,10 @@ a.title {
   border-left: 2px solid red;
 }
 
+.mat-list-base .mat-list-item.sub-item {
+  height: 32px;
+}
+
 @media (max-width: 800px) {
   .menu-label {
     display: none;

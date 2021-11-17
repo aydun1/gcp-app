@@ -7,6 +7,7 @@ import { PalletsComponent } from './pallets.component';
 import { PalletDialogComponent } from './shared/pallet-dialog/pallet-dialog.component';
 import { PalletsService } from './shared/pallets.service';
 import { PalletReconciliationComponent } from './pallet-reconciliation/pallet-reconciliation.component';
+import { PalletListComponent } from './pallet-list/pallet-list.component';
 
 
 
@@ -15,6 +16,7 @@ import { PalletReconciliationComponent } from './pallet-reconciliation/pallet-re
     PalletsComponent,
     PalletDialogComponent,
     PalletReconciliationComponent,
+    PalletListComponent,
   ],
   imports: [
     CommonModule,
