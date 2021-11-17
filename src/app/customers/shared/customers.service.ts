@@ -16,7 +16,7 @@ export class CustomersService {
     'NSW': ['NSW', 'NSWSALES'],
     'QLD': ['QLD', 'QLDSALES'],
     'SA': ['SA', 'SASALES'],
-    'VIC': ['VIC', 'VICSALES', 'HEATH'],
+    'VIC': ['ACT', 'HEATH', 'MISC', 'NT', 'NZ', 'OTHER', 'PRIMARY', 'VIC', 'VICSALES'],
     'WA': ['WA', 'WASALES']
   };
 

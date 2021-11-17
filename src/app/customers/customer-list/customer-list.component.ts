@@ -26,7 +26,7 @@ export class CustomerListComponent implements OnInit {
   public territories$: Observable<Territory[]>;
 
   public territories = [
-    'ACT', 'NSW', 'QLD', 'SA', 'TAS', 'VIC', 'WA', 'INT', 'MISC', 'NATIONAL', 'NT', 'NZ', 'OTHER', 'PRIMARY', 'WHOLESALE'
+    'NSW', 'QLD', 'SA', 'TAS', 'VIC', 'WA', 'INT', 'NATIONAL'
   ];
 
   private loadList: boolean;
