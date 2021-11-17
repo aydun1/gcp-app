@@ -28,7 +28,7 @@
         </ng-container>
   
         <ng-container matColumnDef="out">
-          <mat-header-cell *matHeaderCellDef> To customer </mat-header-cell>
+          <mat-header-cell *matHeaderCellDef> Delivered </mat-header-cell>
           <mat-cell *matCellDef="let pallet">
             {{ pallet.fields.Out }}
           </mat-cell>
@@ -36,7 +36,7 @@
         </ng-container>
 
         <ng-container matColumnDef="in">
-          <mat-header-cell *matHeaderCellDef> From customer </mat-header-cell>
+          <mat-header-cell *matHeaderCellDef> Collected </mat-header-cell>
           <mat-cell *matCellDef="let pallet">
             {{ pallet.fields.In }}
           </mat-cell>

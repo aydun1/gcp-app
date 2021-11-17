@@ -7,12 +7,12 @@
     <mat-button-toggle value="Plain"><img src="assets/pallet.png" alt="Plain pallet"></mat-button-toggle>
   </mat-button-toggle-group>
   <mat-form-field appearance="outline">
-    <mat-label>Pallets out</mat-label>
-    <input matInput type="number" formControlName="outQty" autocomplete="off" placeholder="Pallets left with customer">
+    <mat-label>Pallets delivered</mat-label>
+    <input matInput type="number" formControlName="outQty" autocomplete="off" placeholder="Pallets delivered to customer" min="0">
   </mat-form-field>
   <mat-form-field appearance="outline">
-    <mat-label>Pallets in</mat-label>
-    <input matInput type="number" formControlName="inQty" autocomplete="off" placeholder="Pallets returned to GCP">
+    <mat-label>Pallets collected</mat-label>
+    <input matInput type="number" formControlName="inQty" autocomplete="off" placeholder="Pallets collected from customer" min="0">
   </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>Notes</mat-label>
