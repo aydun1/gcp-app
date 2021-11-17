@@ -33,7 +33,7 @@
         <mat-expansion-panel *ngFor="let cage of groups[1];trackBy: trackByFn">
           <mat-expansion-panel-header>
             <mat-panel-title>{{ cage.fields.AssetType }}</mat-panel-title>
-            <mat-panel-description>{{ cage.fields.Status }}</mat-panel-description>
+            <mat-panel-description>{{ cage.status }}</mat-panel-description>
           </mat-expansion-panel-header>
           <app-action-button [cage]="cage" (updated)="getContainers()" class="actions"></app-action-button>
           <app-cage-details [cage]="cage"></app-cage-details>
@@ -47,7 +47,7 @@
         <mat-expansion-panel *ngFor="let cage of groups[0];trackBy: trackByFn">
           <mat-expansion-panel-header>
             <mat-panel-title>{{ cage.fields.AssetType }}</mat-panel-title>
-            <mat-panel-description>{{ cage.fields.Status }}</mat-panel-description>
+            <mat-panel-description>{{ cage.status }}</mat-panel-description>
           </mat-expansion-panel-header>
           <app-action-button [cage]="cage" (updated)="getContainers()" class="actions"></app-action-button>
           <app-cage-details [cage]="cage"></app-cage-details>

@@ -37,7 +37,7 @@ export class RecyclingService {
     return this._columns$;
   }
 
-  createUrl(filters: any): string {
+  private createUrl(filters: any): string {
     const filterKeys = Object.keys(filters);
     let url = `${this._cageTrackerUrl}/items?expand=fields`;
 
@@ -64,11 +64,47 @@ export class RecyclingService {
     return url;
   }
 
+  private assignStatus(cage: Cage): Cage {
+    if (cage.fields.CustomerNumber && !cage.fields.DueDate) {
+      cage['statusId'] = 1;
+      cage['status'] = 'Assigned to customer';
+    } else if (cage.fields.DueDate && !cage.fields.CollectionDate) {
+      cage['statusId'] = 2;
+      cage['status'] = 'At customer';
+    } else if (cage.fields.CollectionDate && !cage.fields.Weight) {
+      cage['statusId'] = 3;
+      cage['status'] = 'Collected from customer';
+    } else if (cage.fields.Weight && !cage.fields.PurchaseDate) {
+      cage['statusId'] = 4;
+      cage['status'] = 'Collected from customer';
+    } else if (cage.fields.PurchaseDate && !cage.fields.EmptyReceivedDate) {
+      cage['statusId'] = 5;
+      cage['status'] = 'At Polymer';
+    } else if (cage.fields.EmptyReceivedDate && cage.fields.Status !== 'Complete') {
+      cage['statusId'] = 6;
+      cage['status'] = 'Collected from Polymer'
+    } else {
+      cage['status'] = cage.fields.Status;
+    }
+    return cage;
+  }
+
+  private getCages(url: string, paginate = false): Observable<Cage[]> {
+    if (paginate) this._loadingCages = true;
+    return this.http.get(url).pipe(
+      tap(_ => {
+        if (paginate) this._nextPage = _['@odata.nextLink'];
+        if (paginate) this._loadingCages = false;
+      }),
+      map((res: {value: Cage[]}) => res.value.map(cage => this.assignStatus(cage)))
+    );
+  }
+
   getFirstPage(filters: any): BehaviorSubject<Cage[]> {
     this._nextPage = '';
     this._loadingCages = false;
     const url = this.createUrl(filters);
-    this.getCages(url).subscribe(_ => this._cagesSubject$.next(_));
+    this.getCages(url, true).subscribe(_ => this._cagesSubject$.next(_));
     return this._cagesSubject$;
   }
 
@@ -76,36 +112,25 @@ export class RecyclingService {
     if (!this._nextPage || this._loadingCages) return null;
     this._cagesSubject$.pipe(
       take(1),
-      switchMap(acc => this.getCages(this._nextPage).pipe(
+      switchMap(acc => this.getCages(this._nextPage, true).pipe(
         map(curr => [...acc, ...curr])
       ))
     ).subscribe(_ => this._cagesSubject$.next(_));
   }
 
-  getCages(url: string): Observable<Cage[]> {
-    this._loadingCages = true;
-    return this.http.get(url).pipe(
-      tap(_ => {
-        this._nextPage = _['@odata.nextLink'];
-        this._loadingCages = false;
-      }),
-      map((res: {value: Cage[]}) => res.value)
-    );
-  }
-
   getCageHistory(binNumber: number) {
     const url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/Modified desc&filter=fields/Status eq 'Complete' and fields/BinNumber2 eq ${binNumber}`;
-    return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value));
+    return this.getCages(url);
   }
 
   getCage(id: string): Observable<Cage> {
     const url = this._cageTrackerUrl + `/items('${id}')`;
-    return this.http.get(url).pipe(map((res: Cage) => res));
+    return this.http.get(url).pipe(map((res: Cage) => this.assignStatus(res)));
   }
 
   getCagesWithCustomer(custnmbr: string): Observable<Cage[]> {
     const url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/Modified desc&filter=fields/CustomerNumber eq '${encodeURIComponent(custnmbr)}'`;
-    return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value));
+    return this.getCages(url);
   }
 
   markCageWithCustomer(id: string): Observable<any> {
@@ -164,12 +189,12 @@ export class RecyclingService {
 
   getAvailableCages(): Observable<Cage[]> {
     const url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/BinNumber2 asc&filter=fields/Status eq 'Available'`;
-    return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value));
+    return this.getCages(url);
   }
 
   checkCageNumber(cageNumber: string): Observable<Cage> {
     const url = this._cageTrackerUrl + `/items?expand=fields&filter=fields/BinNumber2 eq ${cageNumber} and fields/Status ne 'Complete'`;
-    return this.http.get(url).pipe(map((res: {value: Cage[]}) => res.value[0]));
+    return this.getCages(url).pipe(map(res => res[0]));
   }
 
 }

@@ -2,6 +2,7 @@ export interface Cage {
   createdDateTime: string | Date,
   lastModifiedDateTime: string | Date,
   id: string,
+  statusId?: number,
   fields : {
     Branch: string,
     BinNumber2: number,

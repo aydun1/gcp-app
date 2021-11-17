@@ -10,14 +10,14 @@
       <mat-list>
         <div mat-subheader><span class="subheader">Details</span><app-action-button [cage]="cage" (updated)="getCage()"></app-action-button></div>
         
-        <mat-list-item *ngIf="cage.fields.Customer">
+        <mat-list-item *ngIf="cage.fields.CustomerNumber">
           <mat-icon mat-list-icon>business</mat-icon>
           <div mat-line>{{ cage.fields.Customer }}</div>
-          <div mat-line>Allocated to</div>
+          <div mat-line>Assigned to</div>
         </mat-list-item>
         <mat-list-item *ngIf="cage.fields.Status">
           <mat-icon mat-list-icon>timeline</mat-icon>
-          <div mat-line>{{ cage.fields.Status }}</div>
+          <div mat-line>{{ cage.status }}</div>
           <div mat-line>Status</div>
         </mat-list-item>
         <mat-list-item *ngIf="cage.fields.Weight">
