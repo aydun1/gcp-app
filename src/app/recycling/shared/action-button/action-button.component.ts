@@ -43,8 +43,8 @@ export class ActionButtonComponent implements OnInit {
     this.recyclingService.markCageReturnedEmpty(id).subscribe(() => this.updated.next(true));
   }
 
-  markAvailable(id: string, binNumber: number, branch: string, assetType: string) {
-    this.recyclingService.markCageAvailable(id, binNumber, branch, assetType).subscribe(() => this.updated.next(true));
+  markAvailable(id: string, cageNumber: number, branch: string, assetType: string) {
+    this.recyclingService.markCageAvailable(id, cageNumber, branch, assetType).subscribe(() => this.updated.next(true));
   }
 
   saveWeight(id: string) {

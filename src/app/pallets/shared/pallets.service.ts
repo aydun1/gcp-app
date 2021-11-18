@@ -28,7 +28,7 @@ export class PalletsService {
     const parsed = filterKeys.map(key => {
       switch (key) {
         case 'bin':
-          return `fields/BinNumber2 eq ${filters.bin}`;
+          return `fields/CageNumber eq ${filters.bin}`;
         case 'branch':
           return `fields/Branch eq '${filters.branch}'`;
         case 'status':

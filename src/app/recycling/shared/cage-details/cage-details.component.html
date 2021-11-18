@@ -1,7 +1,7 @@
 <mat-list>
   <mat-list-item>
     <mat-icon mat-list-icon>tag</mat-icon>
-    <div mat-line>{{ cage.fields.BinNumber2 }}</div>
+    <div mat-line>{{ cage.fields.CageNumber }}</div>
     <div mat-line>Cage number</div>
   </mat-list-item>
   <mat-list-item *ngIf="cage.fields.Weight">
@@ -10,20 +10,20 @@
     <div mat-line>Net weight</div>
   </mat-list-item>
   <div mat-subheader>Dates</div>
-  <mat-list-item *ngIf="cage.fields.EmptyReceivedDate">
-    <div mat-line>{{ cage.fields.EmptyReceivedDate | date: 'dd/MM/yyyy' }}</div>
+  <mat-list-item *ngIf="cage.fields.Date4">
+    <div mat-line>{{ cage.fields.Date4 | date: 'dd/MM/yyyy' }}</div>
     <div mat-line>Received date (empty)</div>
   </mat-list-item>
-  <mat-list-item *ngIf="cage.fields.PurchaseDate">
-    <div mat-line>{{ cage.fields.PurchaseDate | date: 'dd/MM/yyyy' }}</div>
+  <mat-list-item *ngIf="cage.fields.Date3">
+    <div mat-line>{{ cage.fields.Date3 | date: 'dd/MM/yyyy' }}</div>
     <div mat-line>Transfer date (to Polymer)</div>
   </mat-list-item>
-  <mat-list-item *ngIf="cage.fields.CollectionDate">
-    <div mat-line>{{ cage.fields.CollectionDate | date: 'dd/MM/yyyy' }}</div>
+  <mat-list-item *ngIf="cage.fields.Date2">
+    <div mat-line>{{ cage.fields.Date2 | date: 'dd/MM/yyyy' }}</div>
     <div mat-line>Collection date (from customer)</div>
   </mat-list-item>
-  <mat-list-item *ngIf="cage.fields.DueDate">
-    <div mat-line>{{ cage.fields.DueDate | date: 'dd/MM/yyyy' }}</div>
+  <mat-list-item *ngIf="cage.fields.Date1">
+    <div mat-line>{{ cage.fields.Date1 | date: 'dd/MM/yyyy' }}</div>
     <div mat-line>Delivery date (to customer)</div>
   </mat-list-item>
 </mat-list>

@@ -30,7 +30,7 @@ export class RecyclingViewComponent implements OnInit {
     this.cageSource$ = new BehaviorSubject(this.id);
     this.cage$ = this.cageSource$.pipe(
       switchMap(_ => this.recyclingService.getCage(_)),
-      tap(_ => this.getCageHistory(_.fields.BinNumber2))
+      tap(_ => this.getCageHistory(_.fields.CageNumber))
     );
   }
 

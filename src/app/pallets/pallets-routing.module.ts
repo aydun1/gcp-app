@@ -5,7 +5,7 @@ import { MsalGuard } from '@azure/msal-angular';
 import { PalletsComponent } from './pallets.component';
 import { PalletListComponent } from './pallet-list/pallet-list.component';
 import { PalletReconciliationComponent } from './pallet-reconciliation/pallet-reconciliation.component';
-import { PalletInterstateTransferComponent } from './pallet-interstate-transfer/pallet-interstate-transfer.component';
+import { PalletInterstateTransferNewComponent } from './pallet-interstate-transfer-new/pallet-interstate-transfer-new.component';
 import { PalletInterstateTransferListComponent } from './pallet-interstate-transfer-list/pallet-interstate-transfer-list.component';
 
 
@@ -28,7 +28,7 @@ const routes: Routes = [
         children: [
           {
             path: 'new',
-            component: PalletInterstateTransferComponent
+            component: PalletInterstateTransferNewComponent
           }
 
         ]

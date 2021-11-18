@@ -17,6 +17,10 @@ export class RecyclingNewComponent implements OnInit {
   public loading: boolean;
   public choices$: Observable<any>;
 
+  public get isCage() {
+    return this.cageForm ? this.cageForm.get('assetType').value.startsWith('Cage') : false;
+  }
+
   constructor(
     private fb: FormBuilder,
     private location: Location,
@@ -30,35 +34,38 @@ export class RecyclingNewComponent implements OnInit {
 
     this.cageForm = this.fb.group({
       assetType: ['', Validators.required],
-      cageNumber: ['', Validators.required],
+      cageNumber: [{value:'', disabled: true}, Validators.required],
+      cageWeight: [{value:'', disabled: true}, Validators.required],
       branch: ['', Validators.required]
     });
 
 
     this.cageForm.get('assetType').valueChanges.subscribe(val => {
       const cageNumber = this.cageForm.get('cageNumber');
-      if (val.startsWith('Cage')) {
-        cageNumber.setValidators(Validators.required);
-      } else {
-        cageNumber.patchValue('');
-        cageNumber.clearValidators();
-      }
-      cageNumber.updateValueAndValidity();
+      const cageWeight = this.cageForm.get('cageWeight');
 
-      this.cageForm.get('cageNumber').valueChanges.pipe(
-        debounceTime(200),
-        mergeMap(_ => _ ? this.recyclingService.checkCageNumber(_) : of(null)),
-        tap(_ => {
-          const control = this.cageForm.get('cageNumber');
-          if (_) {
-            control.setErrors({duplicate: true});
-          } else {
-            if (control.hasError('duplicate')) delete control.errors['duplicate'];
-            if (control.errors && Object.keys(control.errors).length === 0) control.setErrors(null);
-          }
-        })
-      ).subscribe();
+      if (val.startsWith('Cage')) {
+        cageNumber.enable();
+        cageWeight.enable();
+      } else {
+        cageNumber.disable();
+        cageWeight.disable();
+      }
     });
+
+    this.cageForm.get('cageNumber').valueChanges.pipe(
+      debounceTime(200),
+      mergeMap(_ => _ ? this.recyclingService.checkCageNumber(_) : of(null)),
+      tap(_ => {
+        const control = this.cageForm.get('cageNumber');
+        if (_) {
+          control.setErrors({duplicate: true});
+        } else {
+          if (control.hasError('duplicate')) delete control.errors['duplicate'];
+          if (control.errors && Object.keys(control.errors).length === 0) control.setErrors(null);
+        }
+      })
+    ).subscribe();
   }
 
   getOptions(): void {

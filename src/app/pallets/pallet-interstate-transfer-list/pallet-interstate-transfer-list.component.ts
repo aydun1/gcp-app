@@ -21,7 +21,7 @@ export class PalletInterstateTransferListComponent implements OnInit {
   public customers$: Observable<any[]>;
   public weight: number;
   private _loadList: boolean;
-  public displayedColumns = ['date', 'reference', 'pallet', 'from', 'to', 'quantity'];
+  public displayedColumns = ['date', 'reference', 'pallet', 'from', 'to', 'quantity', 'approved'];
 
   public choices$: Observable<any>;
   public Status: any;
@@ -78,15 +78,15 @@ export class PalletInterstateTransferListComponent implements OnInit {
   parseParams(params: Params) {
     if (!params) return;
     const filters: any = {};
-    if ('branch' in params) {
-      this.branchFilter.patchValue(params['branch']);
-      filters['branch'] = params['branch'];
+    if ('from' in params) {
+      this.branchFilter.patchValue(params['from']);
+      filters['from'] = params['from'];
     } else {
       this.branchFilter.patchValue('');
     }
-    if ('status' in params) {
-      this.statusFilter.patchValue(params['status']);
-      filters['status'] = params['status'];
+    if ('to' in params) {
+      this.statusFilter.patchValue(params['to']);
+      filters['to'] = params['to'];
     } else {
       this.statusFilter.patchValue('');
     }
@@ -111,19 +111,17 @@ export class PalletInterstateTransferListComponent implements OnInit {
     }
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
-    const sameBranch = prev['branch'] === curr['branch'];
-    const sameBin = prev['bin'] === curr['bin'];
-    const sameAssetType = prev['assetType'] === curr['assetType'];
-    const sameStatus = prev['status'] === curr['status'];
-    return sameBranch && sameBin && sameAssetType && sameStatus && this._loadList;
+    const sameFrom = prev['from'] === curr['from'];
+    const sameTo = prev['to'] === curr['to'];
+    return sameTo && sameTo && this._loadList;
   }
 
-  setBranch(branch: MatSelectChange ) {
-    this.router.navigate(['pallets/transfer'], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  setFrom(from: MatSelectChange ) {
+    this.router.navigate(['pallets/transfer'], { queryParams: {from: from.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setStatus(status: MatSelectChange ) {
-    this.router.navigate(['pallets/transfer'], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  setTo(to: MatSelectChange ) {
+    this.router.navigate(['pallets/transfer'], { queryParams: {to: to.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setAssetType(assetType: MatSelectChange ) {

@@ -3,7 +3,7 @@
     <a mat-stroked-button (click)="goBack()"><mat-icon>arrow_back</mat-icon>Back to Cages</a>
   </div>
   <div *ngIf="cage$ | async as cage" class="inner">
-    <h2>Cage number: {{ cage.fields.BinNumber2 }}</h2>
+    <h2>Cage number: {{ cage.fields.CageNumber }}</h2>
     <p>{{ cage.fields.AssetType }}</p>
 
     <mat-card>

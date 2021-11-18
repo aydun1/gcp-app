@@ -20,19 +20,16 @@ export class InterstatePalletTransferService {
   ) { }
 
   private createUrl(filters: any): string {
+    console.log(filters)
     const filterKeys = Object.keys(filters);
-    let url = `${this._interstateTransferUrl}/items?expand=fields(select=Created,Title,Pallet,From,To,Quantity)`;
+    let url = `${this._interstateTransferUrl}/items?expand=fields(select=Created,Title,Pallet,From,To,Quantity,Approved)`;
 
     const parsed = filterKeys.map(key => {
       switch (key) {
-        case 'bin':
-          return `fields/BinNumber2 eq ${filters.bin}`;
-        case 'branch':
-          return `fields/Branch eq '${filters.branch}'`;
-        case 'status':
-          return `fields/Status eq '${filters.status}'`;
-        case 'assetType':
-          return `fields/AssetType eq '${filters.assetType}'`;
+        case 'from':
+          return `fields/From eq ${filters.from}`;
+        case 'to':
+          return `fields/To eq '${filters.to}'`;
         default:
           return '';
       }

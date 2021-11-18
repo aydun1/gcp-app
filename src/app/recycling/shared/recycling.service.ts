@@ -14,7 +14,7 @@ export class RecyclingService {
   private _cagesSubject$ = new BehaviorSubject<Cage[]>([]);
   private _columns$ = new BehaviorSubject<any>(null);
   private _dataGroupUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists';
-  private _cageTrackerUrl = `${this._dataGroupUrl}/afec6ed4-8ce3-45e7-8ac7-90428d664fc7`;
+  private _cageTrackerUrl = `${this._dataGroupUrl}/e96c2778-2322-46d6-8de9-3d0c8ca5aefd`;
 
 
   constructor(
@@ -29,7 +29,8 @@ export class RecyclingService {
         return this.http.get(`${this._cageTrackerUrl}/columns`).pipe(
           map((_: any) => _.value),
           map(_ => _.reduce((a, v) => ({ ...a, [v.name]: v}), {})),
-          tap(_ => this._columns$.next(_))
+          tap(_ => this._columns$.next(_)),
+          tap(_ => console.log(_))
         );
       }),
       switchMap(_ => _)
@@ -44,7 +45,7 @@ export class RecyclingService {
     const parsed = filterKeys.map(key => {
       switch (key) {
         case 'bin':
-          return `fields/BinNumber2 eq ${filters.bin}`;
+          return `fields/CageNumber eq ${filters.bin}`;
         case 'branch':
           return `fields/Branch eq '${filters.branch}'`;
         case 'status':
@@ -56,31 +57,31 @@ export class RecyclingService {
       }
     }).filter(_ => _);
 
-    if (!filterKeys.includes('assetType')) parsed.push(`fields/BinNumber2 gt 0`);
+    if (!filterKeys.includes('assetType')) parsed.push(`fields/CageNumber gt 0`);
     if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Complete'`);
 
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
-    url += `&orderby=fields/BinNumber2 asc&top=25`;
+    url += `&orderby=fields/CageNumber asc&top=25`;
     return url;
   }
 
   private assignStatus(cage: Cage): Cage {
-    if (cage.fields.CustomerNumber && !cage.fields.DueDate) {
+    if (cage.fields.CustomerNumber && !cage.fields.Date1) {
       cage['statusId'] = 1;
       cage['status'] = 'Assigned to customer';
-    } else if (cage.fields.DueDate && !cage.fields.CollectionDate) {
+    } else if (cage.fields.Date1 && !cage.fields.Date2) {
       cage['statusId'] = 2;
       cage['status'] = 'At customer';
-    } else if (cage.fields.CollectionDate && !cage.fields.Weight) {
+    } else if (cage.fields.Date2 && !cage.fields.Weight) {
       cage['statusId'] = 3;
       cage['status'] = 'Collected from customer';
-    } else if (cage.fields.Weight && !cage.fields.PurchaseDate) {
+    } else if (cage.fields.Weight && !cage.fields.Date3) {
       cage['statusId'] = 4;
       cage['status'] = 'Collected from customer';
-    } else if (cage.fields.PurchaseDate && !cage.fields.EmptyReceivedDate) {
+    } else if (cage.fields.Date3 && !cage.fields.Date4) {
       cage['statusId'] = 5;
       cage['status'] = 'At Polymer';
-    } else if (cage.fields.EmptyReceivedDate && cage.fields.Status !== 'Complete') {
+    } else if (cage.fields.Date4 && cage.fields.Status !== 'Complete') {
       cage['statusId'] = 6;
       cage['status'] = 'Collected from Polymer'
     } else {
@@ -122,8 +123,8 @@ export class RecyclingService {
     ).subscribe(_ => this._cagesSubject$.next(_));
   }
 
-  getCageHistory(binNumber: number) {
-    const url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/Modified desc&filter=fields/Status eq 'Complete' and fields/BinNumber2 eq ${binNumber}`;
+  getCageHistory(cageNumber: number) {
+    const url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/Modified desc&filter=fields/Status eq 'Complete' and fields/CageNumber eq ${cageNumber}`;
     return this.getCages(url);
   }
 
@@ -173,15 +174,15 @@ export class RecyclingService {
     return this.http.patch(url, payload);
   }
 
-  addNewCage(binNumber: number, branch: string, assetType: string): Observable<any> {
+  addNewCage(cageNumber: number, branch: string, assetType: string): Observable<any> {
     const url = this._cageTrackerUrl + `/items`;
-    const payload = {fields: {Status: 'Available', BinNumber2: binNumber, Branch: branch, AssetType: assetType}};
+    const payload = {fields: {Status: 'Available', CageNumber: cageNumber, Branch: branch, AssetType: assetType}};
     return this.http.post(url, payload);
   }
 
-  markCageAvailable(id: string, binNumber: number, branch: string, assetType: string): Observable<any> {
+  markCageAvailable(id: string, cageNumber: number, branch: string, assetType: string): Observable<any> {
     const patchRequest = this.markCageComplete(id);
-    const newRequest = this.addNewCage(binNumber, branch, assetType);
+    const newRequest = this.addNewCage(cageNumber, branch, assetType);
     return forkJoin([patchRequest, newRequest]);
   }
 
@@ -192,12 +193,12 @@ export class RecyclingService {
   }
 
   getAvailableCages(): Observable<Cage[]> {
-    const url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/BinNumber2 asc&filter=fields/Status eq 'Available'`;
+    const url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/CageNumber asc&filter=fields/Status eq 'Available'`;
     return this.getCages(url);
   }
 
   checkCageNumber(cageNumber: string): Observable<Cage> {
-    const url = this._cageTrackerUrl + `/items?expand=fields&filter=fields/BinNumber2 eq ${cageNumber} and fields/Status ne 'Complete'`;
+    const url = this._cageTrackerUrl + `/items?expand=fields&filter=fields/CageNumber eq ${cageNumber} and fields/Status ne 'Complete'`;
     return this.getCages(url).pipe(map(res => res[0]));
   }
 

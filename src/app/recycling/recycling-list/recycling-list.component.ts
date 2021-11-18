@@ -22,7 +22,7 @@ export class RecyclingListComponent implements OnInit {
   public customers$: Observable<any[]>;
   public weight: number;
   private _loadList: boolean;
-  public displayedColumns = ['binNumber', 'assetType', 'status', 'weight'];
+  public displayedColumns = ['cageNumber', 'assetType', 'status', 'weight'];
 
   public choices$: Observable<any>;
   public Status: Column;

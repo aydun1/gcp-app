@@ -8,7 +8,7 @@
       <mat-expansion-panel *ngFor="let cage of availableCages$ | async;trackBy: trackByFn">
         <mat-expansion-panel-header>
           <mat-panel-title>{{ cage.fields.AssetType }}</mat-panel-title>
-          <mat-panel-description>{{ cage.fields.BinNumber2 }}</mat-panel-description>
+          <mat-panel-description>{{ cage.fields.CageNumber }}</mat-panel-description>
         </mat-expansion-panel-header>
         <div class="actions">
           <button mat-raised-button color="primary" (click)="assignToCustomer(cage.id)">Assign to {{ data.customer.name || data.customer.accountnumber }}</button>

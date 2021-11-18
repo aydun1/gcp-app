@@ -9,4 +9,4 @@
 </form>
 <button mat-raised-button color="primary" *ngIf="cage.statusId == 4" (click)="markWithPolymer(cage.id)">Send to Polymer</button>
 <button mat-raised-button color="primary" *ngIf="cage.statusId == 5" (click)="markReturnedEmpty(cage.id)">Return from Polymer</button>
-<button mat-raised-button color="primary" *ngIf="cage.statusId == 6" (click)="markAvailable(cage.id, cage.fields.BinNumber2, cage.fields.Branch, cage.fields.AssetType)">Set cage as available</button>
+<button mat-raised-button color="primary" *ngIf="cage.statusId == 6" (click)="markAvailable(cage.id, cage.fields.CageNumber, cage.fields.Branch, cage.fields.AssetType)">Set cage as available</button>

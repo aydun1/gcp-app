@@ -5,11 +5,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { InterstatePalletTransferService } from '../shared/interstate-pallet-transfer.service';
 
 @Component({
-  selector: 'gcp-pallet-interstate-transfer',
-  templateUrl: './pallet-interstate-transfer.component.html',
-  styleUrls: ['./pallet-interstate-transfer.component.css']
+  selector: 'gcp-pallet-interstate-transfer-new',
+  templateUrl: './pallet-interstate-transfer-new.component.html',
+  styleUrls: ['./pallet-interstate-transfer-new.component.css']
 })
-export class PalletInterstateTransferComponent implements OnInit {
+export class PalletInterstateTransferNewComponent implements OnInit {
   public palletTransferForm: FormGroup;
   public pallets = ['Loscam', 'Chep', 'Plain'];
   public states = ['NSW', 'QLD', 'SA', 'TAS', 'VIC', 'WA'];

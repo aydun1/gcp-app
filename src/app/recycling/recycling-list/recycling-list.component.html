@@ -39,10 +39,10 @@
   <div *ngIf="(cages$ | async) as cages" class="inner">
     <mat-table #table [dataSource]="cages" [trackBy]="trackByFn">
 
-      <ng-container matColumnDef="binNumber">
+      <ng-container matColumnDef="cageNumber">
         <mat-header-cell *matHeaderCellDef> Number </mat-header-cell>
         <mat-cell *matCellDef="let cage" [routerLink]="[cage.id]">
-          <a [routerLink]="[cage.id]" class="cage-link">{{ cage.fields.BinNumber2 || '-' }}</a>
+          <a [routerLink]="[cage.id]" class="cage-link">{{ cage.fields.CageNumber || '-' }}</a>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
       </ng-container>
