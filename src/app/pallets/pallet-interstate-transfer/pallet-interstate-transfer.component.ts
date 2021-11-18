@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SharedService } from 'src/app/shared.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { PalletsService } from '../shared/pallets.service';
+import { InterstatePalletTransferService } from '../shared/interstate-pallet-transfer.service';
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer',
@@ -22,7 +22,7 @@ export class PalletInterstateTransferComponent implements OnInit {
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
     private sharedService: SharedService,
-    private palletService: PalletsService
+    private palletService: InterstatePalletTransferService
   ) { }
 
   ngOnInit(): void {

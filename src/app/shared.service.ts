@@ -8,6 +8,7 @@ import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
   providedIn: 'root'
 })
 export class SharedService {
+  public regions: ['NSW', 'QLD', 'SA', 'VIC', 'WA'];
   private _state$ = new BehaviorSubject<string>('');
 
   constructor(
@@ -39,5 +40,6 @@ export class SharedService {
   getName(): string {
     const activeAccount = this.authService.instance.getActiveAccount();
     return activeAccount.name;
-  } 
+  }
+  
 }

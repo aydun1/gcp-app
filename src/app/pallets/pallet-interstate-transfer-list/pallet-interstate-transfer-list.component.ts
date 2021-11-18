@@ -4,8 +4,8 @@ import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { SharedService } from 'src/app/shared.service';
+import { InterstatePalletTransferService } from '../shared/interstate-pallet-transfer.service';
 import { Pallet } from '../shared/pallet';
-import { PalletsService } from '../shared/pallets.service';
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer-list',
@@ -21,16 +21,20 @@ export class PalletInterstateTransferListComponent implements OnInit {
   public customers$: Observable<any[]>;
   public weight: number;
   private _loadList: boolean;
-  public displayedColumns = ['date', 'customer', 'pallet', 'out', 'in', 'count'];
+  public displayedColumns = ['date', 'reference', 'pallet', 'from', 'to', 'quantity'];
 
   public choices$: Observable<any>;
   public Status: any;
+
+  get states(): Array<string> {
+    return this.sharedService.regions;
+  }
 
   constructor(
     private el: ElementRef,
     private route: ActivatedRoute,
     private router: Router,
-    private palletsService: PalletsService,
+    private palletsService: InterstatePalletTransferService,
     private sharedService: SharedService
   ) { }
 
@@ -41,7 +45,6 @@ export class PalletInterstateTransferListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getOptions();
     this.pallets$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
@@ -55,16 +58,15 @@ export class PalletInterstateTransferListComponent implements OnInit {
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
       tap(pallets => this.weight = pallets.map(_ => _.fields.Weight).filter(_ => _).reduce((acc, val) => acc + val, 0))
     )
-
+    this.getOptions();
   }
 
   getOptions(): void {
-    //this.choices$ = this.palletsService.getColumns();
+    this.choices$ = this.palletsService.getColumns();
   }
 
   getFirstPage(_: any) {
     this.sharedService.getState().subscribe(_ => console.log(_))
-
     return this.palletsService.getFirstPage(_);
 
   }
@@ -117,15 +119,15 @@ export class PalletInterstateTransferListComponent implements OnInit {
   }
 
   setBranch(branch: MatSelectChange ) {
-    this.router.navigate(['pallets'], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate(['pallets/transfer'], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setStatus(status: MatSelectChange ) {
-    this.router.navigate(['pallets'], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate(['pallets/transfer'], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setAssetType(assetType: MatSelectChange ) {
-    this.router.navigate(['pallets'], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate(['pallets/transfer'], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   clearBinFilter() {
