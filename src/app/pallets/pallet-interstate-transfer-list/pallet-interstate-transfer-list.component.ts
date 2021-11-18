@@ -2,7 +2,7 @@ import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
+import { distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { SharedService } from 'src/app/shared.service';
 import { InterstatePalletTransferService } from '../shared/interstate-pallet-transfer.service';
 import { Pallet } from '../shared/pallet';
@@ -14,12 +14,11 @@ import { Pallet } from '../shared/pallet';
 })
 export class PalletInterstateTransferListComponent implements OnInit {
   public pallets$: Observable<Pallet[]>;
-  public binFilter = new FormControl('');
-  public branchFilter = new FormControl('');
-  public statusFilter = new FormControl('');
+  public fromFilter = new FormControl('');
+  public toFilter = new FormControl('');
   public assetTypeFilter = new FormControl('');
   public customers$: Observable<any[]>;
-  public weight: number;
+  public total: number;
   private _loadList: boolean;
   public displayedColumns = ['date', 'reference', 'pallet', 'from', 'to', 'quantity', 'approved'];
 
@@ -54,9 +53,9 @@ export class PalletInterstateTransferListComponent implements OnInit {
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       tap(_ => this.parseParams(_)),
-      tap(() => this.weight = 0),
+      tap(() => this.total = 0),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
-      tap(pallets => this.weight = pallets.map(_ => _.fields.Weight).filter(_ => _).reduce((acc, val) => acc + val, 0))
+      tap(pallets => this.total = pallets.map(_ => _.fields.Quantity).filter(_ => _).reduce((acc, val) => acc + val, 0))
     )
     this.getOptions();
   }
@@ -79,28 +78,22 @@ export class PalletInterstateTransferListComponent implements OnInit {
     if (!params) return;
     const filters: any = {};
     if ('from' in params) {
-      this.branchFilter.patchValue(params['from']);
+      this.fromFilter.patchValue(params['from']);
       filters['from'] = params['from'];
     } else {
-      this.branchFilter.patchValue('');
+      this.fromFilter.patchValue('');
     }
     if ('to' in params) {
-      this.statusFilter.patchValue(params['to']);
+      this.toFilter.patchValue(params['to']);
       filters['to'] = params['to'];
     } else {
-      this.statusFilter.patchValue('');
+      this.toFilter.patchValue('');
     }
     if ('assetType' in params) {
       this.assetTypeFilter.patchValue(params['assetType']);
       filters['assetType'] = params['assetType'];
     } else {
       this.assetTypeFilter.patchValue('');
-    }
-    if ('bin' in params) {
-      this.binFilter.patchValue(params['bin']);
-      filters['bin'] = params['bin'];
-    } else {
-      if (this.binFilter.value) this.binFilter.patchValue('');
     }
   }
 
@@ -113,7 +106,7 @@ export class PalletInterstateTransferListComponent implements OnInit {
     if (this.route.firstChild != null) return true;
     const sameFrom = prev['from'] === curr['from'];
     const sameTo = prev['to'] === curr['to'];
-    return sameTo && sameTo && this._loadList;
+    return sameFrom && sameTo && this._loadList;
   }
 
   setFrom(from: MatSelectChange ) {
@@ -126,10 +119,6 @@ export class PalletInterstateTransferListComponent implements OnInit {
 
   setAssetType(assetType: MatSelectChange ) {
     this.router.navigate(['pallets/transfer'], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});
-  }
-
-  clearBinFilter() {
-    this.binFilter.patchValue('');
   }
 
   trackByFn(index: number, item: Pallet) {

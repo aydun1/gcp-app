@@ -27,7 +27,7 @@ export class InterstatePalletTransferService {
     const parsed = filterKeys.map(key => {
       switch (key) {
         case 'from':
-          return `fields/From eq ${filters.from}`;
+          return `fields/From eq '${filters.from}'`;
         case 'to':
           return `fields/To eq '${filters.to}'`;
         default:

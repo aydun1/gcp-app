@@ -15,7 +15,7 @@ export class RecyclingService {
   private _columns$ = new BehaviorSubject<any>(null);
   private _dataGroupUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists';
   private _cageTrackerUrl = `${this._dataGroupUrl}/e96c2778-2322-46d6-8de9-3d0c8ca5aefd`;
-
+  private _needReset: boolean;
 
   constructor(
     private http: HttpClient
@@ -95,10 +95,31 @@ export class RecyclingService {
 
   private updateStatus(id, payload) {
     const url = this._cageTrackerUrl + `/items('${id}')`;
-    return this.http.patch(url, payload);
+
+    return this.http.patch(url, payload).pipe(
+      map(_ => _ as Cage),
+      switchMap(res => {
+        return this._cagesSubject$.pipe(
+          take(1),
+          map(cages => cages.map(cage => cage.id === res.id ? res : cage)),
+          tap(_ => this._cagesSubject$.next(_)),
+          map(() => res)
+        )
+      })
+    );
+  }
+
+
+  get needReset() {
+    return this._needReset;
+  }
+
+  resetList() {
+    this._needReset = true;
   }
 
   getFirstPage(filters: any): BehaviorSubject<Cage[]> {
+    this._needReset = false;
     this._nextPage = '';
     this._loadingCages = false;
     const url = this.createUrl(filters);

@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { SharedService } from 'src/app/shared.service';
+import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { catchError, tap, throwError } from 'rxjs';
+
+import { SharedService } from '../../shared.service';
 import { InterstatePalletTransferService } from '../shared/interstate-pallet-transfer.service';
 
 @Component({
@@ -14,12 +17,14 @@ export class PalletInterstateTransferNewComponent implements OnInit {
   public pallets = ['Loscam', 'Chep', 'Plain'];
   public states = ['NSW', 'QLD', 'SA', 'TAS', 'VIC', 'WA'];
   public state: string;
+  public loading: boolean;
   get targetStates() {
     return this.states.filter(_ => _ !== this.palletTransferForm.get('from').value);
   }
 
   constructor(
     private fb: FormBuilder,
+    private router: Router,
     private snackBar: MatSnackBar,
     private sharedService: SharedService,
     private palletService: InterstatePalletTransferService
@@ -59,12 +64,20 @@ export class PalletInterstateTransferNewComponent implements OnInit {
 
   onSubmit(): void {
     if (this.palletTransferForm.invalid) return;
+    this.loading = true;
     const from = this.palletTransferForm.get('from').value;
     const payload = {...this.palletTransferForm.value, from};
-    this.palletService.interstateTransfer(payload).subscribe(_ => {
-        this.snackBar.open('Added pallet transfer', '', {duration: 3000});
-        this.reset();
-    });
+    this.palletService.interstateTransfer(payload).pipe(
+      tap(_ => {
+        this.router.navigate(['/pallets/transfer'], {replaceUrl: true});
+        this.snackBar.open('Added interstate transfer', '', {duration: 3000});
+      }),
+      catchError(err => {
+        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
+        this.loading = false;
+        return throwError(() => new Error(err));
+      })
+    ).subscribe(_ => console.log(_));
     
   }
 

@@ -44,8 +44,8 @@
       </mat-form-field>
     </mat-card>
     <div class="buttons">
-      <button mat-button (click)="reset()" tabindex=-1 type="button">Reset</button>
-      <button mat-raised-button color="primary">Confirm</button>
+      <button mat-button (click)="reset()" tabindex=-1 type="button" [disabled]="loading">Reset</button>
+      <button mat-raised-button color="primary" [disabled]="loading">Confirm</button>
     </div>
   </form>
 </div>

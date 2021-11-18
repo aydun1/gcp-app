@@ -10,8 +10,14 @@
   z-index: 4;
 }
 
-.top-buttons {
+.nav-buttons {
   margin: 10px;
+}
+
+.header {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
 }
 
 .content {

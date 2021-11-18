@@ -1,47 +1,51 @@
 :host {
-    display: block;
-    height: 100%;
-    overflow-y: scroll;
-  }
+  display: block;
+  height: 100%;
+  overflow-y: scroll;
+}
   
-  .outer {
-    margin: 0 auto;
-    max-width: 1024px;
-  }
+.outer {
+  margin: 0 auto;
+  max-width: 1024px;
+}
+
+h2 {
+  margin-left: 10px;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  margin-right: 10px;
+  width: 145px;
+}
   
-  .mat-form-field {
-    font-size: 14px;
-    margin-right: 10px;
-    width: 145px;
-  }
+.mat-footer-row {
+  font-weight: bold;
+}
   
-  .mat-footer-row {
-    font-weight: bold;
-  }
-  
+.options {
+  align-items: baseline;
+  display: flex;
+}
+
+.buttons {
+  flex: 1;
+}
+
+.add-cage {
+  margin-left: auto;
+}
+
+.inner {
+  margin: 10px 10px;
+}
+
+.cage-link {
+  text-decoration: none;
+}
+
+@media print {
   .options {
-    align-items: baseline;
-    display: flex;
+    display: none;
   }
-  
-  .buttons {
-    flex: 1;
-  }
-  
-  .add-cage {
-    margin-left: auto;
-  }
-  
-  .inner {
-    margin: 10px 10px;
-  }
-  
-  .cage-link {
-    text-decoration: none;
-  }
-  
-  @media print {
-    .options {
-      display: none;
-    }
-  }
+}

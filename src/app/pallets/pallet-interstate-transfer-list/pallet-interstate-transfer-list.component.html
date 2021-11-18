@@ -4,14 +4,14 @@
     <div class="buttons">
       <mat-form-field appearance="outline" class="branch">
         <mat-label>{{ (choices$ | async)?.From?.name }}</mat-label>
-        <mat-select [formControl]="branchFilter" (selectionChange)="setFrom($event)">
+        <mat-select [formControl]="fromFilter" (selectionChange)="setFrom($event)">
           <mat-option>All</mat-option>
           <mat-option *ngFor="let s of (choices$ | async)?.From?.choice.choices" value="{{ s }}">{{ s }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="status">
         <mat-label>{{ (choices$ | async)?.To?.name }}</mat-label>
-        <mat-select [formControl]="statusFilter" (selectionChange)="setTo($event)">
+        <mat-select [formControl]="toFilter" (selectionChange)="setTo($event)">
           <mat-option>All</mat-option>
           <mat-option *ngFor="let s of (choices$ | async)?.To?.choice.choices" value="{{ s }}">{{ s }}</mat-option>
         </mat-select>
@@ -65,7 +65,7 @@
       <ng-container matColumnDef="quantity">
         <mat-header-cell *matHeaderCellDef> Quantity </mat-header-cell>
         <mat-cell *matCellDef="let pallet">{{ pallet.fields.Quantity }}</mat-cell>
-        <mat-footer-cell *matFooterCellDef>{{ weight || 0 }}</mat-footer-cell>
+        <mat-footer-cell *matFooterCellDef>{{ total || 0 }}</mat-footer-cell>
       </ng-container>
 
       <ng-container matColumnDef="approved">

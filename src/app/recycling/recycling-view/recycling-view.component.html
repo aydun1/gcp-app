@@ -1,14 +1,18 @@
-<div class="content">
-  <div class="top-buttons">
+<div class="content" *ngIf="cage$ | async as cage">
+  <div class="nav-buttons">
     <a mat-stroked-button (click)="goBack()"><mat-icon>arrow_back</mat-icon>Back to Cages</a>
   </div>
-  <div *ngIf="cage$ | async as cage" class="inner">
-    <h2>Cage number: {{ cage.fields.CageNumber }}</h2>
-    <p>{{ cage.fields.AssetType }}</p>
-
+  <div class="inner">
+    <div class="header">
+      <div>
+        <h2>Cage number: {{ cage.fields.CageNumber }}</h2>
+        <p>{{ cage.fields.AssetType }}</p>
+      </div>
+      <gcp-action-button [cage]="cage" (updated)="getCage()"></gcp-action-button>
+    </div>
     <mat-card>
       <mat-list>
-        <div mat-subheader><span class="subheader">Details</span><gcp-action-button [cage]="cage" (updated)="getCage()"></gcp-action-button></div>
+        <div mat-subheader><span class="subheader">Details</span></div>
         
         <mat-list-item *ngIf="cage.fields.CustomerNumber">
           <mat-icon mat-list-icon>business</mat-icon>
@@ -17,12 +21,17 @@
         </mat-list-item>
         <mat-list-item *ngIf="cage.fields.Status">
           <mat-icon mat-list-icon>timeline</mat-icon>
-          <div mat-line>{{ cage.status }}</div>
+          <div mat-line>{{ cage.fields.Status }}</div>
           <div mat-line>Status</div>
         </mat-list-item>
-        <mat-list-item *ngIf="cage.fields.Weight">
+        <mat-list-item *ngIf="cage.fields.Status">
           <mat-icon mat-list-icon>scale</mat-icon>
-          <div mat-line>{{ cage.fields.Weight }} kg</div>
+          <div mat-line>{{ cage.fields.CageWeight }} kg</div>
+          <div mat-line>Cage weight</div>
+        </mat-list-item>
+        <mat-list-item *ngIf="cage.fields.NetWeight">
+          <mat-icon mat-list-icon>scale</mat-icon>
+          <div mat-line>{{ cage.fields.NetWeight }} kg</div>
           <div mat-line>Net weight</div>
         </mat-list-item>
         <div mat-subheader>Dates</div>
@@ -70,9 +79,9 @@
       </ng-container>
 
       <ng-container matColumnDef="weight">
-        <mat-header-cell *matHeaderCellDef> Weight </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef> Net weight </mat-header-cell>
         <mat-cell *matCellDef="let cage">
-          {{ cage.fields.Weight || 0 }} kg
+          {{ cage.fields.NetWeight || 0 }} kg
         </mat-cell>
         <mat-footer-cell *matFooterCellDef> {{ weight || 0 }} kg </mat-footer-cell>
       </ng-container>
