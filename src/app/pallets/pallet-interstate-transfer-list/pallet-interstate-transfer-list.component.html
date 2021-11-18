@@ -1,0 +1,58 @@
+<div class="outer">
+ 
+    <div *ngIf="(pallets$ | async) as pallets" class="inner">
+      <mat-table #table [dataSource]="pallets" [trackBy]="trackByFn">
+
+        <ng-container matColumnDef="date">
+          <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+          <mat-cell *matCellDef="let pallet">
+            {{ pallet.fields.Created | date: 'dd/MM/yyyy' }}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="customer">
+          <mat-header-cell *matHeaderCellDef> Customer </mat-header-cell>
+          <mat-cell *matCellDef="let pallet">
+            {{ pallet.fields.Title }}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="pallet">
+          <mat-header-cell *matHeaderCellDef> Pallet </mat-header-cell>
+          <mat-cell *matCellDef="let pallet">
+            {{ pallet.fields.Pallet }}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="out">
+          <mat-header-cell *matHeaderCellDef> Delivered </mat-header-cell>
+          <mat-cell *matCellDef="let pallet">
+            {{ pallet.fields.Out }}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="in">
+          <mat-header-cell *matHeaderCellDef> Collected </mat-header-cell>
+          <mat-cell *matCellDef="let pallet">
+            {{ pallet.fields.In }}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="count">
+          <mat-header-cell *matHeaderCellDef> Change </mat-header-cell>
+          <mat-cell *matCellDef="let pallet">{{ pallet.fields.Change }}</mat-cell>
+          <mat-footer-cell *matFooterCellDef>{{ weight || 0 }}</mat-footer-cell>
+        </ng-container> 
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+      </mat-table>
+    </div>
+  </div>
+  
+  <router-outlet></router-outlet>

@@ -8,6 +8,8 @@ import { PalletDialogComponent } from './shared/pallet-dialog/pallet-dialog.comp
 import { PalletsService } from './shared/pallets.service';
 import { PalletReconciliationComponent } from './pallet-reconciliation/pallet-reconciliation.component';
 import { PalletListComponent } from './pallet-list/pallet-list.component';
+import { PalletInterstateTransferComponent } from './pallet-interstate-transfer/pallet-interstate-transfer.component';
+import { PalletInterstateTransferListComponent } from './pallet-interstate-transfer-list/pallet-interstate-transfer-list.component';
 
 
 
@@ -17,6 +19,8 @@ import { PalletListComponent } from './pallet-list/pallet-list.component';
     PalletDialogComponent,
     PalletReconciliationComponent,
     PalletListComponent,
+    PalletInterstateTransferComponent,
+    PalletInterstateTransferListComponent,
   ],
   imports: [
     CommonModule,

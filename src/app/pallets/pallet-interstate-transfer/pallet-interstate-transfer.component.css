@@ -1,0 +1,43 @@
+.outer {
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+h2 {
+  margin-left: 10px;
+}
+
+.mat-card {
+  margin: 10px;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+.sum {
+  font-weight: bold;
+}
+
+.spacer {
+  margin-bottom: 20px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin: 30px 10px;
+}
+
+.field-container {
+  display: flex;
+}
+
+.arrow {
+  margin: 0 20px;
+  padding-top: 18px;
+}
+
+::ng-deep.mat-form-field-appearance-outline .mat-form-field-prefix {
+  top: 0;
+}

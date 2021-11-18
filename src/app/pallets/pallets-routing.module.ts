@@ -5,20 +5,27 @@ import { MsalGuard } from '@azure/msal-angular';
 import { PalletsComponent } from './pallets.component';
 import { PalletListComponent } from './pallet-list/pallet-list.component';
 import { PalletReconciliationComponent } from './pallet-reconciliation/pallet-reconciliation.component';
+import { PalletInterstateTransferComponent } from './pallet-interstate-transfer/pallet-interstate-transfer.component';
 
 
 const routes: Routes = [
   {
     path: '',
     component: PalletsComponent,
-    children: [{
-      path: '',
-      component: PalletListComponent
-    },
-    {
-      path: 'stocktake',
-      component: PalletReconciliationComponent
-    }]
+    children: [
+      {
+        path: '',
+        component: PalletListComponent
+      },
+      {
+        path: 'stocktake',
+        component: PalletReconciliationComponent
+      },
+      {
+        path: 'transfer',
+        component: PalletInterstateTransferComponent
+      }
+    ]
   }
 ]
 

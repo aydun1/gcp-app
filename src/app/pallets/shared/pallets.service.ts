@@ -10,6 +10,9 @@ import { Pallet } from './pallet';
 export class PalletsService {
   private dataGroupUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists';
   private palletTrackerUrl = `${this.dataGroupUrl}/38f14082-02e5-4978-bf92-f42be2220166`;
+  private interstateTransferUrl = `${this.dataGroupUrl}/1ddbafb6-d803-4db2-a56b-99f131e54a67`;
+
+
   private _loadingPallets: boolean;
   private _nextPage: string;
   private _palletsSubject$ = new BehaviorSubject<Pallet[]>([]);
@@ -79,4 +82,9 @@ export class PalletsService {
     return this.http.get(url).pipe(map((_: any) => _.value));
   }
 
+  interstateTransfer(form: any) {
+    let url = `${this.interstateTransferUrl}/items`;
+    const payload = {fields: {Title: `${form.to}${form.reference}`, Pallet: form.type, From: form.from, To: form.to, Quantity: form.quantity}};
+    return this.http.post(url, payload);
+  }
 }
