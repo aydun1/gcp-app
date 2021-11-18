@@ -5,7 +5,7 @@ import { RecyclingService } from '../shared/recycling.service';
 import { BehaviorSubject, Observable, Subject, switchMap, tap } from 'rxjs';
 
 @Component({
-  selector: 'app-recycling-view',
+  selector: 'gcp-recycling-view',
   templateUrl: './recycling-view.component.html',
   styleUrls: ['./recycling-view.component.css']
 })

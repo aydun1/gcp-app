@@ -8,7 +8,7 @@
 
     <mat-card>
       <mat-list>
-        <div mat-subheader><span class="subheader">Details</span><app-action-button [cage]="cage" (updated)="getCage()"></app-action-button></div>
+        <div mat-subheader><span class="subheader">Details</span><gcp-action-button [cage]="cage" (updated)="getCage()"></gcp-action-button></div>
         
         <mat-list-item *ngIf="cage.fields.CustomerNumber">
           <mat-icon mat-list-icon>business</mat-icon>

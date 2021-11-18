@@ -15,7 +15,7 @@ type Territory = {
 };
 
 @Component({
-  selector: 'app-customer-list',
+  selector: 'gcp-customer-list',
   templateUrl: './customer-list.component.html',
   styleUrls: ['./customer-list.component.css']
 })

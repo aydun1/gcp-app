@@ -5,7 +5,7 @@ import { RecyclingService } from '../recycling.service';
 import { Cage } from '../cage';
 
 @Component({
-  selector: 'app-action-button',
+  selector: 'gcp-action-button',
   templateUrl: './action-button.component.html',
   styleUrls: ['./action-button.component.css']
 })

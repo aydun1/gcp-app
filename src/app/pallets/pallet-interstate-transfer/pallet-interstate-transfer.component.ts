@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { PalletsService } from '../shared/pallets.service';
 
 @Component({
-  selector: 'app-pallet-interstate-transfer',
+  selector: 'gcp-pallet-interstate-transfer',
   templateUrl: './pallet-interstate-transfer.component.html',
   styleUrls: ['./pallet-interstate-transfer.component.css']
 })

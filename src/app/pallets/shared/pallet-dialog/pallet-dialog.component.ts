@@ -7,7 +7,7 @@ import { catchError, tap, throwError } from 'rxjs';
 import { PalletsService } from '../pallets.service';
 
 @Component({
-  selector: 'app-pallet-dialog',
+  selector: 'gcp-pallet-dialog',
   templateUrl: './pallet-dialog.component.html',
   styleUrls: ['./pallet-dialog.component.css']
 })

@@ -8,7 +8,7 @@ import { catchError, debounceTime, map, mergeMap, Observable, of, tap, throwErro
 import { RecyclingService } from '../shared/recycling.service';
 
 @Component({
-  selector: 'app-recycling-new',
+  selector: 'gcp-recycling-new',
   templateUrl: './recycling-new.component.html',
   styleUrls: ['./recycling-new.component.css']
 })

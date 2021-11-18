@@ -8,7 +8,7 @@ import { Pallet } from '../shared/pallet';
 import { PalletsService } from '../shared/pallets.service';
 
 @Component({
-  selector: 'app-pallet-list',
+  selector: 'gcp-pallet-list',
   templateUrl: './pallet-list.component.html',
   styleUrls: ['./pallet-list.component.css']
 })

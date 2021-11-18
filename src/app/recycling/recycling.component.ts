@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-recycling',
+  selector: 'gcp-recycling',
   templateUrl: './recycling.component.html',
   styleUrls: ['./recycling.component.css']
 })

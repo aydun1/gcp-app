@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Cage } from '../cage';
 
 @Component({
-  selector: 'app-cage-details',
+  selector: 'gcp-cage-details',
   templateUrl: './cage-details.component.html',
   styleUrls: ['./cage-details.component.css']
 })

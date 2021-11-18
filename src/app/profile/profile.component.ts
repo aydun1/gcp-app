@@ -12,7 +12,7 @@ type ProfileType = {
 };
 
 @Component({
-  selector: 'app-profile',
+  selector: 'gcp-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })

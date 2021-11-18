@@ -4,7 +4,7 @@ import { EventMessage, EventType, InteractionStatus } from '@azure/msal-browser'
 import { filter } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-home',
+  selector: 'gcp-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })

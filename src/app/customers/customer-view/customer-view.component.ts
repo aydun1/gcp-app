@@ -13,7 +13,7 @@ import { RecyclingService } from '../../recycling/shared/recycling.service';
 import { PalletsService } from '../../pallets/shared/pallets.service';
 
 @Component({
-  selector: 'app-customer-view',
+  selector: 'gcp-customer-view',
   templateUrl: './customer-view.component.html',
   styleUrls: ['./customer-view.component.css']
 })

@@ -9,7 +9,7 @@ import { Column } from '../../shared/column';
 import { RecyclingService } from '../shared/recycling.service';
 
 @Component({
-  selector: 'app-recycling-list',
+  selector: 'gcp-recycling-list',
   templateUrl: './recycling-list.component.html',
   styleUrls: ['./recycling-list.component.css']
 })

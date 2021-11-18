@@ -35,8 +35,8 @@
             <mat-panel-title>{{ cage.fields.AssetType }}</mat-panel-title>
             <mat-panel-description>{{ cage.status }}</mat-panel-description>
           </mat-expansion-panel-header>
-          <app-action-button [cage]="cage" (updated)="getContainers()" class="actions"></app-action-button>
-          <app-cage-details [cage]="cage"></app-cage-details>
+          <gcp-action-button [cage]="cage" (updated)="getContainers()" class="actions"></gcp-action-button>
+          <gcp-cage-details [cage]="cage"></gcp-cage-details>
         </mat-expansion-panel>
       </mat-accordion>
       <h3>History</h3>
@@ -49,8 +49,8 @@
             <mat-panel-title>{{ cage.fields.AssetType }}</mat-panel-title>
             <mat-panel-description>{{ cage.status }}</mat-panel-description>
           </mat-expansion-panel-header>
-          <app-action-button [cage]="cage" (updated)="getContainers()" class="actions"></app-action-button>
-          <app-cage-details [cage]="cage"></app-cage-details>
+          <gcp-action-button [cage]="cage" (updated)="getContainers()" class="actions"></gcp-action-button>
+          <gcp-cage-details [cage]="cage"></gcp-cage-details>
         </mat-expansion-panel>
       </mat-accordion>
     </ng-container>

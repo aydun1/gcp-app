@@ -6,7 +6,7 @@ import { SharedService } from 'src/app/shared.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-pallet-reconciliation',
+  selector: 'gcp-pallet-reconciliation',
   templateUrl: './pallet-reconciliation.component.html',
   styleUrls: ['./pallet-reconciliation.component.css']
 })

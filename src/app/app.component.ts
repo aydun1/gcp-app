@@ -7,7 +7,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 import { SharedService } from './shared.service';
 
 @Component({
-  selector: 'app-root',
+  selector: 'gcp-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })

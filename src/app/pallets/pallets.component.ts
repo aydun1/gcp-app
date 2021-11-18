@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-pallets',
+  selector: 'gcp-pallets',
   templateUrl: './pallets.component.html',
   styleUrls: ['./pallets.component.css']
 })

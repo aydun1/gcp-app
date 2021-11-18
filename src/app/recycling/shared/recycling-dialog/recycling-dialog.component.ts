@@ -7,7 +7,7 @@ import { RecyclingService } from 'src/app/recycling/shared/recycling.service';
 import { Cage } from '../../../recycling/shared/cage';
 
 @Component({
-  selector: 'app-recycling-dialog',
+  selector: 'gcp-recycling-dialog',
   templateUrl: './recycling-dialog.component.html',
   styleUrls: ['./recycling-dialog.component.css']
 })

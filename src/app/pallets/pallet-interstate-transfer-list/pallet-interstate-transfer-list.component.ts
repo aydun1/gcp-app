@@ -8,7 +8,7 @@ import { Pallet } from '../shared/pallet';
 import { PalletsService } from '../shared/pallets.service';
 
 @Component({
-  selector: 'app-pallet-interstate-transfer-list',
+  selector: 'gcp-pallet-interstate-transfer-list',
   templateUrl: './pallet-interstate-transfer-list.component.html',
   styleUrls: ['./pallet-interstate-transfer-list.component.css']
 })
