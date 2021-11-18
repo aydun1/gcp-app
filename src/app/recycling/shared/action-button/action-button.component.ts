@@ -28,27 +28,28 @@ export class ActionButtonComponent implements OnInit {
   }
 
   markWithCustomer(id: string) {
-    this.recyclingService.markCageWithCustomer(id).subscribe(() => this.updated.next(true));
+    this.recyclingService.deliverToCustomer(id).subscribe(() => this.updated.next(true));
   }
 
   markAsCollected(id: string) {
-    this.recyclingService.markCageAsCollected(id).subscribe(() => this.updated.next(true));
+    this.recyclingService.collectFromCustomer(id).subscribe(() => this.updated.next(true));
   }
 
   markWithPolymer(id: string) {
-    this.recyclingService.markCageWithPolymer(id).subscribe(() => this.updated.next(true));
+    this.recyclingService.deliverToPolymer(id).subscribe(() => this.updated.next(true));
   }
 
   markReturnedEmpty(id: string) {
-    this.recyclingService.markCageReturnedEmpty(id).subscribe(() => this.updated.next(true));
+    this.recyclingService.collectFromPolymer(id).subscribe(() => this.updated.next(true));
   }
 
-  markAvailable(id: string, cageNumber: number, branch: string, assetType: string) {
-    this.recyclingService.markCageAvailable(id, cageNumber, branch, assetType).subscribe(() => this.updated.next(true));
+  markAvailable(id: string, cageNumber: number, branch: string, assetType: string, cageWeight: number) {
+    this.recyclingService.markCageAvailable(id, cageNumber, branch, assetType, cageWeight).subscribe(() => this.updated.next(true));
   }
 
   saveWeight(id: string) {
     if (this.weightForm.invalid) return;
-    this.recyclingService.setCageWeight(id, this.weightForm.value.weight).subscribe(() => this.updated.next(true));
+    const netWeight = this.weightForm.value.weight - this.cage.fields.CageWeight
+    this.recyclingService.setCageWeight(id, netWeight).subscribe(() => this.updated.next(true));
   }
 }

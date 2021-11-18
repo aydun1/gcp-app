@@ -48,7 +48,7 @@ export class RecyclingDialogComponent implements OnInit {
   }
 
   assignToCustomer(id: string) {
-    this.recyclingService.assignCageToCustomer(id, this.data.customer.accountnumber, this.data.customer.name).subscribe(() => this.closeAssigningPage());
+    this.recyclingService.allocateToCustomer(id, this.data.customer.accountnumber, this.data.customer.name).subscribe(() => this.closeAssigningPage());
   }
 
   closeAssigningPage() {

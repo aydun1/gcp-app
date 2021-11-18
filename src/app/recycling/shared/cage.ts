@@ -6,6 +6,8 @@ export interface Cage {
   fields : {
     Branch: string,
     CageNumber: number,
+    CageWeight: number,
+    NetWeight: number,
     Status: string,
     AssetType: string,
     Date1: string | Date,
@@ -17,7 +19,6 @@ export interface Cage {
     id: string,
     Modified: string | Date,
     Created: string | Date,
-    Edit: string,
-    Weight: number
+    Edit: string
   }
 }

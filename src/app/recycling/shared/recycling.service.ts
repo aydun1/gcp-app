@@ -68,22 +68,16 @@ export class RecyclingService {
   private assignStatus(cage: Cage): Cage {
     if (cage.fields.CustomerNumber && !cage.fields.Date1) {
       cage['statusId'] = 1;
-      cage['status'] = 'Assigned to customer';
     } else if (cage.fields.Date1 && !cage.fields.Date2) {
       cage['statusId'] = 2;
-      cage['status'] = 'At customer';
-    } else if (cage.fields.Date2 && !cage.fields.Weight) {
+    } else if (cage.fields.Date2 && !cage.fields.Date3) {
       cage['statusId'] = 3;
-      cage['status'] = 'Collected from customer';
-    } else if (cage.fields.Weight && !cage.fields.Date3) {
+    } else if (cage.fields.Date3 && !cage.fields.NetWeight) {
       cage['statusId'] = 4;
-      cage['status'] = 'Collected from customer';
-    } else if (cage.fields.Date3 && !cage.fields.Date4) {
+    } else if (cage.fields.NetWeight && !cage.fields.Date4) {
       cage['statusId'] = 5;
-      cage['status'] = 'At Polymer';
     } else if (cage.fields.Date4 && cage.fields.Status !== 'Complete') {
       cage['statusId'] = 6;
-      cage['status'] = 'Collected from Polymer'
     } else {
       cage['status'] = cage.fields.Status;
     }
@@ -97,6 +91,11 @@ export class RecyclingService {
       }),
       map((res: {value: Cage[]}) => res.value.map(cage => this.assignStatus(cage)))
     );
+  }
+
+  private updateStatus(id, payload) {
+    const url = this._cageTrackerUrl + `/items('${id}')`;
+    return this.http.patch(url, payload);
   }
 
   getFirstPage(filters: any): BehaviorSubject<Cage[]> {
@@ -138,58 +137,61 @@ export class RecyclingService {
     return this.getCages(url);
   }
 
-  markCageWithCustomer(id: string): Observable<any> {
-    const payload = {fields: {Status: 'In Use - At Customer', DueDate: new Date()}};
-    const url = this._cageTrackerUrl + `/items('${id}')`;
-    return this.http.patch(url, payload);
+  allocateToCustomer(id: string, custnmbr: string, customerName: string): Observable<any> {
+    const payload = {fields: {Status: 'Allocated to customer', CustomerNumber: custnmbr, Customer: customerName}};
+    return this.updateStatus(id, payload);
   }
 
-  markCageAsCollected(id: string): Observable<any> {
-    const payload = {fields: {Status: 'In Use - At GCP Branch', CollectionDate: new Date()}};
-    const url = this._cageTrackerUrl + `/items('${id}')`;
-    return this.http.patch(url, payload);
+  readyForCustomer(id: string): Observable<any> {
+    const payload = {fields: {Status: 'Ready for delivery to customer'}};
+    return this.updateStatus(id, payload);
   }
 
-  markCageWithPolymer(id: string): Observable<any> {
-    const payload = {fields: {Status: 'In Use - At Polymer', PurchaseDate: new Date()}};
-    const url = this._cageTrackerUrl + `/items('${id}')`;
-    return this.http.patch(url, payload);
+  deliverToCustomer(id: string): Observable<any> {
+    const payload = {fields: {Status: 'Delivered to customer', Date1: new Date()}};
+    return this.updateStatus(id, payload);
   }
 
-  markCageReturnedEmpty(id: string): Observable<any> {
-    const payload = {fields: {Status: 'In Use - At GCP Branch', EmptyReceivedDate: new Date()}};
-    const url = this._cageTrackerUrl + `/items('${id}')`;
-    return this.http.patch(url, payload);
+  collectFromCustomer(id: string): Observable<any> {
+    const payload = {fields: {Status: 'Collected from customer', Date2: new Date()}};
+    return this.updateStatus(id, payload);
+  }
+
+  deliverToPolymer(id: string): Observable<any> {
+    const payload = {fields: {Status: 'Delivered to Polymer', Date3: new Date()}};
+    return this.updateStatus(id, payload);
+  }
+
+  readyForPolymer(id: string): Observable<any> {
+    const payload = {fields: {Status: 'Ready for delivery to Polymer'}};
+    return this.updateStatus(id, payload);
+  }
+
+  collectFromPolymer(id: string): Observable<any> {
+    const payload = {fields: {Status: 'Collected from Polymer', Date4: new Date()}};
+    return this.updateStatus(id, payload);
   }
 
   markCageComplete(id: string) {
     const payload = {fields: {Status: 'Complete'}};
-    const url = this._cageTrackerUrl + `/items('${id}')`;
-    return this.http.patch(url, payload);
+    return this.updateStatus(id, payload);
   }
 
   setCageWeight(id: string, weight: number): Observable<any> {
-    const payload = {fields: {Weight: weight}};
-    const url = this._cageTrackerUrl + `/items('${id}')`;
-    return this.http.patch(url, payload);
+    const payload = {fields: {NetWeight: weight}};
+    return this.updateStatus(id, payload);
   }
 
-  addNewCage(cageNumber: number, branch: string, assetType: string): Observable<any> {
+  addNewCage(cageNumber: number, branch: string, assetType: string, cageWeight: number): Observable<any> {
     const url = this._cageTrackerUrl + `/items`;
-    const payload = {fields: {Status: 'Available', CageNumber: cageNumber, Branch: branch, AssetType: assetType}};
+    const payload = {fields: {Status: 'Available', CageNumber: cageNumber, Branch: branch, AssetType: assetType, CageWeight: cageWeight}};
     return this.http.post(url, payload);
   }
 
-  markCageAvailable(id: string, cageNumber: number, branch: string, assetType: string): Observable<any> {
+  markCageAvailable(id: string, cageNumber: number, branch: string, assetType: string, cageWeight: number): Observable<any> {
     const patchRequest = this.markCageComplete(id);
-    const newRequest = this.addNewCage(cageNumber, branch, assetType);
+    const newRequest = this.addNewCage(cageNumber, branch, assetType, cageWeight);
     return forkJoin([patchRequest, newRequest]);
-  }
-
-  assignCageToCustomer(id: string, custnmbr: string, customerName: string): Observable<any> {
-    const payload = {fields: {Status: 'In Use - At GCP Branch', CustomerNumber: custnmbr, Customer: customerName}};
-    const url = this._cageTrackerUrl + `/items('${id}')`;
-    return this.http.patch(url, payload);
   }
 
   getAvailableCages(): Observable<Cage[]> {
