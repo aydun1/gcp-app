@@ -122,15 +122,15 @@ export class PalletListComponent implements OnInit {
   }
 
   setBranch(branch: MatSelectChange ) {
-    this.router.navigate(['pallets'], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate(['pallets/history'], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setStatus(status: MatSelectChange ) {
-    this.router.navigate(['pallets'], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate(['pallets/history'], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setPallet(pallet: MatSelectChange ) {
-    this.router.navigate(['pallets'], { queryParams: {pallet: pallet.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate(['pallets/history'], { queryParams: {pallet: pallet.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   clearBinFilter() {
