@@ -10,6 +10,7 @@ import { PalletReconciliationComponent } from './pallet-reconciliation/pallet-re
 import { PalletListComponent } from './pallet-list/pallet-list.component';
 import { PalletInterstateTransferNewComponent } from './pallet-interstate-transfer-new/pallet-interstate-transfer-new.component';
 import { PalletInterstateTransferListComponent } from './pallet-interstate-transfer-list/pallet-interstate-transfer-list.component';
+import { PalletViewComponent } from './pallet-view/pallet-view.component';
 
 
 
@@ -21,6 +22,7 @@ import { PalletInterstateTransferListComponent } from './pallet-interstate-trans
     PalletListComponent,
     PalletInterstateTransferNewComponent,
     PalletInterstateTransferListComponent,
+    PalletViewComponent,
   ],
   imports: [
     CommonModule,

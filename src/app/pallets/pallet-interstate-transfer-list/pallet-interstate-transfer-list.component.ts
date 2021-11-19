@@ -4,7 +4,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { SharedService } from 'src/app/shared.service';
-import { InterstatePalletTransferService } from '../shared/interstate-pallet-transfer.service';
+import { PalletsService } from '../shared/pallets.service';
 import { Pallet } from '../shared/pallet';
 
 @Component({
@@ -21,19 +21,15 @@ export class PalletInterstateTransferListComponent implements OnInit {
   public total: number;
   private _loadList: boolean;
   public displayedColumns = ['date', 'reference', 'pallet', 'from', 'to', 'quantity', 'approved'];
-
+  public states = ['NSW', 'QLD', 'SA', 'VIC', 'WA'];
   public choices$: Observable<any>;
   public Status: any;
-
-  get states(): Array<string> {
-    return this.sharedService.regions;
-  }
 
   constructor(
     private el: ElementRef,
     private route: ActivatedRoute,
     private router: Router,
-    private palletsService: InterstatePalletTransferService,
+    private palletsService: PalletsService,
     private sharedService: SharedService
   ) { }
 
@@ -53,6 +49,7 @@ export class PalletInterstateTransferListComponent implements OnInit {
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       tap(_ => this.parseParams(_)),
+      map(_ => {return {..._, type: 'Transfer'}}),
       tap(() => this.total = 0),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
       tap(pallets => this.total = pallets.map(_ => _.fields.Quantity).filter(_ => _).reduce((acc, val) => acc + val, 0))
@@ -67,7 +64,6 @@ export class PalletInterstateTransferListComponent implements OnInit {
   getFirstPage(_: any) {
     this.sharedService.getState().subscribe(_ => console.log(_))
     return this.palletsService.getFirstPage(_);
-
   }
 
   getNextPage() {

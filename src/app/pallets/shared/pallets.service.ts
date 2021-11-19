@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
 import { Pallet } from './pallet';
 
@@ -10,6 +10,7 @@ import { Pallet } from './pallet';
 export class PalletsService {
   private endpoint = 'https://graph.microsoft.com/v1.0';
   private dataGroupUrl = 'sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists/38f14082-02e5-4978-bf92-f42be2220166';
+  private _columns$ = new BehaviorSubject<any>(null);
   private palletTrackerUrl = `${this.endpoint}/${this.dataGroupUrl}`;
 
 
@@ -27,17 +28,22 @@ export class PalletsService {
 
     const parsed = filterKeys.map(key => {
       switch (key) {
+        case 'from':
+          return `fields/From eq '${filters.from}'`;
+        case 'to':
+          return `fields/To eq '${filters.to}'`;  
         case 'branch':
           return `fields/From eq '${filters.branch}' or fields/To eq '${filters.branch}'`;
         case 'status':
           return `fields/Status eq '${filters.status}'`;
         case 'pallet':
           return `fields/Pallet eq '${filters.pallet}'`;
+        case 'type':
+            return `fields/Title eq null`;
         default:
           return '';
       }
     }).filter(_ => _);
-
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
     url += `&orderby=fields/Created desc&top=25`;
     return url;
@@ -48,6 +54,22 @@ export class PalletsService {
       tap(_ => this._nextPage = paginate ? _['@odata.nextLink'] : this._nextPage),
       map((res: {value: Pallet[]}) => res.value)
     );
+  }
+
+  getColumns() {
+    this._columns$.pipe(
+      take(1),
+      map(_ => {
+        if (_) return of(_);
+        return this.http.get(`${this.palletTrackerUrl}/columns`).pipe(
+          map((_: any) => _.value),
+          map(_ => _.reduce((a, v) => ({ ...a, [v.name]: v}), {})),
+          tap(_ => this._columns$.next(_))
+        );
+      }),
+      switchMap(_ => _)
+    ).subscribe();
+    return this._columns$;
   }
 
   getFirstPage(filters: any): BehaviorSubject<Pallet[]> {
@@ -96,6 +118,13 @@ export class PalletsService {
       Reference: `${v.to}${v.reference}`
     }};
     return this.http.post(`${this.palletTrackerUrl}/items`, payload);
+  }
+
+  approveInterstatePalletTransfer(approval: boolean): Observable<any> {
+    const payload = {fields: {
+      Status: approval ? 1 : -1,
+    }};
+    return this.http.patch(`${this.palletTrackerUrl}/items`, payload);
   }
 
   getCustomerPallets(custnmbr: string): Observable<Pallet[]> {

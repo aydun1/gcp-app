@@ -3,16 +3,17 @@
   <div class="options inner">
     <div class="buttons">
       <mat-form-field appearance="outline" class="branch">
-        <mat-label>{{ (choices$ | async)?.From?.name }}</mat-label>
+        <mat-label>From</mat-label>
         <mat-select [formControl]="fromFilter" (selectionChange)="setFrom($event)">
-          <mat-option *ngFor="let s of (choices$ | async)?.From?.choice.choices" value="{{ s }}">{{ s }}</mat-option>
+          <mat-option>All</mat-option>
+          <mat-option *ngFor="let s of states" value="{{ s }}">{{ s }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="status">
-        <mat-label>{{ (choices$ | async)?.To?.name }}</mat-label>
+        <mat-label>To</mat-label>
         <mat-select [formControl]="toFilter" (selectionChange)="setTo($event)">
           <mat-option>All</mat-option>
-          <mat-option *ngFor="let s of (choices$ | async)?.To?.choice.choices" value="{{ s }}">{{ s }}</mat-option>
+          <mat-option *ngFor="let s of states" value="{{ s }}">{{ s }}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
