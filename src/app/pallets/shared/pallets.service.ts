@@ -24,7 +24,7 @@ export class PalletsService {
 
   private createUrl(filters: any): string {
     const filterKeys = Object.keys(filters);
-    let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created,Title,Pallet,In,Out,From,To,Quantity)`;
+    let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created,Title,Pallet,In,Out,From,To,Quantity,Reference, Status)`;
 
     const parsed = filterKeys.map(key => {
       switch (key) {
@@ -120,12 +120,28 @@ export class PalletsService {
     return this.http.post(`${this.palletTrackerUrl}/items`, payload);
   }
 
-  approveInterstatePalletTransfer(approval: boolean): Observable<any> {
+  approveInterstatePalletTransfer(id: string, approval: boolean): Observable<any> {
     const payload = {fields: {
-      Status: approval ? 1 : -1,
+      Status: approval ? 1 : 0,
     }};
-    return this.http.patch(`${this.palletTrackerUrl}/items`, payload);
+    return this.http.patch(`${this.palletTrackerUrl}/items('${id}')`, payload).pipe(
+      map(_ => _ as Pallet),
+      switchMap(res => {
+        return this._palletsSubject$.pipe(
+          take(1),
+          map(pallets => pallets.map(pallet => pallet.id === res.id ? res : pallet)),
+          tap(_ => this._palletsSubject$.next(_)),
+          map(() => res)
+        )
+      })
+    );;
   }
+
+
+
+
+
+
 
   getCustomerPallets(custnmbr: string): Observable<Pallet[]> {
     const url = this.palletTrackerUrl + `/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/From eq '${encodeURIComponent(custnmbr)}' or fields/To eq '${encodeURIComponent(custnmbr)}'`;
