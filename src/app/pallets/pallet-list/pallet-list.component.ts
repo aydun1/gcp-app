@@ -19,9 +19,10 @@ export class PalletListComponent implements OnInit {
   public statusFilter = new FormControl('');
   public assetTypeFilter = new FormControl('');
   public customers$: Observable<any[]>;
-  public weight: number;
+  public total: number;
   private _loadList: boolean;
-  public displayedColumns = ['date', 'from', 'to', 'pallet', 'out', 'in', 'count'];
+  public states = ['NSW', 'QLD', 'SA', 'VIC', 'WA'];
+  public displayedColumns = ['date', 'from', 'to', 'pallet', 'quantity'];
 
   public choices$: Observable<any>;
   public Status: any;
@@ -41,7 +42,6 @@ export class PalletListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getOptions();
     this.pallets$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
@@ -51,21 +51,22 @@ export class PalletListComponent implements OnInit {
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       tap(_ => this.parseParams(_)),
-      tap(() => this.weight = 0),
+      tap(() => this.total = 0),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
-      tap(pallets => this.weight = pallets.map(_ => _.fields.Weight).filter(_ => _).reduce((acc, val) => acc + val, 0))
+      tap(pallets => this.total = pallets.map(_ => _.fields.Change).filter(_ => _).reduce((acc, val) => acc + val, 0))
     )
-
-  }
-
-  getOptions(): void {
-    //this.choices$ = this.palletsService.getColumns();
   }
 
   getFirstPage(_: any) {
     this.sharedService.getState().subscribe(_ => console.log(_))
 
-    return this.palletsService.getFirstPage(_);
+    return this.palletsService.getFirstPage(_).pipe(map(_=> {
+      return _.map(pallet =>  {
+        pallet.fields['Change'] = pallet.fields.From === this.branchFilter.value ? -parseInt(pallet.fields.Quantity) : parseInt(pallet.fields.Quantity)
+        return pallet
+      })
+    }),
+    tap(_ => console.log(_)));
 
   }
 

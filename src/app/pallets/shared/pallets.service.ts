@@ -28,7 +28,7 @@ export class PalletsService {
     const parsed = filterKeys.map(key => {
       switch (key) {
         case 'branch':
-          return `fields/Branch eq '${filters.branch}'`;
+          return `fields/From eq '${filters.branch}' or fields/To eq '${filters.branch}'`;
         case 'status':
           return `fields/Status eq '${filters.status}'`;
         case 'assetType':
@@ -91,7 +91,8 @@ export class PalletsService {
       To: v.to,
       Pallet: v.type,
       Quantity: v.quantity,
-      Notes: v.notes
+      Notes: v.notes,
+      Reference: v.reference
     }};
     return this.http.post(`${this.palletTrackerUrl}/items`, payload);
   }
