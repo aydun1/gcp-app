@@ -17,12 +17,13 @@ export class PalletListComponent implements OnInit {
   public binFilter = new FormControl('');
   public branchFilter = new FormControl('');
   public statusFilter = new FormControl('');
-  public assetTypeFilter = new FormControl('');
+  public palletFilter = new FormControl('');
   public customers$: Observable<any[]>;
   public total: number;
   private _loadList: boolean;
   public states = ['NSW', 'QLD', 'SA', 'VIC', 'WA'];
-  public displayedColumns = ['date', 'from', 'to', 'pallet', 'quantity'];
+  public pallets = ['Loscam', 'Chep', 'Plain'];
+  public displayedColumns = ['date', 'to', 'pallet', 'quantity'];
 
   public choices$: Observable<any>;
   public Status: any;
@@ -42,6 +43,7 @@ export class PalletListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const state$ = this.sharedService.getState();
     this.pallets$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
@@ -50,6 +52,7 @@ export class PalletListComponent implements OnInit {
         map(() => _)
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
+      switchMap(_ => state$.pipe(map(state => !_['branch'] ? {..._, branch: state} : _))),
       tap(_ => this.parseParams(_)),
       tap(() => this.total = 0),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
@@ -62,7 +65,8 @@ export class PalletListComponent implements OnInit {
 
     return this.palletsService.getFirstPage(_).pipe(map(_=> {
       return _.map(pallet =>  {
-        pallet.fields['Change'] = pallet.fields.From === this.branchFilter.value ? -parseInt(pallet.fields.Quantity) : parseInt(pallet.fields.Quantity)
+        pallet.fields['To'] = pallet.fields.From === this.branchFilter.value ? pallet.fields.To : pallet.fields.From;
+        pallet.fields['Change'] = pallet.fields.From === this.branchFilter.value ? -pallet.fields.Quantity : +pallet.fields.Quantity;
         return pallet
       })
     }),
@@ -89,11 +93,11 @@ export class PalletListComponent implements OnInit {
     } else {
       this.statusFilter.patchValue('');
     }
-    if ('assetType' in params) {
-      this.assetTypeFilter.patchValue(params['assetType']);
-      filters['assetType'] = params['assetType'];
+    if ('pallet' in params) {
+      this.palletFilter.patchValue(params['pallet']);
+      filters['pallet'] = params['pallet'];
     } else {
-      this.assetTypeFilter.patchValue('');
+      this.palletFilter.patchValue('');
     }
     if ('bin' in params) {
       this.binFilter.patchValue(params['bin']);
@@ -112,9 +116,9 @@ export class PalletListComponent implements OnInit {
     if (this.route.firstChild != null) return true;
     const sameBranch = prev['branch'] === curr['branch'];
     const sameBin = prev['bin'] === curr['bin'];
-    const sameAssetType = prev['assetType'] === curr['assetType'];
+    const samePallet = prev['pallet'] === curr['pallet'];
     const sameStatus = prev['status'] === curr['status'];
-    return sameBranch && sameBin && sameAssetType && sameStatus && this._loadList;
+    return sameBranch && sameBin && samePallet && sameStatus && this._loadList;
   }
 
   setBranch(branch: MatSelectChange ) {
@@ -125,8 +129,8 @@ export class PalletListComponent implements OnInit {
     this.router.navigate(['pallets'], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setAssetType(assetType: MatSelectChange ) {
-    this.router.navigate(['pallets'], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  setPallet(pallet: MatSelectChange ) {
+    this.router.navigate(['pallets'], { queryParams: {pallet: pallet.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   clearBinFilter() {

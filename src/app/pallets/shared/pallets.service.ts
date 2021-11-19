@@ -31,8 +31,8 @@ export class PalletsService {
           return `fields/From eq '${filters.branch}' or fields/To eq '${filters.branch}'`;
         case 'status':
           return `fields/Status eq '${filters.status}'`;
-        case 'assetType':
-          return `fields/AssetType eq '${filters.assetType}'`;
+        case 'pallet':
+          return `fields/Pallet eq '${filters.pallet}'`;
         default:
           return '';
       }
@@ -71,9 +71,10 @@ export class PalletsService {
   }
 
   customerPalletTransfer(v: any): Observable<any> {
+    console.log(v);
     const inbound = v.inQty > v.outQty;
     const payload = {fields: {
-      Title: v.customer,
+      Title: v.customerName,
       From: inbound ? v.customer : v.state,
       To: inbound ? v.state: v.customer,
       In: v.inQty,
@@ -92,13 +93,13 @@ export class PalletsService {
       Pallet: v.type,
       Quantity: v.quantity,
       Notes: v.notes,
-      Reference: v.reference
+      Reference: `${v.to}${v.reference}`
     }};
     return this.http.post(`${this.palletTrackerUrl}/items`, payload);
   }
 
   getCustomerPallets(custnmbr: string): Observable<Pallet[]> {
-    const url = this.palletTrackerUrl + `/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/Title eq '${encodeURIComponent(custnmbr)}'`;
+    const url = this.palletTrackerUrl + `/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/From eq '${encodeURIComponent(custnmbr)}' or fields/To eq '${encodeURIComponent(custnmbr)}'`;
     return this.http.get(url).pipe(map((_: any) => _.value));
   }
 }

@@ -83,11 +83,11 @@ export class CustomerViewComponent implements OnInit {
     this.cagesSubject$.next(id);
   }
 
-  openPalletDialog(customer: string) {
+  openPalletDialog(customer: Customer) {
     const data = {customer};
     const dialogRef = this.dialog.open(PalletDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().subscribe(result => {
-      this.refreshPallets(data.customer);
+      this.refreshPallets(data.customer.accountnumber);
       if (!result) return;
     });
   }

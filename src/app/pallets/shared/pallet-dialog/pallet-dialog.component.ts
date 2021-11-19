@@ -3,8 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, tap, throwError } from 'rxjs';
-import { SharedService } from 'src/app/shared.service';
 
+import { Customer } from '../../../customers/shared/customer';
+import { SharedService } from '../../../shared.service';
 import { PalletsService } from '../pallets.service';
 
 @Component({
@@ -19,7 +20,7 @@ export class PalletDialogComponent implements OnInit {
 
   constructor(
       public dialogRef: MatDialogRef<PalletDialogComponent>,
-      @Inject(MAT_DIALOG_DATA) public data: any,
+      @Inject(MAT_DIALOG_DATA) public data: {customer: Customer},
       private snackBar: MatSnackBar,
       private fb: FormBuilder,
       private sharedService: SharedService,
@@ -42,8 +43,9 @@ export class PalletDialogComponent implements OnInit {
 
   addPallets(): void {
     if (this.palletForm.invalid) return;
+    console.log(this.data);
     this.loading = true;
-    const payload = {...this.palletForm.value, customer: this.data.customer, state: this._state}
+    const payload = {...this.palletForm.value, customer: this.data.customer.accountnumber, state: this._state, customerName: this.data.customer.name};
     this.palletsService.customerPalletTransfer(payload).pipe(
       tap(_ => {
         this.dialogRef.close();

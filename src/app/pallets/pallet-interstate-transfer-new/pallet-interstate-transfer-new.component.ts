@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, tap, throwError } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
-import { InterstatePalletTransferService } from '../shared/interstate-pallet-transfer.service';
 import { PalletsService } from '../shared/pallets.service';
 
 @Component({
@@ -16,7 +16,7 @@ import { PalletsService } from '../shared/pallets.service';
 export class PalletInterstateTransferNewComponent implements OnInit {
   public palletTransferForm: FormGroup;
   public pallets = ['Loscam', 'Chep', 'Plain'];
-  public states = ['NSW', 'QLD', 'SA', 'TAS', 'VIC', 'WA'];
+  public states = ['NSW', 'QLD', 'SA', 'VIC', 'WA'];
   public state: string;
   public loading: boolean;
   get targetStates() {
@@ -25,6 +25,7 @@ export class PalletInterstateTransferNewComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private location: Location,
     private router: Router,
     private snackBar: MatSnackBar,
     private sharedService: SharedService,
@@ -66,7 +67,7 @@ export class PalletInterstateTransferNewComponent implements OnInit {
     const payload = {...this.palletTransferForm.value, from};
     this.palletService.interstatePalletTransfer(payload).pipe(
       tap(_ => {
-        this.router.navigate(['/pallets/transfer'], {replaceUrl: true});
+        this.location.back();
         this.snackBar.open('Added interstate transfer', '', {duration: 3000});
       }),
       catchError(err => {
