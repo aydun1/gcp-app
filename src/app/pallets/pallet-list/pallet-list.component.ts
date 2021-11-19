@@ -21,7 +21,7 @@ export class PalletListComponent implements OnInit {
   public customers$: Observable<any[]>;
   public weight: number;
   private _loadList: boolean;
-  public displayedColumns = ['date', 'customer', 'pallet', 'out', 'in', 'count'];
+  public displayedColumns = ['date', 'from', 'to', 'pallet', 'out', 'in', 'count'];
 
   public choices$: Observable<any>;
   public Status: any;

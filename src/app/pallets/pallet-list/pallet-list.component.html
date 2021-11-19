@@ -11,10 +11,18 @@
           <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
         </ng-container>
 
-        <ng-container matColumnDef="customer">
-          <mat-header-cell *matHeaderCellDef> Customer </mat-header-cell>
+        <ng-container matColumnDef="from">
+          <mat-header-cell *matHeaderCellDef> From </mat-header-cell>
           <mat-cell *matCellDef="let pallet">
-            {{ pallet.fields.Title }}
+            {{ pallet.fields.From }}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="to">
+          <mat-header-cell *matHeaderCellDef> To </mat-header-cell>
+          <mat-cell *matCellDef="let pallet">
+            {{ pallet.fields.To }}
           </mat-cell>
           <mat-footer-cell *matFooterCellDef></mat-footer-cell>
         </ng-container>
@@ -44,8 +52,8 @@
         </ng-container>
 
         <ng-container matColumnDef="count">
-          <mat-header-cell *matHeaderCellDef> Change </mat-header-cell>
-          <mat-cell *matCellDef="let pallet">{{ pallet.fields.Change }}</mat-cell>
+          <mat-header-cell *matHeaderCellDef> Quantity </mat-header-cell>
+          <mat-cell *matCellDef="let pallet">{{ pallet.fields.Quantity }}</mat-cell>
           <mat-footer-cell *matFooterCellDef>{{ weight || 0 }}</mat-footer-cell>
         </ng-container> 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

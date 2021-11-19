@@ -6,6 +6,7 @@ import { catchError, tap, throwError } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { InterstatePalletTransferService } from '../shared/interstate-pallet-transfer.service';
+import { PalletsService } from '../shared/pallets.service';
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer-new',
@@ -27,12 +28,13 @@ export class PalletInterstateTransferNewComponent implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar,
     private sharedService: SharedService,
-    private palletService: InterstatePalletTransferService
+    private palletService: PalletsService
   ) { }
 
   ngOnInit(): void {
     const name = this.sharedService.getName();
     const date = new Date();
+
     this.sharedService.getState().subscribe(state => {
       this.state = state;
       if (this.palletTransferForm) this.palletTransferForm.patchValue({from: state});
@@ -47,11 +49,6 @@ export class PalletInterstateTransferNewComponent implements OnInit {
       quantity: ['', [Validators.required, Validators.min(0)]],
       reference: ['', [Validators.required]]
     });
-
-    this.sharedService.getState().subscribe(
-      _ => this.palletTransferForm.patchValue({from: _})
-    );
-
   }
 
   reset(): void {
@@ -67,7 +64,7 @@ export class PalletInterstateTransferNewComponent implements OnInit {
     this.loading = true;
     const from = this.palletTransferForm.get('from').value;
     const payload = {...this.palletTransferForm.value, from};
-    this.palletService.interstateTransfer(payload).pipe(
+    this.palletService.interstatePalletTransfer(payload).pipe(
       tap(_ => {
         this.router.navigate(['/pallets/transfer'], {replaceUrl: true});
         this.snackBar.open('Added interstate transfer', '', {duration: 3000});
