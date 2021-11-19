@@ -1,0 +1,11 @@
+.home-cards {
+  width: 400px;
+  margin: 0 auto;
+}
+
+@media (max-width: 800px) {
+  .home-cards {
+    width: calc(100% - 20px);
+    margin: 0 10px;
+  }
+}

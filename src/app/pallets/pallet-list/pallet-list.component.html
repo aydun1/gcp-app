@@ -15,7 +15,6 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <a mat-raised-button [routerLink]="['/pallets/transfer', 'new']" color="primary" class="add-cage">New transfer</a>
   </div>
 
   <div *ngIf="(pallets$ | async) as pallets" class="inner">

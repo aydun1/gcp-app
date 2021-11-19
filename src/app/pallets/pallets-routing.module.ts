@@ -13,27 +13,22 @@ const routes: Routes = [
   {
     path: '',
     component: PalletsComponent,
-    children: [
-      {
-        path: '',
-        component: PalletListComponent
-      },
-      {
-        path: 'stocktake',
-        component: PalletReconciliationComponent
-      },
-      {
-        path: 'transfer',
-        component: PalletInterstateTransferListComponent,
-        children: [
-          {
-            path: 'new',
-            component: PalletInterstateTransferNewComponent
-          }
-
-        ]
-      }
-    ]
+  },
+  {
+    path: 'history',
+    component: PalletListComponent
+  },
+  {
+    path: 'stocktake',
+    component: PalletReconciliationComponent
+  },
+  {
+    path: 'transfer',
+    component: PalletInterstateTransferListComponent,
+    children: [{
+      path: 'new',
+      component: PalletInterstateTransferNewComponent
+    }]
   }
 ]
 
