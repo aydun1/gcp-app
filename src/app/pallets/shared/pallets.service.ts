@@ -122,7 +122,7 @@ export class PalletsService {
 
   approveInterstatePalletTransfer(id: string, approval: boolean): Observable<any> {
     const payload = {fields: {
-      Status: approval ? 1 : 0,
+      Status: approval ? 'Approved' : 'Rejected',
     }};
     return this.http.patch(`${this.palletTrackerUrl}/items('${id}')`, payload).pipe(
       map(_ => _ as Pallet),
@@ -137,14 +137,38 @@ export class PalletsService {
     );;
   }
 
-
-
-
-
-
-
   getCustomerPallets(custnmbr: string): Observable<Pallet[]> {
     const url = this.palletTrackerUrl + `/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/From eq '${encodeURIComponent(custnmbr)}' or fields/To eq '${encodeURIComponent(custnmbr)}'`;
     return this.http.get(url).pipe(map((_: any) => _.value));
+  }
+
+  getPalletTransfer(id: string): Observable<any> {
+    const url = this.palletTrackerUrl + `/items('${id}')/versions`;
+    return this.http.get<{value: Pallet[]}>(url).pipe(
+      map(_ => {
+        const a = _.value.reverse().reduce(
+          (acc, curr) => {
+            if (curr.id === '1.0') {
+              acc['initiator'] = curr.lastModifiedBy.user;
+              acc['pallet'] = curr.fields.Pallet;
+              acc['quantity'] = curr.fields.Quantity;
+              acc['from'] = curr.fields.From;
+              acc['to'] = curr.fields.To;
+            }
+            if (!acc['approved']) {
+              if (curr.fields.Status === "Approved") {
+                acc['approved'] = true;
+                acc['approver'] = curr.lastModifiedBy.user;
+              } else {
+                acc['quantity'] = curr.fields.Quantity;
+              }
+            }
+            return acc;
+          }, {versions: _.value.length}
+
+        )
+        return a
+    })
+    );
   }
 }

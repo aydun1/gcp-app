@@ -1,5 +1,12 @@
 export interface Pallet {
   id: string,
+  lastModifiedBy: {
+    user: {
+      displayName: string,
+      email: string,
+      id: string
+    }
+  }
   fields: {
     Title: string,
     From: string,
@@ -8,6 +15,7 @@ export interface Pallet {
     In: string,
     Out: string,
     Quantity: string,
-    Change?: number
+    Change?: number,
+    Status: string,
   }
 }

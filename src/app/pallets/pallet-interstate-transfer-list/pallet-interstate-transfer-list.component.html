@@ -33,8 +33,8 @@
 
       <ng-container matColumnDef="reference">
         <mat-header-cell *matHeaderCellDef> Reference no. </mat-header-cell>
-        <mat-cell *matCellDef="let pallet">
-          {{ pallet.fields.Reference }}
+        <mat-cell *matCellDef="let pallet" [routerLink]="[pallet.id]">
+          <a [routerLink]="[pallet.id]" class="pallet-link">{{ pallet.fields.Reference || '-' }}</a>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
@@ -71,7 +71,7 @@
       <ng-container matColumnDef="approved">
         <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
         <mat-cell *matCellDef="let pallet" (click)="approve(pallet.id)">
-          {{ statusValues[pallet.fields.Status] || 'Pending approval' }}
+          {{ pallet.fields.Status || 'Pending approval' }}
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>

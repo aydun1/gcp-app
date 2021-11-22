@@ -7,6 +7,7 @@ import { PalletListComponent } from './pallet-list/pallet-list.component';
 import { PalletReconciliationComponent } from './pallet-reconciliation/pallet-reconciliation.component';
 import { PalletInterstateTransferNewComponent } from './pallet-interstate-transfer-new/pallet-interstate-transfer-new.component';
 import { PalletInterstateTransferListComponent } from './pallet-interstate-transfer-list/pallet-interstate-transfer-list.component';
+import { PalletTransferViewComponent } from './pallet-transfer-view/pallet-transfer-view.component';
 
 
 const routes: Routes = [
@@ -28,6 +29,9 @@ const routes: Routes = [
     children: [{
       path: 'new',
       component: PalletInterstateTransferNewComponent
+    }, {
+      path: ':id',
+      component: PalletTransferViewComponent
     }]
   }
 ]

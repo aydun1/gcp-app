@@ -11,6 +11,7 @@ import { PalletListComponent } from './pallet-list/pallet-list.component';
 import { PalletInterstateTransferNewComponent } from './pallet-interstate-transfer-new/pallet-interstate-transfer-new.component';
 import { PalletInterstateTransferListComponent } from './pallet-interstate-transfer-list/pallet-interstate-transfer-list.component';
 import { PalletViewComponent } from './pallet-view/pallet-view.component';
+import { PalletTransferViewComponent } from './pallet-transfer-view/pallet-transfer-view.component';
 
 
 
@@ -23,6 +24,7 @@ import { PalletViewComponent } from './pallet-view/pallet-view.component';
     PalletInterstateTransferNewComponent,
     PalletInterstateTransferListComponent,
     PalletViewComponent,
+    PalletTransferViewComponent,
   ],
   imports: [
     CommonModule,

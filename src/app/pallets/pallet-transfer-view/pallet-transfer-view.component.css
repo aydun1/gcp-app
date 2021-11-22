@@ -1,0 +1,22 @@
+:host {
+  background: white;
+  bottom: 0;
+  display: block;
+  left: 0;
+  overflow-y: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 4;
+}
+
+.content {
+  display: block;
+  margin: 0 auto;
+  max-width: 1024px;
+}
+
+.inner {
+  margin: 10px 10px;
+  position: relative;
+}

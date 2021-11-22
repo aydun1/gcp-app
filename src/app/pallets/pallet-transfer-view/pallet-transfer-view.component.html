@@ -1,0 +1,55 @@
+<div class="content" *ngIf="transfer$ | async as transfer">
+  <div class="nav-buttons">
+    <a mat-stroked-button (click)="goBack()"><mat-icon>arrow_back</mat-icon>Back to Cages</a>
+  </div>
+  <div class="inner">
+    <div class="header">
+      <div>
+        <h2>Pallet transfer request</h2>
+      </div>
+    </div>
+    <mat-card *ngFor="let t of transfer">
+
+
+      <mat-list>
+        <div mat-subheader><span class="subheader">Details</span></div>
+        <mat-list-item *ngIf="t.fields.Reference">
+          <mat-icon mat-list-icon>business</mat-icon>
+          <div mat-line>{{ t.fields.Reference }}</div>
+          <div mat-line>Reference number</div>
+        </mat-list-item>
+        <mat-list-item *ngIf="t.fields.From">
+          <mat-icon mat-list-icon>timeline</mat-icon>
+          <div mat-line>{{ t.fields.From }}</div>
+          <div mat-line>From</div>
+        </mat-list-item>
+        <mat-list-item *ngIf="t.fields.To">
+          <mat-icon mat-list-icon>scale</mat-icon>
+          <div mat-line>{{ t.fields.To }}</div>
+          <div mat-line>To</div>
+        </mat-list-item>
+        <mat-list-item *ngIf="t.fields.Status">
+          <mat-icon mat-list-icon>scale</mat-icon>
+          <div mat-line>{{ t.fields.CageWeight }} kg</div>
+          <div mat-line>Cage weight</div>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon mat-list-icon>scale</mat-icon>
+          <div mat-line>{{ t.lastModifiedBy.user.displayName }}</div>
+          <div mat-line>Cage weight</div>
+        </mat-list-item>
+        <mat-list-item *ngIf="t.fields.Pallet">
+          <mat-icon mat-list-icon>table_rows</mat-icon>
+
+          <div mat-line>{{ t.fields.Pallet }}</div>
+          <div mat-line>Pallet</div>
+        </mat-list-item>
+        <mat-list-item *ngIf="t.fields.Quantity">
+          <mat-icon mat-list-icon>123</mat-icon>
+          <div mat-line>{{ t.fields.Quantity }}</div>
+          <div mat-line>Quantity</div>
+        </mat-list-item>
+      </mat-list>
+    </mat-card>
+  </div>
+</div>
