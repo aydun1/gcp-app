@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, Observable, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, Subject, switchMap, tap, throwError } from 'rxjs';
 import { PalletsService } from '../shared/pallets.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'gcp-pallet-transfer-view',
@@ -13,10 +14,12 @@ export class PalletTransferViewComponent implements OnInit {
   private id: string;
   private transferSource$: Subject<string>;
   public transfer$: Observable<any>;
+  public loading: boolean;
 
   constructor(
     private location: Location,
     private route: ActivatedRoute,
+    private snackBar: MatSnackBar,
     private palletsService: PalletsService
   ) { }
 
@@ -33,7 +36,22 @@ export class PalletTransferViewComponent implements OnInit {
   getTransfer() {
     this.transferSource$.next(this.id);
   }
-  
+
+  approve() {
+    this.loading = true;
+    this.palletsService.approveInterstatePalletTransfer(this.id, true).pipe(
+      tap(_ => {
+        this.getTransfer();
+        this.snackBar.open('Approved interstate transfer', '', {duration: 3000});
+      }),
+      catchError(err => {
+        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
+        this.loading = false;
+        return throwError(() => new Error(err));
+      })
+    ).subscribe();
+  }
+
   goBack() {
     this.location.back();
   }

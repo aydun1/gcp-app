@@ -10,13 +10,40 @@
   z-index: 4;
 }
 
+.nav-buttons {
+  margin: 10px;
+}
+
+.header {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
+}
+
 .content {
   display: block;
   margin: 0 auto;
-  max-width: 1024px;
+  max-width: 800px;
 }
 
 .inner {
   margin: 10px 10px;
   position: relative;
+}
+
+.subheader {
+  flex: 1
+}
+
+.status {
+  display: flex;
+  line-height: 24px;
+}
+
+.approved {
+  color: green;
+}
+
+.side-by-side {
+  display: flex;
 }

@@ -151,7 +151,7 @@ export class PalletsService {
     return this.http.get(url).pipe(map((_: any) => _.value));
   }
 
-  getPalletTransfer(id: string): Observable<any> {
+  getPalletTransfer(id: string): Observable<{summary: any}> {
     const url = this.palletTrackerUrl + `/items('${id}')/versions`;
     return this.http.get<{value: Pallet[]}>(url).pipe(
       map(_ => {
@@ -175,7 +175,7 @@ export class PalletsService {
             return acc;
           }, {versions: _.value.length}
         )
-        return a;
+        return {summary: a};
       })
     );
   }

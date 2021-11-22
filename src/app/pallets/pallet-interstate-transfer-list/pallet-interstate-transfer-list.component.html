@@ -70,7 +70,7 @@
 
       <ng-container matColumnDef="approved">
         <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
-        <mat-cell *matCellDef="let pallet" (click)="approve(pallet.id)">
+        <mat-cell *matCellDef="let pallet">
           {{ pallet.fields.Status || 'Pending approval' }}
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
