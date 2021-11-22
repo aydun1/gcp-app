@@ -49,7 +49,7 @@ export class CustomerViewComponent implements OnInit {
     ).subscribe(sites => this.sites = sites);
 
     this.palletsSubject$.pipe(
-      switchMap(id => this.palletsService.getCustomerPallets(id)),
+      switchMap(id => this.palletsService.getCustomerPallets(id, this.site)),
       map(pallets => ['Loscam', 'Chep', 'Plain'].reduce((acc,curr) => {
         const count = pallets.filter(_ => _.fields.Pallet === curr).reduce((subtotal, qty) => subtotal + parseInt(qty.fields.Out) - parseInt(qty.fields.In), 0);
         acc[curr] = count;
@@ -106,8 +106,8 @@ export class CustomerViewComponent implements OnInit {
     });
   }
 
-  openPalletDialog(customer: Customer) {
-    const data = {customer};
+  openPalletDialog(customer: Customer, sites: Array<any>) {
+    const data = {customer, sites};
     const dialogRef = this.dialog.open(PalletDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().subscribe(result => {
       this.refreshPallets(data.customer.accountnumber);
@@ -124,8 +124,9 @@ export class CustomerViewComponent implements OnInit {
     });
   }
 
-  setSite(site: string) {
+  setSite(customer: string, site: string) {
     this.site = site;
+    this.refreshPallets(customer);
   }
 
   goBack() {

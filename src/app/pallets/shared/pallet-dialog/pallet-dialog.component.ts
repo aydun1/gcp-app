@@ -20,7 +20,7 @@ export class PalletDialogComponent implements OnInit {
 
   constructor(
       public dialogRef: MatDialogRef<PalletDialogComponent>,
-      @Inject(MAT_DIALOG_DATA) public data: {customer: Customer},
+      @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<any>},
       private snackBar: MatSnackBar,
       private fb: FormBuilder,
       private sharedService: SharedService,
@@ -36,6 +36,7 @@ export class PalletDialogComponent implements OnInit {
       palletType: ['', Validators.required],
       inQty: ['', Validators.required],
       outQty: ['', Validators.required],
+      site: ['', this.data.sites.length ? Validators.required : ''],
       notes: ['']
     });
 

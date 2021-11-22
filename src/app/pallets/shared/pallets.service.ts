@@ -105,6 +105,7 @@ export class PalletsService {
       Quantity: Math.abs(v.inQty - v.outQty),
       Notes: v.notes
     }};
+    if (v.site) payload['fields']['Site'] = v.site.fields.Title;
     return this.http.post(`${this.palletTrackerUrl}/items`, payload);
   }
 
@@ -145,8 +146,9 @@ export class PalletsService {
     );;
   }
 
-  getCustomerPallets(custnmbr: string): Observable<Pallet[]> {
-    const url = this.palletTrackerUrl + `/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/From eq '${encodeURIComponent(custnmbr)}' or fields/To eq '${encodeURIComponent(custnmbr)}'`;
+  getCustomerPallets(custnmbr: string, site = ''): Observable<Pallet[]> {
+    let url = this.palletTrackerUrl + `/items?expand=fields(select=Title,Pallet,Out,In)&filter=(fields/From eq '${encodeURIComponent(custnmbr)}' or fields/To eq '${encodeURIComponent(custnmbr)}')`;
+    if (site) url += `and fields/Site eq '${encodeURIComponent(site)}'`;
     return this.http.get(url).pipe(map((_: any) => _.value));
   }
 

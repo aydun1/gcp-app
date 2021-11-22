@@ -33,7 +33,7 @@
       </div>
     </div>
     <div>
-      <gcp-big-button [target]="[]" (click)="openPalletDialog(customer)">Transfer Pallets</gcp-big-button>
+      <gcp-big-button [target]="[]" (click)="openPalletDialog(customer, sites)">Transfer Pallets</gcp-big-button>
       <gcp-big-button [target]="[]" (click)="openRecyclingDialog(customer)">Manage Recycling</gcp-big-button>
     </div>
   </div>
@@ -41,10 +41,10 @@
 
 <mat-menu #menu="matMenu" xPosition="before" >
   <ng-template matMenuContent let-customer="customer">
-    <button mat-menu-item  (click)="setSite(null)">
+    <button mat-menu-item (click)="setSite(customer, null)">
       <span>All sites</span>
     </button>
-    <button mat-menu-item *ngFor="let site of sites" (click)="setSite(site.fields.Title)">
+    <button mat-menu-item *ngFor="let site of sites" (click)="setSite(customer, site.fields.Title)">
       <span>{{ site.fields.Title }}</span>
     </button>
     <button mat-menu-item (click)="openSiteDialog(customer)">
