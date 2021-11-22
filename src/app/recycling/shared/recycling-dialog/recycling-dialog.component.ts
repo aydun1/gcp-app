@@ -2,9 +2,11 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Customer } from 'src/app/customers/shared/customer';
-import { RecyclingService } from 'src/app/recycling/shared/recycling.service';
-import { Cage } from '../../../recycling/shared/cage';
+
+import { RecyclingService } from '../../shared/recycling.service';
+import { Cage } from '../../shared/cage';
+import { Customer } from '../../../customers/shared/customer';
+import { Site } from '../../../customers/shared/site';
 
 @Component({
   selector: 'gcp-recycling-dialog',
@@ -22,10 +24,9 @@ export class RecyclingDialogComponent implements OnInit {
 
   constructor(
       public dialogRef: MatDialogRef<RecyclingDialogComponent>,
-      @Inject(MAT_DIALOG_DATA) public data: {customer: Customer},
+      @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>, site: string},
       private recyclingService: RecyclingService,
-
-      private fb: FormBuilder,
+      private fb: FormBuilder
   ) { }
 
   ngOnInit(): void {
@@ -37,18 +38,17 @@ export class RecyclingDialogComponent implements OnInit {
   }
 
   getContainers() {
-    return this.recyclingService.getCagesWithCustomer(this.data.customer.accountnumber).subscribe(
+    return this.recyclingService.getCagesWithCustomer(this.data.customer.accountnumber, this.data.site).subscribe(
       _ => {
         this.noActiveCages = _.filter(c => c['fields']['Status'] !== 'Complete').length === 0;
         this.noCageHistory = _.filter(c => c['fields']['Status'] === 'Complete').length === 0;
-
-        this.cages$.next(_)
+        this.cages$.next(_);
       }
     );
   }
 
   assignToCustomer(id: string) {
-    this.recyclingService.allocateToCustomer(id, this.data.customer.accountnumber, this.data.customer.name).subscribe(() => this.closeAssigningPage());
+    this.recyclingService.allocateToCustomer(id, this.data.customer.accountnumber, this.data.customer.name, this.data.site).subscribe(() => this.closeAssigningPage());
   }
 
   closeAssigningPage() {

@@ -47,8 +47,9 @@ export class CustomerViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.sitesSubject$.pipe(
-      switchMap(id => this.cutomersService.getSites(id))
-    ).subscribe(sites => this.sites = sites);
+      switchMap(id => this.cutomersService.getSites(id)),
+      tap(sites => this.sites = sites)
+    ).subscribe();
 
     this.palletsSubject$.pipe(
       switchMap(id => this.palletsService.getCustomerPallets(id, this.site)),
@@ -99,14 +100,14 @@ export class CustomerViewComponent implements OnInit {
     dialogRef.afterClosed().subscribe(() => this.refreshSites(data.customer.accountnumber));
   }
 
-  openPalletDialog(customer: Customer, sites: Array<any>) {
-    const data = {customer, sites, site: this.site};
+  openPalletDialog(customer: Customer) {
+    const data = {customer, sites: this.sites, site: this.site};
     const dialogRef = this.dialog.open(PalletDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().subscribe(() => this.refreshPallets(data.customer.accountnumber));
   }
 
   openRecyclingDialog(customer: Customer) {
-    const data = {customer};
+    const data = {customer, sites: this.sites, site: this.site};
     const dialogRef = this.dialog.open(RecyclingDialogComponent, {width: '800px', data});
     dialogRef.afterClosed().subscribe(() => this.refreshCages(data.customer.accountnumber));
   }

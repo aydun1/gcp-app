@@ -4,10 +4,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, tap, throwError } from 'rxjs';
 
-import { Site } from 'src/app/customers/shared/site';
-import { Customer } from '../../../customers/shared/customer';
-import { SharedService } from '../../../shared.service';
 import { PalletsService } from '../pallets.service';
+import { SharedService } from '../../../shared.service';
+import { Site } from '../../../customers/shared/site';
+import { Customer } from '../../../customers/shared/customer';
 
 @Component({
   selector: 'gcp-pallet-dialog',

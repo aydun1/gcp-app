@@ -146,13 +146,15 @@ export class RecyclingService {
     return this.http.get(url).pipe(map((res: Cage) => this.assignStatus(res)));
   }
 
-  getCagesWithCustomer(custnmbr: string): Observable<Cage[]> {
-    const url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/Modified desc&filter=fields/CustomerNumber eq '${encodeURIComponent(custnmbr)}'`;
+  getCagesWithCustomer(custnmbr: string, site = ''): Observable<Cage[]> {
+    let url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/Modified desc&filter=fields/CustomerNumber eq '${encodeURIComponent(custnmbr)}'`;
+    if (site) url += `and fields/Site eq '${encodeURIComponent(site)}'`;
     return this.getCages(url);
   }
 
-  allocateToCustomer(id: string, custnmbr: string, customerName: string): Observable<any> {
+  allocateToCustomer(id: string, custnmbr: string, customerName: string, site: string): Observable<any> {
     const payload = {fields: {Status: 'Allocated to customer', CustomerNumber: custnmbr, Customer: customerName}};
+    if (site) payload['fields']['Site'] = site;
     return this.updateStatus(id, payload);
   }
 
