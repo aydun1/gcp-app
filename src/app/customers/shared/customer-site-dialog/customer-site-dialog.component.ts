@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 
+import { Customer } from '../customer';
 import { CustomersService } from '../customers.service';
 
 @Component({
@@ -21,7 +22,7 @@ export class CustomerSiteDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<CustomerSiteDialogComponent>,
     public fb: FormBuilder,
     public snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: {customer: string},
+    @Inject(MAT_DIALOG_DATA) public data: {customer: Customer},
     private customerService: CustomersService
   ) { }
 
@@ -33,13 +34,13 @@ export class CustomerSiteDialogComponent implements OnInit {
   }
 
   getSites() {
-    this.sites$ = this.customerService.getSites(this.data.customer)
+    this.sites$ = this.customerService.getSites(this.data.customer.accountnumber);
   }
 
   addSite() {
     if (this.siteForm.invalid) return;
     this.loading = true;
-    const action = this.edit ? this.customerService.renameSite(this.edit, this.siteForm.value['site'] ) : this.customerService.addSite(this.data.customer, this.siteForm.value['site'] );
+    const action = this.edit ? this.customerService.renameSite(this.edit, this.siteForm.value['site']) : this.customerService.addSite(this.data.customer.accountnumber, this.siteForm.value['site'] );
     action.pipe(
       tap(_ => {
         this.dialogRef.close();

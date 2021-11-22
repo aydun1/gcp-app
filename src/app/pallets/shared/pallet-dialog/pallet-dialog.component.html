@@ -7,7 +7,7 @@
     <mat-button-toggle value="Plain"><img src="assets/pallet.png" alt="Plain pallet"></mat-button-toggle>
   </mat-button-toggle-group>
   <mat-form-field appearance="fill" *ngIf="data.sites.length">
-    <mat-label>Sites</mat-label>
+    <mat-label>Site</mat-label>
     <mat-select formControlName="site">
       <mat-option *ngFor="let site of data.sites" [value]="site">{{ site.fields.Title }}</mat-option>
     </mat-select>

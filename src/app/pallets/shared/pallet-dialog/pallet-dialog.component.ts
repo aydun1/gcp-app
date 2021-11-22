@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, tap, throwError } from 'rxjs';
 
+import { Site } from 'src/app/customers/shared/site';
 import { Customer } from '../../../customers/shared/customer';
 import { SharedService } from '../../../shared.service';
 import { PalletsService } from '../pallets.service';
@@ -20,7 +21,7 @@ export class PalletDialogComponent implements OnInit {
 
   constructor(
       public dialogRef: MatDialogRef<PalletDialogComponent>,
-      @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<any>},
+      @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>, site: string},
       private snackBar: MatSnackBar,
       private fb: FormBuilder,
       private sharedService: SharedService,
@@ -32,14 +33,14 @@ export class PalletDialogComponent implements OnInit {
       this._state = state;
     });
 
+    const selectedSite = this.data.sites.find(_ => _.fields.Title === this.data.site);
     this.palletForm = this.fb.group({
       palletType: ['', Validators.required],
       inQty: ['', Validators.required],
       outQty: ['', Validators.required],
-      site: ['', this.data.sites.length ? Validators.required : ''],
+      site: [selectedSite, this.data.sites.length ? Validators.required : ''],
       notes: ['']
     });
-
   }
 
   addPallets(): void {

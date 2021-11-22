@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, switchMap, take, tap } from 'rxjs';
 import { Customer } from './customer';
+import { Site } from './site';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +31,7 @@ export class CustomersService {
     private http: HttpClient
   ) { }
 
-  createUrl(filters: any) {
+  private createUrl(filters: any) {
     let url = `${this.url}/accounts?$select=name,accountnumber,territoryid`;
     const filterCount = Object.keys(filters).length;
     if(filterCount > 0) {
@@ -87,7 +88,7 @@ export class CustomersService {
     return this.http.get(url);
   }
 
-  getSites(customer: string) {
+  getSites(customer: string): Observable<Site[]> {
     const url = `${this.sitesUrl}/items?expand=fields(select=Title, Customer)&filter=fields/Customer eq '${customer}'`;
     return this.http.get(url).pipe(map(_ => _['value']));
   }
