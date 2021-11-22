@@ -122,18 +122,17 @@ export class PalletsService {
     );
   }
 
-  updateList(res: Pallet) {
+  private updateList(res: Pallet) {
     return this._palletsSubject$.pipe(
       take(1),
-      map(pallets => pallets.map(pallet => pallet.id === res.id ? res : pallet)),
-      map(pallets => {
+      map(_ => {
+        const pallets = _.map(pallet => pallet);
         const i = pallets.findIndex(pallet => pallet.id === res.id);
         if (i > -1) pallets[i] = res
         else pallets.unshift(res);
-        return pallets
-      }),
-      tap(_ => this._palletsSubject$.next(_)),
-      map(() => res)
+        this._palletsSubject$.next(pallets);
+        return res
+      })
     )
   }
 

@@ -109,8 +109,6 @@ export class RecyclingListComponent implements OnInit {
   }
 
   compareQueryStrings(prev: Params, curr: Params) {
-    console.log(this.recyclingService.needReset)
-    if (this.recyclingService.needReset) return false;
     if (!this._loadList && this.route.children.length === 0) {
       this._loadList = true;
       return false;

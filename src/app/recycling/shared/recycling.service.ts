@@ -15,7 +15,6 @@ export class RecyclingService {
   private _columns$ = new BehaviorSubject<any>(null);
   private _dataGroupUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists';
   private _cageTrackerUrl = `${this._dataGroupUrl}/e96c2778-2322-46d6-8de9-3d0c8ca5aefd`;
-  private _needReset: boolean;
 
   constructor(
     private http: HttpClient
@@ -95,31 +94,25 @@ export class RecyclingService {
 
   private updateStatus(id, payload) {
     const url = this._cageTrackerUrl + `/items('${id}')`;
-
-    return this.http.patch(url, payload).pipe(
-      map(_ => _ as Cage),
-      switchMap(res => {
-        return this._cagesSubject$.pipe(
-          take(1),
-          map(cages => cages.map(cage => cage.id === res.id ? res : cage)),
-          tap(_ => this._cagesSubject$.next(_)),
-          map(() => res)
-        )
-      })
+    return this.http.patch<Cage>(url, payload).pipe(
+      switchMap(res => this.updateList(res))
     );
   }
 
-
-  get needReset() {
-    return this._needReset;
+  private updateList(res: Cage) {
+    return this._cagesSubject$.pipe(
+      take(1),
+      map(_ => {
+        const cages = _.map(cage => cage);
+        const i = cages.findIndex(cage => cage.id === res.id);
+        if (i > -1) cages[i] = res
+        else cages.unshift(res);
+        this._cagesSubject$.next(cages);
+        return res;
+      })
+    );
   }
-
-  resetList() {
-    this._needReset = true;
-  }
-
   getFirstPage(filters: any): BehaviorSubject<Cage[]> {
-    this._needReset = false;
     this._nextPage = '';
     this._loadingCages = false;
     const url = this.createUrl(filters);
@@ -206,7 +199,9 @@ export class RecyclingService {
   addNewCage(cageNumber: number, branch: string, assetType: string, cageWeight: number): Observable<any> {
     const url = this._cageTrackerUrl + `/items`;
     const payload = {fields: {Status: 'Available', CageNumber: cageNumber, Branch: branch, AssetType: assetType, CageWeight: cageWeight}};
-    return this.http.post(url, payload);
+    return this.http.post<Cage>(url, payload).pipe(
+      switchMap(_ => this.updateList(_))
+    );
   }
 
   markCageAvailable(id: string, cageNumber: number, branch: string, assetType: string, cageWeight: number): Observable<any> {

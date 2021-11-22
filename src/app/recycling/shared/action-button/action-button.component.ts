@@ -49,7 +49,7 @@ export class ActionButtonComponent implements OnInit {
 
   saveWeight(id: string) {
     if (this.weightForm.invalid) return;
-    const netWeight = this.weightForm.value.weight - this.cage.fields.CageWeight
+    const netWeight = this.weightForm.value.weight - this.cage.fields.CageWeight;
     this.recyclingService.setCageWeight(id, netWeight).subscribe(() => this.updated.next(true));
   }
 }
