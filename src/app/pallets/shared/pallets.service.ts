@@ -117,23 +117,32 @@ export class PalletsService {
       Notes: v.notes,
       Reference: `${v.to}${v.reference}`
     }};
-    return this.http.post(`${this.palletTrackerUrl}/items`, payload);
+    return this.http.post<Pallet>(`${this.palletTrackerUrl}/items`, payload).pipe(
+      switchMap(_ => this.updateList(_))
+    );
+  }
+
+  updateList(res: Pallet) {
+    return this._palletsSubject$.pipe(
+      take(1),
+      map(pallets => pallets.map(pallet => pallet.id === res.id ? res : pallet)),
+      map(pallets => {
+        const i = pallets.findIndex(pallet => pallet.id === res.id);
+        if (i > -1) pallets[i] = res
+        else pallets.unshift(res);
+        return pallets
+      }),
+      tap(_ => this._palletsSubject$.next(_)),
+      map(() => res)
+    )
   }
 
   approveInterstatePalletTransfer(id: string, approval: boolean): Observable<any> {
     const payload = {fields: {
       Status: approval ? 'Approved' : 'Rejected',
     }};
-    return this.http.patch(`${this.palletTrackerUrl}/items('${id}')`, payload).pipe(
-      map(_ => _ as Pallet),
-      switchMap(res => {
-        return this._palletsSubject$.pipe(
-          take(1),
-          map(pallets => pallets.map(pallet => pallet.id === res.id ? res : pallet)),
-          tap(_ => this._palletsSubject$.next(_)),
-          map(() => res)
-        )
-      })
+    return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${id}')`, payload).pipe(
+      switchMap(res => this.updateList(res))
     );;
   }
 
@@ -165,10 +174,9 @@ export class PalletsService {
             }
             return acc;
           }, {versions: _.value.length}
-
         )
-        return a
-    })
+        return a;
+      })
     );
   }
 }
