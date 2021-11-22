@@ -79,4 +79,7 @@ export class PalletInterstateTransferNewComponent implements OnInit {
     
   }
 
+  goBack() {
+    this.location.back();
+  }
 }

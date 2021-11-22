@@ -1,4 +1,7 @@
 <div class="outer">
+  <div class="nav-buttons">
+    <a mat-stroked-button (click)="goBack()"><mat-icon>arrow_back</mat-icon>Back to Transfers</a>
+  </div>
   <h2>Pallet interstate transfer</h2>
   <form (ngSubmit)="onSubmit()" [formGroup]="palletTransferForm">
     <mat-card>

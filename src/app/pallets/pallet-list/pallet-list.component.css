@@ -9,6 +9,10 @@
   max-width: 1024px;
 }
 
+h2 {
+  margin-left: 10px;
+}
+
 .mat-form-field {
   font-size: 14px;
   margin-right: 10px;
