@@ -1,0 +1,13 @@
+.close-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.icon {
+  order: 10;
+}
+
+.mat-form-field {
+  width: 100%;
+}

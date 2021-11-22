@@ -11,6 +11,7 @@ import { PalletDialogComponent } from '../../pallets/shared/pallet-dialog/pallet
 import { RecyclingDialogComponent } from '../../recycling/shared/recycling-dialog/recycling-dialog.component';
 import { RecyclingService } from '../../recycling/shared/recycling.service';
 import { PalletsService } from '../../pallets/shared/pallets.service';
+import { CustomerSiteDialogComponent } from '../shared/customer-site-dialog/customer-site-dialog.component';
 
 @Component({
   selector: 'gcp-customer-view',
@@ -20,9 +21,12 @@ import { PalletsService } from '../../pallets/shared/pallets.service';
 export class CustomerViewComponent implements OnInit {
   private id: string;
   private navigationSubscription: Subscription;
+  private sitesSubject$ = new Subject<string>();
   private palletsSubject$ = new Subject<string>();
   private cagesSubject$ = new Subject<string>();
   public customer$: Observable<any>;
+  public site: string;
+  public sites: any;
   public pallets: any;
   public cages: any;
 
@@ -38,6 +42,11 @@ export class CustomerViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.customer$ = this.getCustomer();
+    this.site = '';
+
+    this.sitesSubject$.pipe(
+      switchMap(id => this.cutomersService.getSites(id))
+    ).subscribe(sites => this.sites = sites);
 
     this.palletsSubject$.pipe(
       switchMap(id => this.palletsService.getCustomerPallets(id)),
@@ -70,9 +79,14 @@ export class CustomerViewComponent implements OnInit {
   getCustomer() {
     this.id = this.route.snapshot.paramMap.get('id');
     return this.cutomersService.getCustomer(this.id).pipe(
+      tap(_ => this.refreshSites(_.accountnumber)),
       tap(_ => this.refreshPallets(_.accountnumber)),
       tap(_ => this.refreshCages(_.accountnumber))
     );
+  }
+
+  refreshSites(id: string) {
+    this.sitesSubject$.next(id);
   }
 
   refreshPallets(id: string) {
@@ -81,6 +95,15 @@ export class CustomerViewComponent implements OnInit {
 
   refreshCages(id: string) {
     this.cagesSubject$.next(id);
+  }
+
+  openSiteDialog(customer: string) {
+    const data = {customer};
+    const dialogRef = this.dialog.open(CustomerSiteDialogComponent, {width: '600px', data});
+    dialogRef.afterClosed().subscribe(result => {
+      this.refreshSites(data.customer);
+      if (!result) return;
+    });
   }
 
   openPalletDialog(customer: Customer) {
@@ -99,6 +122,10 @@ export class CustomerViewComponent implements OnInit {
       this.refreshCages(data.customer.accountnumber);
       if (!result) return;
     });
+  }
+
+  setSite(site: string) {
+    this.site = site;
   }
 
   goBack() {

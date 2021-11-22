@@ -7,8 +7,14 @@ import { Customer } from './customer';
   providedIn: 'root'
 })
 export class CustomersService {
-
   private url = 'https://gardencityplastics.crm6.dynamics.com/api/data/v9.2';
+  private sitesUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists/1e955039-1d2e-41f8-98a2-688319720410';
+
+
+
+
+
+
   private nextPage: string;
   private customersSubject$ = new BehaviorSubject<Customer[]>([]);
   private loadingCustomers: boolean;
@@ -79,5 +85,29 @@ export class CustomersService {
   getRegions() {
     const url = `${this.url}/territories?$select=name`;
     return this.http.get(url);
+  }
+
+  getSites(customer: string) {
+    const url = `${this.sitesUrl}/items?expand=fields(select=Title, Customer)&filter=fields/Customer eq '${customer}'`;
+    return this.http.get(url).pipe(map(_ => _['value']));
+  }
+
+  addSite(customer: string, site: string) {
+    const payload = {fields: {
+      Customer: customer,
+      Title: site
+    }};
+    return this.http.post(`${this.sitesUrl}/items`, payload);
+  }
+
+  renameSite(id: string, site: string) {
+    const payload = {fields: {
+      Title: site
+    }};
+    return this.http.patch(`${this.sitesUrl}/items('${id}')`, payload);
+
+  }
+  deleteSite(id: string) {
+    return this.http.delete(`${this.sitesUrl}/items('${id}')`);
   }
 }

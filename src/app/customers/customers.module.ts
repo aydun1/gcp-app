@@ -6,6 +6,7 @@ import { CustomersService } from './shared/customers.service';
 import { SharedModule } from '../shared/shared.module';
 import { CustomerRoutingModule } from './ customer-routing.module';
 import { CustomerViewComponent } from './customer-view/customer-view.component';
+import { CustomerSiteDialogComponent } from './shared/customer-site-dialog/customer-site-dialog.component';
 
 
 
@@ -14,6 +15,7 @@ import { CustomerViewComponent } from './customer-view/customer-view.component';
     CustomersComponent,
     CustomerListComponent,
     CustomerViewComponent,
+    CustomerSiteDialogComponent,
   ],
   imports: [
     CommonModule,
