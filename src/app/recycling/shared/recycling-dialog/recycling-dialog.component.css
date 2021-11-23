@@ -7,6 +7,10 @@
   margin: 10px 0;
 }
 
+.mat-expansion-panel-header-title, .mat-expansion-panel-header-description {
+  flex: 265px;
+}
+
 .actions {
   display: flex;
   flex-direction: column;
@@ -36,4 +40,9 @@
   position: absolute;
   right: 0;
   top: 0;
+}
+
+.cage-number {
+  font-weight: bold;
+  width: 42px;
 }
