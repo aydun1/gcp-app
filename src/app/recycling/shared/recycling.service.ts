@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
 import { Cage } from './cage';
 
@@ -191,7 +192,12 @@ export class RecyclingService {
     return this.updateStatus(id, payload);
   }
 
-  setCageWeight(id: string, weight: number): Observable<any> {
+  setNetWeight(id: string, weight: number): Observable<any> {
+    const payload = {fields: {NetWeight: weight}};
+    return this.updateStatus(id, payload);
+  }
+
+  setGrossWeight(id: string, weight: number): Observable<any> {
     const payload = {fields: {NetWeight: weight}};
     return this.updateStatus(id, payload);
   }
@@ -220,4 +226,12 @@ export class RecyclingService {
     return this.getCages(url).pipe(map(res => res[0]));
   }
 
+  uniqueCageValidator() {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      return this.checkCageNumber(control.value).pipe(
+        map((exists) => (exists ? { cageExists: true } : null)),
+        catchError((err) => null)
+      );
+    };
+  }
 }
