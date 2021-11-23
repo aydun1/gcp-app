@@ -71,12 +71,10 @@ export class RecyclingService {
       cage['statusId'] = 2;
     } else if (cage.fields.Date2 && !cage.fields.Date3) {
       cage['statusId'] = 3;
-    } else if (cage.fields.Date3 && !cage.fields.NetWeight) {
+    } else if (cage.fields.Date3 && !cage.fields.Date4) {
       cage['statusId'] = 4;
-    } else if (cage.fields.NetWeight && !cage.fields.Date4) {
-      cage['statusId'] = 5;
     } else if (cage.fields.Date4 && cage.fields.Status !== 'Complete') {
-      cage['statusId'] = 6;
+      cage['statusId'] = 5;
     } else {
       cage['status'] = cage.fields.Status;
     }
