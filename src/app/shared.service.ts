@@ -1,6 +1,6 @@
 import { HttpClient,  } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { MsalService } from '@azure/msal-angular';
 import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
 
@@ -19,7 +19,7 @@ export class SharedService {
 
 
 
-  getPhoto(): Observable<any> {
+  getPhoto(): Observable<SafeUrl> {
     const url = 'https://graph.microsoft.com/v1.0/me/photo/$value';
     return this.http.get(url, { responseType: 'blob' }).pipe(
       map(_ => URL.createObjectURL(_)),

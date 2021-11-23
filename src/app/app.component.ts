@@ -1,9 +1,11 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
+import { SafeUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { AuthenticationResult, InteractionStatus, PopupRequest, EventMessage, EventType, AccountInfo } from '@azure/msal-browser';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
+
 import { SharedService } from './shared.service';
 
 @Component({
@@ -17,7 +19,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public loginDisplay: boolean;
   public loginDisplay$ = new Subject<boolean>();
   public accounts: AccountInfo[];
-  public photo$: any;
+  public photo$: Observable<SafeUrl>;
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -72,7 +74,7 @@ export class AppComponent implements OnInit, OnDestroy {
   login() {
     if (this.msalGuardConfig.authRequest) {
       this.authService.loginPopup({...this.msalGuardConfig.authRequest} as PopupRequest).subscribe(
-        (response: AuthenticationResult) => 
+        (response: AuthenticationResult) =>
           this.authService.instance.setActiveAccount(response.account)
       );
     } else {
