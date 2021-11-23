@@ -3,6 +3,11 @@
   max-width: 800px;
 }
 
+h2 {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 .inner {
   margin-left: 10px;
   margin-right: 10px;
@@ -11,6 +16,10 @@
 .buttons {
   display: flex;
   justify-content: flex-end;
+}
+
+.buttons > button {
+  margin-left: 10px;
 }
 
 .mat-form-field {

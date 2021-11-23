@@ -8,30 +8,30 @@
 </mat-toolbar>
 
 <div class="outer">
-  <h2 mat-dialog-title class="inner">Add a new cage</h2>
+  <h2>Add a new cage</h2>
   <form (ngSubmit)="addCage()" [formGroup]="cageForm" class="inner">
     <mat-card>
-    <mat-form-field appearance="outline" class="asset-type">
+    <mat-form-field appearance="fill" class="asset-type">
       <mat-label>{{ (choices$ | async)?.AssetType.name }}</mat-label>
       <mat-select formControlName="assetType">
         <mat-option *ngFor="let s of (choices$ | async)?.AssetType.choice.choices" value="{{ s }}">{{ s }}</mat-option>
       </mat-select>
     </mat-form-field>
     <ng-container *ngIf="isCage">
-      <mat-form-field appearance="outline" class="full-width">
+      <mat-form-field appearance="fill" class="full-width">
         <mat-label>Cage number</mat-label>
         <input matInput type="number" formControlName="cageNumber" autocomplete="off" placeholder="The number of the cage">
         <mat-error *ngIf="cageForm.get('cageNumber').hasError('duplicate')">
           Cage number is already assigned
         </mat-error>
       </mat-form-field>
-      <mat-form-field appearance="outline" class="full-width">
+      <mat-form-field appearance="fill" class="full-width">
         <mat-label>Empty cage weight</mat-label>
         <input matInput type="number" formControlName="cageWeight" autocomplete="off" placeholder="The weight of the empty cage">
         <span matSuffix>kg</span>
       </mat-form-field>
     </ng-container>
-    <mat-form-field appearance="outline" class="branch">
+    <mat-form-field appearance="fill" class="branch">
       <mat-label>{{ (choices$ | async)?.Branch.name }}</mat-label>
       <mat-select formControlName="branch">
         <mat-option *ngFor="let s of (choices$ | async)?.Branch.choice.choices" value="{{ s }}">{{ s }}</mat-option>
