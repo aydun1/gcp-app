@@ -60,18 +60,16 @@ export class PalletListComponent implements OnInit {
     )
   }
 
-  getFirstPage(_: any) {
-    this.sharedService.getState().subscribe(_ => console.log(_))
-
-    return this.palletsService.getFirstPage(_).pipe(map(_=> {
-      return _.map(pallet =>  {
-        pallet.fields['To'] = pallet.fields.From === this.branchFilter.value ? pallet.fields.To : pallet.fields.From;
-        pallet.fields['Change'] = pallet.fields.From === this.branchFilter.value ? -pallet.fields.Quantity : +pallet.fields.Quantity;
-        return pallet
-      })
-    }),
-    tap(_ => console.log(_)));
-
+  getFirstPage(params: Params) {
+    return this.palletsService.getFirstPage(params).pipe(
+      map(_=> 
+        _.map(pallet =>  {
+          pallet.fields['To'] = pallet.fields.From === this.branchFilter.value ? pallet.fields.To : pallet.fields.From;
+          pallet.fields['Change'] = pallet.fields.From === this.branchFilter.value ? -pallet.fields.Quantity : +pallet.fields.Quantity;
+          return pallet;
+        })
+      )
+    );
   }
 
   getNextPage() {

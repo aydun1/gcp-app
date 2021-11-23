@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Params } from '@angular/router';
 import { BehaviorSubject, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
 import { Pallet } from './pallet';
@@ -72,7 +73,7 @@ export class PalletsService {
     return this._columns$;
   }
 
-  getFirstPage(filters: any): BehaviorSubject<Pallet[]> {
+  getFirstPage(filters: Params): BehaviorSubject<Pallet[]> {
     this._nextPage = '';
     this._loadingPallets = false;
     const url = this.createUrl(filters);
@@ -93,7 +94,6 @@ export class PalletsService {
   }
 
   customerPalletTransfer(v: any): Observable<any> {
-    console.log(v);
     const inbound = v.inQty > v.outQty;
     const payload = {fields: {
       Title: v.customerName,
