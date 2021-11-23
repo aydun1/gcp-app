@@ -1,33 +1,22 @@
-<mat-toolbar>
-  <a class="title" [routerLink]="['/']">{{ title }}</a>
-  <div class="toolbar-spacer"></div>
-  <button *ngIf="!loginDisplay" mat-raised-button (click)="login()">Login</button>
-  <div *ngIf="photo$ | async as photo; else noPic" class="photo-button" mat-button [matMenuTriggerFor]="menu"> <img [src]="photo"></div>
-  <ng-template #noPic>
-    <button  *ngIf="loginDisplay" mat-button [matMenuTriggerFor]="menu"><mat-icon>arrow_drop_down</mat-icon></button>
-  </ng-template>
-</mat-toolbar>
+<ng-container *ngIf="loginDisplay">
+  <mat-toolbar>
+    <button *ngIf="snav" mat-icon-button (click)="snav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <a class="title" [routerLink]="['/']">{{ title }}</a>
+    <div class="toolbar-spacer"></div>
+    <div *ngIf="photo$ | async as photo; else noPic" class="photo-button" mat-button [matMenuTriggerFor]="menu"> <img [src]="photo"></div>
+    <ng-template #noPic>
+      <button  *ngIf="loginDisplay" mat-button [matMenuTriggerFor]="menu"><mat-icon>arrow_drop_down</mat-icon></button>
+    </ng-template>
+  </mat-toolbar>
 
-<div class="print-heading">
-  <h1>Garden City Plastics</h1>
-</div>
-
-<mat-menu #menu="matMenu">
-  <div class="menu-upper">
-    <div class="menu-company">Garden City Plastics</div>
-    <button mat-button (click)="logout()" class="menu-logout">Logout</button>
+  <div class="print-heading">
+    <h1>Garden City Plastics</h1>
   </div>
-  <mat-list>
-    <mat-list-item class="menu-accounts" *ngFor="let account of accounts">
-      <div mat-line>{{ account.name }}</div>
-      <div mat-line>{{ account.username }}</div>
-    </mat-list-item>
-  </mat-list>
-</mat-menu>
 
-<div class="container">
-  <mat-drawer-container>
-    <mat-drawer *ngIf="loginDisplay" mode="side" opened>
+  <mat-sidenav-container>
+    <mat-sidenav #snav [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile">
       <mat-nav-list>
         <a mat-list-item routerLink="/customers" routerLinkActive="active"><mat-icon>groups</mat-icon><span class="menu-label">Customers</span></a>
         <mat-divider></mat-divider>
@@ -42,9 +31,29 @@
         <ng-container *ngIf="urlActive('/recycling')">
         </ng-container>
       </mat-nav-list>
-    </mat-drawer>
-    <mat-drawer-content>
+    </mat-sidenav>
+    <mat-sidenav-content>
       <router-outlet></router-outlet>
-    </mat-drawer-content>
-  </mat-drawer-container>
-</div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</ng-container>
+
+<mat-menu #menu="matMenu">
+  <div class="menu-upper">
+    <div class="menu-company">Garden City Plastics</div>
+    <button mat-button (click)="logout()" class="menu-logout">Logout</button>
+  </div>
+  <mat-list>
+    <mat-list-item class="menu-accounts" *ngFor="let account of accounts">
+      <div mat-line>{{ account.name }}</div>
+      <div mat-line>{{ account.username }}</div>
+    </mat-list-item>
+  </mat-list>
+</mat-menu>
+
+<mat-card *ngIf="!loginDisplay" class="login-card">
+  <img src="/assets/bannerlogo.png" class="logo">
+  <p>Welcome to the Garden City Plastics pallet and cage tracker.</p>
+  <p>Click below to login.</p>
+  <button mat-button (click)="login()">Login</button>
+</mat-card>

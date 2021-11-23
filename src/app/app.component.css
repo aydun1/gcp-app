@@ -20,12 +20,6 @@
   top:0;
 }
 
-.container {
-  height: 100%;
-  overflow-y: hidden;
-  position: relative;
-}
-
 .toolbar-spacer {
   flex: 1 1 auto;
 }
@@ -75,8 +69,6 @@ a.title {
 }
 
 .mat-drawer-content {
-  height: 100%;
-  overflow-y: auto;
   position: inherit;
 }
 
@@ -97,10 +89,18 @@ a.title {
   height: 32px;
 }
 
-@media (max-width: 800px) {
-  .menu-label {
-    display: none;
-  }
+.login-card {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.logo {
+  max-width: 100%;
+}
+
+.login-card .mat-button {
+  display: block;
+  margin: 0 auto;
 }
 
 @media (max-width: 600px) {
@@ -118,20 +118,7 @@ a.title {
     display: none;
   }
 
-  .container {
-    height: auto;
-    overflow-y: inherit;
-  }
-
   .print-heading {
     display: block;
-  }
-
-  .mat-drawer {
-    display: none;
-  }
-
-  .mat-drawer-content {
-    margin-left: 0!important;
   }
 }

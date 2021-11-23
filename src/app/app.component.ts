@@ -1,3 +1,4 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
@@ -20,19 +21,22 @@ export class AppComponent implements OnInit, OnDestroy {
   public loginDisplay$ = new Subject<boolean>();
   public accounts: AccountInfo[];
   public photo$: Observable<SafeUrl>;
+  public mobileQuery: MediaQueryList;
+  public isMobile: boolean;
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
     private authService: MsalService,
     private msalBroadcastService: MsalBroadcastService,
     private router: Router,
-    private sharedService: SharedService
-  ) {}
+    private sharedService: SharedService,
+    private observer: BreakpointObserver
+  ) { }
 
   ngOnInit(): void {
     this.setLoginDisplay();
+    this.observer.observe(['(max-width: 600px)']).subscribe(_ => this.isMobile = _.matches);
     this.authService.instance.enableAccountStorageEvents();
-
     this.msalBroadcastService.msalSubject$.pipe(
       filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED)
     ).subscribe((result: EventMessage) => {
