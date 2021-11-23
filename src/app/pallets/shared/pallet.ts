@@ -1,5 +1,6 @@
 export interface Pallet {
   id: string,
+  lastModifiedDateTime: any,
   lastModifiedBy: {
     user: {
       displayName: string,

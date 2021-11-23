@@ -10,6 +10,7 @@ import { PalletsService } from '../shared/pallets.service';
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer-new',
+  host: {class:'app-component'},
   templateUrl: './pallet-interstate-transfer-new.component.html',
   styleUrls: ['./pallet-interstate-transfer-new.component.css']
 })

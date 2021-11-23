@@ -1,7 +1,13 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="goBack()" class="mobile-button">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <ng-container>
+    <div class="title">Pallet transfer</div>
+  </ng-container>
+</mat-toolbar>
+
 <div class="outer">
-  <div class="nav-buttons">
-    <a mat-stroked-button (click)="goBack()"><mat-icon>arrow_back</mat-icon>Back to Transfers</a>
-  </div>
   <h2>New interstate pallet transfer</h2>
   <form (ngSubmit)="onSubmit()" [formGroup]="palletTransferForm">
     <mat-card>

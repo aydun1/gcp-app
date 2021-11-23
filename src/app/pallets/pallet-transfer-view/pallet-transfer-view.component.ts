@@ -7,6 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'gcp-pallet-transfer-view',
+  host: {class:'app-component'},
   templateUrl: './pallet-transfer-view.component.html',
   styleUrls: ['./pallet-transfer-view.component.css']
 })

@@ -6,6 +6,7 @@ import { BehaviorSubject, Observable, Subject, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'gcp-recycling-view',
+  host: {class:'app-component'},
   templateUrl: './recycling-view.component.html',
   styleUrls: ['./recycling-view.component.css']
 })

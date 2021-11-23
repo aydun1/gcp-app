@@ -9,6 +9,7 @@ import { RecyclingService } from '../shared/recycling.service';
 
 @Component({
   selector: 'gcp-recycling-new',
+  host: {class:'app-component'},
   templateUrl: './recycling-new.component.html',
   styleUrls: ['./recycling-new.component.css']
 })

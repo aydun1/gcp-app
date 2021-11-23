@@ -23,6 +23,7 @@ interface PalletQuantities {
 
 @Component({
   selector: 'gcp-customer-view',
+  host: {class:'app-component'},
   templateUrl: './customer-view.component.html',
   styleUrls: ['./customer-view.component.css']
 })

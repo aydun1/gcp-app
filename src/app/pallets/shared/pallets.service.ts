@@ -164,10 +164,11 @@ export class PalletsService {
               acc['quantity'] = curr.fields.Quantity;
               acc['from'] = curr.fields.From;
               acc['to'] = curr.fields.To;
+              acc['innitiated'] = curr.lastModifiedDateTime;
             }
             if (!acc['approved']) {
               if (curr.fields.Status === "Approved") {
-                acc['approved'] = true;
+                acc['approved'] = curr.lastModifiedDateTime;
                 acc['approver'] = curr.lastModifiedBy.user;
               } else {
                 acc['quantity'] = curr.fields.Quantity;
