@@ -16,10 +16,6 @@
   position: relative;
 }
 
-.subheader {
-  flex: 1
-}
-
 .status {
   font-size: 18px;
   position: absolute;
@@ -38,4 +34,19 @@
 
 .side-by-side {
   display: flex;
+}
+
+.arrow {
+  align-self: center;
+  margin: 0 40px;
+}
+
+@media (max-width: 600px) {
+  .arrow {
+    display: none;
+  }
+
+  .side-by-side {
+    flex-direction: column;
+  }
 }
