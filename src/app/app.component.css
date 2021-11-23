@@ -78,6 +78,7 @@ a.title {
   height: 100%;
   overflow-y: auto;
   position: inherit;
+  z-index: 5;
 }
 
 .mat-nav-list {
