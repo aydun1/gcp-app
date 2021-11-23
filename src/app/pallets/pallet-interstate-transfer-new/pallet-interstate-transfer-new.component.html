@@ -25,14 +25,14 @@
         <mat-form-field appearance="fill">
           <mat-label>From</mat-label>
           <mat-select matInput type="text" formControlName="from">
-            <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
+            <mat-option *ngFor="let s of targetStates" [value]="s">{{ s }}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-icon class="arrow">arrow_forward</mat-icon>
         <mat-form-field appearance="fill">
           <mat-label>To</mat-label>
           <mat-select matInput type="text" formControlName="to">
-            <mat-option *ngFor="let s of targetStates" [value]="s">{{ s }}</mat-option>
+            <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -48,8 +48,8 @@
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>Reference no.</mat-label>
-        <span matPrefix>{{palletTransferForm.get('to').value}}</span>
-        <input matInput type="number" formControlName="reference" autocomplete="off">
+        <span matPrefix>{{palletTransferForm.get('from').value}}</span>
+        <input matInput type="text" formControlName="reference" autocomplete="off">
       </mat-form-field>
     </mat-card>
     <div class="buttons">
