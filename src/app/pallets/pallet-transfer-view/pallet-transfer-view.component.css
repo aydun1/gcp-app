@@ -1,23 +1,24 @@
 :host {
   background: white;
   bottom: 0;
-  display: block;
   left: 0;
   overflow-y: auto;
-  position: absolute;
+  position: fixed;
   right: 0;
   top: 0;
   z-index: 6;
-}
-
-.nav-buttons {
-  margin: 10px;
 }
 
 .header {
   align-items: baseline;
   display: flex;
   justify-content: space-between;
+  margin: 20px 0 10px 0;
+}
+
+.header > h2 {
+  margin: 0;
+  margin-bottom: 8px;
 }
 
 .content {
@@ -36,6 +37,13 @@
 }
 
 .status {
+  font-size: 18px;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.status > div {
   display: flex;
   line-height: 24px;
 }

@@ -11,6 +11,11 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+.mat-toolbar {
+  background-color: #343a40;
+  color: white;
+}
+
 .mat-dialog-container {
   position: relative;
 }

@@ -10,11 +10,6 @@
   z-index: 6;
 }
 
-.mat-toolbar {
-  background-color: #343a40;
-  color: white;
-}
-
 .name, .number {
   margin: 0;
 }
