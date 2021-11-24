@@ -1,15 +1,5 @@
 <mat-list>
-  <mat-list-item>
-    <mat-icon mat-list-icon>tag</mat-icon>
-    <div mat-line>{{ cage.fields.CageNumber }}</div>
-    <div mat-line>Cage number</div>
-  </mat-list-item>
-  <mat-list-item *ngIf="cage.fields.NetWeight">
-    <mat-icon mat-list-icon>scale</mat-icon>
-    <div mat-line>{{ cage.fields.NetWeight }} kg</div>
-    <div mat-line>Net weight</div>
-  </mat-list-item>
-  <div mat-subheader>Dates</div>
+  <div mat-subheader *ngIf="cage.fields.Date1 || cage.fields.Date2 || cage.fields.Date3 || cage.fields.Date4">Dates</div>
   <mat-list-item *ngIf="cage.fields.Date4">
     <div mat-line>{{ cage.fields.Date4 | date: 'dd/MM/yyyy' }}</div>
     <div mat-line>Collected from Polymer</div>

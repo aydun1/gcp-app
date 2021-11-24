@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Transferring pallets for {{ data.customer.name || data.customer.accountnumber }}</h2>
+<h2 mat-dialog-title>Transferring pallets for {{ data.customer.name }} ({{ data.customer.accountnumber }})</h2>
 <form (ngSubmit)="addPallets()" [formGroup]="palletForm">
   <mat-dialog-content>
     <mat-button-toggle-group formControlName="palletType" aria-label="Pallet type">

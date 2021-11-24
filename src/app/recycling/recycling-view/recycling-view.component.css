@@ -41,3 +41,7 @@
 .mat-subheader > span {
   flex: 1;
 }
+
+.last-icon {
+  order: 9;
+}

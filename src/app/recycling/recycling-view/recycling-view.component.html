@@ -19,7 +19,6 @@
     <mat-card>
       <mat-list>
         <div mat-subheader><span class="subheader">Details</span></div>
-        
         <mat-list-item *ngIf="cage.fields.CustomerNumber">
           <mat-icon mat-list-icon>business</mat-icon>
           <div mat-line>{{ cage.fields.Customer }}</div>
@@ -30,34 +29,10 @@
           <div mat-line>{{ cage.fields.Status }}</div>
           <div mat-line>Status</div>
         </mat-list-item>
-        <mat-list-item *ngIf="cage.fields.Status">
-          <mat-icon mat-list-icon>scale</mat-icon>
-          <div mat-line>{{ cage.fields.CageWeight }} kg</div>
-          <div mat-line>Cage weight</div>
-        </mat-list-item>
-        <mat-list-item *ngIf="cage.fields.NetWeight">
-          <mat-icon mat-list-icon>scale</mat-icon>
-          <div mat-line>{{ cage.fields.NetWeight }} kg</div>
-          <div mat-line>Net weight</div>
-        </mat-list-item>
-        <div mat-subheader *ngIf="cage.fields.Date1 || cage.fields.Date2 || cage.fields.Date3 || cage.fields.Date4">Dates</div>
-        <mat-list-item *ngIf="cage.fields.Date4">
-          <div mat-line>{{ cage.fields.Date4 | date: 'dd/MM/yyyy' }}</div>
-          <div mat-line>Collected from Polymer</div>
-        </mat-list-item>
-        <mat-list-item *ngIf="cage.fields.Date3">
-          <div mat-line>{{ cage.fields.Date3 | date: 'dd/MM/yyyy' }}</div>
-          <div mat-line>Delivered to Polymer</div>
-        </mat-list-item>
-        <mat-list-item *ngIf="cage.fields.Date2">
-          <div mat-line>{{ cage.fields.Date2 | date: 'dd/MM/yyyy' }}</div>
-          <div mat-line>Collected from customer</div>
-        </mat-list-item>
-        <mat-list-item *ngIf="cage.fields.Date1">
-          <div mat-line>{{ cage.fields.Date1 | date: 'dd/MM/yyyy' }}</div>
-          <div mat-line>Delivered to customer</div>
-        </mat-list-item>
+        <div mat-subheader>Weights</div>
+        <gcp-cage-weights [cage]="cage" (updated)="getCage()"></gcp-cage-weights>
       </mat-list>
+      <gcp-cage-details [cage]="cage"></gcp-cage-details>
     </mat-card>
 
   </div>
@@ -89,7 +64,7 @@
         <mat-cell *matCellDef="let cage">
           {{ cage.fields.NetWeight || 0 }} kg
         </mat-cell>
-        <mat-footer-cell *matFooterCellDef> {{ weight || 0 }} kg </mat-footer-cell>
+        <mat-footer-cell *matFooterCellDef> {{ totalWeight || 0 }} kg </mat-footer-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>

@@ -64,8 +64,8 @@ export class CustomerViewComponent implements OnInit {
     this.cagesSubject$.pipe(
       switchMap(id => this.recyclingService.getCagesWithCustomer(id)),
       map(cages => {
-        const weight = cages.map(_ => _.fields.NetWeight || 0).reduce((acc, curr) => acc + curr, 0);
-        return {weight};
+        const totalWeight = cages.map(_ => +_.fields.NetWeight || 0).reduce((acc, curr) => acc + curr, 0);
+        return {weight: totalWeight};
       })
     ).subscribe(cages => this.cages = cages);
 

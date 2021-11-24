@@ -60,6 +60,10 @@ export class RecyclingDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  trackByIndex(index: number, item: Cage) {
+    return index;
+  }
+
   trackByFn(index: number, item: Cage) {
     return item.id;
   }

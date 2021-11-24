@@ -11,6 +11,7 @@ import { RecyclingViewComponent } from './recycling-view/recycling-view.componen
 import { RecyclingNewComponent } from './recycling-new/recycling-new.component';
 import { ActionButtonComponent } from './shared/action-button/action-button.component';
 import { CageDetailsComponent } from './shared/cage-details/cage-details.component';
+import { CageWeightsComponent } from './shared/cage-weights/cage-weights.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { CageDetailsComponent } from './shared/cage-details/cage-details.compone
     RecyclingNewComponent,
     ActionButtonComponent,
     CageDetailsComponent,
+    CageWeightsComponent,
   ],
   imports: [
     CommonModule,

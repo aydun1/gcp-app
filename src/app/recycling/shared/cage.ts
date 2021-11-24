@@ -7,6 +7,7 @@ export interface Cage {
     Branch: string,
     CageNumber: number,
     CageWeight: number,
+    GrossWeight: number,
     NetWeight: number,
     Status: string,
     AssetType: string,

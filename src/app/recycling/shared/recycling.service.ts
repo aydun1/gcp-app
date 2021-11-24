@@ -192,13 +192,13 @@ export class RecyclingService {
     return this.updateStatus(id, payload);
   }
 
-  setNetWeight(id: string, weight: number): Observable<any> {
-    const payload = {fields: {NetWeight: weight}};
+  setCageWeight(id: string, weight: number): Observable<any> {
+    const payload = {fields: {CageWeight: weight}};
     return this.updateStatus(id, payload);
   }
 
   setGrossWeight(id: string, weight: number): Observable<any> {
-    const payload = {fields: {NetWeight: weight}};
+    const payload = {fields: {GrossWeight: weight}};
     return this.updateStatus(id, payload);
   }
 

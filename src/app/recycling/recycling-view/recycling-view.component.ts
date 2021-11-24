@@ -18,7 +18,7 @@ export class RecyclingViewComponent implements OnInit {
   public cageHistory$: Observable<any>;
   public noHistory: boolean;
   public displayedColumns = ['updated', 'customer', 'weight'];
-  public weight: number;
+  public totalWeight: number;
 
   constructor(
     private route: ActivatedRoute,
@@ -41,10 +41,12 @@ export class RecyclingViewComponent implements OnInit {
 
   getCageHistory(bin: number) {
     this.cageHistory$ = this.recyclingService.getCageHistory(bin).pipe(
-      tap(cages => this.weight = cages.map(_ => _.fields.NetWeight).filter(_ => _).reduce((acc, val) => acc + val, 0)),
+      tap(cages => this.totalWeight = cages.map(_ => _.fields.NetWeight).filter(_ => _).reduce((acc, val) => acc + val, 0)),
       tap(_ => this.noHistory = _.length === 0)   
     );
   }
+
+
 
   goBack() {
     this.location.back();

@@ -18,40 +18,40 @@
 </ng-container>
 
 <ng-container *ngIf="!assigning">
-  <h2 mat-dialog-title>Manage cages for {{ data.customer.accountnumber }} <span *ngIf="data.site">({{ data.site }})</span></h2>
+  <h2 mat-dialog-title>Manage cages for {{ data.customer.name }} ({{ data.customer.accountnumber }}) <span *ngIf="data.site">({{ data.site }})</span></h2>
   <mat-dialog-content>
     <ng-container *ngIf="(cages$ | async | groupBy:'Complete') as groups">
-      <div class="buttons">
-        <h3 class="section-title">Active cages</h3>
-        <button mat-raised-button color="primary" (click)="assigning=true">Assign a cage</button>
-      </div>
-      <p *ngIf="noActiveCages" class="note">
-        No active cages
-      </p>
-      <mat-accordion>
-        <mat-expansion-panel *ngFor="let cage of groups[1];trackBy: trackByFn">
-          <mat-expansion-panel-header>
-            <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> {{ cage.fields.AssetType }}</mat-panel-title>
-            <mat-panel-description>{{ cage.fields.Status }}</mat-panel-description>
-          </mat-expansion-panel-header>
-          <gcp-action-button [cage]="cage" (updated)="getContainers()" class="actions"></gcp-action-button>
-          <gcp-cage-details [cage]="cage"></gcp-cage-details>
-        </mat-expansion-panel>
-      </mat-accordion>
-      <h3>History</h3>
-      <p *ngIf="noCageHistory" class="note">
-        No cage history
-      </p>
-      <mat-accordion>
-        <mat-expansion-panel *ngFor="let cage of groups[0];trackBy: trackByFn">
-          <mat-expansion-panel-header>
-            <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> {{ cage.fields.AssetType }}</mat-panel-title>
-            <mat-panel-description>{{ cage.fields.Status }}</mat-panel-description>
-          </mat-expansion-panel-header>
-          <gcp-action-button [cage]="cage" (updated)="getContainers()" class="actions"></gcp-action-button>
-          <gcp-cage-details [cage]="cage"></gcp-cage-details>
-        </mat-expansion-panel>
-      </mat-accordion>
+      <ng-container *ngFor="let cages of groups.reverse();let indexOfelement=index;trackBy: trackByIndex">
+        <ng-container *ngIf="indexOfelement === 0" >
+          <div class="buttons">
+            <h3 class="section-title">Active cages</h3>
+            <button mat-raised-button color="primary" (click)="assigning=true">Assign a cage</button>
+          </div>
+          <p *ngIf="noActiveCages" class="note">
+            No active cages
+          </p>
+        </ng-container>
+        <ng-container *ngIf="indexOfelement === 1" >
+          <h3>History</h3>
+          <p *ngIf="noCageHistory" class="note">
+            No cage history
+          </p>
+        </ng-container>
+        <mat-accordion>
+          <mat-expansion-panel *ngFor="let cage of cages;trackBy: trackByFn">
+            <mat-expansion-panel-header>
+              <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> {{ cage.fields.AssetType }}</mat-panel-title>
+              <mat-panel-description>{{ cage.fields.Status }}</mat-panel-description>
+            </mat-expansion-panel-header>
+            <gcp-action-button [cage]="cage" (updated)="getContainers()" class="actions"></gcp-action-button>
+            <mat-list>
+              <div mat-subheader>Weights</div>
+              <gcp-cage-weights [cage]="cage" (updated)="getContainers()"></gcp-cage-weights>            
+            </mat-list>
+            <gcp-cage-details [cage]="cage"></gcp-cage-details>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </ng-container>
     </ng-container>
   </mat-dialog-content>
 </ng-container>
