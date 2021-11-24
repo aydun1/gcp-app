@@ -3,7 +3,6 @@ import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
-import { SharedService } from 'src/app/shared.service';
 import { Cage } from '../shared/cage';
 import { RecyclingService } from '../shared/recycling.service';
 
@@ -56,7 +55,7 @@ export class RecyclingListComponent implements OnInit {
     this.binFilter.valueChanges.pipe(
       debounceTime(200),
       map(_ => _ > 0 ? _ : null),
-      tap(_ => this.router.navigate(['recycling'], { queryParams: {'bin': _}, queryParamsHandling: 'merge', replaceUrl: true}))
+      tap(_ => this.router.navigate([], { queryParams: {'bin': _}, queryParamsHandling: 'merge', replaceUrl: true}))
     ).subscribe();
   }
 
@@ -115,16 +114,16 @@ export class RecyclingListComponent implements OnInit {
     return sameBranch && sameBin && sameAssetType && sameStatus && this._loadList;
   }
 
-  setBranch(branch: MatSelectChange ) {
-    this.router.navigate(['recycling'], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  setBranch(branch: MatSelectChange) {
+    this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setStatus(status: MatSelectChange ) {
-    this.router.navigate(['recycling'], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  setStatus(status: MatSelectChange) {
+    this.router.navigate([], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setAssetType(assetType: MatSelectChange ) {
-    this.router.navigate(['recycling'], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  setAssetType(assetType: MatSelectChange) {
+    this.router.navigate([], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   clearBinFilter() {

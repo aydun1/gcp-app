@@ -34,7 +34,7 @@ export class PalletsService {
         case 'to':
           return `fields/To eq '${filters.to}'`;  
         case 'branch':
-          return `fields/From eq '${filters.branch}' or fields/To eq '${filters.branch}'`;
+          return `(fields/From eq '${filters.branch}' or fields/To eq '${filters.branch}')`;
         case 'status':
           return `fields/Status eq '${filters.status}'`;
         case 'pallet':

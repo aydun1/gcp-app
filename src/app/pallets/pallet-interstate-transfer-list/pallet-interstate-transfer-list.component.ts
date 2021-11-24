@@ -85,12 +85,6 @@ export class PalletInterstateTransferListComponent implements OnInit {
     } else {
       this.toFilter.patchValue('');
     }
-    if ('assetType' in params) {
-      this.assetTypeFilter.patchValue(params['assetType']);
-      filters['assetType'] = params['assetType'];
-    } else {
-      this.assetTypeFilter.patchValue('');
-    }
   }
 
   compareQueryStrings(prev: Params, curr: Params) {
@@ -106,15 +100,15 @@ export class PalletInterstateTransferListComponent implements OnInit {
   }
 
   setFrom(from: MatSelectChange ) {
-    this.router.navigate(['pallets/transfer'], { queryParams: {from: from.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate([], { queryParams: {from: from.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setTo(to: MatSelectChange ) {
-    this.router.navigate(['pallets/transfer'], { queryParams: {to: to.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate([], { queryParams: {to: to.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setAssetType(assetType: MatSelectChange ) {
-    this.router.navigate(['pallets/transfer'], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate([], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   approve(id: string) {

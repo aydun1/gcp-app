@@ -64,7 +64,7 @@ export class CustomerListComponent implements OnInit {
     this.nameFilter.valueChanges.pipe(
       debounceTime(200),
       map(_ => _.length > 0 ? _ : null),
-      tap(_ => this.router.navigate(['customers'], { queryParams: {'name': _}, queryParamsHandling: 'merge', replaceUrl: true}))
+      tap(_ => this.router.navigate([], { queryParams: {'name': _}, queryParamsHandling: 'merge', replaceUrl: true}))
     ).subscribe();
 
     this.territories$ = this.getTerritories();
@@ -115,7 +115,7 @@ export class CustomerListComponent implements OnInit {
   }
 
   setRegion(territory: MatSelectChange ) {
-    this.router.navigate(['customers'], { queryParams: {territory: territory.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate([], { queryParams: {territory: territory.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   clearNameFilter() {

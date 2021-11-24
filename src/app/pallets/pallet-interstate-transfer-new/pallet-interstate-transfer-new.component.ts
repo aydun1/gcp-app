@@ -75,7 +75,6 @@ export class PalletInterstateTransferNewComponent implements OnInit {
         return throwError(() => new Error(err));
       })
     ).subscribe(_ => console.log(_));
-    
   }
 
   goBack() {
