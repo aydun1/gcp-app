@@ -16,7 +16,7 @@ import { RecyclingReceiptsService } from '../shared/recycling-receipts.service';
 export class RecyclingReceiptListComponent implements OnInit {
   private _loadList: boolean;
   public branchFilter = new FormControl('');
-  public displayedColumns = ['receiptNumber', 'branch', 'weight'];
+  public displayedColumns = ['date', 'receiptNumber', 'branch', 'weight'];
   public weight: number;
   public receipts$: Observable<Receipt[]>;
   public states = this.sharedService.branches;
@@ -40,7 +40,7 @@ export class RecyclingReceiptListComponent implements OnInit {
       tap(_ => this.parseParams(_)),
       tap(() => this.weight = 0),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
-      tap(receipts => this.weight = receipts.map(_ => _.fields.Weight).filter(_ => _).reduce((acc, val) => acc + val, 0))
+      tap(receipts => this.weight = receipts.map(_ => _.fields.NetWeight).filter(_ => _).reduce((acc, val) => acc + val, 0))
     )
   }
 
@@ -75,7 +75,7 @@ export class RecyclingReceiptListComponent implements OnInit {
   }
 
   setBranch(branch: MatSelectChange) {
-    this.router.navigate(['recycling'], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   trackByFn(index: number, item: Receipt) {

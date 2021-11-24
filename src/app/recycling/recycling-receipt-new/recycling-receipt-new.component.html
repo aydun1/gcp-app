@@ -1,1 +1,39 @@
-<p>recycling-receipt-new works!</p>
+<mat-toolbar>
+  <button mat-icon-button (click)="goBack()" class="mobile-button">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <ng-container>
+    <div class="title">New receipt</div>
+  </ng-container>
+</mat-toolbar>
+
+<div class="outer">
+  <h2>New Polymer receipt</h2>
+  <form (ngSubmit)="onSubmit()" [formGroup]="newReceiptForm">
+    <mat-card>
+      <mat-form-field appearance="fill">
+        <mat-label>Branch</mat-label>
+        <mat-select matInput type="text" formControlName="branch">
+          <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Receipt date</mat-label>
+        <input matInput [matDatepicker]="picker1" formControlName="date">
+        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker  #picker1></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Reference no.</mat-label>
+        <input matInput type="text" formControlName="reference" autocomplete="off">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Net weight</mat-label>
+        <input matInput type="number" formControlName="weight" autocomplete="off" min="0">
+      </mat-form-field>
+    </mat-card>
+    <div class="buttons">
+      <button mat-raised-button color="primary" [disabled]="loading">Confirm</button>
+    </div>
+  </form>
+</div>

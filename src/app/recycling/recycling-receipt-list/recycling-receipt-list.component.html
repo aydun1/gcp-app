@@ -15,19 +15,21 @@
   <div *ngIf="(receipts$ | async) as receipts" class="inner">
     <mat-table #table [dataSource]="receipts" [trackBy]="trackByFn">
 
-      <ng-container matColumnDef="receiptNumber">
-        <mat-header-cell *matHeaderCellDef> Number </mat-header-cell>
-        <mat-cell *matCellDef="let receipt" [routerLink]="[receipt.id]">
-          <a [routerLink]="[receipt.id]" class="receipt-link">{{ receipt.fields.ReceiptNumber || '-' }}</a>
-        </mat-cell>
+      <ng-container matColumnDef="date">
+        <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+        <mat-cell *matCellDef="let receipt" [routerLink]="[receipt.id]">{{ receipt.fields.Date | date: 'dd/MM/yyy' }}</mat-cell>
         <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="receiptNumber">
+        <mat-header-cell *matHeaderCellDef> Reference </mat-header-cell>
+        <mat-cell *matCellDef="let receipt" [routerLink]="[receipt.id]">{{ receipt.fields.Title || '-' }}</mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
 
       <ng-container matColumnDef="branch">
         <mat-header-cell *matHeaderCellDef> Branch </mat-header-cell>
-        <mat-cell *matCellDef="let receipt" [routerLink]="[receipt.id]">
-          <a [routerLink]="[receipt.id]" class="receipt-link">{{ receipt.fields.Branch }}</a>
-        </mat-cell>
+        <mat-cell *matCellDef="let receipt">{{ receipt.fields.Branch }}</mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
 

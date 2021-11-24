@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { RecyclingListComponent } from './recycling-list/recycling-list.component';
 import { RecyclingNewComponent } from './recycling-new/recycling-new.component';
 import { RecyclingReceiptListComponent } from './recycling-receipt-list/recycling-receipt-list.component';
+import { RecyclingReceiptNewComponent } from './recycling-receipt-new/recycling-receipt-new.component';
 import { RecyclingViewComponent } from './recycling-view/recycling-view.component';
 
 import { RecyclingComponent } from './recycling.component';
@@ -29,7 +30,11 @@ const routes: Routes = [
   },
   {
     path: 'receipts',
-    component: RecyclingReceiptListComponent
+    component: RecyclingReceiptListComponent,
+    children: [{
+      path: 'new',
+      component: RecyclingReceiptNewComponent
+    }]
   }
 ]
 
