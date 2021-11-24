@@ -55,7 +55,7 @@ export class CustomerViewComponent implements OnInit {
     this.palletsSubject$.pipe(
       switchMap(id => this.palletsService.getCustomerPallets(id, this.site)),
       map(pallets => ['Loscam', 'Chep', 'Plain'].reduce((acc,curr) => {
-        const count = pallets.filter(_ => _.fields.Pallet === curr).reduce((subtotal, qty) => subtotal + parseInt(qty.fields.Out) - parseInt(qty.fields.In), 0);
+        const count = pallets.filter(_ => _.fields.Pallet === curr).reduce((subtotal, qty) => subtotal + qty.fields.Out - qty.fields.In, 0);
         acc[curr] = count;
         return acc;
       }, {} as PalletQuantities))

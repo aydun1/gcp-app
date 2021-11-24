@@ -23,7 +23,7 @@ export class PalletListComponent implements OnInit {
   private _loadList: boolean;
   public states = ['NSW', 'QLD', 'SA', 'VIC', 'WA'];
   public pallets = ['Loscam', 'Chep', 'Plain'];
-  public displayedColumns = ['date', 'to', 'pallet', 'quantity'];
+  public displayedColumns = ['date', 'recepient', 'pallet', 'out', 'in'];
 
   public choices$: Observable<any>;
   public Status: any;
@@ -64,7 +64,11 @@ export class PalletListComponent implements OnInit {
     return this.palletsService.getFirstPage(params).pipe(
       map(_=> 
         _.map(pallet =>  {
-          pallet.fields['To'] = pallet.fields.From === this.branchFilter.value ? pallet.fields.To : pallet.fields.From;
+          const source = pallet.fields.From === this.branchFilter.value;
+          const inn = source ? null: +pallet.fields.Quantity;
+          const out = source ? +pallet.fields.Quantity : null;
+          pallet.fields['In'] = inn;
+          pallet.fields['Out'] = out;
           pallet.fields['Change'] = pallet.fields.From === this.branchFilter.value ? -pallet.fields.Quantity : +pallet.fields.Quantity;
           return pallet;
         })
