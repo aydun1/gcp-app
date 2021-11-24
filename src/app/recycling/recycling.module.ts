@@ -2,8 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { SharedModule } from '../shared/shared.module';
+import { RecyclingRoutingModule } from './recycling-routing.module';
 import { RecyclingService } from './shared/recycling.service';
-import { RecyclingRoutingModule } from './ recycling-routing.module';
+import { RecyclingReceiptsService } from './shared/recycling-receipts.service';
 import { RecyclingComponent } from './recycling.component';
 import { RecyclingDialogComponent } from './shared/recycling-dialog/recycling-dialog.component';
 import { RecyclingListComponent } from './recycling-list/recycling-list.component';
@@ -12,6 +13,8 @@ import { RecyclingNewComponent } from './recycling-new/recycling-new.component';
 import { ActionButtonComponent } from './shared/action-button/action-button.component';
 import { CageDetailsComponent } from './shared/cage-details/cage-details.component';
 import { CageWeightsComponent } from './shared/cage-weights/cage-weights.component';
+import { RecyclingReceiptListComponent } from './recycling-receipt-list/recycling-receipt-list.component';
+import { RecyclingReceiptNewComponent } from './recycling-receipt-new/recycling-receipt-new.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +26,8 @@ import { CageWeightsComponent } from './shared/cage-weights/cage-weights.compone
     ActionButtonComponent,
     CageDetailsComponent,
     CageWeightsComponent,
+    RecyclingReceiptListComponent,
+    RecyclingReceiptNewComponent,
   ],
   imports: [
     CommonModule,
@@ -30,7 +35,8 @@ import { CageWeightsComponent } from './shared/cage-weights/cage-weights.compone
     RecyclingRoutingModule
   ],
   providers: [
-    RecyclingService
+    RecyclingService,
+    RecyclingReceiptsService
   ]
 })
 export class RecyclingModule { }

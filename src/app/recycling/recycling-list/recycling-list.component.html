@@ -33,7 +33,7 @@
         </button>
       </mat-form-field>
     </div>
-    <a mat-raised-button [routerLink]="['/recycling', 'new']" color="primary" class="add-cage">Add New Cage</a>
+    <a mat-raised-button [routerLink]="['new']" color="primary" class="add-cage">Add New Cage</a>
   </div>
 
   <div *ngIf="(cages$ | async) as cages" class="inner">

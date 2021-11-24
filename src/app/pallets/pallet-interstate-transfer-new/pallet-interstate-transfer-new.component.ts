@@ -16,7 +16,7 @@ import { PalletsService } from '../shared/pallets.service';
 export class PalletInterstateTransferNewComponent implements OnInit {
   public palletTransferForm: FormGroup;
   public pallets = ['Loscam', 'Chep', 'Plain'];
-  public states = ['NSW', 'QLD', 'SA', 'VIC', 'WA'];
+  public states = this.sharedService.branches;
   public state: string;
   public loading: boolean;
   get targetStates() {

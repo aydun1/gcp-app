@@ -8,7 +8,7 @@ import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
   providedIn: 'root'
 })
 export class SharedService {
-  public regions: ['NSW', 'QLD', 'SA', 'VIC', 'WA'];
+  public branches = ['NSW', 'QLD', 'SA', 'VIC', 'WA'];
   private _state$ = new BehaviorSubject<string>('');
 
   constructor(
@@ -16,8 +16,6 @@ export class SharedService {
     private dom: DomSanitizer,
     private authService: MsalService,
   ) { }
-
-
 
   getPhoto(): Observable<SafeUrl> {
     const url = 'https://graph.microsoft.com/v1.0/me/photo/$value';

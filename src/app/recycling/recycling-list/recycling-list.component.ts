@@ -5,7 +5,6 @@ import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { SharedService } from 'src/app/shared.service';
 import { Cage } from '../shared/cage';
-import { Column } from '../../shared/column';
 import { RecyclingService } from '../shared/recycling.service';
 
 @Component({
@@ -14,6 +13,7 @@ import { RecyclingService } from '../shared/recycling.service';
   styleUrls: ['./recycling-list.component.css']
 })
 export class RecyclingListComponent implements OnInit {
+  private _loadList: boolean;
   public cages$: Observable<Cage[]>;
   public binFilter = new FormControl('');
   public branchFilter = new FormControl('');
@@ -21,18 +21,14 @@ export class RecyclingListComponent implements OnInit {
   public assetTypeFilter = new FormControl('');
   public customers$: Observable<any[]>;
   public weight: number;
-  private _loadList: boolean;
   public displayedColumns = ['cageNumber', 'assetType', 'status', 'weight'];
-
   public choices$: Observable<any>;
-  public Status: Column;
 
   constructor(
     private el: ElementRef,
     private route: ActivatedRoute,
     private router: Router,
-    private recyclingService: RecyclingService,
-    private sharedService: SharedService
+    private recyclingService: RecyclingService
   ) { }
 
   @HostListener('scroll', ['$event'])
@@ -69,10 +65,7 @@ export class RecyclingListComponent implements OnInit {
   }
 
   getFirstPage(_: any) {
-    this.sharedService.getState().subscribe(_ => console.log(_))
-
     return this.recyclingService.getFirstPage(_);
-
   }
 
   getNextPage() {

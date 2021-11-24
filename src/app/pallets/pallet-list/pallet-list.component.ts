@@ -21,7 +21,7 @@ export class PalletListComponent implements OnInit {
   public customers$: Observable<any[]>;
   public total: number;
   private _loadList: boolean;
-  public states = ['NSW', 'QLD', 'SA', 'VIC', 'WA'];
+  public states = this.sharedService.branches;
   public pallets = ['Loscam', 'Chep', 'Plain'];
   public displayedColumns = ['date', 'recepient', 'pallet', 'out', 'in'];
 

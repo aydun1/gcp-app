@@ -26,8 +26,11 @@
           <a mat-list-item routerLink="/pallets/stocktake" routerLinkActive="active" class="sub-item"><span class="menu-label">Stocktake</span></a>
           <mat-divider></mat-divider>
         </ng-container>
-        <a mat-list-item routerLink="/recycling" routerLinkActive="active"><mat-icon>recycling</mat-icon><span class="menu-label">Recycling Cages</span></a>
+        <a mat-list-item routerLink="/recycling" routerLinkActive="active"><mat-icon>recycling</mat-icon><span class="menu-label">Recycling</span></a>
         <ng-container *ngIf="urlActive('/recycling')">
+          <a mat-list-item routerLink="/recycling/cages" routerLinkActive="active" class="sub-item"><span class="menu-label">Cage manager</span></a>
+          <a mat-list-item routerLink="/recycling/receipts" routerLinkActive="active" class="sub-item"><span class="menu-label">Polymer receipts</span></a>
+          <mat-divider></mat-divider>
         </ng-container>
       </mat-nav-list>
     </mat-sidenav>

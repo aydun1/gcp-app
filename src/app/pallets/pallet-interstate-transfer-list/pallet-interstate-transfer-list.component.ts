@@ -21,7 +21,7 @@ export class PalletInterstateTransferListComponent implements OnInit {
   public total: number;
   private _loadList: boolean;
   public displayedColumns = ['date', 'reference', 'pallet', 'from', 'to', 'quantity', 'approved'];
-  public states = ['NSW', 'QLD', 'SA', 'VIC', 'WA'];
+  public states = this.sharedService.branches;
   public choices$: Observable<any>;
   public Status: any;
 
