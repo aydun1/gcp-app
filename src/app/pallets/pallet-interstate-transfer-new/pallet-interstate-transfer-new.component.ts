@@ -20,8 +20,9 @@ export class PalletInterstateTransferNewComponent implements OnInit {
   public state: string;
   public loading: boolean;
   get targetStates() {
-    const states = this.states;
-    return states.filter(_ => _ !== this.palletTransferForm.get('from').value);
+    const from = this.palletTransferForm.get('from').value;
+    const states = this.states.filter(_ => _ !== from);
+    return from === 'Transport' ? [this.state] : states;
   }
   get ownState() {
     return this.states.filter(_ => this.state ? _ === this.state : _);
@@ -61,6 +62,7 @@ export class PalletInterstateTransferNewComponent implements OnInit {
       fromBranch => {
         const toBranch = this.palletTransferForm.get('to');
         if (fromBranch === toBranch.value) toBranch.patchValue('');
+        if (fromBranch === 'Transport') toBranch.patchValue(this.state);
       }
     )
   }
