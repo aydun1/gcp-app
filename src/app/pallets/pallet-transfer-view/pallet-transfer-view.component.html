@@ -43,14 +43,14 @@
           <div mat-line>{{ transfer.summary.from }}</div>
           <div mat-line>From</div>
         </mat-list-item>
-        <mat-list-item *ngIf="transfer.summary.approved">
+        <mat-list-item>
           <mat-icon mat-list-icon>event</mat-icon>
-          <div mat-line>{{ transfer.summary.approved | date:'dd/MM/yyyy' }}</div>
+          <div mat-line>{{ (transfer.summary.approved | date:'dd/MM/yyyy') || '-' }}</div>
           <div mat-line>Approved on</div>
         </mat-list-item>
-        <mat-list-item *ngIf="transfer.summary.approver">
+        <mat-list-item>
           <mat-icon mat-list-icon>person</mat-icon>
-          <div mat-line>{{ transfer.summary.approver.displayName }}</div>
+          <div mat-line>{{ transfer.summary.approver?.displayName || '-' }}</div>
           <div mat-line>Approved by</div>
         </mat-list-item>
       </mat-list>
@@ -67,7 +67,7 @@
           <div mat-line>{{ transfer.summary.innitiated | date:'dd/MM/yyyy' }}</div>
           <div mat-line>Requested on</div>
         </mat-list-item>
-        <mat-list-item *ngIf="transfer.summary.initiator">
+        <mat-list-item>
           <mat-icon mat-list-icon>person</mat-icon>
           <div mat-line>{{ transfer.summary.initiator.displayName }}</div>
           <div mat-line>Requested by</div>
