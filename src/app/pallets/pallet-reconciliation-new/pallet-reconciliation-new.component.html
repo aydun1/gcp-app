@@ -1,5 +1,14 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="goBack()" class="mobile-button">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <ng-container>
+    <div class="title">Pallet stocktake</div>
+  </ng-container>
+</mat-toolbar>
+
 <div class="outer">
-  <h2>Pallet stocktake reconciliation report</h2>
+  <h2>New pallet stocktake report</h2>
   <form (ngSubmit)="addPalletRec()" [formGroup]="palletRecForm">
     <mat-card>
       <mat-form-field appearance="fill">
@@ -85,7 +94,6 @@
       </mat-form-field>
     </mat-card>
     <div class="buttons">
-      <button mat-button mat-dialog-close (click)="reset()" tabindex=-1>Reset</button>
       <button mat-raised-button color="primary" (click)="submit()">Confirm</button>
     </div>
   </form>

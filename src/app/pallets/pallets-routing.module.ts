@@ -4,10 +4,11 @@ import { MsalGuard } from '@azure/msal-angular';
 
 import { PalletsComponent } from './pallets.component';
 import { PalletListComponent } from './pallet-list/pallet-list.component';
-import { PalletReconciliationComponent } from './pallet-reconciliation/pallet-reconciliation.component';
+import { PalletReconciliationListComponent } from './pallet-reconciliation-list/pallet-reconciliation-list.component';
 import { PalletInterstateTransferNewComponent } from './pallet-interstate-transfer-new/pallet-interstate-transfer-new.component';
 import { PalletInterstateTransferListComponent } from './pallet-interstate-transfer-list/pallet-interstate-transfer-list.component';
 import { PalletTransferViewComponent } from './pallet-transfer-view/pallet-transfer-view.component';
+import { PalletReconciliationNewComponent } from './pallet-reconciliation-new/pallet-reconciliation-new.component';
 
 
 const routes: Routes = [
@@ -21,7 +22,11 @@ const routes: Routes = [
   },
   {
     path: 'stocktake',
-    component: PalletReconciliationComponent
+    component: PalletReconciliationListComponent,
+    children: [{
+      path: 'new',
+      component: PalletReconciliationNewComponent
+    }]
   },
   {
     path: 'transfer',

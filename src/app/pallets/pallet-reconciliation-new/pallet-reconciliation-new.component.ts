@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { combineLatest, tap } from 'rxjs';
 import { SharedService } from 'src/app/shared.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PalletsService } from '../shared/pallets.service';
+import { Location } from '@angular/common';
 
 @Component({
-  selector: 'gcp-pallet-reconciliation',
-  templateUrl: './pallet-reconciliation.component.html',
-  styleUrls: ['./pallet-reconciliation.component.css']
+  selector: 'gcp-pallet-reconciliation-new',
+  host: {class:'app-component'},
+  templateUrl: './pallet-reconciliation-new.component.html',
+  styleUrls: ['./pallet-reconciliation-new.component.css']
 })
-export class PalletReconciliationComponent implements OnInit {
+export class PalletReconciliationNewComponent implements OnInit {
   public palletRecForm: FormGroup;
   public adjInvBalance = 0;
   public adjPhyBalance = 0;
@@ -22,6 +23,7 @@ export class PalletReconciliationComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private location: Location,
     private snackBar: MatSnackBar,
     private palletsService: PalletsService,
     private sharedService: SharedService
@@ -91,5 +93,9 @@ export class PalletReconciliationComponent implements OnInit {
 
   addPalletRec() {
 
+  }
+
+  goBack() {
+    this.location.back();
   }
 }
