@@ -134,7 +134,7 @@ export class PalletsService {
         this._palletsSubject$.next(pallets);
         return res
       })
-    )
+    );
   }
 
   approveInterstatePalletTransfer(id: string, approval: boolean): Observable<any> {
@@ -143,7 +143,16 @@ export class PalletsService {
     }};
     return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${id}')`, payload).pipe(
       switchMap(res => this.updateList(res))
-    );;
+    );
+  }
+
+  transferInterstatePalletTransfer(id: string): Observable<any> {
+    const payload = {fields: {
+      Status: 'Transferred'
+    }};
+    return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${id}')`, payload).pipe(
+      switchMap(res => this.updateList(res))
+    );
   }
 
   getCustomerPallets(custnmbr: string, site = ''): Observable<Pallet[]> {
@@ -165,13 +174,17 @@ export class PalletsService {
               acc['from'] = curr.fields.From;
               acc['to'] = curr.fields.To;
               acc['innitiated'] = curr.lastModifiedDateTime;
-            }
-            if (!acc['approved']) {
+            } else if (!acc['approved']) {
               if (curr.fields.Status === "Approved") {
                 acc['approved'] = curr.lastModifiedDateTime;
                 acc['approver'] = curr.lastModifiedBy.user;
               } else {
                 acc['quantity'] = curr.fields.Quantity;
+              }
+            } else if (!acc['transferred']) {
+              if (curr.fields.Status === "Transferred") {
+                acc['transferred'] = curr.lastModifiedDateTime;
+                acc['transferer'] = curr.lastModifiedBy.user;
               }
             }
             return acc;

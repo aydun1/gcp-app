@@ -11,6 +11,8 @@
   <div class="header">
     <h2>Transfer details</h2>
     <button *ngIf="!transfer.summary.approved" mat-button mat-raised-button color="primary" (click)="approve()" [disabled]="loading">Approve</button>
+    <button *ngIf="transfer.summary.approved && !transfer.summary.transferred" mat-button mat-raised-button color="primary" (click)="transferp()" [disabled]="loading">Mark as transferred</button>
+
   </div>
   <mat-card class="inner">
     <mat-list>
@@ -29,6 +31,10 @@
       <div class="approved" *ngIf="transfer.summary.approved">
         <mat-icon>verified</mat-icon>
         <span>Approved</span>
+      </div>
+      <div class="approved" *ngIf="transfer.summary.transferred">
+        <mat-icon>verified</mat-icon>
+        <span>Transferred</span>
       </div>
       <div *ngIf="!transfer.summary.approved">
         <span>Pending approval</span>

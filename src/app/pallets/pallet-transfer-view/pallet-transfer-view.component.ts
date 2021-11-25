@@ -53,6 +53,21 @@ export class PalletTransferViewComponent implements OnInit {
     ).subscribe();
   }
 
+  transferp() {
+    this.loading = true;
+    this.palletsService.transferInterstatePalletTransfer(this.id).pipe(
+      tap(_ => {
+        this.getTransfer();
+        this.snackBar.open('Marked as transferred', '', {duration: 3000});
+      }),
+      catchError(err => {
+        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
+        this.loading = false;
+        return throwError(() => new Error(err));
+      })
+    ).subscribe();
+  }
+
   goBack() {
     this.location.back();
   }
