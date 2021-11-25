@@ -44,14 +44,14 @@
           <div mat-line>From</div>
         </mat-list-item>
         <mat-list-item>
-          <mat-icon mat-list-icon>event</mat-icon>
-          <div mat-line>{{ (transfer.summary.approved | date:'dd/MM/yyyy') || '-' }}</div>
-          <div mat-line>Approved on</div>
+          <mat-icon mat-list-icon>today</mat-icon>
+          <div mat-line>{{ transfer.summary.innitiated | date:'dd/MM/yyyy' }}</div>
+          <div mat-line>Requested on</div>
         </mat-list-item>
         <mat-list-item>
           <mat-icon mat-list-icon>person</mat-icon>
-          <div mat-line>{{ transfer.summary.approver?.displayName || '-' }}</div>
-          <div mat-line>Approved by</div>
+          <div mat-line>{{ transfer.summary.initiator.displayName }}</div>
+          <div mat-line>Requested by</div>
         </mat-list-item>
       </mat-list>
       <mat-icon class="arrow">arrow_forward</mat-icon>
@@ -63,14 +63,14 @@
           <div mat-line>To</div>
         </mat-list-item>
         <mat-list-item>
-          <mat-icon mat-list-icon>today</mat-icon>
-          <div mat-line>{{ transfer.summary.innitiated | date:'dd/MM/yyyy' }}</div>
-          <div mat-line>Requested on</div>
+          <mat-icon mat-list-icon>event</mat-icon>
+          <div mat-line>{{ (transfer.summary.approved | date:'dd/MM/yyyy') || '-' }}</div>
+          <div mat-line>Approved on</div>
         </mat-list-item>
         <mat-list-item>
           <mat-icon mat-list-icon>person</mat-icon>
-          <div mat-line>{{ transfer.summary.initiator.displayName }}</div>
-          <div mat-line>Requested by</div>
+          <div mat-line>{{ transfer.summary.approver?.displayName || '-' }}</div>
+          <div mat-line>Approved by</div>
         </mat-list-item>
       </mat-list>
     </div>
