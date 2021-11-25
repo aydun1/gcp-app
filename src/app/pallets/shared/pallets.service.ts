@@ -97,8 +97,10 @@ export class PalletsService {
     const inbound = v.inQty > v.outQty;
     const payload = {fields: {
       Title: v.customerName,
-      From: inbound ? v.customer : v.state,
-      To: inbound ? v.state: v.customer,
+      Branch: v.branch,
+      CustomerNumber: v.customer,
+      From: inbound ? v.customer : v.branch,
+      To: inbound ? v.branch: v.customer,
       In: v.inQty,
       Out: v.outQty,
       Pallet: v.palletType,

@@ -47,7 +47,12 @@ export class PalletDialogComponent implements OnInit {
     if (this.palletForm.invalid) return;
     console.log(this.data);
     this.loading = true;
-    const payload = {...this.palletForm.value, customer: this.data.customer.accountnumber, state: this._state, customerName: this.data.customer.name};
+    if (!this._state) {
+      this.snackBar.open('Could not detect branch. Reload and try again.', '', {duration: 3000});
+      this.loading = false;
+      return;
+    }
+    const payload = {...this.palletForm.value, customer: this.data.customer.accountnumber, branch: this._state, customerName: this.data.customer.name};
     this.palletsService.customerPalletTransfer(payload).pipe(
       tap(_ => {
         this.dialogRef.close();
