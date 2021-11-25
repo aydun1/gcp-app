@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { tap } from 'rxjs';
+import { combineLatest, tap } from 'rxjs';
 import { SharedService } from 'src/app/shared.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { PalletsService } from '../shared/pallets.service';
 
 @Component({
   selector: 'gcp-pallet-reconciliation',
@@ -16,9 +17,13 @@ export class PalletReconciliationComponent implements OnInit {
   public adjPhyBalance = 0;
   public stocktakeResult = 0;
   public pallets = ['Loscam', 'Chep', 'Plain'];
+  public states = this.sharedService.branches;
+  public state: string;
+
   constructor(
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
+    private palletsService: PalletsService,
     private sharedService: SharedService
   ) { }
 
@@ -31,10 +36,15 @@ export class PalletReconciliationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.sharedService.getState().subscribe(state => {
+      this.state = state;
+      if (this.palletRecForm) this.palletRecForm.patchValue({branch: state});
+    });
     const name = this.sharedService.getName();
     const date = new Date();
     this.palletRecForm = this.fb.group({
       date: [date, [Validators.required]],
+      branch: [this.state, [Validators.required]],
       name: [name, [Validators.required]],
       type: ['', [Validators.required]],
       invClosing: ['', [Validators.min(0)]],
@@ -44,16 +54,29 @@ export class PalletReconciliationComponent implements OnInit {
       phyOffSite: ['', [Validators.min(0)]],
       phyToBeCollected: ['', [Validators.min(0)]],
       phyToBeRepaid: ['', [Validators.min(0)]],
-      phyInTransit: ['', [Validators.min(0)]],
+      phyInTransitOff: ['', [Validators.min(0)]],
+      phyInTransitOn: ['', [Validators.min(0)]],
     });
 
     this.palletRecForm.valueChanges.pipe(
       tap(_ => {
         this.adjInvBalance = +_.invClosing - +_.invUnTransfersOff + +_.invUnTransfersOn;
-        this.adjPhyBalance = +_.phyOnSite + +_.phyOffSite + +_.phyToBeCollected - +_.phyToBeRepaid + +_.phyInTransit;
+        this.adjPhyBalance = +_.phyOnSite + +_.phyOffSite + +_.phyToBeCollected - +_.phyToBeRepaid + +_.phyInTransitOff - + _.phyInTransitOn;
         this.stocktakeResult = this.adjInvBalance - this.adjPhyBalance;
       })
     ).subscribe();
+
+
+    this.palletRecForm.get('type').valueChanges.subscribe(
+      _ => this.updateTransits(_)
+    )
+  }
+
+  updateTransits(type: string) {
+   const offs = this.palletsService.getInTransitOff(this.state, type);
+    const ons = this.palletsService.getInTransitOn(this.state, type);
+    combineLatest([offs, ons]).subscribe(([a, b]) => this.palletRecForm.patchValue({phyInTransitOff: a, phyInTransitOn: b}))
+
   }
 
   reset() {

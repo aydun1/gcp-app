@@ -161,6 +161,22 @@ export class PalletsService {
     return this.http.get(url).pipe(map((_: any) => _.value));
   }
 
+  getInTransitOff(branch: string, pallet: string): Observable<Pallet[]> {
+    const melbourneMidnight = new Date(new Date(new Date().toLocaleString("en-US", {timeZone: "Australia/Melbourne"})).setHours(0,0,0,0)).toISOString();
+    let url = this.palletTrackerUrl + '/items?expand=fields(select=Quantity)';
+    url += `&filter=fields/From eq '${encodeURIComponent(branch)}' and fields/Title eq null and fields/Pallet eq '${pallet}'`;
+    url += ` and (fields/Status ne 'Transferred' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
+    return this.http.get(url).pipe(map((_: any) => _.value.reduce((acc, val) => acc + val['fields'].Quantity, 0)));
+  }
+
+  getInTransitOn(branch: string, pallet: string): Observable<Pallet[]> {
+    const melbourneMidnight = new Date(new Date(new Date().toLocaleString("en-US", {timeZone: "Australia/Melbourne"})).setHours(0,0,0,0)).toISOString();
+    let url = this.palletTrackerUrl + '/items?expand=fields(select=Quantity)';
+    url += `&filter=fields/To eq '${encodeURIComponent(branch)}' and fields/Title eq null and fields/Pallet eq '${pallet}'`;
+    url += ` and (fields/Status eq 'Approved' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
+    return this.http.get(url).pipe(map((_: any) => _.value.reduce((acc, val) => acc + val['fields'].Quantity, 0)));
+  }
+
   getPalletTransfer(id: string): Observable<{summary: any}> {
     const url = this.palletTrackerUrl + `/items('${id}')/versions`;
     return this.http.get<{value: Pallet[]}>(url).pipe(

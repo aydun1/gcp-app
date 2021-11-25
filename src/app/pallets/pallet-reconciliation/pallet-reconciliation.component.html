@@ -2,70 +2,52 @@
   <h2>Pallet stocktake reconciliation report</h2>
   <form (ngSubmit)="addPalletRec()" [formGroup]="palletRecForm">
     <mat-card>
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="fill">
         <mat-label>Invoice/stocktake date</mat-label>
         <input matInput [matDatepicker]="picker1" formControlName="date">
         <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
         <mat-datepicker  #picker1></mat-datepicker>
       </mat-form-field>
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="fill">
+        <mat-label>Branch</mat-label>
+        <mat-select matInput type="text" formControlName="branch">
+          <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
         <mat-label>Completed by (name)</mat-label>
         <input matInput type="text" formControlName="name" autocomplete="off">
       </mat-form-field>
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="fill">
         <mat-label>Pallet type</mat-label>
         <mat-select matInput type="number" formControlName="type">
           <mat-option *ngFor="let p of pallets" [value]="p">{{ p }}</mat-option>
         </mat-select>
       </mat-form-field>
-    </mat-card>
-    <mat-card>
-      <mat-card-title>Invoice stocktake</mat-card-title>
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="fill">
         <mat-label>Current account balance</mat-label>
         <input matInput type="number" formControlName="invClosing" autocomplete="off">
       </mat-form-field>
-      <div class="spacer">
-        <mat-divider></mat-divider>
-      </div>
-      <mat-form-field appearance="outline">
-        <mat-label>Un-invoiced transfers off</mat-label>
-        <mat-icon matPrefix>remove</mat-icon>
-        <input matInput type="number" formControlName="invUnTransfersOff" autocomplete="off" min="0">
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Un-invoiced transfers on</mat-label>
-        <mat-icon matPrefix>add</mat-icon>
-        <input matInput type="number" formControlName="invUnTransfersOn" autocomplete="off" min="0">
-      </mat-form-field>
-      <div class="spacer">
-        <mat-divider></mat-divider>
-      </div>
-      <mat-form-field appearance="outline" class="sum">
-        <mat-label>Adjusted invoice closing balance</mat-label>
-        <input matInput type="number" autocomplete="off" disabled [ngModel]="adjInvBalance" [ngModelOptions]="{standalone: true}">
-      </mat-form-field>
     </mat-card>
-
     <mat-card>
-      <mat-card-title>Physical stocktake</mat-card-title>
-      <mat-form-field appearance="outline">
-        <mat-label>Physical pallet count - on site</mat-label>
+      <mat-card-title>Pallet counts</mat-card-title>
+      <mat-form-field appearance="fill">
+        <mat-label>On site</mat-label>
         <input matInput type="number" formControlName="phyOnSite" autocomplete="off" min="0">
       </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Physical pallet count - off site</mat-label>
+      <mat-form-field appearance="fill">
+        <mat-label>Off site</mat-label>
         <input matInput type="number" formControlName="phyOffSite" autocomplete="off" min="0">
       </mat-form-field>
       <div class="spacer">
         <mat-divider></mat-divider>
       </div>
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="fill">
         <mat-label>IOUs - pallets to be collected</mat-label>
         <mat-icon matPrefix>add</mat-icon>
         <input matInput type="number" formControlName="phyToBeCollected" autocomplete="off" min="0">
       </mat-form-field>
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="fill">
         <mat-label>IOUs - pallets to be repaid</mat-label>
         <mat-icon matPrefix>remove</mat-icon>
         <input matInput type="number" formControlName="phyToBeRepaid" autocomplete="off" min="0">
@@ -73,26 +55,31 @@
       <div class="spacer">
         <mat-divider></mat-divider>
       </div>
-      <mat-form-field appearance="outline">
-        <mat-label>Pallets in transit</mat-label>
+      <mat-form-field appearance="fill">
+        <mat-label>Pallets in transit - off</mat-label>
         <mat-icon matPrefix>add</mat-icon>
-        <input matInput type="number" formControlName="phyInTransit" autocomplete="off" min="0">
+        <input matInput type="number" formControlName="phyInTransitOff" autocomplete="off" min="0">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Pallets in transit - on</mat-label>
+        <mat-icon matPrefix>remove</mat-icon>
+        <input matInput type="number" formControlName="phyInTransitOn" autocomplete="off" min="0">
       </mat-form-field>
       <div class="spacer">
         <mat-divider></mat-divider>
       </div>
-      <mat-form-field appearance="outline" class="sum">
+      <mat-form-field appearance="fill" class="sum">
         <mat-label>Adjusted physical stocktake</mat-label>
         <input matInput type="number" autocomplete="off" disabled [ngModel]="adjPhyBalance" [ngModelOptions]="{standalone: true}">
       </mat-form-field>
     </mat-card>
     <mat-card>
       <mat-card-title>Stocktake result</mat-card-title>
-      <mat-form-field appearance="outline" class="sum">
+      <mat-form-field appearance="fill" class="sum">
         <mat-label>Surplus (Physical > Invoice)</mat-label>
         <input matInput type="number" autocomplete="off" disabled  [ngModel]="deficit" [ngModelOptions]="{standalone: true}">
       </mat-form-field>
-      <mat-form-field appearance="outline" class="sum">
+      <mat-form-field appearance="fill" class="sum">
         <mat-label>Deficit (Physical < Invoice)</mat-label>
         <input matInput type="number" autocomplete="off" disabled  [ngModel]="surplus" [ngModelOptions]="{standalone: true}">
       </mat-form-field>
