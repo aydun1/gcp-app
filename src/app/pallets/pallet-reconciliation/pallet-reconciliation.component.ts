@@ -44,7 +44,7 @@ export class PalletReconciliationComponent implements OnInit {
     const date = new Date();
     this.palletRecForm = this.fb.group({
       date: [date, [Validators.required]],
-      branch: [this.state, [Validators.required]],
+      branch: [{value: this.state, disabled: true}, [Validators.required]],
       name: [name, [Validators.required]],
       type: ['', [Validators.required]],
       invClosing: ['', [Validators.min(0)]],
