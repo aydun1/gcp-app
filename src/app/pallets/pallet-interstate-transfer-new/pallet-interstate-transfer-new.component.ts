@@ -20,7 +20,14 @@ export class PalletInterstateTransferNewComponent implements OnInit {
   public state: string;
   public loading: boolean;
   get targetStates() {
-    return this.states.filter(_ => _ !== this.palletTransferForm.get('to').value);
+    const states = this.states;
+    return states.filter(_ => _ !== this.palletTransferForm.get('from').value);
+  }
+  get ownState() {
+    return this.states.filter(_ => this.state ? _ === this.state : _);
+  }
+  get fromTrans() {
+    return this.palletTransferForm.get('from').value === 'Transport';
   }
 
   constructor(
@@ -37,33 +44,31 @@ export class PalletInterstateTransferNewComponent implements OnInit {
 
     this.sharedService.getState().subscribe(state => {
       this.state = state;
-      if (this.palletTransferForm) this.palletTransferForm.patchValue({to: state});
+      if (this.palletTransferForm) this.palletTransferForm.patchValue({from: state});
     });
 
     this.palletTransferForm = this.fb.group({
       date: [{value: date, disabled: true}, Validators.required],
       name: [{value: name, disabled: true}, Validators.required],
-      from: ['', Validators.required],
-      to: [{value: this.state, disabled: true}, [Validators.required]],
+      from: [this.state, Validators.required],
+      to: ['', Validators.required],
       type: ['', [Validators.required]],
       quantity: ['', [Validators.required, Validators.min(0)]],
       reference: ['', [Validators.required]]
     });
-  }
 
-  reset(): void {
-    const to = this.palletTransferForm.get('to').value;
-    const name = this.sharedService.getName();
-    const date = new Date();
-    this.palletTransferForm.reset({date, name, to});
-    this.palletTransferForm.updateValueAndValidity()
+    this.palletTransferForm.get('from').valueChanges.subscribe(
+      fromBranch => {
+        const toBranch = this.palletTransferForm.get('to');
+        if (fromBranch === toBranch.value) toBranch.patchValue('');
+      }
+    )
   }
 
   onSubmit(): void {
     if (this.palletTransferForm.invalid) return;
     this.loading = true;
-    const to = this.palletTransferForm.get('to').value;
-    const payload = {...this.palletTransferForm.value, to};
+    const payload = {...this.palletTransferForm.value};
     this.palletService.interstatePalletTransfer(payload).pipe(
       tap(_ => {
         this.location.back();

@@ -116,7 +116,7 @@ export class PalletsService {
       Pallet: v.type,
       Quantity: v.quantity,
       Notes: v.notes,
-      Reference: `${v.to}${v.reference}`
+      Reference: v.reference
     }};
     return this.http.post<Pallet>(`${this.palletTrackerUrl}/items`, payload).pipe(
       switchMap(_ => this.updateList(_))
