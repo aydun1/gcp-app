@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { combineLatest, tap } from 'rxjs';
+import { catchError, combineLatest, tap, throwError } from 'rxjs';
 import { SharedService } from 'src/app/shared.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PalletsService } from '../shared/pallets.service';
@@ -15,22 +15,24 @@ import { Location } from '@angular/common';
 })
 export class PalletReconciliationNewComponent implements OnInit {
   public palletRecForm: FormGroup;
-  public adjInvBalance = 0;
-  public adjPhyBalance = 0;
+  public adjBalance = 0;
   public stocktakeResult = 0;
   public pallets = ['Loscam', 'Chep', 'Plain'];
   public states = this.sharedService.branches;
   public state: string;
+  public loading: boolean;
 
   constructor(
     private fb: FormBuilder,
     private location: Location,
     private snackBar: MatSnackBar,
     private palletsService: PalletsService,
+    private palletsReconciliationService: PalletsReconciliationService,
     private sharedService: SharedService
   ) { }
 
   get surplus() {
+    console.log(this.stocktakeResult)
     return this.stocktakeResult > 0 ? this.stocktakeResult : this.stocktakeResult === 0 ? 0 : null;
   }
 
@@ -49,67 +51,64 @@ export class PalletReconciliationNewComponent implements OnInit {
       date: [date, [Validators.required]],
       branch: [{value: this.state, disabled: true}, [Validators.required]],
       name: [name, [Validators.required]],
-      type: ['', [Validators.required]],
-      invClosing: ['', [Validators.min(0)]],
-      invUnTransfersOff: ['', [Validators.min(0)]],
-      invUnTransfersOn: ['', [Validators.min(0)]],
-      phyOnSite: ['', [Validators.min(0)]],
-      phyOffSite: ['', [Validators.min(0)]],
-      phyToBeCollected: [{value: '', disabled: true}, [Validators.min(0)]],
-      phyToBeRepaid: [{value: '', disabled: true}, [Validators.min(0)]],
-      phyInTransitOff: [{value: '', disabled: true}, [Validators.min(0)]],
-      phyInTransitOn: [{value: '', disabled: true}, [Validators.min(0)]],
+      pallet: ['', [Validators.required]],
+      currentBalance: ['', [Validators.required, Validators.min(0)]],
+      onSite: ['', [Validators.required, Validators.min(0)]],
+      offSite: ['', [Validators.required, Validators.min(0)]],
+      toBeCollected: [{value: '', disabled: true}, [Validators.min(0)]],
+      toBeRepaid: [{value: '', disabled: true}, [Validators.min(0)]],
+      inTransitOff: [{value: '', disabled: true}, [Validators.min(0)]],
+      inTransitOn: [{value: '', disabled: true}, [Validators.min(0)]],
     });
 
     this.palletRecForm.valueChanges.pipe(
       tap(_ => {
         const v = this.palletRecForm.getRawValue();
-        this.adjInvBalance = +v.invClosing - +v.invUnTransfersOff + +v.invUnTransfersOn;
-        this.adjPhyBalance = +v.phyOnSite + +v.phyOffSite + +v.phyToBeCollected - +v.phyToBeRepaid + +v.phyInTransitOff - + v.phyInTransitOn;
-        this.stocktakeResult = this.adjInvBalance - this.adjPhyBalance;
+        this.adjBalance = +v.onSite + +v.offSite + +v.toBeCollected - +v.toBeRepaid + +v.inTransitOff - + v.inTransitOn;
+        this.stocktakeResult = this.adjBalance - +v.currentBalance;
       })
     ).subscribe();
 
 
-    this.palletRecForm.get('type').valueChanges.subscribe(
+    this.palletRecForm.get('pallet').valueChanges.subscribe(
       _ => {
         this.updateTransits(_)
       }
     )
   }
 
-  updateTransits(type: string) {
-    const offs = this.palletsService.getInTransitOff(this.state, type);
-    const ons = this.palletsService.getInTransitOn(this.state, type);
-    const owed = this.palletsService.getOwed(this.state, type);
+  updateTransits(pallet: string) {
+    this.loading = true;
+    const offs = this.palletsService.getInTransitOff(this.state, pallet);
+    const ons = this.palletsService.getInTransitOn(this.state, pallet);
+    const owed = this.palletsService.getOwed(this.state, pallet);
     combineLatest([offs, ons, owed]).subscribe(([a, b, c]) => {
-      const iouKey = c > 0 ? 'phyToBeCollected' : 'phyToBeRepaid';
       this.palletRecForm.patchValue({
-        phyInTransitOff: a,
-        phyInTransitOn: b,
-        [c > 0 ? 'phyToBeCollected' : 'phyToBeRepaid']: Math.abs(c),
-        [c > 0 ? 'phyToBeRepaid' : 'phyToBeCollected']: 0
+        inTransitOff: a,
+        inTransitOn: b,
+        [c > 0 ? 'toBeCollected' : 'toBeRepaid']: Math.abs(c),
+        [c > 0 ? 'toBeRepaid' : 'toBeCollected']: 0
       })
-
-
-
-
-
+      this.loading = false;
     })
   }
 
-  reset() {
-    this.palletRecForm.reset();
-  }
-
-  submit() {
+  onSubmit(): void {
     if (this.palletRecForm.invalid) return;
-    this.snackBar.open('Added pallet stocktake', '', {duration: 3000});
-    this.palletRecForm.reset();
-  }
-
-  addPalletRec() {
-
+    this.loading = true;
+    const payload = {...this.palletRecForm.getRawValue(), surplus: this.surplus, deficit: this.deficit, result: this.stocktakeResult};
+    console.log(payload)
+    this.palletsReconciliationService.addReconciliation(payload).pipe(
+      tap(_ => {
+        this.location.back();
+        this.snackBar.open('Added pallet stocktake', '', {duration: 3000});
+      }),
+      catchError(err => {
+        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
+        this.loading = false;
+        return throwError(() => new Error(err));
+      })
+    ).subscribe(_ => console.log(_));
   }
 
   goBack() {

@@ -9,7 +9,7 @@
 
 <div class="outer">
   <h2>New pallet stocktake report</h2>
-  <form (ngSubmit)="addPalletRec()" [formGroup]="palletRecForm">
+  <form (ngSubmit)="onSubmit()" [formGroup]="palletRecForm">
     <mat-card>
       <mat-form-field appearance="fill">
         <mat-label>Invoice/stocktake date</mat-label>
@@ -29,24 +29,24 @@
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>Pallet type</mat-label>
-        <mat-select matInput type="number" formControlName="type">
+        <mat-select matInput type="number" formControlName="pallet">
           <mat-option *ngFor="let p of pallets" [value]="p">{{ p }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>Current account balance</mat-label>
-        <input matInput type="number" formControlName="invClosing" autocomplete="off">
+        <input matInput type="number" formControlName="currentBalance" autocomplete="off">
       </mat-form-field>
     </mat-card>
     <mat-card>
       <mat-card-title>Pallet counts</mat-card-title>
       <mat-form-field appearance="fill">
         <mat-label>On site</mat-label>
-        <input matInput type="number" formControlName="phyOnSite" autocomplete="off" min="0">
+        <input matInput type="number" formControlName="onSite" autocomplete="off" min="0">
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>Off site</mat-label>
-        <input matInput type="number" formControlName="phyOffSite" autocomplete="off" min="0">
+        <input matInput type="number" formControlName="offSite" autocomplete="off" min="0">
       </mat-form-field>
       <div class="spacer">
         <mat-divider></mat-divider>
@@ -54,12 +54,12 @@
       <mat-form-field appearance="fill">
         <mat-label>IOUs - pallets to be collected</mat-label>
         <mat-icon matPrefix>add</mat-icon>
-        <input matInput type="number" formControlName="phyToBeCollected" autocomplete="off" min="0">
+        <input matInput type="number" formControlName="toBeCollected" autocomplete="off" min="0">
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>IOUs - pallets to be repaid</mat-label>
         <mat-icon matPrefix>remove</mat-icon>
-        <input matInput type="number" formControlName="phyToBeRepaid" autocomplete="off" min="0">
+        <input matInput type="number" formControlName="toBeRepaid" autocomplete="off" min="0">
       </mat-form-field>
       <div class="spacer">
         <mat-divider></mat-divider>
@@ -67,34 +67,34 @@
       <mat-form-field appearance="fill">
         <mat-label>Pallets in transit - off</mat-label>
         <mat-icon matPrefix>add</mat-icon>
-        <input matInput type="number" formControlName="phyInTransitOff" autocomplete="off" min="0">
+        <input matInput type="number" formControlName="inTransitOff" autocomplete="off" min="0">
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>Pallets in transit - on</mat-label>
         <mat-icon matPrefix>remove</mat-icon>
-        <input matInput type="number" formControlName="phyInTransitOn" autocomplete="off" min="0">
+        <input matInput type="number" formControlName="inTransitOn" autocomplete="off" min="0">
       </mat-form-field>
       <div class="spacer">
         <mat-divider></mat-divider>
       </div>
       <mat-form-field appearance="fill" class="sum">
         <mat-label>Adjusted physical stocktake</mat-label>
-        <input matInput type="number" autocomplete="off" disabled [ngModel]="adjPhyBalance" [ngModelOptions]="{standalone: true}">
+        <input matInput type="number" autocomplete="off" disabled [ngModel]="adjBalance" [ngModelOptions]="{standalone: true}">
       </mat-form-field>
     </mat-card>
     <mat-card>
       <mat-card-title>Stocktake result</mat-card-title>
       <mat-form-field appearance="fill" class="sum">
         <mat-label>Surplus (Physical > Invoice)</mat-label>
-        <input matInput type="number" autocomplete="off" disabled  [ngModel]="deficit" [ngModelOptions]="{standalone: true}">
+        <input matInput type="number" autocomplete="off" disabled  [ngModel]="surplus" [ngModelOptions]="{standalone: true}">
       </mat-form-field>
       <mat-form-field appearance="fill" class="sum">
         <mat-label>Deficit (Physical < Invoice)</mat-label>
-        <input matInput type="number" autocomplete="off" disabled  [ngModel]="surplus" [ngModelOptions]="{standalone: true}">
+        <input matInput type="number" autocomplete="off" disabled  [ngModel]="deficit" [ngModelOptions]="{standalone: true}">
       </mat-form-field>
     </mat-card>
     <div class="buttons">
-      <button mat-raised-button color="primary" (click)="submit()">Confirm</button>
+      <button mat-raised-button color="primary" [disabled]="loading">Confirm</button>
     </div>
   </form>
 </div>

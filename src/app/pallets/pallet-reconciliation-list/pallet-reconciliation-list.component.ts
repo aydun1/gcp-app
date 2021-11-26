@@ -15,13 +15,12 @@ import { Pallet } from '../shared/pallet';
 })
 export class PalletReconciliationListComponent implements OnInit {
   public pallets$: Observable<Pallet[]>;
-  public fromFilter = new FormControl('');
-  public toFilter = new FormControl('');
-  public assetTypeFilter = new FormControl('');
+  public branchFilter = new FormControl('');
+  public palletFilter = new FormControl('');
   public customers$: Observable<any[]>;
   public total: number;
   private _loadList: boolean;
-  public displayedColumns = ['date', 'pallet', 'branch', 'surplus', 'deficit'];
+  public displayedColumns = ['date', 'branch', 'pallet', 'surplus', 'deficit'];
   public states = this.sharedService.branches;
   public pallets = ['Loscam', 'Chep', 'Plain']
   public choices$: Observable<any>;
@@ -71,17 +70,17 @@ export class PalletReconciliationListComponent implements OnInit {
   parseParams(params: Params) {
     if (!params) return;
     const filters: any = {};
-    if ('from' in params) {
-      this.fromFilter.patchValue(params['from']);
-      filters['from'] = params['from'];
+    if ('branch' in params) {
+      this.branchFilter.patchValue(params['branch']);
+      filters['branch'] = params['branch'];
     } else {
-      this.fromFilter.patchValue('');
+      this.branchFilter.patchValue('');
     }
-    if ('to' in params) {
-      this.toFilter.patchValue(params['to']);
-      filters['to'] = params['to'];
+    if ('pallet' in params) {
+      this.palletFilter.patchValue(params['pallet']);
+      filters['pallet'] = params['pallet'];
     } else {
-      this.toFilter.patchValue('');
+      this.palletFilter.patchValue('');
     }
   }
 
@@ -92,21 +91,17 @@ export class PalletReconciliationListComponent implements OnInit {
     }
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
-    const sameFrom = prev['from'] === curr['from'];
-    const sameTo = prev['to'] === curr['to'];
-    return sameFrom && sameTo && this._loadList;
+    const sameBranch = prev['branch'] === curr['branch'];
+    const samePallet = prev['pallet'] === curr['pallet'];
+    return sameBranch && samePallet && this._loadList;
   }
 
-  setFrom(from: MatSelectChange ) {
-    this.router.navigate([], { queryParams: {from: from.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  setBranch(branch: MatSelectChange ) {
+    this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setTo(to: MatSelectChange ) {
-    this.router.navigate([], { queryParams: {to: to.value}, queryParamsHandling: 'merge', replaceUrl: true});
-  }
-
-  setAssetType(assetType: MatSelectChange ) {
-    this.router.navigate([], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  setPallet(pallet: MatSelectChange ) {
+    this.router.navigate([], { queryParams: {pallet: pallet.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   approve(id: string) {

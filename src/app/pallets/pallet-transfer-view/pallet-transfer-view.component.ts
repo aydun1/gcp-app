@@ -44,6 +44,7 @@ export class PalletTransferViewComponent implements OnInit {
       tap(_ => {
         this.getTransfer();
         this.snackBar.open('Approved interstate transfer', '', {duration: 3000});
+        this.loading = false;
       }),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
@@ -59,6 +60,7 @@ export class PalletTransferViewComponent implements OnInit {
       tap(_ => {
         this.getTransfer();
         this.snackBar.open('Marked as transferred', '', {duration: 3000});
+        this.loading = false;
       }),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});

@@ -25,8 +25,8 @@ export class PalletsReconciliationService {
 
   private createUrl(filters: any): string {
     const filterKeys = Object.keys(filters);
-    let url = `${this.reconciliationTrackerUrl}/items?expand=fields(select=Created,Title,Pallet,Quantity,Reference,Status)`;
-
+    let url = `${this.reconciliationTrackerUrl}/items?expand=fields`;
+    console.log(filters)
     const parsed = filterKeys.map(key => {
       switch (key) {
         case 'branch':
@@ -69,22 +69,23 @@ export class PalletsReconciliationService {
     ).subscribe(_ => this._palletsSubject$.next(_));
   }
 
-  customerPalletTransfer(v: any): Observable<any> {
-    const inbound = v.inQty > v.outQty;
+  addReconciliation(v: any): Observable<any> {
     const payload = {fields: {
-      Title: v.customerName,
-      From: inbound ? v.customer : v.state,
-      To: inbound ? v.state: v.customer,
-      In: v.inQty,
-      Out: v.outQty,
-      Pallet: v.palletType,
-      Quantity: Math.abs(v.inQty - v.outQty),
-      Notes: v.notes
+      Branch: v.branch,
+      Pallet: v.pallet,
+      CurrentBalance: v.currentBalance,
+      ToBeCollected: v.toBeCollected,
+      ToBeRepaid: v.toBeRepaid,
+      InTransitOff: v.inTransitOff,
+      InTransitOn: v.inTransitOn,
+      Surplus: v.surplus,
+      Deficit: v.deficit,
+      OnSite: v.onSite,
+      OffSite: v.offSite,
     }};
-    if (v.site) payload['fields']['Site'] = v.site.fields.Title;
     return this.http.post<Reconciliation>(`${this.reconciliationTrackerUrl}/items`, payload).pipe(
       switchMap(res => this.updateList(res))
-    );;
+    );
   }
 
   private updateList(res: Reconciliation) {
