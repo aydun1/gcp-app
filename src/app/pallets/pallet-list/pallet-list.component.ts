@@ -18,6 +18,7 @@ export class PalletListComponent implements OnInit {
   public branchFilter = new FormControl('');
   public statusFilter = new FormControl('');
   public palletFilter = new FormControl('');
+  public nameFilter = new FormControl('');
   public customers$: Observable<any[]>;
   public total: number;
   private _loadList: boolean;
@@ -58,6 +59,12 @@ export class PalletListComponent implements OnInit {
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
       tap(pallets => this.total = pallets.map(_ => _.fields.Change).filter(_ => _).reduce((acc, val) => acc + val, 0))
     )
+        this.palletsService.getColumns()
+    this.nameFilter.valueChanges.pipe(
+      debounceTime(200),
+      map(_ => _.length > 0 ? _ : null),
+      tap(_ => this.router.navigate([], { queryParams: {'name': _}, queryParamsHandling: 'merge', replaceUrl: true}))
+    ).subscribe();
   }
 
   getFirstPage(params: Params) {
@@ -90,23 +97,17 @@ export class PalletListComponent implements OnInit {
     } else {
       this.branchFilter.patchValue('');
     }
-    if ('status' in params) {
-      this.statusFilter.patchValue(params['status']);
-      filters['status'] = params['status'];
-    } else {
-      this.statusFilter.patchValue('');
-    }
     if ('pallet' in params) {
       this.palletFilter.patchValue(params['pallet']);
       filters['pallet'] = params['pallet'];
     } else {
       this.palletFilter.patchValue('');
     }
-    if ('bin' in params) {
-      this.binFilter.patchValue(params['bin']);
-      filters['bin'] = params['bin'];
+    if ('name' in params) {
+      this.nameFilter.patchValue(params['name']);
+      filters['name'] = params['name'];
     } else {
-      if (this.binFilter.value) this.binFilter.patchValue('');
+      if (this.nameFilter.value) this.nameFilter.patchValue('');
     }
   }
 
@@ -118,10 +119,9 @@ export class PalletListComponent implements OnInit {
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
     const sameBranch = prev['branch'] === curr['branch'];
-    const sameBin = prev['bin'] === curr['bin'];
     const samePallet = prev['pallet'] === curr['pallet'];
-    const sameStatus = prev['status'] === curr['status'];
-    return sameBranch && sameBin && samePallet && sameStatus && this._loadList;
+    const sameName = prev['name'] === curr['name'];
+    return sameBranch && samePallet && sameName && this._loadList;
   }
 
   setBranch(branch: MatSelectChange ) {
@@ -138,6 +138,10 @@ export class PalletListComponent implements OnInit {
 
   clearBinFilter() {
     this.binFilter.patchValue('');
+  }
+
+  clearNameFilter() {
+    this.nameFilter.patchValue('');
   }
 
   trackByFn(index: number, item: Pallet) {

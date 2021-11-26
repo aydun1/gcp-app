@@ -25,7 +25,7 @@ export class PalletsService {
 
   private createUrl(filters: any): string {
     const filterKeys = Object.keys(filters);
-    let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created,Title,Pallet,In,Out,From,To,Quantity,Reference, Status)`;
+    let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created,Title,Pallet,In,Out,From,To,Quantity,Reference,Status)`;
 
     const parsed = filterKeys.map(key => {
       switch (key) {
@@ -35,6 +35,8 @@ export class PalletsService {
           return `fields/To eq '${filters.to}'`;  
         case 'branch':
           return `(fields/From eq '${filters.branch}' or fields/To eq '${filters.branch}')`;
+        case 'name':
+          return `startswith(fields/CustomerNumber, '${filters.name}') or startswith(fields/Title, '${filters.name}')`;  
         case 'status':
           return `fields/Status eq '${filters.status}'`;
         case 'pallet':

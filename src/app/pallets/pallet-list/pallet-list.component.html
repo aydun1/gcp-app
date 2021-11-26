@@ -14,6 +14,16 @@
           <mat-option *ngFor="let s of pallets" value="{{ s }}">{{ s }}</mat-option>
         </mat-select>
       </mat-form-field>
+      <mat-form-field appearance="outline" class="name-filter">
+        <mat-label>Customer</mat-label>
+        <input matInput [formControl]="nameFilter" type="text" autocomplete="off" placeholder="Type to search...">
+        <button *ngIf="!nameFilter.value" matSuffix mat-icon-button disabled>
+          <mat-icon>search</mat-icon>
+        </button>
+        <button *ngIf="nameFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearNameFilter()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
     </div>
   </div>
 
