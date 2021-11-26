@@ -4,6 +4,7 @@ import { combineLatest, tap } from 'rxjs';
 import { SharedService } from 'src/app/shared.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PalletsService } from '../shared/pallets.service';
+import { PalletsReconciliationService } from '../shared/pallets-reconciliation.service';
 import { Location } from '@angular/common';
 
 @Component({
@@ -54,31 +55,47 @@ export class PalletReconciliationNewComponent implements OnInit {
       invUnTransfersOn: ['', [Validators.min(0)]],
       phyOnSite: ['', [Validators.min(0)]],
       phyOffSite: ['', [Validators.min(0)]],
-      phyToBeCollected: ['', [Validators.min(0)]],
-      phyToBeRepaid: ['', [Validators.min(0)]],
-      phyInTransitOff: ['', [Validators.min(0)]],
-      phyInTransitOn: ['', [Validators.min(0)]],
+      phyToBeCollected: [{value: '', disabled: true}, [Validators.min(0)]],
+      phyToBeRepaid: [{value: '', disabled: true}, [Validators.min(0)]],
+      phyInTransitOff: [{value: '', disabled: true}, [Validators.min(0)]],
+      phyInTransitOn: [{value: '', disabled: true}, [Validators.min(0)]],
     });
 
     this.palletRecForm.valueChanges.pipe(
       tap(_ => {
-        this.adjInvBalance = +_.invClosing - +_.invUnTransfersOff + +_.invUnTransfersOn;
-        this.adjPhyBalance = +_.phyOnSite + +_.phyOffSite + +_.phyToBeCollected - +_.phyToBeRepaid + +_.phyInTransitOff - + _.phyInTransitOn;
+        const v = this.palletRecForm.getRawValue();
+        this.adjInvBalance = +v.invClosing - +v.invUnTransfersOff + +v.invUnTransfersOn;
+        this.adjPhyBalance = +v.phyOnSite + +v.phyOffSite + +v.phyToBeCollected - +v.phyToBeRepaid + +v.phyInTransitOff - + v.phyInTransitOn;
         this.stocktakeResult = this.adjInvBalance - this.adjPhyBalance;
       })
     ).subscribe();
 
 
     this.palletRecForm.get('type').valueChanges.subscribe(
-      _ => this.updateTransits(_)
+      _ => {
+        this.updateTransits(_)
+      }
     )
   }
 
   updateTransits(type: string) {
-   const offs = this.palletsService.getInTransitOff(this.state, type);
+    const offs = this.palletsService.getInTransitOff(this.state, type);
     const ons = this.palletsService.getInTransitOn(this.state, type);
-    combineLatest([offs, ons]).subscribe(([a, b]) => this.palletRecForm.patchValue({phyInTransitOff: a, phyInTransitOn: b}))
+    const owed = this.palletsService.getOwed(this.state, type);
+    combineLatest([offs, ons, owed]).subscribe(([a, b, c]) => {
+      const iouKey = c > 0 ? 'phyToBeCollected' : 'phyToBeRepaid';
+      this.palletRecForm.patchValue({
+        phyInTransitOff: a,
+        phyInTransitOn: b,
+        [c > 0 ? 'phyToBeCollected' : 'phyToBeRepaid']: Math.abs(c),
+        [c > 0 ? 'phyToBeRepaid' : 'phyToBeCollected']: 0
+      })
 
+
+
+
+
+    })
   }
 
   reset() {

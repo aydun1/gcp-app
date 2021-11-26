@@ -57,6 +57,18 @@ export class PalletsService {
     );
   }
 
+
+  getOwed(branch: string, pallet: string) {
+    let url = `${this.palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}'`;
+    return this.http.get(url).pipe(
+      //tap(_ => this._nextPage = paginate ? _['@odata.nextLink'] : this._nextPage),
+      map((res: {value: Pallet[]}) => res.value.reduce((acc, cur) => acc + +cur.fields.Out - +cur.fields.In, 0))
+    );
+  }
+
+
+
+
   getColumns() {
     this._columns$.pipe(
       take(1),

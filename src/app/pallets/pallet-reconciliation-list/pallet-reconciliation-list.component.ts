@@ -5,8 +5,8 @@ import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { SharedService } from 'src/app/shared.service';
 import { PalletsService } from '../shared/pallets.service';
-import { Pallet } from '../shared/pallet';
 import { PalletsReconciliationService } from '../shared/pallets-reconciliation.service';
+import { Pallet } from '../shared/pallet';
 
 @Component({
   selector: 'gcp-pallet-reconciliation-list',
@@ -31,7 +31,8 @@ export class PalletReconciliationListComponent implements OnInit {
     private el: ElementRef,
     private route: ActivatedRoute,
     private router: Router,
-    private palletsService: PalletsReconciliationService,
+    private palletsService: PalletsService,
+    private palletsReconciliationService: PalletsReconciliationService,
     private sharedService: SharedService
   ) { }
 
@@ -60,11 +61,11 @@ export class PalletReconciliationListComponent implements OnInit {
 
   getFirstPage(_: any) {
     this.sharedService.getState().subscribe(_ => console.log(_))
-    return this.palletsService.getFirstPage(_);
+    return this.palletsReconciliationService.getFirstPage(_);
   }
 
   getNextPage() {
-    return this.palletsService.getNextPage();
+    return this.palletsReconciliationService.getNextPage();
   }
 
   parseParams(params: Params) {
@@ -109,7 +110,7 @@ export class PalletReconciliationListComponent implements OnInit {
   }
 
   approve(id: string) {
-    this.palletsService.approveInterstatePalletTransfer(id, true).subscribe();
+    this.palletsReconciliationService.approveInterstatePalletTransfer(id, true).subscribe();
   }
 
   trackByFn(index: number, item: Pallet) {
