@@ -9,6 +9,7 @@ export interface Pallet {
     }
   }
   fields: {
+    id: string,
     Title: string,
     From: string,
     To: string,

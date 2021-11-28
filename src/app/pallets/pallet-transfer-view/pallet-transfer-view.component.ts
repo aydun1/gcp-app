@@ -12,10 +12,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./pallet-transfer-view.component.css']
 })
 export class PalletTransferViewComponent implements OnInit {
-  private id: string;
   private transferSource$: Subject<string>;
   public transfer$: Observable<any>;
   public loading: boolean;
+  public editQuantity: boolean;
+  public quantity: number;
 
   constructor(
     private location: Location,
@@ -25,24 +26,26 @@ export class PalletTransferViewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.id = this.route.snapshot.paramMap.get('id');
-    this.transferSource$ = new BehaviorSubject(this.id);
+    const id = this.route.snapshot.paramMap.get('id');
+    this.transferSource$ = new BehaviorSubject(id);
     this.transfer$ = this.transferSource$.pipe(
       switchMap(_ => this.palletsService.getPalletTransfer(_)),
-      tap(_ => console.log(_))
+      tap(_ => this.quantity = _.summary.quantity)
     );
-  
+
+
+
   }
 
-  getTransfer() {
-    this.transferSource$.next(this.id);
+  getTransfer(id: string) {
+    this.transferSource$.next(id);
   }
 
-  approve() {
+  approve(id: string) {
     this.loading = true;
-    this.palletsService.approveInterstatePalletTransfer(this.id, true).pipe(
+    this.palletsService.approveInterstatePalletTransfer(id, true).pipe(
       tap(_ => {
-        this.getTransfer();
+        this.getTransfer(id);
         this.snackBar.open('Approved interstate transfer', '', {duration: 3000});
         this.loading = false;
       }),
@@ -54,11 +57,11 @@ export class PalletTransferViewComponent implements OnInit {
     ).subscribe();
   }
 
-  transferp() {
+  transferp(id: string) {
     this.loading = true;
-    this.palletsService.transferInterstatePalletTransfer(this.id).pipe(
+    this.palletsService.transferInterstatePalletTransfer(id).pipe(
       tap(_ => {
-        this.getTransfer();
+        this.getTransfer(id);
         this.snackBar.open('Marked as transferred', '', {duration: 3000});
         this.loading = false;
       }),
@@ -68,6 +71,28 @@ export class PalletTransferViewComponent implements OnInit {
         return throwError(() => new Error(err));
       })
     ).subscribe();
+  }
+
+  setQuantity(id: string) {
+    this.loading = true;
+    this.palletsService.editInterstatePalletTransferQuantity(id, this.quantity).pipe(
+      tap(() => {
+        this.getTransfer(id);
+        this.snackBar.open('Updated quantity', '', {duration: 3000});
+        this.editQuantity = false;
+        this.loading = false;
+      }),
+      catchError(err => {
+        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
+        this.loading = false;
+        return throwError(() => new Error(err));
+      })
+    ).subscribe()
+  }
+
+  cancelEditQuantity(quantity: number) {
+    this.quantity = quantity;
+    this.editQuantity = false
   }
 
   goBack() {

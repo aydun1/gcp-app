@@ -171,6 +171,15 @@ export class PalletsService {
     );
   }
 
+  editInterstatePalletTransferQuantity(id: string, quantity: number): Observable<any> {
+    const payload = {fields: {
+      Quantity: quantity
+    }};
+    return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${id}')`, payload).pipe(
+      switchMap(res => this.updateList(res))
+    );
+  }
+
   getCustomerPallets(custnmbr: string, site = ''): Observable<Pallet[]> {
     let url = this.palletTrackerUrl + `/items?expand=fields(select=Title,Pallet,Out,In)&filter=(fields/From eq '${encodeURIComponent(custnmbr)}' or fields/To eq '${encodeURIComponent(custnmbr)}')`;
     if (site) url += `and fields/Site eq '${encodeURIComponent(site)}'`;
@@ -199,6 +208,7 @@ export class PalletsService {
       map(_ => {
         const a = _.value.reverse().reduce(
           (acc, curr) => {
+            acc['id'] = curr.fields.id;
             if (curr.id === '1.0') {
               acc['initiator'] = curr.lastModifiedBy.user;
               acc['pallet'] = curr.fields.Pallet;

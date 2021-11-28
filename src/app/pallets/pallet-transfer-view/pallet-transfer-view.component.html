@@ -10,18 +10,26 @@
 <div class="content" *ngIf="transfer$ | async as transfer">
   <div class="header">
     <h2>Transfer details</h2>
-    <button *ngIf="!transfer.summary.approved" mat-button mat-raised-button color="primary" (click)="approve()" [disabled]="loading">Approve</button>
-    <button *ngIf="transfer.summary.approved && !transfer.summary.transferred" mat-button mat-raised-button color="primary" (click)="transferp()" [disabled]="loading">Mark as transferred</button>
+    <button *ngIf="!transfer.summary.approved" mat-button mat-raised-button color="primary" (click)="approve(transfer.summary.id)" [disabled]="loading">Approve</button>
+    <button *ngIf="transfer.summary.approved && !transfer.summary.transferred" mat-button mat-raised-button color="primary" (click)="transferp(transfer.summary.id)" [disabled]="loading">Mark as transferred</button>
 
   </div>
   <mat-card class="inner">
     <mat-list>
+      <form (ngSubmit)="setQuantity(transfer.summary.id)">
+        <mat-list-item>
+          <mat-icon mat-list-icon>123</mat-icon>
+          <div *ngIf="editQuantity" mat-line><input [(ngModel)]="quantity" [ngModelOptions]="{standalone: true}" type="number"></div>
+          <div *ngIf="!editQuantity" mat-line>{{ quantity }}</div>
+          <div mat-line>Quantity</div>
+          <button mat-icon-button type="button" *ngIf="!editQuantity && !transfer.summary.approved" (click)="editQuantity = true"><mat-icon mat-list-icon class="last-icon">edit</mat-icon></button>
+          <ng-container *ngIf="editQuantity">
+            <button mat-icon-button type="button" (click)="cancelEditQuantity(transfer.summary.quantity)" [disabled]="loading"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
+            <button mat-icon-button [disabled]="loading"><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
+          </ng-container>
+        </mat-list-item>
+      </form>
       <mat-list-item>
-        <mat-icon mat-list-icon>123</mat-icon>
-        <div mat-line>{{ transfer.summary.quantity}}</div>
-        <div mat-line>Quantity</div>
-      </mat-list-item>
-      <mat-list-item *ngIf="transfer.summary.pallet">
         <mat-icon mat-list-icon>table_rows</mat-icon>
         <div mat-line>{{ transfer.summary.pallet }}</div>
         <div mat-line>Pallet</div>
