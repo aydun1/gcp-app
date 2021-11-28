@@ -32,7 +32,6 @@ export class PalletReconciliationNewComponent implements OnInit {
   ) { }
 
   get surplus() {
-    console.log(this.stocktakeResult)
     return this.stocktakeResult > 0 ? this.stocktakeResult : this.stocktakeResult === 0 ? 0 : null;
   }
 
@@ -50,7 +49,7 @@ export class PalletReconciliationNewComponent implements OnInit {
     this.palletRecForm = this.fb.group({
       date: [date, [Validators.required]],
       branch: [{value: this.state, disabled: true}, [Validators.required]],
-      name: [name, [Validators.required]],
+      name: [{value: name, disabled: true}, [Validators.required]],
       pallet: ['', [Validators.required]],
       currentBalance: ['', [Validators.required, Validators.min(0)]],
       onSite: ['', [Validators.required, Validators.min(0)]],
@@ -97,7 +96,6 @@ export class PalletReconciliationNewComponent implements OnInit {
     if (this.palletRecForm.invalid) return;
     this.loading = true;
     const payload = {...this.palletRecForm.getRawValue(), surplus: this.surplus, deficit: this.deficit, result: this.stocktakeResult};
-    console.log(payload)
     this.palletsReconciliationService.addReconciliation(payload).pipe(
       tap(_ => {
         this.location.back();

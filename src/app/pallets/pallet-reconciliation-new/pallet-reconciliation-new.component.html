@@ -24,7 +24,7 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="fill">
-        <mat-label>Completed by (name)</mat-label>
+        <mat-label>Completed by</mat-label>
         <input matInput type="text" formControlName="name" autocomplete="off">
       </mat-form-field>
       <mat-form-field appearance="fill">
@@ -39,7 +39,7 @@
       </mat-form-field>
     </mat-card>
     <mat-card>
-      <mat-card-title>Pallet counts</mat-card-title>
+      <mat-card-title>Physical stocktake</mat-card-title>
       <mat-form-field appearance="fill">
         <mat-label>On site</mat-label>
         <input matInput type="number" formControlName="onSite" autocomplete="off" min="0">
@@ -48,9 +48,10 @@
         <mat-label>Off site</mat-label>
         <input matInput type="number" formControlName="offSite" autocomplete="off" min="0">
       </mat-form-field>
-      <div class="spacer">
-        <mat-divider></mat-divider>
-      </div>
+    </mat-card>
+    <mat-card>
+      <mat-card-title>Pallets elsewhere</mat-card-title>
+
       <mat-form-field appearance="fill">
         <mat-label>IOUs - pallets to be collected</mat-label>
         <mat-icon matPrefix>add</mat-icon>
