@@ -16,6 +16,6 @@ export class GroupByPipe implements PipeTransform {
       }), 
       {},
     );
-    return [a[prop], a['Other']];
+    return [a['Other'], a[prop]];
   }
 }
