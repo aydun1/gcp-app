@@ -17,6 +17,7 @@ import { FailedComponent } from './failed/failed.component';
 import { environment } from '../environments/environment';
 import { SharedModule } from './shared/shared.module';
 import { MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 
 
@@ -72,7 +73,11 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
-    SharedModule
+    SharedModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      registrationStrategy: 'registerWhenStable:30000'
+    })
   ],
   providers: [
     {provide: MAT_DATE_LOCALE, useValue: 'en-AU'},
