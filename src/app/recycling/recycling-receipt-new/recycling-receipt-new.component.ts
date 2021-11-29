@@ -30,7 +30,7 @@ export class RecyclingReceiptNewComponent implements OnInit {
   ngOnInit(): void {
     const date = new Date();
 
-    this.sharedService.getState().subscribe(state => {
+    this.sharedService.getBranch().subscribe(state => {
       this.state = state;
       if (this.newReceiptForm) this.newReceiptForm.patchValue({branch: state});
     });

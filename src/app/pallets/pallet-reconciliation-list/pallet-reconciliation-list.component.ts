@@ -59,7 +59,7 @@ export class PalletReconciliationListComponent implements OnInit {
   }
 
   getFirstPage(_: any) {
-    this.sharedService.getState().subscribe(_ => console.log(_))
+    this.sharedService.getBranch().subscribe(_ => console.log(_))
     return this.palletsReconciliationService.getFirstPage(_);
   }
 

@@ -59,6 +59,19 @@ export class PalletsService {
     );
   }
 
+  private updateList(res: Pallet) {
+    return this._palletsSubject$.pipe(
+      take(1),
+      map(_ => {
+        const pallets = _.map(pallet => pallet);
+        const i = pallets.findIndex(pallet => pallet.id === res.id);
+        if (i > -1) pallets[i] = res
+        else pallets.unshift(res);
+        this._palletsSubject$.next(pallets);
+        return res
+      })
+    );
+  }
 
   getOwed(branch: string, pallet: string) {
     let url = `${this.palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}'`;
@@ -67,9 +80,6 @@ export class PalletsService {
       map((res: {value: Pallet[]}) => res.value.reduce((acc, cur) => acc + +cur.fields.Out - +cur.fields.In, 0))
     );
   }
-
-
-
 
   getColumns() {
     this._columns$.pipe(
@@ -132,24 +142,11 @@ export class PalletsService {
       Pallet: v.type,
       Quantity: v.quantity,
       Notes: v.notes,
-      Reference: v.reference
+      Reference: v.reference,
+      Status: 'Pending'
     }};
     return this.http.post<Pallet>(`${this.palletTrackerUrl}/items`, payload).pipe(
       switchMap(_ => this.updateList(_))
-    );
-  }
-
-  private updateList(res: Pallet) {
-    return this._palletsSubject$.pipe(
-      take(1),
-      map(_ => {
-        const pallets = _.map(pallet => pallet);
-        const i = pallets.findIndex(pallet => pallet.id === res.id);
-        if (i > -1) pallets[i] = res
-        else pallets.unshift(res);
-        this._palletsSubject$.next(pallets);
-        return res
-      })
     );
   }
 

@@ -54,6 +54,6 @@ export class CageWeightsComponent implements OnInit {
 
   cancelGrossWeight() {
     this.cageWeight = this.cage.fields.CageWeight;
-    this.editGrossWeight = false
+    this.editGrossWeight = false;
   }
 }

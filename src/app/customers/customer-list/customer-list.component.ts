@@ -47,7 +47,7 @@ export class CustomerListComponent implements OnInit {
   }
   
   ngOnInit() {
-    const state$ = this.sharedService.getState();
+    const state$ = this.sharedService.getBranch();
     this.customers$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(

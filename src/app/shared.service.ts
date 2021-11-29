@@ -25,7 +25,7 @@ export class SharedService {
     );
   }
 
-  getState(): Observable<any> {
+  getBranch(): Observable<any> {
     const url = 'https://graph.microsoft.com/beta/me/state';
     return this._state$.pipe(
       switchMap(cur => cur ? of(cur) : this.http.get(url).pipe(

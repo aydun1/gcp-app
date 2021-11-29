@@ -29,7 +29,7 @@ export class PalletDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.sharedService.getState().subscribe(state => {
+    this.sharedService.getBranch().subscribe(state => {
       this._state = state;
     });
 

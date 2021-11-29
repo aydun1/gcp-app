@@ -43,7 +43,7 @@ export class PalletInterstateTransferNewComponent implements OnInit {
     const name = this.sharedService.getName();
     const date = new Date();
 
-    this.sharedService.getState().subscribe(state => {
+    this.sharedService.getBranch().subscribe(state => {
       this.state = state;
       if (this.palletTransferForm) this.palletTransferForm.patchValue({from: state});
     });

@@ -40,7 +40,7 @@ export class PalletReconciliationNewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.sharedService.getState().subscribe(state => {
+    this.sharedService.getBranch().subscribe(state => {
       this.state = state;
       if (this.palletRecForm) this.palletRecForm.patchValue({branch: state});
     });

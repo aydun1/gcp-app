@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, catchError, Observable, Subject, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, map, Observable, Subject, switchMap, tap, throwError } from 'rxjs';
 import { PalletsService } from '../shared/pallets.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SharedService } from 'src/app/shared.service';
 
 @Component({
   selector: 'gcp-pallet-transfer-view',
@@ -17,11 +18,15 @@ export class PalletTransferViewComponent implements OnInit {
   public loading: boolean;
   public editQuantity: boolean;
   public quantity: number;
+  public sender: boolean;
+  public receiver: boolean;
+  public transport: boolean;
 
   constructor(
     private location: Location,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
+    private sharedService: SharedService,
     private palletsService: PalletsService
   ) { }
 
@@ -29,8 +34,14 @@ export class PalletTransferViewComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     this.transferSource$ = new BehaviorSubject(id);
     this.transfer$ = this.transferSource$.pipe(
-      switchMap(_ => this.palletsService.getPalletTransfer(_)),
-      tap(_ => this.quantity = _.summary.quantity)
+      switchMap(_ => combineLatest([this.palletsService.getPalletTransfer(_), this.sharedService.getBranch()])),
+      tap(([transfer, state]) => {
+        this.quantity = transfer.summary.quantity;
+        this.sender = transfer.summary.from === state;
+        this.receiver = transfer.summary.to === state;
+        this.transport = (transfer.summary.from || transfer.summary.to) && (transfer.summary.from === 'Transport' || transfer.summary.to === 'Transport');
+      }),
+      map(_ => _[0])
     );
 
 
