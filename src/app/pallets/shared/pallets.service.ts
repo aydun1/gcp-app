@@ -32,11 +32,11 @@ export class PalletsService {
         case 'from':
           return `fields/From eq '${filters.from}'`;
         case 'to':
-          return `fields/To eq '${filters.to}'`;  
+          return `fields/To eq '${filters.to}'`;
         case 'branch':
           return `(fields/From eq '${filters.branch}' or fields/To eq '${filters.branch}')`;
         case 'name':
-          return `startswith(fields/CustomerNumber, '${filters.name}') or startswith(fields/Title, '${filters.name}')`;  
+          return `(startswith(fields/CustomerNumber, '${filters.name}') or startswith(fields/Title, '${filters.name}'))`;
         case 'status':
           return `fields/Status eq '${filters.status}'`;
         case 'pallet':
