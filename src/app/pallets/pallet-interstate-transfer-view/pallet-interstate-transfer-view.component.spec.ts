@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PalletTransferViewComponent } from './pallet-transfer-view.component';
+import { PalletInterstateTransferViewComponent } from './pallet-interstate-transfer-view.component';
 
 describe('PalletTransferViewComponent', () => {
-  let component: PalletTransferViewComponent;
-  let fixture: ComponentFixture<PalletTransferViewComponent>;
+  let component: PalletInterstateTransferViewComponent;
+  let fixture: ComponentFixture<PalletInterstateTransferViewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PalletTransferViewComponent ]
+      declarations: [ PalletInterstateTransferViewComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PalletTransferViewComponent);
+    fixture = TestBed.createComponent(PalletInterstateTransferViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

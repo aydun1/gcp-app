@@ -7,12 +7,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { SharedService } from 'src/app/shared.service';
 
 @Component({
-  selector: 'gcp-pallet-transfer-view',
+  selector: 'gcp-pallet-interstate-transfer-view',
   host: {class:'app-component'},
-  templateUrl: './pallet-transfer-view.component.html',
-  styleUrls: ['./pallet-transfer-view.component.css']
+  templateUrl: './pallet-interstate-transfer-view.component.html',
+  styleUrls: ['./pallet-interstate-transfer-view.component.css']
 })
-export class PalletTransferViewComponent implements OnInit {
+export class PalletInterstateTransferViewComponent implements OnInit {
   private transferSource$: Subject<string>;
   public transfer$: Observable<any>;
   public loading: boolean;
