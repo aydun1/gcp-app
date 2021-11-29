@@ -45,7 +45,7 @@ export class CustomerListComponent implements OnInit {
     const bottomPosition = this.el.nativeElement.offsetHeight + this.el.nativeElement.scrollTop - this.el.nativeElement.scrollHeight;
     if (bottomPosition >= -250) this.getNextPage();
   }
-  
+
   ngOnInit() {
     const state$ = this.sharedService.getBranch();
     this.customers$ = this.route.queryParams.pipe(
@@ -60,7 +60,7 @@ export class CustomerListComponent implements OnInit {
       tap(_ => this.parseParams(_)),
       switchMap(_ => this.loadList ? this.getFirstPage(_) : [])
     )
-  
+
     this.nameFilter.valueChanges.pipe(
       debounceTime(200),
       map(_ => _.length > 0 ? _ : null),

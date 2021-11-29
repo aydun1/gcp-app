@@ -51,7 +51,7 @@ export class CustomerSiteDialogComponent implements OnInit {
         this.loading = false;
         return throwError(() => new Error(err));
       })
-    ).subscribe()   
+    ).subscribe()
   }
 
   editSite(id: string, name: string) {

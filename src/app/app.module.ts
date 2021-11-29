@@ -49,7 +49,7 @@ function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
 }
 
 function MSALGuardConfigFactory(): MsalGuardConfiguration {
-  return { 
+  return {
     interactionType: InteractionType.Redirect,
     authRequest: {
       scopes: ['user.read', 'Sites.ReadWrite.All', 'https://gardencityplastics.crm6.dynamics.com//user_impersonation']

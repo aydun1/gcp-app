@@ -13,7 +13,7 @@ export class GroupByPipe implements PipeTransform {
           ...(result[item['fields']['Status'] === prop ? prop : 'Other'] || []),
           item,
         ],
-      }), 
+      }),
       {},
     );
     return [a['Other'], a[prop]];

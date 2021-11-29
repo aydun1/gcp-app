@@ -39,5 +39,5 @@ export class SharedService {
     const activeAccount = this.authService.instance.getActiveAccount();
     return activeAccount.name;
   }
-  
+
 }

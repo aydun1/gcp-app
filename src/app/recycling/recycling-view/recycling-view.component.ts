@@ -42,11 +42,9 @@ export class RecyclingViewComponent implements OnInit {
   getCageHistory(bin: number) {
     this.cageHistory$ = this.recyclingService.getCageHistory(bin).pipe(
       tap(cages => this.totalWeight = cages.map(_ => _.fields.NetWeight).filter(_ => _).reduce((acc, val) => acc + val, 0)),
-      tap(_ => this.noHistory = _.length === 0)   
+      tap(_ => this.noHistory = _.length === 0)
     );
   }
-
-
 
   goBack() {
     this.location.back();
