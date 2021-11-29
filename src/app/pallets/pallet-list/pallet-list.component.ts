@@ -20,7 +20,8 @@ export class PalletListComponent implements OnInit {
   public palletFilter = new FormControl('');
   public nameFilter = new FormControl('');
   public customers$: Observable<any[]>;
-  public total: number;
+  public totalOut = 0;
+  public totalIn = 0;
   private _loadList: boolean;
   public states = this.sharedService.branches;
   public pallets = ['Loscam', 'Chep', 'Plain'];
@@ -54,10 +55,15 @@ export class PalletListComponent implements OnInit {
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       switchMap(_ => state$.pipe(map(state => !_['branch'] ? {..._, branch: state} : _))),
-      tap(_ => this.parseParams(_)),
-      tap(() => this.total = 0),
+      tap(_ => {
+        this.parseParams(_);
+        this.totalIn = 0;
+        this.totalOut = 0;
+      }),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
-      tap(pallets => this.total = pallets.map(_ => _.fields.Change).filter(_ => _).reduce((acc, val) => acc + val, 0))
+      tap(pallets => this.totalOut = pallets.map(_ => _.fields.Out).filter(_ => _).reduce((acc, val) => acc + val, 0)),
+      tap(pallets => this.totalIn = pallets.map(_ => _.fields.In).filter(_ => _).reduce((acc, val) => acc + val, 0))
+
     )
         this.palletsService.getColumns()
     this.nameFilter.valueChanges.pipe(

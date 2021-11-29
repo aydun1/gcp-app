@@ -44,6 +44,18 @@ h2 {
   text-decoration: none;
 }
 
+.mat-column-date {
+  flex: 0 1 115px;
+}
+
+.mat-column-pallet {
+  flex: 0 1 115px;
+}
+
+.mat-column-out, .mat-column-in {
+    flex: 0 1 80px;
+}
+
 @media print {
   .options {
     display: none;

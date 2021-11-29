@@ -49,7 +49,7 @@
       <ng-container matColumnDef="recepient">
         <mat-header-cell *matHeaderCellDef> Recepient </mat-header-cell>
         <mat-cell *matCellDef="let pallet">
-          {{ pallet.fields.To }}
+          {{ pallet.fields.Title ? pallet.fields.Title + ' (' + pallet.fields.To + ')' : pallet.fields.To }}
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
@@ -65,12 +65,12 @@
       <ng-container matColumnDef="in">
         <mat-header-cell *matHeaderCellDef> In </mat-header-cell>
         <mat-cell *matCellDef="let pallet">{{ pallet.fields.In }}</mat-cell>
-        <mat-footer-cell *matFooterCellDef>{{ total || 0 }}</mat-footer-cell>
+        <mat-footer-cell *matFooterCellDef>{{ totalIn }}</mat-footer-cell>
       </ng-container> 
       <ng-container matColumnDef="out">
         <mat-header-cell *matHeaderCellDef> Out </mat-header-cell>
         <mat-cell *matCellDef="let pallet">{{ pallet.fields.Out }}</mat-cell>
-        <mat-footer-cell *matFooterCellDef>{{ total || 0 }}</mat-footer-cell>
+        <mat-footer-cell *matFooterCellDef>{{ totalOut }}</mat-footer-cell>
       </ng-container> 
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
