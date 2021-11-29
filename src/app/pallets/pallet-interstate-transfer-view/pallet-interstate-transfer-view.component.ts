@@ -39,7 +39,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
         this.quantity = transfer.summary.quantity;
         this.sender = transfer.summary.from === state;
         this.receiver = transfer.summary.to === state;
-        this.transport = (transfer.summary.from || transfer.summary.to) && (transfer.summary.from === 'Transport' || transfer.summary.to === 'Transport');
+        this.transport = (this.sender || this.receiver) && (transfer.summary.from === 'Transport' || transfer.summary.to === 'Transport');
       }),
       map(_ => _[0])
     );
