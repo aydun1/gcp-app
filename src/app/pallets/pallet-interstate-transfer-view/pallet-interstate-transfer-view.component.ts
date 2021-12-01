@@ -68,6 +68,23 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     ).subscribe();
   }
 
+  cancel(id: string) {
+    this.loading = true;
+    this.palletsService.cancelInterstatePalletTransfer(id).pipe(
+      tap(_ => {
+        this.getTransfer(id);
+        this.snackBar.open('Cancelled interstate transfer', '', {duration: 3000});
+        this.loading = false;
+        this.goBack();
+      }),
+      catchError(err => {
+        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
+        this.loading = false;
+        return throwError(() => new Error(err));
+      })
+    ).subscribe();
+  }
+
   transferp(id: string) {
     this.loading = true;
     this.palletsService.transferInterstatePalletTransfer(id).pipe(

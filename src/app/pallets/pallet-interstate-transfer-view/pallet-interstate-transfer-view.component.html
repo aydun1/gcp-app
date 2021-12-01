@@ -10,9 +10,11 @@
 <div class="content" *ngIf="transfer$ | async as transfer">
   <div class="header">
     <h2>Transfer details</h2>
-    <button *ngIf="(transport || receiver) && !transfer.summary.approved" mat-button mat-raised-button color="primary" (click)="approve(transfer.summary.id)" [disabled]="loading">Approve</button>
-    <button *ngIf="(transport || sender) && transfer.summary.approved && !transfer.summary.transferred" mat-button mat-raised-button color="primary" (click)="transferp(transfer.summary.id)" [disabled]="loading">Mark as transferred</button>
-
+    <ng-container *ngIf="!transfer.summary.cancelled">
+      <button *ngIf="(transport || sender) && !transfer.summary.approved" mat-button (click)="cancel(transfer.summary.id)" [disabled]="loading">Cancel</button>
+      <button *ngIf="(transport || receiver) && !transfer.summary.approved" mat-button mat-raised-button color="primary" (click)="approve(transfer.summary.id)" [disabled]="loading">Approve</button>
+      <button *ngIf="(transport || sender) && transfer.summary.approved && !transfer.summary.transferred" mat-button mat-raised-button color="primary" (click)="transferp(transfer.summary.id)" [disabled]="loading">Mark as transferred</button>
+    </ng-container>
   </div>
   <mat-card class="inner">
     <mat-list>
@@ -22,7 +24,7 @@
           <div *ngIf="editQuantity" mat-line><input [(ngModel)]="quantity" [ngModelOptions]="{standalone: true}" type="number"></div>
           <div *ngIf="!editQuantity" mat-line>{{ quantity }}</div>
           <div mat-line>Quantity</div>
-          <button mat-icon-button type="button" *ngIf="!editQuantity && !transfer.summary.approved" (click)="editQuantity = true"><mat-icon mat-list-icon class="last-icon">edit</mat-icon></button>
+          <button mat-icon-button type="button" *ngIf="!editQuantity && !transfer.summary.approved && !transfer.summary.cancelled" (click)="editQuantity = true"><mat-icon mat-list-icon class="last-icon">edit</mat-icon></button>
           <ng-container *ngIf="editQuantity">
             <button mat-icon-button type="button" (click)="cancelEditQuantity(transfer.summary.quantity)" [disabled]="loading"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
             <button mat-icon-button [disabled]="loading"><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
@@ -44,8 +46,11 @@
         <mat-icon>verified</mat-icon>
         <span>Transferred</span>
       </div>
-      <div *ngIf="!transfer.summary.approved">
+      <div *ngIf="!transfer.summary.approved && !transfer.summary.cancelled">
         <span>Pending approval</span>
+      </div>
+      <div *ngIf="transfer.summary.cancelled">
+        <span>Cancelled</span>
       </div>
     </div>
 

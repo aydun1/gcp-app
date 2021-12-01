@@ -159,6 +159,13 @@ export class PalletsService {
     );
   }
 
+  cancelInterstatePalletTransfer(id: string): Observable<any> {
+    const payload = {fields: {Status: 'Cancelled',}};
+    return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${id}')`, payload).pipe(
+      switchMap(res => this.updateList(res))
+    );
+  }
+
   transferInterstatePalletTransfer(id: string): Observable<any> {
     const payload = {fields: {
       Status: 'Transferred'
@@ -184,7 +191,7 @@ export class PalletsService {
   }
 
   getInTransitOff(branch: string, pallet: string): Observable<Pallet[]> {
-    const melbourneMidnight = new Date(new Date(new Date().toLocaleString("en-US", {timeZone: "Australia/Melbourne"})).setHours(0,0,0,0)).toISOString();
+    const melbourneMidnight = new Date(new Date(new Date().toLocaleString('en-US', {timeZone: 'Australia/Melbourne'})).setHours(0,0,0,0)).toISOString();
     let url = this.palletTrackerUrl + '/items?expand=fields(select=Quantity)';
     url += `&filter=fields/From eq '${encodeURIComponent(branch)}' and fields/Title eq null and fields/Pallet eq '${pallet}'`;
     url += ` and (fields/Status ne 'Transferred' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
@@ -192,7 +199,7 @@ export class PalletsService {
   }
 
   getInTransitOn(branch: string, pallet: string): Observable<Pallet[]> {
-    const melbourneMidnight = new Date(new Date(new Date().toLocaleString("en-US", {timeZone: "Australia/Melbourne"})).setHours(0,0,0,0)).toISOString();
+    const melbourneMidnight = new Date(new Date(new Date().toLocaleString('en-US', {timeZone: 'Australia/Melbourne'})).setHours(0,0,0,0)).toISOString();
     let url = this.palletTrackerUrl + '/items?expand=fields(select=Quantity)';
     url += `&filter=fields/To eq '${encodeURIComponent(branch)}' and fields/Title eq null and fields/Pallet eq '${pallet}'`;
     url += ` and (fields/Status eq 'Approved' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
@@ -213,15 +220,20 @@ export class PalletsService {
               acc['from'] = curr.fields.From;
               acc['to'] = curr.fields.To;
               acc['innitiated'] = curr.lastModifiedDateTime;
+            } else if (!acc['cancelled']) {
+              if (curr.fields.Status === 'Cancelled') {
+                acc['cancelled'] = curr.lastModifiedDateTime;
+                acc['canceller'] = curr.lastModifiedBy.user;
+              }
             } else if (!acc['approved']) {
-              if (curr.fields.Status === "Approved") {
+              if (curr.fields.Status === 'Approved') {
                 acc['approved'] = curr.lastModifiedDateTime;
                 acc['approver'] = curr.lastModifiedBy.user;
               } else {
                 acc['quantity'] = curr.fields.Quantity;
               }
             } else if (!acc['transferred']) {
-              if (curr.fields.Status === "Transferred") {
+              if (curr.fields.Status === 'Transferred') {
                 acc['transferred'] = curr.lastModifiedDateTime;
                 acc['transferer'] = curr.lastModifiedBy.user;
               }
