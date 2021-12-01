@@ -102,17 +102,4 @@ export class PalletsReconciliationService {
     );
   }
 
-  approveInterstatePalletTransfer(id: string, approval: boolean): Observable<any> {
-    const payload = {fields: {
-      Status: approval ? 'Approved' : 'Rejected',
-    }};
-    return this.http.patch<Reconciliation>(`${this.reconciliationTrackerUrl}/items('${id}')`, payload)
-  }
-
-  getCustomerPallets(custnmbr: string, site = ''): Observable<Reconciliation[]> {
-    let url = this.reconciliationTrackerUrl + `/items?expand=fields(select=Title,Pallet,Out,In)&filter=(fields/From eq '${encodeURIComponent(custnmbr)}' or fields/To eq '${encodeURIComponent(custnmbr)}')`;
-    if (site) url += `and fields/Site eq '${encodeURIComponent(site)}'`;
-    return this.http.get(url).pipe(map((_: any) => _.value));
-  }
-
 }

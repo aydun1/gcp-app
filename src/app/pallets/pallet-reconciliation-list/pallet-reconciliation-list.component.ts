@@ -104,10 +104,6 @@ export class PalletReconciliationListComponent implements OnInit {
     this.router.navigate([], { queryParams: {pallet: pallet.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  approve(id: string) {
-    this.palletsReconciliationService.approveInterstatePalletTransfer(id, true).subscribe();
-  }
-
   trackByFn(index: number, item: Pallet) {
     return item.id;
   }
