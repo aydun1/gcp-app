@@ -9,7 +9,7 @@
   <mat-list>
     <mat-list-item>
       <div mat-line>{{ transfer?.fields.Notes}}</div>
-      <div mat-line>Reference</div>
+      <div mat-line>Reference number</div>
     </mat-list-item>
     <mat-list-item>
       <div mat-line>{{ transfer?.fields.Pallet}}</div>
@@ -24,8 +24,9 @@
       <div mat-line>Total {{ transfer?.fields.Pallet }} pallets owed</div>
     </mat-list-item>
 
+    <div class="signs">Qty for exchange: ______</div>
     <div class="signs">
-      <div>Sent by: ________________</div>
+      <div class="sender">Sent by: ________________</div>
       <div>Received by: ________________</div>
     </div>
   </mat-list>

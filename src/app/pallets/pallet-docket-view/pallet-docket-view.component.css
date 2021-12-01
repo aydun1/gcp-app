@@ -33,4 +33,9 @@ h2, h3 {
 
 .signs {
   display: flex;
+  margin-top: 60px;
+}
+
+.sender {
+  margin-right: 20px;
 }
