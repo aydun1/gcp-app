@@ -5,6 +5,12 @@ import { BehaviorSubject, map, Observable, of, switchMap, take, tap } from 'rxjs
 
 import { Pallet } from './pallet';
 
+interface PalletQuantities {
+  Loscam: number,
+  Chep: number,
+  Plain: number
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -25,7 +31,7 @@ export class PalletsService {
 
   private createUrl(filters: any): string {
     const filterKeys = Object.keys(filters);
-    let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created,Title,Pallet,In,Out,From,To,Quantity,Reference,Status)`;
+    let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created,Title,Pallet,In,Out,From,To,Quantity,Reference,Status,Notes)`;
 
     const parsed = filterKeys.map(key => {
       switch (key) {
@@ -184,10 +190,25 @@ export class PalletsService {
     );
   }
 
+  getPalletTransfer(id: string) {
+    const url = this.palletTrackerUrl + `/items('${id}')`;
+    return this.http.get<Pallet>(url);
+  }
+
   getCustomerPallets(custnmbr: string, site = ''): Observable<Pallet[]> {
     let url = this.palletTrackerUrl + `/items?expand=fields(select=Title,Pallet,Out,In)&filter=(fields/From eq '${encodeURIComponent(custnmbr)}' or fields/To eq '${encodeURIComponent(custnmbr)}')`;
     if (site) url += `and fields/Site eq '${encodeURIComponent(site)}'`;
     return this.http.get(url).pipe(map((_: any) => _.value));
+  }
+
+  getCustomerPalletQuantities(custnmbr: string, site = ''): Observable<PalletQuantities> {
+    return this.getCustomerPallets(custnmbr, site).pipe(
+      map(pallets => ['Loscam', 'Chep', 'Plain'].reduce((acc,curr) => {
+        const count = pallets.filter(_ => _.fields.Pallet === curr).reduce((subtotal, qty) => subtotal + qty.fields.Out - qty.fields.In, 0);
+        acc[curr] = count;
+        return acc;
+      }, {} as PalletQuantities))
+    )
   }
 
   getInTransitOff(branch: string, pallet: string): Observable<Pallet[]> {
@@ -206,7 +227,7 @@ export class PalletsService {
     return this.http.get(url).pipe(map((_: any) => _.value.reduce((acc, val) => acc + val['fields'].Quantity, 0)));
   }
 
-  getPalletTransfer(id: string): Observable<{summary: any}> {
+  getInterstatePalletTransfer(id: string): Observable<{summary: any}> {
     const url = this.palletTrackerUrl + `/items('${id}')/versions`;
     return this.http.get<{value: Pallet[]}>(url).pipe(
       map(_ => {

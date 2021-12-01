@@ -34,7 +34,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     this.transferSource$ = new BehaviorSubject(id);
     this.transfer$ = this.transferSource$.pipe(
-      switchMap(_ => combineLatest([this.palletsService.getPalletTransfer(_), this.sharedService.getBranch()])),
+      switchMap(_ => combineLatest([this.palletsService.getInterstatePalletTransfer(_), this.sharedService.getBranch()])),
       tap(([transfer, state]) => {
         this.quantity = transfer.summary.quantity;
         this.sender = transfer.summary.from === state;

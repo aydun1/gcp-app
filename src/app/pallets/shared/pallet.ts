@@ -18,7 +18,10 @@ export interface Pallet {
     Out: number,
     Quantity: string,
     Reference: string,
+    Notes: string,
     Change?: number,
     Status: string,
+    CustomerNumber: string,
+    Site: string
   }
 }

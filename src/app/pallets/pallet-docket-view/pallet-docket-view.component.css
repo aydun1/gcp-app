@@ -1,0 +1,36 @@
+.docket {
+  transform: rotate(90deg);
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  right: 0;
+  top: 40px;
+}
+
+.docket2 {
+  transform: rotate(90deg);
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  right: 0;
+  top: 540px;
+}
+
+.header {
+  align-items: center;
+  display: flex;
+  height: 110px;
+}
+
+img {
+  margin-right: 16px;
+  width: 110px;
+}
+
+h2, h3 {
+  margin: 10px 0;
+}
+
+.signs {
+  display: flex;
+}

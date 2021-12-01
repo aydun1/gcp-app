@@ -15,12 +15,6 @@ import { RecyclingService } from '../../recycling/shared/recycling.service';
 import { PalletsService } from '../../pallets/shared/pallets.service';
 import { CustomerSiteDialogComponent } from '../shared/customer-site-dialog/customer-site-dialog.component';
 
-interface PalletQuantities {
-  Loscam: number,
-  Chep: number,
-  Plain: number
-}
-
 @Component({
   selector: 'gcp-customer-view',
   host: {class:'app-component'},
@@ -34,7 +28,7 @@ export class CustomerViewComponent implements OnInit {
   public customer$: Observable<any>;
   public site: string;
   public sites: Array<Site>;
-  public pallets: PalletQuantities;
+  public pallets: any;
   public cages: {weight: number};
 
   constructor(
@@ -53,12 +47,8 @@ export class CustomerViewComponent implements OnInit {
     ).subscribe();
 
     this.palletsSubject$.pipe(
-      switchMap(id => this.palletsService.getCustomerPallets(id, this.site)),
-      map(pallets => ['Loscam', 'Chep', 'Plain'].reduce((acc,curr) => {
-        const count = pallets.filter(_ => _.fields.Pallet === curr).reduce((subtotal, qty) => subtotal + qty.fields.Out - qty.fields.In, 0);
-        acc[curr] = count;
-        return acc;
-      }, {} as PalletQuantities))
+      switchMap(id => this.palletsService.getCustomerPalletQuantities(id, this.site)),
+
     ).subscribe(pallets => this.pallets = pallets);
 
     this.cagesSubject$.pipe(

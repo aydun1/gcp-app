@@ -1,1 +1,65 @@
-<p>pallet-docket-view works!</p>
+<div class="docket">
+  <div class="header">
+    <img src="assets/icons/icon-192x192.png">
+    <div>
+      <h2>Garden City Plastics</h2>
+      <h3>Pallet Management System</h3>
+    </div>
+  </div>
+  <mat-list>
+    <mat-list-item>
+      <div mat-line>{{ transfer?.fields.Notes}}</div>
+      <div mat-line>Reference</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div mat-line>{{ transfer?.fields.Pallet}}</div>
+      <div mat-line>Pallet type</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div mat-line>{{ transfer?.fields.Out}}</div>
+      <div mat-line>{{ transfer?.fields.Pallet }} pallets delivered</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div mat-line>{{ quantities ? quantities[transfer.fields.Pallet] : '...'}}</div>
+      <div mat-line>Total {{ transfer?.fields.Pallet }} pallets owed</div>
+    </mat-list-item>
+
+    <div class="signs">
+      <div>Sent by: ________________</div>
+      <div>Received by: ________________</div>
+    </div>
+  </mat-list>
+</div>
+
+<div class="docket2">
+  <div class="header">
+    <img src="assets/icons/icon-192x192.png">
+    <div>
+      <h2>Garden City Plastics</h2>
+      <h3>Pallet Management System</h3>
+    </div>
+  </div>
+  <mat-list>
+    <mat-list-item>
+      <div mat-line>{{ transfer?.fields.Notes}}</div>
+      <div mat-line>Reference</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div mat-line>{{ transfer?.fields.Pallet}}</div>
+      <div mat-line>Pallet type</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div mat-line>{{ transfer?.fields.Out}}</div>
+      <div mat-line>{{ transfer?.fields.Pallet }} pallets delivered</div>
+    </mat-list-item>
+    <mat-list-item>
+      <div mat-line>{{ quantities ? quantities[transfer.fields.Pallet] : '...'}}</div>
+      <div mat-line>Total {{ transfer?.fields.Pallet }} pallets owed</div>
+    </mat-list-item>
+
+    <div class="signs">
+      <div>Sent by: ________________</div>
+      <div>Received by: ________________</div>
+    </div>
+  </mat-list>
+</div>
