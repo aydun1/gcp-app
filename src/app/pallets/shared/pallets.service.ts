@@ -242,7 +242,8 @@ export class PalletsService {
               acc['to'] = curr.fields.To;
               acc['innitiated'] = curr.lastModifiedDateTime;
               acc['reference'] = curr.fields.Reference;
-            } else if (!acc['approved']) {
+            }
+            if (!acc['approved']) {
               if (curr.fields.Status === 'Approved') {
                 acc['approved'] = curr.lastModifiedDateTime;
                 acc['approver'] = curr.lastModifiedBy.user;
@@ -254,12 +255,16 @@ export class PalletsService {
                 acc['transferred'] = curr.lastModifiedDateTime;
                 acc['transferer'] = curr.lastModifiedBy.user;
               }
-            } else if (!acc['cancelled']) {
+            }
+            if (!acc['cancelled']) {
               if (curr.fields.Status === 'Cancelled') {
                 acc['cancelled'] = curr.lastModifiedDateTime;
                 acc['canceller'] = curr.lastModifiedBy.user;
+              } else {
+                delete acc['cancelled'];
+                delete acc['canceller'];
               }
-            } 
+            }
             return acc;
           }, {versions: _.value.length}
         )
