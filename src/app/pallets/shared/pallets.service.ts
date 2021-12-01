@@ -256,14 +256,13 @@ export class PalletsService {
                 acc['transferer'] = curr.lastModifiedBy.user;
               }
             }
-            if (!acc['cancelled']) {
-              if (curr.fields.Status === 'Cancelled') {
-                acc['cancelled'] = curr.lastModifiedDateTime;
-                acc['canceller'] = curr.lastModifiedBy.user;
-              } else {
-                delete acc['cancelled'];
-                delete acc['canceller'];
-              }
+
+            if (curr.fields.Status === 'Cancelled') {
+              acc['cancelled'] = curr.lastModifiedDateTime;
+              acc['canceller'] = curr.lastModifiedBy.user;
+            } else {
+              delete acc['cancelled'];
+              delete acc['canceller'];
             }
             return acc;
           }, {versions: _.value.length}
