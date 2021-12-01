@@ -16,11 +16,14 @@ export class PalletInterstateTransferListComponent implements OnInit {
   public pallets$: Observable<Pallet[]>;
   public fromFilter = new FormControl('');
   public toFilter = new FormControl('');
+  public statusFilter = new FormControl('');
   public assetTypeFilter = new FormControl('');
   public customers$: Observable<any[]>;
   public total: number;
   private _loadList: boolean;
   public displayedColumns = ['date', 'reference', 'pallet', 'from', 'to', 'quantity', 'approved'];
+  public statuses = ['Pending', 'Approved', 'Transferred', 'Cancelled'];
+
   public states = this.sharedService.branches.concat('Transport');
   public choices$: Observable<any>;
   public Status: any;
@@ -85,6 +88,12 @@ export class PalletInterstateTransferListComponent implements OnInit {
     } else {
       this.toFilter.patchValue('');
     }
+    if ('status' in params) {
+      this.statusFilter.patchValue(params['status']);
+      filters['status'] = params['status'];
+    } else {
+      this.statusFilter.patchValue('');
+    }
   }
 
   compareQueryStrings(prev: Params, curr: Params) {
@@ -96,7 +105,9 @@ export class PalletInterstateTransferListComponent implements OnInit {
     if (this.route.firstChild != null) return true;
     const sameFrom = prev['from'] === curr['from'];
     const sameTo = prev['to'] === curr['to'];
-    return sameFrom && sameTo && this._loadList;
+    const sameStatus = prev['status'] === curr['status'];
+
+    return sameFrom && sameTo && sameStatus && this._loadList;
   }
 
   setFrom(from: MatSelectChange ) {
@@ -105,6 +116,10 @@ export class PalletInterstateTransferListComponent implements OnInit {
 
   setTo(to: MatSelectChange ) {
     this.router.navigate([], { queryParams: {to: to.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  setStatus(status: MatSelectChange ) {
+    this.router.navigate([], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setAssetType(assetType: MatSelectChange ) {
