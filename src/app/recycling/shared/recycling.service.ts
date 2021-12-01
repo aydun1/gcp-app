@@ -66,16 +66,18 @@ export class RecyclingService {
   }
 
   private assignStatus(cage: Cage): Cage {
-    if (cage.fields.CustomerNumber && !cage.fields.Date1) {
-      cage['statusId'] = 1;
-    } else if (cage.fields.Date1 && !cage.fields.Date2) {
-      cage['statusId'] = 2;
-    } else if (cage.fields.Date2 && !cage.fields.Date3) {
-      cage['statusId'] = 3;
+
+
+    if (cage.fields.Date4 && cage.fields.Status !== 'Complete') {
+      cage['statusId'] = 5;
     } else if (cage.fields.Date3 && !cage.fields.Date4) {
       cage['statusId'] = 4;
-    } else if (cage.fields.Date4 && cage.fields.Status !== 'Complete') {
-      cage['statusId'] = 5;
+    } else if (cage.fields.Date2 && !cage.fields.Date3) {
+      cage['statusId'] = 3;
+    } else if (cage.fields.Date1 && !cage.fields.Date2) {
+      cage['statusId'] = 2;
+    } else if (cage.fields.CustomerNumber && !cage.fields.Date1) {
+      cage['statusId'] = 1;
     } else {
       cage['status'] = cage.fields.Status;
     }
