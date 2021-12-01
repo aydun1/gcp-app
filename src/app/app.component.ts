@@ -1,7 +1,9 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { SafeUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { SwUpdate } from '@angular/service-worker';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { AuthenticationResult, InteractionStatus, PopupRequest, EventMessage, EventType, AccountInfo } from '@azure/msal-browser';
 import { Observable, Subject } from 'rxjs';
@@ -26,6 +28,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
+    private swUpdate: SwUpdate, 
+    private snackBar: MatSnackBar,
     private authService: MsalService,
     private msalBroadcastService: MsalBroadcastService,
     private router: Router,
@@ -53,7 +57,19 @@ export class AppComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.setLoginDisplay();
       this.checkAndSetActiveAccount();
-    })
+    });
+
+    if (this.swUpdate.isEnabled) {
+      this.swUpdate.available.subscribe((evt) => {
+        const snackBarRef = this.snackBar.open('Application updated. Refresh page to apply changes.', 'Refresh');
+        snackBarRef.onAction().subscribe(() => location.reload());
+      });
+      this.swUpdate.checkForUpdate().then(
+        () => console.log('Checking for application updates')
+      ).catch(
+        e => console.error('error when checking for update', e)
+      );
+    }
   }
 
   setLoginDisplay() {
