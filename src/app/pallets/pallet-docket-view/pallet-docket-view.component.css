@@ -5,18 +5,17 @@
 .docket {
   transform: rotate(90deg);
   position: absolute;
+  right: 0;
   width: 500px;
   height: 500px;
 
 }
 
 .docket1 {
-  right: 0;
   top: 40px;
 }
 
 .docket2 {
-  right: 0;
   bottom: 40px;
 }
 

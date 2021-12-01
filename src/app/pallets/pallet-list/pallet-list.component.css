@@ -44,12 +44,20 @@ h2 {
   text-decoration: none;
 }
 
-.mat-column-pallet, .mat-column-date, .mat-column-id {
+.mat-column-pallet, .mat-column-date {
   flex: 0 1 115px;
 }
 
 .mat-column-out, .mat-column-in {
     flex: 0 1 80px;
+}
+
+.mat-column-docket {
+  flex: 0 1 40px;
+}
+
+a {
+  color: #007449;
 }
 
 @media print {

@@ -39,10 +39,10 @@
         <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
       </ng-container>
 
-      <ng-container matColumnDef="id">
-        <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
+      <ng-container matColumnDef="docket">
+        <mat-header-cell *matHeaderCellDef> Docket </mat-header-cell>
         <mat-cell *matCellDef="let pallet">
-          <a [routerLink]="[pallet.id]">{{ pallet.id }}</a>
+          <a [routerLink]="[pallet.id]" *ngIf="pallet.fields.Title"><mat-icon>receipt</mat-icon></a>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
       </ng-container>
