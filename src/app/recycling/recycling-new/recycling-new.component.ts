@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 
 import { RecyclingService } from '../shared/recycling.service';
+import { NavigationService } from '../../navigation.service';
 
 @Component({
   selector: 'gcp-recycling-new',
@@ -24,9 +24,9 @@ export class RecyclingNewComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private location: Location,
     private router: Router,
     private snackBar: MatSnackBar,
+    private navService: NavigationService,
     private recyclingService: RecyclingService
   ) { }
 
@@ -70,6 +70,6 @@ export class RecyclingNewComponent implements OnInit {
   }
 
   goBack() {
-    this.location.back();
+    this.navService.back();
   }
 }

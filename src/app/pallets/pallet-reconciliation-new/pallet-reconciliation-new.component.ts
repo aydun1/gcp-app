@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { catchError, combineLatest, tap, throwError } from 'rxjs';
-import { SharedService } from 'src/app/shared.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { catchError, combineLatest, tap, throwError } from 'rxjs';
+
 import { PalletsService } from '../shared/pallets.service';
 import { PalletsReconciliationService } from '../shared/pallets-reconciliation.service';
-import { Location } from '@angular/common';
+import { SharedService } from '../../shared.service';
+import { NavigationService } from '../../navigation.service';
 
 @Component({
   selector: 'gcp-pallet-reconciliation-new',
@@ -24,11 +25,11 @@ export class PalletReconciliationNewComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private location: Location,
     private snackBar: MatSnackBar,
     private palletsService: PalletsService,
     private palletsReconciliationService: PalletsReconciliationService,
-    private sharedService: SharedService
+    private sharedService: SharedService,
+    private navService: NavigationService
   ) { }
 
   get surplus() {
@@ -98,7 +99,7 @@ export class PalletReconciliationNewComponent implements OnInit {
     const payload = {...this.palletRecForm.getRawValue(), surplus: this.surplus, deficit: this.deficit, result: this.stocktakeResult};
     this.palletsReconciliationService.addReconciliation(payload).pipe(
       tap(_ => {
-        this.location.back();
+        this.goBack();
         this.snackBar.open('Added pallet stocktake', '', {duration: 3000});
       }),
       catchError(err => {
@@ -110,6 +111,6 @@ export class PalletReconciliationNewComponent implements OnInit {
   }
 
   goBack() {
-    this.location.back();
+    this.navService.back();
   }
 }

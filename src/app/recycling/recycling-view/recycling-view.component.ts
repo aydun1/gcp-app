@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { RecyclingService } from '../shared/recycling.service';
 import { BehaviorSubject, Observable, Subject, switchMap, tap } from 'rxjs';
+
+import { RecyclingService } from '../shared/recycling.service';
+import { NavigationService } from '../../navigation.service';
 
 @Component({
   selector: 'gcp-recycling-view',
@@ -22,7 +23,7 @@ export class RecyclingViewComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private location: Location,
+    private navService: NavigationService,
     private recyclingService: RecyclingService
   ) { }
 
@@ -47,6 +48,6 @@ export class RecyclingViewComponent implements OnInit {
   }
 
   goBack() {
-    this.location.back();
+    this.navService.back();
   }
 }

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
@@ -7,13 +6,13 @@ import { map, switchMap, tap } from 'rxjs/operators';
 
 import { Customer } from '../shared/customer';
 import { Site } from '../shared/site';
-
 import { CustomersService } from '../shared/customers.service';
 import { PalletDialogComponent } from '../../pallets/shared/pallet-dialog/pallet-dialog.component';
 import { RecyclingDialogComponent } from '../../recycling/shared/recycling-dialog/recycling-dialog.component';
 import { RecyclingService } from '../../recycling/shared/recycling.service';
 import { PalletsService } from '../../pallets/shared/pallets.service';
 import { CustomerSiteDialogComponent } from '../shared/customer-site-dialog/customer-site-dialog.component';
+import { NavigationService } from '../../navigation.service';
 
 @Component({
   selector: 'gcp-customer-view',
@@ -33,8 +32,8 @@ export class CustomerViewComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private location: Location,
     private dialog: MatDialog,
+    private navService: NavigationService,
     private cutomersService: CustomersService,
     private recyclingService: RecyclingService,
     private palletsService: PalletsService
@@ -109,6 +108,6 @@ export class CustomerViewComponent implements OnInit {
   }
 
   goBack() {
-    this.location.back();
+    this.navService.back();
   }
 }

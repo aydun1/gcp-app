@@ -1,9 +1,9 @@
-import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, tap, throwError } from 'rxjs';
 
+import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
 import { RecyclingReceiptsService } from '../shared/recycling-receipts.service';
 
@@ -20,10 +20,10 @@ export class RecyclingReceiptNewComponent implements OnInit {
   public states = this.sharedService.branches;
 
   constructor(
-    private location: Location,
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
     private sharedService: SharedService,
+    private navService: NavigationService,
     private receiptsService: RecyclingReceiptsService
   ) { }
 
@@ -50,7 +50,7 @@ export class RecyclingReceiptNewComponent implements OnInit {
     const values = this.newReceiptForm.value;
     this.receiptsService.addNewReceipt(values.reference, branch, values.weight, values.date).pipe(
       tap(_ => {
-        this.location.back();
+        this.goBack();
         this.snackBar.open('Added interstate transfer', '', {duration: 3000});
       }),
       catchError(err => {
@@ -62,7 +62,7 @@ export class RecyclingReceiptNewComponent implements OnInit {
   }
 
   goBack() {
-    this.location.back();
+    this.navService.back();
   }
 
 }
