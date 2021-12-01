@@ -36,6 +36,11 @@
         <div mat-line>{{ transfer.summary.pallet }}</div>
         <div mat-line>Pallet</div>
       </mat-list-item>
+      <mat-list-item>
+        <mat-icon mat-list-icon>tag</mat-icon>
+        <div mat-line>{{ transfer.summary.reference }}</div>
+        <div mat-line>Reference number</div>
+      </mat-list-item>
     </mat-list>
     <div class="status">
       <div class="approved" *ngIf="transfer.summary.approved">

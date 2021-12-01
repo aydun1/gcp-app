@@ -220,6 +220,8 @@ export class PalletsService {
               acc['from'] = curr.fields.From;
               acc['to'] = curr.fields.To;
               acc['innitiated'] = curr.lastModifiedDateTime;
+              acc['reference'] = curr.fields.Reference;
+
             } else if (!acc['cancelled']) {
               if (curr.fields.Status === 'Cancelled') {
                 acc['cancelled'] = curr.lastModifiedDateTime;

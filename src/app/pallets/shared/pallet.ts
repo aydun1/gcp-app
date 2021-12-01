@@ -17,6 +17,7 @@ export interface Pallet {
     In: number,
     Out: number,
     Quantity: string,
+    Reference: string,
     Change?: number,
     Status: string,
   }
