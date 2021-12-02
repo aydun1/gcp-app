@@ -1,6 +1,6 @@
 {
-  "name": "gcp-app",
-  "short_name": "gcp-app",
+  "name": "GCP Pallet Management System",
+  "short_name": "GCP PMS",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",
