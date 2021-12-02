@@ -113,7 +113,15 @@ a.title {
 
 @media print {
   :host {
-    top: 0;
+    position: relative;
+  }
+
+  .mat-sidenav {
+    display: none;
+  }
+
+  .mat-drawer-content {
+    margin-left: 0!important;
   }
 
   .mat-toolbar {

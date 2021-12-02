@@ -18,7 +18,7 @@ import { SharedService } from './shared.service';
 })
 export class AppComponent implements OnInit, OnDestroy {
   private readonly _destroying$ = new Subject<void>();
-  public title = 'Garden City Plastics';
+  public title = 'Pallet Management System';
   public loginDisplay: boolean;
   public loginDisplay$ = new Subject<boolean>();
   public accounts: AccountInfo[];
