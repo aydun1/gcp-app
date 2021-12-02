@@ -21,11 +21,13 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BigButtonComponent } from './big-button/big-button.component';
 import { MatNativeDateModule } from '@angular/material/core';
-import { PipeModule } from './pipe.module';
+import { PipeModule } from './pipes/pipe.module';
+import { UploadControlComponent } from './pipes/controls/upload-control/upload-control.component';
 
 @NgModule({
   declarations: [
-    BigButtonComponent
+    BigButtonComponent,
+    UploadControlComponent
   ],
   imports: [
     CommonModule,

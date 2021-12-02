@@ -6,6 +6,7 @@ import { BehaviorSubject, catchError, combineLatest, map, Observable, Subject, s
 import { PalletsService } from '../shared/pallets.service';
 import { SharedService } from '../../shared.service';
 import { NavigationService } from '../../navigation.service';
+import { UploadService } from 'src/app/shared/upload.service';
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer-view',
@@ -31,7 +32,8 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     private snackBar: MatSnackBar,
     private sharedService: SharedService,
     private navService: NavigationService,
-    private palletsService: PalletsService
+    private palletsService: PalletsService,
+    private uploadService: UploadService
   ) { }
 
   ngOnInit(): void {
@@ -129,6 +131,23 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     this.chepQuantity = chep;
     this.plainQuantity = plain;
     this.editQuantity = false
+  }
+
+
+  fileChangeEvent(e: any) {
+    const files = e.target.files;
+    const keys = Array.from(Array(files.length).keys());
+    for (let key in keys) {
+      const file = files[key];
+      this.uploadFile(file);
+    }
+  }
+
+
+
+  uploadFile(file: File) {
+    console.log(file.name, file.size)
+    this.uploadService.createUploadSession(file).subscribe();
   }
 
   goBack() {
