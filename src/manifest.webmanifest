@@ -1,7 +1,7 @@
 {
   "name": "GCP Pallet Management System",
   "short_name": "GCP PMS",
-  "theme_color": "#1976d2",
+  "theme_color": "#309962",
   "background_color": "#fafafa",
   "display": "standalone",
   "scope": "./",
