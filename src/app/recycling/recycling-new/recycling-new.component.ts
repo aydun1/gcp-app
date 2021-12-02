@@ -58,7 +58,7 @@ export class RecyclingNewComponent implements OnInit {
     this.loading = true;
     this.recyclingService.addNewCage(d.cageNumber, d.branch, d.assetType, d.cageWeight).pipe(
       tap(_ => {
-        this.router.navigate(['recycling', _.id], {replaceUrl: true});
+        this.router.navigate(['recycling/cages', _.id], {replaceUrl: true});
         this.snackBar.open('Cage added', '', {duration: 3000});
       }),
       catchError(err => {
