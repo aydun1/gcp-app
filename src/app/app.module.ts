@@ -50,11 +50,10 @@ function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
 
 function MSALGuardConfigFactory(): MsalGuardConfiguration {
   return {
-    interactionType: InteractionType.Redirect,
+    interactionType: InteractionType.Popup,
     authRequest: {
       scopes: ['user.read', 'Sites.ReadWrite.All', 'https://gardencityplastics.crm6.dynamics.com//user_impersonation']
-    },
-    loginFailedRoute: '/login-failed'
+    }
   };
 }
 
