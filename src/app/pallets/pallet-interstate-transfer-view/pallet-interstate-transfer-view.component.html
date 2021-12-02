@@ -16,31 +16,34 @@
       <button *ngIf="(transport || sender) && transfer.summary.approved && !transfer.summary.transferred" mat-button mat-raised-button color="primary" (click)="transferp(transfer.summary.id)" [disabled]="loading">Mark as transferred</button>
     </ng-container>
   </div>
-  <mat-card class="inner">
-    <mat-list>
-      <form (ngSubmit)="setQuantity(transfer.summary.id)">
+  <form (ngSubmit)="setQuantity(transfer.summary.id)">
+    <mat-card class="inner">
+      <mat-list>
         <mat-list-item>
-          <mat-icon mat-list-icon>123</mat-icon>
-          <div *ngIf="editQuantity" mat-line><input [(ngModel)]="quantity" [ngModelOptions]="{standalone: true}" type="number"></div>
-          <div *ngIf="!editQuantity" mat-line>{{ quantity }}</div>
-          <div mat-line>Quantity</div>
-          <button mat-icon-button type="button" *ngIf="!editQuantity && !transfer.summary.approved && !transfer.summary.cancelled" (click)="editQuantity = true"><mat-icon mat-list-icon class="last-icon">edit</mat-icon></button>
-          <ng-container *ngIf="editQuantity">
-            <button mat-icon-button type="button" (click)="cancelEditQuantity(transfer.summary.quantity)" [disabled]="loading"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
-            <button mat-icon-button [disabled]="loading"><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
-          </ng-container>
+          <mat-icon mat-list-icon>tag</mat-icon>
+          <div mat-line>{{ transfer.summary.reference }}</div>
+          <div mat-line>Reference number</div>
         </mat-list-item>
-      </form>
-      <mat-list-item>
-        <mat-icon mat-list-icon>table_rows</mat-icon>
-        <div mat-line>{{ transfer.summary.pallet }}</div>
-        <div mat-line>Pallet</div>
-      </mat-list-item>
-      <mat-list-item>
-        <mat-icon mat-list-icon>tag</mat-icon>
-        <div mat-line>{{ transfer.summary.reference }}</div>
-        <div mat-line>Reference number</div>
-      </mat-list-item>
+      </mat-list>
+      <mat-list class="pallets">
+        <mat-list-item>
+          <img src="assets/loscam.png" mat-list-icon>
+          <div *ngIf="editQuantity" mat-line><input [(ngModel)]="loscamQuantity" [ngModelOptions]="{standalone: true}" type="number"></div>
+          <div *ngIf="!editQuantity" mat-line>{{ loscamQuantity || 0 }}</div>
+          <div mat-line>Loscams</div>
+        </mat-list-item>
+        <mat-list-item>
+          <img src="assets/chep.png" mat-list-icon>
+          <div *ngIf="editQuantity" mat-line><input [(ngModel)]="chepQuantity" [ngModelOptions]="{standalone: true}" type="number"></div>
+          <div *ngIf="!editQuantity" mat-line>{{ chepQuantity || 0 }}</div>
+          <div mat-line>Cheps</div>
+        </mat-list-item>
+        <mat-list-item>
+          <img src="assets/pallet.png" mat-list-icon>
+          <div *ngIf="editQuantity" mat-line><input [(ngModel)]="plainQuantity" [ngModelOptions]="{standalone: true}" type="number"></div>
+          <div *ngIf="!editQuantity" mat-line>{{ plainQuantity || 0 }}</div>
+          <div mat-line>Plains</div>
+        </mat-list-item>
     </mat-list>
     <div class="status">
       <div class="approved" *ngIf="transfer.summary.approved">
@@ -56,6 +59,13 @@
       </div>
       <div *ngIf="transfer.summary.cancelled">
         <span>Cancelled</span>
+      </div>
+      <div *ngIf="(transport || sender) && !transfer.summary.approved && !transfer.summary.cancelled" class="edit">
+        <button mat-icon-button type="button" *ngIf="!editQuantity" (click)="editQuantity = true"><mat-icon mat-list-icon class="last-icon">edit</mat-icon></button>
+        <ng-container *ngIf="editQuantity">
+          <button mat-icon-button type="button" (click)="cancelEditQuantity(transfer.summary.loscam, transfer.summary.chep, transfer.summary.plain)" [disabled]="loading"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
+          <button mat-icon-button [disabled]="loading"><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
+        </ng-container>
       </div>
     </div>
 
@@ -99,4 +109,5 @@
       </mat-list>
     </div>
   </mat-card>
+  </form>
 </div>

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, catchError, combineLatest, map, Observable, Subject, switchMap, tap, throwError } from 'rxjs';
-import { PalletsService } from '../shared/pallets.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { SharedService } from 'src/app/shared.service';
+import { BehaviorSubject, catchError, combineLatest, map, Observable, Subject, switchMap, tap, throwError } from 'rxjs';
+
+import { PalletsService } from '../shared/pallets.service';
+import { SharedService } from '../../shared.service';
+import { NavigationService } from '../../navigation.service';
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer-view',
@@ -17,16 +18,19 @@ export class PalletInterstateTransferViewComponent implements OnInit {
   public transfer$: Observable<any>;
   public loading: boolean;
   public editQuantity: boolean;
-  public quantity: number;
+  public loscamQuantity: number;
+  public chepQuantity: number;
+  public plainQuantity: number;
+
   public sender: boolean;
   public receiver: boolean;
   public transport: boolean;
 
   constructor(
-    private location: Location,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
     private sharedService: SharedService,
+    private navService: NavigationService,
     private palletsService: PalletsService
   ) { }
 
@@ -36,7 +40,9 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     this.transfer$ = this.transferSource$.pipe(
       switchMap(_ => combineLatest([this.palletsService.getInterstatePalletTransfer(_), this.sharedService.getBranch()])),
       tap(([transfer, state]) => {
-        this.quantity = transfer.summary.quantity;
+        this.loscamQuantity = transfer.summary.loscam;
+        this.chepQuantity = transfer.summary.chep;
+        this.plainQuantity = transfer.summary.plain;
         this.sender = transfer.summary.from === state;
         this.receiver = transfer.summary.to === state;
         this.transport = (this.sender || this.receiver) && (transfer.summary.from === 'Transport' || transfer.summary.to === 'Transport');
@@ -103,7 +109,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
 
   setQuantity(id: string) {
     this.loading = true;
-    this.palletsService.editInterstatePalletTransferQuantity(id, this.quantity).pipe(
+    this.palletsService.editInterstatePalletTransferQuantity(id, this.loscamQuantity, this.chepQuantity, this.plainQuantity).pipe(
       tap(() => {
         this.getTransfer(id);
         this.snackBar.open('Updated quantity', '', {duration: 3000});
@@ -118,12 +124,14 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     ).subscribe()
   }
 
-  cancelEditQuantity(quantity: number) {
-    this.quantity = quantity;
+  cancelEditQuantity(loscam: number, chep: number, plain: number) {
+    this.loscamQuantity = loscam;
+    this.chepQuantity = chep;
+    this.plainQuantity = plain;
     this.editQuantity = false
   }
 
   goBack() {
-    this.location.back();
+    this.navService.back();
   }
 }

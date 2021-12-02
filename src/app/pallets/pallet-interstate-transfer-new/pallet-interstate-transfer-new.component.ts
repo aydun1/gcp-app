@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, tap, throwError } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
+import { NavigationService } from '../../navigation.service';
 import { PalletsService } from '../shared/pallets.service';
 
 @Component({
@@ -15,7 +15,6 @@ import { PalletsService } from '../shared/pallets.service';
 })
 export class PalletInterstateTransferNewComponent implements OnInit {
   public palletTransferForm: FormGroup;
-  public pallets = ['Loscam', 'Chep', 'Plain'];
   public states = this.sharedService.branches;
   public state: string;
   public loading: boolean;
@@ -33,9 +32,9 @@ export class PalletInterstateTransferNewComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private location: Location,
     private snackBar: MatSnackBar,
     private sharedService: SharedService,
+    private navService: NavigationService,
     private palletService: PalletsService
   ) { }
 
@@ -53,9 +52,10 @@ export class PalletInterstateTransferNewComponent implements OnInit {
       name: [{value: name, disabled: true}, Validators.required],
       from: [this.state, Validators.required],
       to: ['', Validators.required],
-      type: ['', [Validators.required]],
-      quantity: ['', [Validators.required, Validators.min(0)]],
-      reference: ['', [Validators.required]]
+      reference: ['', [Validators.required]],
+      loscam: ['', [Validators.min(0)]],
+      chep: ['', [Validators.min(0)]],
+      plain: ['', [Validators.min(0)]]
     });
 
     this.palletTransferForm.get('from').valueChanges.subscribe(
@@ -71,9 +71,9 @@ export class PalletInterstateTransferNewComponent implements OnInit {
     if (this.palletTransferForm.invalid) return;
     this.loading = true;
     const payload = {...this.palletTransferForm.value};
-    this.palletService.interstatePalletTransfer(payload).pipe(
+    this.palletService.createInterstatePalletTransfer(payload).pipe(
       tap(_ => {
-        this.location.back();
+        this.goBack();
         this.snackBar.open('Added interstate transfer', '', {duration: 3000});
       }),
       catchError(err => {
@@ -85,6 +85,6 @@ export class PalletInterstateTransferNewComponent implements OnInit {
   }
 
   goBack() {
-    this.location.back();
+    this.navService.back();
   }
 }

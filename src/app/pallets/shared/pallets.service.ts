@@ -141,13 +141,17 @@ export class PalletsService {
     return this.http.post(`${this.palletTrackerUrl}/items`, payload);
   }
 
-  interstatePalletTransfer(v: any): Observable<any> {
+  createInterstatePalletTransfer(v: any): Observable<any> {
+    const pallets = [v.loscam ? 'Loscam' : '', v.chep ? 'Chep' : '', v.plain ? 'Plain' : ''].filter(_ => _);
+    const pallet = pallets.length > 1 ? 'Mixed' : pallets.length === 1 ? pallets[0] : 'None';
     const payload = {fields: {
       From: v.from,
       To: v.to,
-      Pallet: v.type,
-      Quantity: v.quantity,
-      Notes: v.notes,
+      Pallet: pallet,
+      Quantity: +v.loscam + +v.plain + +v.chep,
+      Loscam: +v.loscam,
+      Chep: +v.chep,
+      Plain: +v.plain,
       Reference: v.reference,
       Status: 'Pending'
     }};
@@ -181,9 +185,15 @@ export class PalletsService {
     );
   }
 
-  editInterstatePalletTransferQuantity(id: string, quantity: number): Observable<any> {
+  editInterstatePalletTransferQuantity(id: string, loscam: number, chep: number, plain: number): Observable<any> {
+    const pallets = [loscam ? 'Loscam' : '', chep ? 'Chep' : '', plain ? 'Plain' : ''].filter(_ => _);
+    const pallet = pallets.length > 1 ? 'Mixed' : pallets.length === 1 ? pallets[0] : 'None';
     const payload = {fields: {
-      Quantity: quantity
+      Pallet: pallet,
+      Quantity: +loscam + +plain + +chep,
+      Loscam: +loscam,
+      Chep: +chep,
+      Plain: +plain
     }};
     return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${id}')`, payload).pipe(
       switchMap(res => this.updateList(res))
@@ -214,17 +224,17 @@ export class PalletsService {
   getInTransitOff(branch: string, pallet: string): Observable<Pallet[]> {
     const melbourneMidnight = new Date(new Date(new Date().toLocaleString('en-US', {timeZone: 'Australia/Melbourne'})).setHours(0,0,0,0)).toISOString();
     let url = this.palletTrackerUrl + '/items?expand=fields(select=Quantity)';
-    url += `&filter=fields/From eq '${encodeURIComponent(branch)}' and fields/Title eq null and fields/Pallet eq '${pallet}'`;
+    url += `&filter=fields/From eq '${encodeURIComponent(branch)}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;
     url += ` and (fields/Status ne 'Transferred' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
-    return this.http.get(url).pipe(map((_: any) => _.value.reduce((acc, val) => acc + val['fields'].Quantity, 0)));
+    return this.http.get(url).pipe(map((_: any) => _.value.reduce((acc, val) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
 
   getInTransitOn(branch: string, pallet: string): Observable<Pallet[]> {
     const melbourneMidnight = new Date(new Date(new Date().toLocaleString('en-US', {timeZone: 'Australia/Melbourne'})).setHours(0,0,0,0)).toISOString();
     let url = this.palletTrackerUrl + '/items?expand=fields(select=Quantity)';
-    url += `&filter=fields/To eq '${encodeURIComponent(branch)}' and fields/Title eq null and fields/Pallet eq '${pallet}'`;
+    url += `&filter=fields/To eq '${encodeURIComponent(branch)}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;
     url += ` and (fields/Status eq 'Approved' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
-    return this.http.get(url).pipe(map((_: any) => _.value.reduce((acc, val) => acc + val['fields'].Quantity, 0)));
+    return this.http.get(url).pipe(map((_: any) => _.value.reduce((acc, val) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
 
   getInterstatePalletTransfer(id: string): Observable<{summary: any}> {
@@ -236,8 +246,6 @@ export class PalletsService {
             acc['id'] = curr.fields.id;
             if (curr.id === '1.0') {
               acc['initiator'] = curr.lastModifiedBy.user;
-              acc['pallet'] = curr.fields.Pallet;
-              acc['quantity'] = curr.fields.Quantity;
               acc['from'] = curr.fields.From;
               acc['to'] = curr.fields.To;
               acc['innitiated'] = curr.lastModifiedDateTime;
@@ -249,6 +257,10 @@ export class PalletsService {
                 acc['approver'] = curr.lastModifiedBy.user;
               } else {
                 acc['quantity'] = curr.fields.Quantity;
+                acc['loscam'] = curr.fields.Loscam;
+                acc['chep'] = curr.fields.Chep;
+                acc['plain'] = curr.fields.Plain;
+                if (['Loscam', 'Chep', 'Plain'].includes(curr.fields.Pallet)) acc[curr.fields.Pallet.toLowerCase()] = curr.fields.Quantity;
               }
             } else if (!acc['transferred']) {
               if (curr.fields.Status === 'Transferred') {

@@ -3,20 +3,35 @@
   max-width: 800px;
 }
 
+.field-container {
+  display: flex;
+  margin: 0 -8px;
+}
+
+.field-container > .mat-form-field {
+  flex: 1;
+  min-width: 120px;
+  margin: 0 8px;
+}
+
 h2 {
   margin-left: 10px;
+}
+
+img {
+  height: 25px;
 }
 
 .mat-card {
   margin: 10px;
 }
 
-.mat-form-field {
+.full-width {
   width: 100%;
 }
 
-.sum {
-  font-weight: bold;
+.pallets > .mat-form-field {
+  flex: 1;
 }
 
 .spacer {
@@ -29,11 +44,7 @@ h2 {
   margin: 30px 10px;
 }
 
-.field-container {
-  display: flex;
-}
-
 .arrow {
-  margin: 0 20px;
+  margin: 0 12px;
   padding-top: 18px;
 }
