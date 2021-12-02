@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
-import { BehaviorSubject, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, of, switchMap, take, tap, timer } from 'rxjs';
 
 import { Pallet } from './pallet';
 
@@ -164,6 +164,34 @@ export class PalletsService {
     const payload = {fields: {
       Status: approval ? 'Approved' : 'Rejected',
     }};
+    return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${id}')`, payload).pipe(
+      switchMap(res => this.updateList(res))
+    );
+  }
+
+
+public i = 0;
+
+  getAll(): Observable<number> {
+    let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created)&filter=fields/CustomerNumber ne null &top=2000`;
+    const a$: Observable<string[]> = this.http.get(url).pipe(
+      map((res: {value: Pallet[]}) => res.value),
+      map(_ => _.map(p => p.id))
+    );
+
+    const b$ = timer(1000, 4000);
+    return combineLatest([a$, b$]).pipe(
+      switchMap(([a, b]) => this.removeId(a[this.i])),
+      tap(() => this.i += 1),
+      map(_ => this.i)
+    )
+
+
+  }
+
+
+  removeId(id: string): Observable<any> {
+    const payload = {fields: {ImportID: null,}};
     return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${id}')`, payload).pipe(
       switchMap(res => this.updateList(res))
     );
