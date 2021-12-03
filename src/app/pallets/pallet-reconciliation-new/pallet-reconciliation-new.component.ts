@@ -69,19 +69,18 @@ export class PalletReconciliationNewComponent implements OnInit {
       })
     ).subscribe();
 
-
-    this.palletRecForm.get('pallet').valueChanges.subscribe(
-      _ => {
-        this.updateTransits(_)
-      }
-    )
+    this.palletRecForm.get('date').valueChanges.subscribe(() => this.updateTransits());
+    this.palletRecForm.get('pallet').valueChanges.subscribe(() => this.updateTransits());    
   }
 
-  updateTransits(pallet: string) {
+  updateTransits() {
+    const date = this.palletRecForm.get('date').value;
+    const pallet = this.palletRecForm.get('pallet').value;
+    if (!pallet) return;
     this.loading = true;
     const offs = this.palletsService.getInTransitOff(this.state, pallet);
     const ons = this.palletsService.getInTransitOn(this.state, pallet);
-    const owed = this.palletsService.getOwed(this.state, pallet);
+    const owed = this.palletsService.getOwed(this.state, pallet, date);
     combineLatest([offs, ons, owed]).subscribe(([a, b, c]) => {
       this.palletRecForm.patchValue({
         inTransitOff: a,
