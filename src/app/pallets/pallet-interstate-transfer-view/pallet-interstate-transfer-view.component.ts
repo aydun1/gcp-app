@@ -137,17 +137,15 @@ export class PalletInterstateTransferViewComponent implements OnInit {
   fileChangeEvent(e: any) {
     const files = e.target.files;
     const keys = Array.from(Array(files.length).keys());
+    
     for (let key in keys) {
       const file = files[key];
       this.uploadFile(file);
     }
   }
 
-
-
   uploadFile(file: File) {
-    console.log(file.name, file.size)
-    this.uploadService.createUploadSession(file).subscribe();
+    this.uploadService.createUploadSession(file).subscribe(_ => console.log(_.percent));
   }
 
   goBack() {
