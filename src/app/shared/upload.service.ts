@@ -23,18 +23,10 @@ export class UploadService {
       }
     }
     return this.http.post(url, payload).pipe(
-      switchMap((res: {uploadUrl: string}) => this.uploadChunks(file, res.uploadUrl).pipe(tap(_ => console.log(_)))),
+      switchMap(res => this.readFragment(file, 0, res['uploadUrl'])),
       tap(_ => console.log(_))
     );
   }
-
-  uploadChunks(file: File, uploadUrl: string) {
-    const position = 0;
-    const start = 0;
-    let stop = position + this.chunkLength;
-    return this.readFragment(file, start, uploadUrl)
-  }
-
 
   readFragment(file: File, start: number, url: string) {
     return from(file.slice(start, start + this.chunkLength).arrayBuffer()).pipe(
