@@ -15,6 +15,7 @@ import { CageDetailsComponent } from './shared/cage-details/cage-details.compone
 import { CageWeightsComponent } from './shared/cage-weights/cage-weights.component';
 import { RecyclingReceiptListComponent } from './recycling-receipt-list/recycling-receipt-list.component';
 import { RecyclingReceiptNewComponent } from './recycling-receipt-new/recycling-receipt-new.component';
+import { SignaturePadModule } from '../shared/signature/signature-pad.module';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { RecyclingReceiptNewComponent } from './recycling-receipt-new/recycling-
   imports: [
     CommonModule,
     SharedModule,
+    SignaturePadModule,
     RecyclingRoutingModule
   ],
   providers: [

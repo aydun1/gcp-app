@@ -1,0 +1,13 @@
+.canvas {
+  width: 100%;
+}
+
+.buttons {
+  margin: 10px 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.buttons > .mat-button-base {
+  margin-left: 10px;
+}

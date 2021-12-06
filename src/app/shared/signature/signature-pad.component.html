@@ -1,0 +1,9 @@
+<mat-card class="signature-pad-body">
+  <canvas #sPad class="canvas" width="900" height="458"></canvas>
+  <div class="buttons">
+    <button mat-button tabindex=-1 type="button" (click)="clear()">Clear</button>
+    <button mat-button tabindex=-1 type="button" (click)="undo()">Undo</button>
+    <button mat-raised-button color="primary" (click)="savePNG()">Save</button>
+  </div>
+</mat-card>
+
