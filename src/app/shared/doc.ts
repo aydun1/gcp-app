@@ -11,5 +11,7 @@ export interface Doc {
   },
   name: string,
   size: number,
-  webUrl: string
+  uploadUrl: string,
+  webUrl: string,
+  percent: number
 }

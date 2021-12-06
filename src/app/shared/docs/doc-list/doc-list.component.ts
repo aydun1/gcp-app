@@ -21,4 +21,7 @@ export class DocListComponent implements OnInit {
 
   }
 
+  icon(mime: string): string {
+    return this.docsService.icon(mime);
+  }
 }

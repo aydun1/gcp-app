@@ -1,3 +1,7 @@
-<div *ngFor="let doc of docs$ | async">
-  {{ doc.name }}
-</div>
+<mat-nav-list>
+  <a mat-list-item [href]="doc.webUrl" target="_blank" *ngFor="let doc of docs$ | async">
+    <img [src]="icon(doc.file.mimeType)" mat-list-icon>
+    <div mat-line>{{ doc.name }}</div>
+    <div mat-line>Uploaded by {{ doc.createdBy.user.displayName }} on {{ doc.createdDateTime | date: 'dd/MM/yyyy hh:mm a' }} </div>
+  </a>
+</mat-nav-list>

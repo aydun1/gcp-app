@@ -1,12 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { tap } from 'rxjs';
+import { Doc } from '../../doc';
 
 import { DocsService } from '../../docs.service';
-
-interface Upload {
-  name: string,
-  percent: number
-}
 
 @Component({
   selector: 'gcp-doc-upload',
@@ -17,7 +13,7 @@ export class DocUploadComponent implements OnInit {
   @Input() id: string;
   @Output() complete = new EventEmitter<any>();
 
-  public uploads: Array<Upload> = [];
+  public uploads: Array<Doc> = [];
 
   constructor(
     private docsService: DocsService
@@ -37,13 +33,13 @@ export class DocUploadComponent implements OnInit {
   }
 
   uploadFile(id: string, file: File) {
-    this.uploads.push({name: file.name, percent: 0})
+    const date = new Date();
+    this.uploads.unshift({name: file.name, percent: 0, createdDateTime: date.toISOString()} as Doc)
     this.docsService.createUploadSession(id, file).pipe(
       tap(_ => {
-
-
-
-        this.uploads = this.uploads.map(obj => obj.name === file.name ? {name: file.name, percent: _.percent} : obj );
+        this.uploads = this.uploads.map(obj => obj.name === file.name ? {
+          name: file.name, percent: Math.min(_.percent, 100), createdDateTime: date.toISOString(), webUrl: _.webUrl, createdBy: _.createdBy, file: _.file
+        } as Doc : obj ) ;
         if (_.percent >= 100) this.complete.next(true);
       })
     ).subscribe();
@@ -64,6 +60,14 @@ export class DocUploadComponent implements OnInit {
         this.uploadFile(this.id, file);
       }
     }
+  }
+
+  icon(mime: string): string {
+    return this.docsService.icon(mime);
+  }
+
+  trackByFn(index: number, doc: Doc) {
+    return doc.name;
   }
 
 }

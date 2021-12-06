@@ -6,7 +6,6 @@ import { BehaviorSubject, catchError, combineLatest, map, Observable, Subject, s
 import { PalletsService } from '../shared/pallets.service';
 import { SharedService } from '../../shared.service';
 import { NavigationService } from '../../navigation.service';
-import { DocsService } from '../../shared/docs.service';
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer-view',

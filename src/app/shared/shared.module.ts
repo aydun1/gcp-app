@@ -24,17 +24,13 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { PipeModule } from './pipes/pipe.module';
 import { UploadControlComponent } from './pipes/controls/upload-control/upload-control.component';
 import { DocsComponent } from './docs/docs.component';
-import { DocListComponent } from './docs/doc-list/doc-list.component';
-import { DocUploadComponent } from './docs/doc-upload/doc-upload.component';
+import { DocsModule } from './docs/docs.module';
 
 @NgModule({
   declarations: [
     BigButtonComponent,
     UploadControlComponent,
     DocsComponent,
-    
-    DocListComponent,
-    DocUploadComponent
   ],
   imports: [
     CommonModule,
@@ -63,8 +59,7 @@ import { DocUploadComponent } from './docs/doc-upload/doc-upload.component';
     ReactiveFormsModule,
     BigButtonComponent,
     PipeModule,
-    DocListComponent,
-    DocUploadComponent
+    DocsModule
   ]
 })
 export class SharedModule {

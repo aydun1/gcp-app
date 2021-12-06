@@ -13,7 +13,7 @@ export class DocsService {
   ) { }
 
   listFiles(id: string): Observable<Doc[]> {
-    const url = `${this.endpoint}/drive/root:/transfers/${id}:/children`
+    const url = `${this.endpoint}/drive/root:/transfers/${id}:/children?$orderby=name`
     return this.http.get(url).pipe(
       map(_ => _['value']),
 
@@ -47,10 +47,30 @@ export class DocsService {
     return from(file.slice(start, start + this.chunkLength).arrayBuffer()).pipe(
       switchMap(chunk => {
         const crHeader = `bytes ${start}-${start + chunk.byteLength - 1}/${file.size}`;
-        return this.http.put(res['uploadUrl'], chunk, {headers: {'Content-Range': crHeader}})
+        return this.http.put<Doc>(res['uploadUrl'], chunk, {headers: {'Content-Range': crHeader}})
       }),
       map(_ => {return {..._, next: start + this.chunkLength, uploadUrl: res['uploadUrl'], percent: Math.round((_['size'] || start + this.chunkLength) / file.size * 100)}}),
       tap(_ => console.log(_))
     )
+  }
+
+  icon(mime: string): string {
+    const path = 'assets';
+    switch (mime) {
+      case 'application/pdf':
+        return `${path}/pdf.svg`;
+      case 'application/vnd.ms-excel':
+      case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        return `${path}/xlsx.svg`;
+      case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+        return `${path}/docx.svg`;
+      case 'application/zip':
+        return `${path}/zip.svg`;
+      case 'image/png':
+      case 'image/jpeg':
+        return `${path}/photo.svg`;
+      default:
+        return `${path}/genericfile.svg`;
+    }
   }
 }

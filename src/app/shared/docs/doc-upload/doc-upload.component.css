@@ -18,6 +18,9 @@
   display: block;
   padding: 10px 5px;
   text-align: center;
-  margin-bottom: 10px;
   cursor: pointer;
+}
+
+.mat-list-base .mat-list-item .mat-list-icon {
+  border-radius: 0;
 }
