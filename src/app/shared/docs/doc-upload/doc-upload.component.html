@@ -1,0 +1,10 @@
+
+<div for="file" class="image-upload-preview">
+  <input id="file" class="file-select" multiple="multiple" type="file" (change)="fileChangeEvent(id, $event)">
+  <label class="label" for="file" (dragover)="allowDrop($event)" (drop)="drop($event)">
+    <span class="drag-info">Attach a document</span>
+  </label>
+</div>
+<div *ngFor="let upload of uploads">
+  {{ upload.name }}: {{ upload.percent || 0 }}%
+</div>

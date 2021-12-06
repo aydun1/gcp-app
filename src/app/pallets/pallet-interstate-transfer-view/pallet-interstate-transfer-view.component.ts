@@ -6,7 +6,7 @@ import { BehaviorSubject, catchError, combineLatest, map, Observable, Subject, s
 import { PalletsService } from '../shared/pallets.service';
 import { SharedService } from '../../shared.service';
 import { NavigationService } from '../../navigation.service';
-import { UploadService } from 'src/app/shared/upload.service';
+import { DocsService } from '../../shared/docs.service';
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer-view',
@@ -17,6 +17,7 @@ import { UploadService } from 'src/app/shared/upload.service';
 export class PalletInterstateTransferViewComponent implements OnInit {
   private transferSource$: Subject<string>;
   public transfer$: Observable<any>;
+  public files$: Observable<any>;
   public loading: boolean;
   public editQuantity: boolean;
   public loscamQuantity: number;
@@ -33,7 +34,6 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     private sharedService: SharedService,
     private navService: NavigationService,
     private palletsService: PalletsService,
-    private uploadService: UploadService
   ) { }
 
   ngOnInit(): void {
@@ -51,9 +51,6 @@ export class PalletInterstateTransferViewComponent implements OnInit {
       }),
       map(_ => _[0])
     );
-
-
-
   }
 
   getTransfer(id: string) {
@@ -131,21 +128,6 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     this.chepQuantity = chep;
     this.plainQuantity = plain;
     this.editQuantity = false
-  }
-
-
-  fileChangeEvent(e: any) {
-    const files = e.target.files;
-    const keys = Array.from(Array(files.length).keys());
-    
-    for (let key in keys) {
-      const file = files[key];
-      this.uploadFile(file);
-    }
-  }
-
-  uploadFile(file: File) {
-    this.uploadService.createUploadSession(file).subscribe(_ => console.log(_.percent));
   }
 
   goBack() {

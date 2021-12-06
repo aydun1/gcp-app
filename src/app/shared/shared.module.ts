@@ -23,11 +23,18 @@ import { BigButtonComponent } from './big-button/big-button.component';
 import { MatNativeDateModule } from '@angular/material/core';
 import { PipeModule } from './pipes/pipe.module';
 import { UploadControlComponent } from './pipes/controls/upload-control/upload-control.component';
+import { DocsComponent } from './docs/docs.component';
+import { DocListComponent } from './docs/doc-list/doc-list.component';
+import { DocUploadComponent } from './docs/doc-upload/doc-upload.component';
 
 @NgModule({
   declarations: [
     BigButtonComponent,
-    UploadControlComponent
+    UploadControlComponent,
+    DocsComponent,
+    
+    DocListComponent,
+    DocUploadComponent
   ],
   imports: [
     CommonModule,
@@ -55,7 +62,9 @@ import { UploadControlComponent } from './pipes/controls/upload-control/upload-c
     FormsModule,
     ReactiveFormsModule,
     BigButtonComponent,
-    PipeModule
+    PipeModule,
+    DocListComponent,
+    DocUploadComponent
   ]
 })
 export class SharedModule {

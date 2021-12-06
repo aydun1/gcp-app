@@ -113,7 +113,8 @@
     <mat-card-header>
       <mat-card-title>Attachments</mat-card-title>
     </mat-card-header>
-    <input id="file" class="file-select" multiple="multiple" type="file" (change)="fileChangeEvent($event)">
+    <gcp-doc-upload [id]="transfer.summary.id"></gcp-doc-upload>
+    <gcp-doc-list [id]="transfer.summary.id"></gcp-doc-list>
   </mat-card>
   </form>
 </div>
