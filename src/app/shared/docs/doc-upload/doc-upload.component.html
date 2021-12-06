@@ -1,0 +1,23 @@
+<div (dragover)="allowDrop($event)" (drop)="drop($event)">
+  <div for="file" class="image-upload-preview">
+    <input #fileSelect class="file-select" multiple="multiple" type="file" (change)="fileChangeEvent(id, $event)">
+    <label class="label" for="file">
+      <button mat-button type="button" class="drag-info" (click)="fileSelect.click()">Attach a document</button>
+    </label>
+  </div>
+
+  <mat-nav-list>
+    <a mat-list-item [href]="upload.webUrl" target="_blank" *ngFor="let upload of uploads; trackBy: trackByFn">
+      <img [src]="icon(upload.file.mimeType)" mat-list-icon *ngIf="upload.percent >= 100; else loading">
+      <ng-template #loading>
+        <mat-spinner mat-list-icon diameter="24"></mat-spinner>
+      </ng-template>
+      <div mat-line>{{ upload.name }}</div>
+      <div mat-line *ngIf="upload.percent >= 100; else loading2">Uploaded by {{ upload.createdBy.user.displayName }} on {{ upload.createdDateTime | date: 'dd/MM/yyyy hh:mm a' }} </div>
+      <ng-template #loading2>
+        <div mat-line>{{ upload.percent || 0 }}% </div>
+      </ng-template>
+    </a>
+  </mat-nav-list>
+  <ng-content></ng-content>
+</div>

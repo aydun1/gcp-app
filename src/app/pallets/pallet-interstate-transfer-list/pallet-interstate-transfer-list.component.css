@@ -44,6 +44,18 @@ h2 {
   text-decoration: none;
 }
 
+.mat-column-from, .mat-column-to, .mat-column-status, .mat-column-pallet, .mat-column-date {
+  flex: 0 1 90px;
+}
+
+.mat-column-quantity {
+  flex: 0 1 75px;
+}
+
+.mat-column-attachment {
+  flex: 0 1 40px;
+}
+
 @media print {
   :host {
     overflow-y: auto;

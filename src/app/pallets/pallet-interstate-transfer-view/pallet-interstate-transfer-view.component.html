@@ -109,5 +109,14 @@
       </mat-list>
     </div>
   </mat-card>
+  <mat-card class="inner">
+    <mat-card-header>
+      <mat-card-title>Attachments</mat-card-title>
+    </mat-card-header>
+    <gcp-doc-upload [id]="transfer.summary.id">
+      <gcp-doc-list [id]="transfer.summary.id">
+      </gcp-doc-list>
+    </gcp-doc-upload>
+  </mat-card>
   </form>
 </div>
