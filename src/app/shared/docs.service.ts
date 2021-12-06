@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core'
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, expand, from, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { Doc } from './doc';
+import { PalletsService } from '../pallets/shared/pallets.service';
 
 @Injectable({ providedIn: 'root' })
 export class DocsService {
@@ -9,7 +10,8 @@ export class DocsService {
   private chunkLength = 320 * 1024;
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private palletService: PalletsService
   ) { }
 
   listFiles(id: string): Observable<Doc[]> {
@@ -52,6 +54,10 @@ export class DocsService {
       map(_ => {return {..._, next: start + this.chunkLength, uploadUrl: res['uploadUrl'], percent: Math.round((_['size'] || start + this.chunkLength) / file.size * 100)}}),
       tap(_ => console.log(_))
     )
+  }
+
+  markWithAttachment(id: string): Observable<any> {
+    return this.palletService.attachToInterstatePalletTransfer(id);
   }
 
   icon(mime: string): string {

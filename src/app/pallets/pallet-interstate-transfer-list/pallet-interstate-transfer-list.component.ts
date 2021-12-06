@@ -21,7 +21,7 @@ export class PalletInterstateTransferListComponent implements OnInit {
   public customers$: Observable<any[]>;
   public total: number;
   private _loadList: boolean;
-  public displayedColumns = ['date', 'reference', 'pallet', 'from', 'to', 'quantity', 'approved'];
+  public displayedColumns = ['date', 'reference', 'pallet', 'from', 'to', 'quantity', 'status', 'attachment'];
   public statuses = ['Pending', 'Approved', 'Transferred', 'Cancelled'];
 
   public states = this.sharedService.branches.concat('Transport');

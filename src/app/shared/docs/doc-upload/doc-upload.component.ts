@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { tap } from 'rxjs';
+import { switchMap, tap } from 'rxjs';
 import { Doc } from '../../doc';
 
 import { DocsService } from '../../docs.service';
@@ -40,13 +40,15 @@ export class DocUploadComponent implements OnInit {
         this.uploads = this.uploads.map(obj => obj.name === file.name ? {
           name: file.name, percent: Math.min(_.percent, 100), createdDateTime: date.toISOString(), webUrl: _.webUrl, createdBy: _.createdBy, file: _.file
         } as Doc : obj ) ;
-        if (_.percent >= 100) this.complete.next(true);
+        if (_.percent >= 100) {
+          this.complete.next(true);
+          this.docsService.markWithAttachment(id).subscribe();
+        };
       })
     ).subscribe();
   }
 
   allowDrop(e: DragEvent) {
-    console.log(111)
     e.preventDefault();
   }
 
