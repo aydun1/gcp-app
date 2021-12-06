@@ -27,7 +27,7 @@ export class DocsService {
         }
         return of([])
       }),
-
+      map(_ => _.sort((a, b) => b.createdDateTime > a.createdDateTime && 1 || -1))
     );
   }
 
@@ -70,11 +70,17 @@ export class DocsService {
         return `${path}/xlsx.svg`;
       case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
         return `${path}/docx.svg`;
+      case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+        return `${path}/pptx.svg`;
       case 'application/zip':
         return `${path}/zip.svg`;
       case 'image/png':
       case 'image/jpeg':
         return `${path}/photo.svg`;
+      case 'image/svg+xml':
+        return `${path}/vector.svg`;
+        case 'text/plain':
+          return `${path}/txt.svg`;
       default:
         return `${path}/genericfile.svg`;
     }
