@@ -45,7 +45,9 @@ export class DocUploadComponent implements OnInit {
         take(1),
         map(pending => {
           const index = pending.findIndex(_ => file.name === _.oldName || file.name === _.name);
-          const doc = {oldName: upload.file ? '' : file.name, name: upload.name || file.name, percent: Math.min(upload.percent, 100) || 0, createdDateTime: date.toISOString(), webUrl: upload.webUrl, createdBy: upload.createdBy, file: upload.file} as Doc;
+          const percent = Math.min(upload.percent, 100) || 0;
+          if (percent === 100) this.docStarter$.next(this.id);
+          const doc = {oldName: upload.file ? '' : file.name, name: upload.name || file.name, percent: percent, createdDateTime: date.toISOString(), webUrl: upload.webUrl, createdBy: upload.createdBy, file: upload.file} as Doc;
           return index === -1 ? [doc, ...pending] : pending.map(obj => obj.name === file.name ? doc : obj)
           }
         ),
@@ -85,13 +87,16 @@ export class DocUploadComponent implements OnInit {
       document.body.appendChild(a);
       a.click();
       URL.revokeObjectURL(url);
-    }
-    );
+    });
   }
 
-
-
-
+  printFile(url: string): void {
+    this.docsService.downloadFile(url).subscribe(blob => {
+      const url = URL.createObjectURL(blob);
+      const w = window.open(url);
+      w.print();
+    });
+  }
 
   icon(mime: string): string {
     return this.docsService.icon(mime);
