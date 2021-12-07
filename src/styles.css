@@ -36,6 +36,16 @@ body {
   z-index: 6;
 }
 
+.loading:before {
+  content: "";
+  background: #e3e3e3b8;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+
 @media (max-width: 800px) {
   .home-cards {
     width: calc(100% - 20px);
