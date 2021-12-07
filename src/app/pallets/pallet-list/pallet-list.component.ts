@@ -25,7 +25,7 @@ export class PalletListComponent implements OnInit {
   private _loadList: boolean;
   public states = this.sharedService.branches;
   public pallets = ['Loscam', 'Chep', 'Plain'];
-  public displayedColumns = ['date', 'recepient', 'pallet', 'out', 'in', 'docket'];
+  public displayedColumns = ['date', 'notes', 'recepient', 'pallet', 'out', 'in', 'docket'];
 
   public choices$: Observable<any>;
   public Status: any;

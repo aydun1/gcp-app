@@ -39,6 +39,14 @@
         <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
       </ng-container>
 
+      <ng-container matColumnDef="notes">
+        <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
+        <mat-cell *matCellDef="let pallet">
+        {{ pallet.fields.Notes || pallet.fields.Reference || '-' }}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
       <ng-container matColumnDef="docket">
         <mat-header-cell *matHeaderCellDef> Docket </mat-header-cell>
         <mat-cell *matCellDef="let pallet">
