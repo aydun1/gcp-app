@@ -44,6 +44,10 @@ h2 {
   text-decoration: none;
 }
 
+.mat-column-reference {
+  flex: 0 1 400px;
+}
+
 .mat-column-from, .mat-column-to, .mat-column-status, .mat-column-pallet, .mat-column-date {
   flex: 0 1 90px;
 }
