@@ -29,7 +29,7 @@ export class SharedService {
     const url = 'https://graph.microsoft.com/beta/me/state';
     return this._state$.pipe(
       switchMap(cur => cur ? of(cur) : this.http.get(url).pipe(
-        map((_: any) => _.value),
+        map((_: any) => _.value ? _.value : 'NA'),
         tap(_ => this._state$.next(_))
       ))
     )
