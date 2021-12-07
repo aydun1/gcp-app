@@ -18,7 +18,6 @@ export class DocsService {
     const url = `${this.endpoint}/drive/root:/transfers/${id}:/children?$orderby=name`
     return this.http.get(url).pipe(
       map(_ => _['value']),
-
       catchError((error: HttpErrorResponse) => {
         if (error.error instanceof Error) {
           console.error('An error occurred:', error.error.message);
@@ -51,9 +50,22 @@ export class DocsService {
         const crHeader = `bytes ${start}-${start + chunk.byteLength - 1}/${file.size}`;
         return this.http.put<Doc>(res['uploadUrl'], chunk, {headers: {'Content-Range': crHeader}})
       }),
-      map(_ => {return {..._, next: start + this.chunkLength, uploadUrl: res['uploadUrl'], percent: Math.round((_['size'] || start + this.chunkLength) / file.size * 100)}}),
-      tap(_ => console.log(_))
+      map(_ => {return {
+        ..._,next: start + this.chunkLength,
+        uploadUrl: res['uploadUrl'],
+        percent: Math.round((_['size'] || start + this.chunkLength) / file.size * 100),
+        oldName: file.name
+      }}),
     )
+  }
+
+  deleteFile(folder: string, fileName: string) {
+    const url = `${this.endpoint}/drive/root:/transfers/${folder}/${fileName}:`;
+    return this.http.delete(url);
+  }
+
+  downloadFile(url: string): Observable<Blob> {
+    return this.http.get<Blob>(url, {responseType: 'blob' as 'json'});
   }
 
   markWithAttachment(id: string): Observable<any> {

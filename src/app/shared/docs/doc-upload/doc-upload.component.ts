@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { switchMap, tap } from 'rxjs';
-import { Doc } from '../../doc';
+import { BehaviorSubject, combineLatest, map, Observable, switchMap, take, tap } from 'rxjs';
 
+import { Doc } from '../../doc';
 import { DocsService } from '../../docs.service';
 
 @Component({
@@ -11,48 +11,54 @@ import { DocsService } from '../../docs.service';
 })
 export class DocUploadComponent implements OnInit {
   @Input() id: string;
-  @Output() complete = new EventEmitter<any>();
+  @Output() complete = new EventEmitter<boolean>();
 
-  public uploads: Array<Doc> = [];
+  public docs$: Observable<Doc[]>;
+  private uploads$ = new BehaviorSubject<Doc[]>([]);
+  public docStarter$ = new BehaviorSubject<string>('');
 
   constructor(
     private docsService: DocsService
   ) { }
 
   ngOnInit(): void {
+    this.docStarter$.next(this.id)
+    this.docs$ = this.docStarter$.pipe(
+      switchMap(_ => combineLatest([this.uploads$, this.docsService.listFiles(_).pipe(tap(() => this.uploads$.next([])))])),
+      map(_ => [..._[0], ..._[1]])
+    );
   }
 
   fileChangeEvent(id: string, e: any) {
     const files = e.target.files;
     const keys = Array.from(Array(files.length).keys());
-
     for (let key in keys) {
       const file = files[key];
       this.uploadFile(id, file);
     }
   }
 
-  uploadFile(id: string, file: File) {
+  uploadFile(id: string, file: File): void {
     const date = new Date();
-    this.uploads.unshift({name: file.name, percent: 0, createdDateTime: date.toISOString()} as Doc)
     this.docsService.createUploadSession(id, file).pipe(
-      tap(_ => {
-        this.uploads = this.uploads.map(obj => obj.name === file.name ? {
-          name: file.name, percent: Math.min(_.percent, 100), createdDateTime: date.toISOString(), webUrl: _.webUrl, createdBy: _.createdBy, file: _.file
-        } as Doc : obj ) ;
-        if (_.percent >= 100) {
-          this.complete.next(true);
-          this.docsService.markWithAttachment(id).subscribe();
-        };
-      })
+      switchMap(upload => this.uploads$.pipe(
+        take(1),
+        map(pending => {
+          const index = pending.findIndex(_ => file.name === _.oldName || file.name === _.name);
+          const doc = {oldName: upload.file ? '' : file.name, name: upload.name || file.name, percent: Math.min(upload.percent, 100) || 0, createdDateTime: date.toISOString(), webUrl: upload.webUrl, createdBy: upload.createdBy, file: upload.file} as Doc;
+          return index === -1 ? [doc, ...pending] : pending.map(obj => obj.name === file.name ? doc : obj)
+          }
+        ),
+      )),
+      tap(_ => this.uploads$.next(_))
     ).subscribe();
   }
 
-  allowDrop(e: DragEvent) {
+  allowDrop(e: DragEvent): void {
     e.preventDefault();
   }
 
-  drop(e: DragEvent) {
+  drop(e: DragEvent): void {
     e.preventDefault();
     const items = e.dataTransfer.items;
     for (let key in items) {
@@ -63,6 +69,29 @@ export class DocUploadComponent implements OnInit {
       }
     }
   }
+
+  deleteFile(id: string): void {
+    this.docsService.deleteFile(this.id, id).subscribe(
+      _ => this.docStarter$.next(this.id)
+    );
+  }
+
+  downloadFile(fileName: string, url: string): void {
+    this.docsService.downloadFile(url).subscribe(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    );
+  }
+
+
+
+
 
   icon(mime: string): string {
     return this.docsService.icon(mime);

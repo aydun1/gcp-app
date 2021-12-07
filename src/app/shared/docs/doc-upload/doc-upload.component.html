@@ -5,19 +5,36 @@
       <button mat-button type="button" class="drag-info" (click)="fileSelect.click()">Attach a document</button>
     </label>
   </div>
+</div>
 
-  <mat-nav-list>
-    <a mat-list-item [href]="upload.webUrl" target="_blank" *ngFor="let upload of uploads; trackBy: trackByFn">
-      <img [src]="icon(upload.file.mimeType)" mat-list-icon *ngIf="upload.percent >= 100; else loading">
-      <ng-template #loading>
-        <mat-spinner mat-list-icon diameter="24"></mat-spinner>
-      </ng-template>
-      <div mat-line>{{ upload.name }}</div>
-      <div mat-line *ngIf="upload.percent >= 100; else loading2">Uploaded by {{ upload.createdBy.user.displayName }} on {{ upload.createdDateTime | date: 'dd/MM/yyyy hh:mm a' }} </div>
+<mat-nav-list>
+  <div class="doc" *ngFor="let doc of docs$ | async">
+    <a mat-list-item [href]="doc.webUrl" target="_blank">
+      <img *ngIf="doc.file; else loading" [src]="icon(doc.file.mimeType)" mat-list-icon>
+      <div mat-line>{{ doc.name }}</div>
+      <div mat-line *ngIf="doc.createdBy else loading2">Uploaded by {{ doc.createdBy.user.displayName }} on {{ doc.createdDateTime | date: 'dd/MM/yyyy hh:mm a' }} </div>
       <ng-template #loading2>
-        <div mat-line>{{ upload.percent || 0 }}% </div>
+        <div mat-line>{{ doc.percent || 0 }}% </div>
       </ng-template>
     </a>
-  </mat-nav-list>
-  <ng-content></ng-content>
-</div>
+    <button mat-icon-button class="menu-toggle" type="button" [matMenuTriggerFor]="menu" [matMenuTriggerData]="{doc: doc}"><mat-icon>more_vert</mat-icon></button>
+  </div>
+</mat-nav-list>
+
+<ng-template #loading>
+  <mat-spinner mat-list-icon diameter="24"></mat-spinner>
+</ng-template>
+
+
+<mat-menu #menu="matMenu">
+  <ng-template matMenuContent let-doc="doc">
+    <button mat-menu-item (click)="downloadFile(doc.name, doc['@microsoft.graph.downloadUrl'])">
+      <mat-icon>download</mat-icon>
+      <span>Download</span>
+    </button>
+    <button mat-menu-item (click)="deleteFile(doc.name)">
+      <mat-icon>delete</mat-icon>
+      <span>Delete</span>
+    </button>
+  </ng-template>
+</mat-menu>
