@@ -36,7 +36,7 @@ export class CustomersService {
     const filterCount = Object.keys(filters).length;
     if(filterCount > 0) {
       url += '&$filter=';
-      if ('name' in filters) url += `(startswith(name,'${filters.name}') or startswith(accountnumber,'${filters.name}'))`;
+      if ('name' in filters) url += `(contains(name,'${filters.name}') or startswith(accountnumber,'${filters.name}'))`;
       if (filterCount > 1) url += ' and ';
       if ('territory' in filters) {
         if (filters.territory in this.territories) {
