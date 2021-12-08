@@ -1,9 +1,16 @@
 <h2 mat-dialog-title>Pick a customer</h2>
 <form [formGroup]="customerForm" (ngSubmit)="assignToCustomer()">
-  <gcp-customer-control type="search" formControlName="customer" [required]="true" placeholder="Type to search..."></gcp-customer-control>
-
+  <mat-form-field color="primary" appearance="outline">
+    <mat-label>Customer</mat-label>
+    <gcp-customer-control placeholder="Type to search..." formControlName="customer"></gcp-customer-control>
+    <mat-icon matSuffix>search</mat-icon>
+    <mat-error *ngIf="customerForm.get('customer').hasError('unselected')">
+      Select a customer from the list
+    </mat-error>
+  </mat-form-field>
   <ng-container *ngIf="sites$ | async as sites">
-    <mat-form-field *ngIf="sites.length > 0" color="primary">
+    <mat-form-field *ngIf="sites.length > 0" color="primary" appearance="outline">
+      <mat-label>Site</mat-label>
       <mat-select formControlName="site">
         <mat-option *ngFor="let s of sites" [value]="s">{{ s.fields.Title }}</mat-option>
       </mat-select>

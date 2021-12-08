@@ -49,7 +49,7 @@ export class CustomerPickerDialogComponent implements OnInit {
     this.loading = true;
     const customer = this.customerForm.get('customer').value as Customer;
     const site = this.customerForm.get('site').value as Site;
-    this.recyclingService.allocateToCustomer(this.data.id, customer.name, customer.accountnumber, site ? site.fields.Title : '').pipe(
+    this.recyclingService.allocateToCustomer(this.data.id, customer.accountnumber, customer.name, site ? site.fields.Title : '').pipe(
       tap(_ => {
         this.dialogRef.close();
       }),

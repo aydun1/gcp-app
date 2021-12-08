@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { Customer } from './customer';
 import { Site } from './site';
 
@@ -10,11 +10,6 @@ import { Site } from './site';
 export class CustomersService {
   private url = 'https://gardencityplastics.crm6.dynamics.com/api/data/v9.2';
   private sitesUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists/1e955039-1d2e-41f8-98a2-688319720410';
-
-
-
-
-
 
   private nextPage: string;
   private customersSubject$ = new BehaviorSubject<Customer[]>([]);
@@ -33,16 +28,17 @@ export class CustomersService {
 
   private createUrl(filters: any) {
     let url = `${this.url}/accounts?$select=name,accountnumber,territoryid`;
-    const filterCount = Object.keys(filters).length;
+    const cleanedFilters = Object.fromEntries(Object.entries(filters).filter(([_, v]) => v != null)) as any;
+    const filterCount = Object.keys(cleanedFilters).length;
     if(filterCount > 0) {
       url += '&$filter=';
-      if ('name' in filters) url += `(contains(name,'${filters.name.replace('\'', '\'\'')}') or startswith(accountnumber,'${filters.name.replace('\'', '\'\'')}'))`;
+      if ('name' in cleanedFilters) url += `(contains(name,'${cleanedFilters.name.replace('\'', '\'\'')}') or startswith(accountnumber,'${cleanedFilters.name.replace('\'', '\'\'')}'))`;
       if (filterCount > 1) url += ' and ';
-      if ('territory' in filters) {
-        if (filters.territory in this.territories) {
-          url += '(' + this.territories[filters.territory].map(_ => `territoryid/name eq '${_}'`).join(' or ') + ')'
+      if ('territory' in cleanedFilters) {
+        if (cleanedFilters['territory'] in this.territories) {
+          url += '(' + this.territories[cleanedFilters.territory].map(_ => `territoryid/name eq '${_}'`).join(' or ') + ')'
         } else {
-          url += `territoryid/name eq '${filters.territory}'`
+          url += `territoryid/name eq '${cleanedFilters.territory}'`
         } };
     }
     url += `&$orderby=name`;
@@ -89,6 +85,7 @@ export class CustomersService {
   }
 
   getSites(customer: string): Observable<Site[]> {
+    if (!customer) return of([]);
     const url = `${this.sitesUrl}/items?expand=fields(select=Title, Customer)&filter=fields/Customer eq '${customer.replace('\'', '\'\'')}'`;
     return this.http.get(url).pipe(map(_ => _['value']));
   }
