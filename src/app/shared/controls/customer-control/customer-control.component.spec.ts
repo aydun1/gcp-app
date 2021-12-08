@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UploadControlComponent } from './upload-control.component';
+import { CustomerControlComponent } from './customer-control.component';
 
-describe('UploadControlComponent', () => {
-  let component: UploadControlComponent;
-  let fixture: ComponentFixture<UploadControlComponent>;
+describe('CustomerControlComponent', () => {
+  let component: CustomerControlComponent;
+  let fixture: ComponentFixture<CustomerControlComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UploadControlComponent ]
+      declarations: [ CustomerControlComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(UploadControlComponent);
+    fixture = TestBed.createComponent(CustomerControlComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

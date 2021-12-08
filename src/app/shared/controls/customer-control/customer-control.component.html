@@ -1,0 +1,11 @@
+<mat-form-field color="primary">
+  <mat-label>Customer search</mat-label>
+  <input matInput #customerInput [placeholder]="placeholder" type="search" aria-label="Customer" [formControl]="myControl" 
+    [matAutocomplete]="auto" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autocomplete="chrome-off">
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="addCustomer()" [displayWith]="customerDisplayFn">
+    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+      {{ option.name }} ({{ option.accountnumber }})
+    </mat-option>
+  </mat-autocomplete>
+  <mat-icon matSuffix>search</mat-icon>
+</mat-form-field>

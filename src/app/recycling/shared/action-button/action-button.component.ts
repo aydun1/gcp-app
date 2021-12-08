@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 
 import { RecyclingService } from '../recycling.service';
 import { Cage } from '../cage';
+import { CustomerPickerDialogComponent } from '../../../customers/shared/customer-picker-dialog/customer-picker-dialog.component';
 
 @Component({
   selector: 'gcp-action-button',
@@ -18,6 +20,7 @@ export class ActionButtonComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private dialog: MatDialog,
     private recyclingService: RecyclingService
   ) { }
 
@@ -45,6 +48,12 @@ export class ActionButtonComponent implements OnInit {
 
   markAvailable(id: string, cageNumber: number, branch: string, assetType: string, cageWeight: number) {
     this.recyclingService.markCageAvailable(id, cageNumber, branch, assetType, cageWeight).subscribe(() => this.updated.next(true));
+  }
+
+  openCustomerPicker(id: string) {
+    const data = {id};
+    const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px', data});
+    dialogRef.afterClosed().subscribe(() => this.updated.next(true));
   }
 
   saveWeight(id: string) {

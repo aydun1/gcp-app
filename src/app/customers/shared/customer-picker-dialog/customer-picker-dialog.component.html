@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>Pick a customer</h2>
+<form [formGroup]="customerForm" (ngSubmit)="assignToCustomer()">
+  <gcp-customer-control type="search" formControlName="customer" [required]="true" placeholder="Type to search..."></gcp-customer-control>
+
+  <ng-container *ngIf="sites$ | async as sites">
+    <mat-form-field *ngIf="sites.length > 0" color="primary">
+      <mat-select formControlName="site">
+        <mat-option *ngFor="let s of sites" [value]="s">{{ s.fields.Title }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </ng-container>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close tabindex=-1>Cancel</button>
+    <button mat-raised-button color="primary" [disabled]="loading">{{'Ok'}}</button>
+  </mat-dialog-actions>
+</form>
+
+<button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>

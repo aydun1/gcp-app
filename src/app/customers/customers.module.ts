@@ -7,6 +7,7 @@ import { SharedModule } from '../shared/shared.module';
 import { CustomerRoutingModule } from './ customer-routing.module';
 import { CustomerViewComponent } from './customer-view/customer-view.component';
 import { CustomerSiteDialogComponent } from './shared/customer-site-dialog/customer-site-dialog.component';
+import { CustomerPickerDialogComponent } from './shared/customer-picker-dialog/customer-picker-dialog.component';
 
 
 
@@ -16,6 +17,7 @@ import { CustomerSiteDialogComponent } from './shared/customer-site-dialog/custo
     CustomerListComponent,
     CustomerViewComponent,
     CustomerSiteDialogComponent,
+    CustomerPickerDialogComponent
   ],
   imports: [
     CommonModule,
@@ -24,6 +26,9 @@ import { CustomerSiteDialogComponent } from './shared/customer-site-dialog/custo
   ],
   providers: [
     CustomersService
+  ],
+  exports: [
+    CustomerPickerDialogComponent
   ]
 })
 export class CustomersModule { }
