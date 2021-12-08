@@ -1,22 +1,16 @@
-:host {
-  height: 297mm;
-}
-
 .docket {
-  transform: rotate(90deg);
-  position: absolute;
+  position: fixed;
   right: 0;
   width: 500px;
   height: 500px;
-
 }
 
 .docket1 {
-  top: 40px;
+  left: 40px;
 }
 
 .docket2 {
-  bottom: 40px;
+  right: 0;
 }
 
 .header {
@@ -41,4 +35,14 @@ h2, h3 {
 
 .sender {
   margin-right: 20px;
+}
+
+.list-container {
+  height: 368px;
+}
+
+@media print {
+  @page {
+    size: landscape
+  }
 }
