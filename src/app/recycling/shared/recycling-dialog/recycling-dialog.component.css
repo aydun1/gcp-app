@@ -27,8 +27,13 @@
   margin: 0;
 }
 
+.section {
+  min-height: 198px;
+}
+
 .section-title {
   flex: 1;
+  margin: 18px 0px;
 }
 
 .note {
