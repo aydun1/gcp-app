@@ -66,7 +66,7 @@ export class RecyclingService {
   }
 
   private assignStatus(cage: Cage): Cage {
-
+    cage['Date'] = cage.fields.Date4 || cage.fields.Date3 || cage.fields.Date2 || cage.fields.Date1 || cage.fields.Created; 
     if (cage.fields.Status === 'Available') {
       cage['statusId'] = 0;
     } else if (cage.fields.Status === 'Complete') {

@@ -55,6 +55,12 @@
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
 
+      <ng-container matColumnDef="updated">
+        <mat-header-cell *matHeaderCellDef> Updated </mat-header-cell>
+        <mat-cell *matCellDef="let cage">{{ cage.Date | date: 'dd/MM/yyyy' }}</mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
       <ng-container matColumnDef="weight">
         <mat-header-cell *matHeaderCellDef> Net weight </mat-header-cell>
         <mat-cell *matCellDef="let cage">
