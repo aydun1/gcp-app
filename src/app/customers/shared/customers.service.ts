@@ -26,13 +26,17 @@ export class CustomersService {
     private http: HttpClient
   ) { }
 
+  private cleanName(name: string) {
+    return encodeURIComponent(name.replace('\'', '\'\''));
+  }
+
   private createUrl(filters: any) {
     let url = `${this.url}/accounts?$select=name,accountnumber,territoryid`;
     const cleanedFilters = Object.fromEntries(Object.entries(filters).filter(([_, v]) => v != null)) as any;
     const filterCount = Object.keys(cleanedFilters).length;
     if(filterCount > 0) {
       url += '&$filter=';
-      if ('name' in cleanedFilters) url += `(contains(name,'${cleanedFilters.name.replace('\'', '\'\'')}') or startswith(accountnumber,'${cleanedFilters.name.replace('\'', '\'\'')}'))`;
+      if ('name' in cleanedFilters) url += `(contains(name,'${this.cleanName(cleanedFilters.name)}') or startswith(accountnumber,'${this.cleanName(cleanedFilters.name)}'))`;
       if (filterCount > 1) url += ' and ';
       if ('territory' in cleanedFilters) {
         if (cleanedFilters['territory'] in this.territories) {
@@ -86,7 +90,7 @@ export class CustomersService {
 
   getSites(customer: string): Observable<Site[]> {
     if (!customer) return of([]);
-    const url = `${this.sitesUrl}/items?expand=fields(select=Title, Customer)&filter=fields/Customer eq '${customer.replace('\'', '\'\'')}'`;
+    const url = `${this.sitesUrl}/items?expand=fields(select=Title, Customer)&filter=fields/Customer eq '${this.cleanName(customer)}'`;
     return this.http.get(url).pipe(map(_ => _['value']));
   }
 
