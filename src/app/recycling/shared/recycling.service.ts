@@ -197,6 +197,11 @@ export class RecyclingService {
     return this.updateStatus(id, payload);
   }
 
+  collectAndComplete(id: string) {
+    const payload = {fields: {Status: 'Complete', Date4: new Date()}};
+    return this.updateStatus(id, payload);
+  }
+
   setCageWeight(id: string, weight: number): Observable<any> {
     const payload = {fields: {CageWeight: weight}};
     return this.updateStatus(id, payload);

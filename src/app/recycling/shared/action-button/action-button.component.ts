@@ -57,9 +57,10 @@ export class ActionButtonComponent implements OnInit {
     });
   }
 
-  markReturnedEmpty(id: string): void {
+  markReturnedEmpty(id: string, assetType: string): void {
     this.loading = true;
-    this.recyclingService.collectFromPolymer(id).subscribe(() => {
+    const action = assetType.startsWith('Cage') ? this.recyclingService.collectFromPolymer(id): this.recyclingService.collectAndComplete(id);
+    action.subscribe(() => {
       this.loading = false;
       this.updated.next(true);
     });

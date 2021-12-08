@@ -10,9 +10,12 @@
 <div class="content" *ngIf="cage$ | async as cage">
   <div class="inner">
     <div class="header">
-      <div>
+      <div *ngIf="isCage">
         <h2>Cage number: {{ cage.fields.CageNumber }}</h2>
         <p>{{ cage.fields.AssetType }}</p>
+      </div>
+      <div *ngIf="!isCage">
+        <h2>{{ cage.fields.AssetType }}</h2>
       </div>
       <gcp-action-button [cage]="cage" (updated)="getCage()"></gcp-action-button>
     </div>
@@ -39,7 +42,7 @@
 
 
 
-  <div class="inner">
+  <div *ngIf="isCage" class="inner">
     <h3>Cage history</h3>
 
     <mat-table #table [dataSource]="cageHistory$" >

@@ -19,6 +19,7 @@ export class RecyclingViewComponent implements OnInit {
   public noHistory: boolean;
   public displayedColumns = ['updated', 'customer', 'weight'];
   public totalWeight: number;
+  public isCage: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,6 +30,7 @@ export class RecyclingViewComponent implements OnInit {
   ngOnInit(): void {
     this.cage$ = combineLatest([this.route.paramMap, this.cageSource$]).pipe(
       switchMap(_ => this.recyclingService.getCage(_[0].get('id'))),
+      tap(_ => this.isCage = _.fields.AssetType.startsWith('Cage')),
       tap(_ => this.getCageHistory(_.fields.CageNumber))
     );
     this.getCage();
