@@ -1,6 +1,6 @@
-<button mat-raised-button color="primary" *ngIf="cage.statusId === 0" (click)="openCustomerPicker(cage.id)">Assign to customer</button>
-<button mat-raised-button color="primary" *ngIf="cage.statusId === 1" (click)="markWithCustomer(cage.id)">Deliver to customer</button>
-<button mat-raised-button color="primary" *ngIf="cage.statusId === 2" (click)="markAsCollected(cage.id)">Collect from customer</button>
-<button mat-raised-button color="primary" *ngIf="cage.statusId === 3" (click)="markWithPolymer(cage.id)">Send to Polymer</button>
-<button mat-raised-button color="primary" *ngIf="cage.statusId === 4" (click)="markReturnedEmpty(cage.id)">Return from Polymer</button>
-<button mat-raised-button color="primary" *ngIf="cage.statusId === 5" (click)="markAvailable(cage.id, cage.fields.CageNumber, cage.fields.Branch, cage.fields.AssetType, cage.fields.CageWeight)">Set cage as available</button>
+<button mat-raised-button color="primary" *ngIf="cage.statusId === 0" (click)="openCustomerPicker(cage.id)" [disabled]="loading">Assign to customer</button>
+<button mat-raised-button color="primary" *ngIf="cage.statusId === 1" (click)="markWithCustomer(cage.id)" [disabled]="loading">Deliver to customer</button>
+<button mat-raised-button color="primary" *ngIf="cage.statusId === 2" (click)="markAsCollected(cage.id)" [disabled]="loading">Collect from customer</button>
+<button mat-raised-button color="primary" *ngIf="cage.statusId === 3" (click)="markWithPolymer(cage.id)" [disabled]="loading">Send to Polymer</button>
+<button mat-raised-button color="primary" *ngIf="cage.statusId === 4" (click)="markReturnedEmpty(cage.id)" [disabled]="loading">Return from Polymer</button>
+<button mat-raised-button color="primary" *ngIf="cage.statusId === 5" (click)="markAvailable(cage.id, cage.fields.CageNumber, cage.fields.Branch, cage.fields.AssetType, cage.fields.CageWeight)" [disabled]="loading">Set cage as available</button>

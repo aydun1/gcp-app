@@ -36,7 +36,7 @@ export class CustomersService {
     const filterCount = Object.keys(filters).length;
     if(filterCount > 0) {
       url += '&$filter=';
-      if ('name' in filters) url += `(contains(name,'${filters.name}') or startswith(accountnumber,'${filters.name}'))`;
+      if ('name' in filters) url += `(contains(name,'${filters.name.replace('\'', '\'\'')}') or startswith(accountnumber,'${filters.name.replace('\'', '\'\'')}'))`;
       if (filterCount > 1) url += ' and ';
       if ('territory' in filters) {
         if (filters.territory in this.territories) {
@@ -89,7 +89,7 @@ export class CustomersService {
   }
 
   getSites(customer: string): Observable<Site[]> {
-    const url = `${this.sitesUrl}/items?expand=fields(select=Title, Customer)&filter=fields/Customer eq '${customer}'`;
+    const url = `${this.sitesUrl}/items?expand=fields(select=Title, Customer)&filter=fields/Customer eq '${customer.replace('\'', '\'\'')}'`;
     return this.http.get(url).pipe(map(_ => _['value']));
   }
 
