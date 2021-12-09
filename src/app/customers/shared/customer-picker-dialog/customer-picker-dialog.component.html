@@ -1,8 +1,13 @@
-<h2 mat-dialog-title>Pick a customer</h2>
+<div class="header">
+  <h2 mat-dialog-title>Pick a customer</h2>
+  <button mat-stroked-button [matMenuTriggerFor]="menu" tabindex="-1">
+    {{ branch || 'All branches'}}
+  </button>
+</div>
 <form [formGroup]="customerForm" (ngSubmit)="assignToCustomer()">
   <mat-form-field color="primary" appearance="outline">
     <mat-label>Customer</mat-label>
-    <gcp-customer-control placeholder="Type to search..." formControlName="customer"></gcp-customer-control>
+    <gcp-customer-control placeholder="Type to search..." formControlName="customer" [territory]="branch"></gcp-customer-control>
     <mat-icon matSuffix>search</mat-icon>
     <mat-error *ngIf="customerForm.get('customer').hasError('unselected')">
       Select a customer from the list
@@ -24,3 +29,12 @@
 </form>
 
 <button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>
+
+
+<mat-menu #menu="matMenu" xPosition="before" >
+  <ng-template matMenuContent>
+    <button mat-menu-item *ngFor="let branch of branches" (click)="setBranch(branch)">
+      <span>{{ branch }}</span>
+    </button>
+  </ng-template>
+</mat-menu>

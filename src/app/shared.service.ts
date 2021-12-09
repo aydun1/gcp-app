@@ -16,6 +16,7 @@ export class SharedService {
     'WA': ['WA', 'WASALES']
   };
   public branches = Object.keys(this.territories);
+  public territoryNames = this.branches.concat(['INT', 'NATIONAL']);
   private _state$ = new BehaviorSubject<string>('');
 
   constructor(

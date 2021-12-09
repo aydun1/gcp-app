@@ -8,6 +8,7 @@ import { CustomersService } from '../customers.service';
 import { Customer } from '../customer';
 import { Site } from '../site';
 import { RecyclingService } from '../../../recycling/shared/recycling.service';
+import { SharedService } from '../../../shared.service';
 
 @Component({
   selector: 'gcp-customer-picker-dialog',
@@ -19,22 +20,25 @@ export class CustomerPickerDialogComponent implements OnInit {
   public customerForm: FormGroup;
   public sites$: Observable<Site[]>;
 
+  public branch: string;
+  public get branches(): Array<string> {return this.shared.branches};
+
   constructor(
     public dialogRef: MatDialogRef<CustomerPickerDialogComponent>,
     private fb: FormBuilder,
     public snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: {id: string},
     private customersService: CustomersService,
-    private recyclingService: RecyclingService
+    private recyclingService: RecyclingService,
+    private shared: SharedService
   ) { }
 
-  
   ngOnInit(): void {
     this.customerForm = this.fb.group({
       customer: ['', Validators.required],
       site: ''
     });
-
+    this.shared.getBranch().subscribe(_ => this.branch = _);
     this.customerForm.get('customer').valueChanges.subscribe(_ => this.getSites(_));
   }
 
@@ -59,6 +63,10 @@ export class CustomerPickerDialogComponent implements OnInit {
         return throwError(() => new Error(err));
       })
     ).subscribe();
+  }
+
+  setBranch(branch: string) {
+    this.branch = branch;
   }
 
   closeDialog(): void {
