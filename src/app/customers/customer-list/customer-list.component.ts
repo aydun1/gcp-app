@@ -114,7 +114,7 @@ export class CustomerListComponent implements OnInit {
     return sameName && sameTerritory && this.loadList;
   }
 
-  setRegion(territory: MatSelectChange ) {
+  setRegion(territory: MatSelectChange) {
     this.router.navigate([], { queryParams: {territory: territory.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
