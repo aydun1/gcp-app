@@ -66,8 +66,10 @@ export class RecyclingService {
   }
 
   private assignStatus(cage: Cage): Cage {
-
-    if (cage.fields.Status === 'Complete') {
+    cage['Date'] = cage.fields.Date4 || cage.fields.Date3 || cage.fields.Date2 || cage.fields.Date1 || cage.fields.Created; 
+    if (cage.fields.Status === 'Available') {
+      cage['statusId'] = 0;
+    } else if (cage.fields.Status === 'Complete') {
       cage['statusId'] = 6;
     } else if (cage.fields.Date4 && cage.fields.Status !== 'Complete') {
       cage['statusId'] = 5;
@@ -192,6 +194,11 @@ export class RecyclingService {
 
   markCageComplete(id: string) {
     const payload = {fields: {Status: 'Complete'}};
+    return this.updateStatus(id, payload);
+  }
+
+  collectAndComplete(id: string) {
+    const payload = {fields: {Status: 'Complete', Date4: new Date()}};
     return this.updateStatus(id, payload);
   }
 

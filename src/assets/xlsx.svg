@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 23.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve">
+<g id="_x5F_GRID" display="none">
+	<g display="inline">
+		<g>
+			
+				<rect x="9" y="-9" transform="matrix(6.123234e-17 -1 1 6.123234e-17 9 11)" opacity="0.2" fill="#FF00FF" width="2" height="20"/>
+			
+				<rect x="9.5" y="-9.5" transform="matrix(6.123234e-17 -1 1 6.123234e-17 9.5 10.5)" opacity="0.3" fill="#FF00FF" width="1" height="20"/>
+		</g>
+		<g>
+			
+				<rect x="9" y="9" transform="matrix(-1.836970e-16 1 -1 -1.836970e-16 29 9)" opacity="0.2" fill="#FF00FF" width="2" height="20"/>
+			
+				<rect x="9.5" y="9.5" transform="matrix(-1.836970e-16 1 -1 -1.836970e-16 29.5 9.5)" opacity="0.3" fill="#FF00FF" width="1" height="20"/>
+		</g>
+		<g>
+			<rect transform="matrix(-1 -1.224647e-16 1.224647e-16 -1 2 20)" opacity="0.2" fill="#FF00FF" width="2" height="20"/>
+			<rect transform="matrix(-1 -1.224647e-16 1.224647e-16 -1 1 20)" opacity="0.3" fill="#FF00FF" width="1" height="20"/>
+		</g>
+		<g>
+			<rect x="18" opacity="0.2" fill="#FF00FF" width="2" height="20"/>
+			<rect x="19" opacity="0.3" fill="#FF00FF" width="1" height="20"/>
+		</g>
+	</g>
+</g>
+<g id="ICONS">
+	<path fill="#FFFFFF" stroke="#979593" stroke-miterlimit="10" d="M14.2929,1.5H6C5.7239,1.5,5.5,1.7239,5.5,2v16
+		c0,0.2761,0.2239,0.5,0.5,0.5h12c0.2761,0,0.5-0.2239,0.5-0.5V5.7071c0-0.1326-0.0527-0.2598-0.1464-0.3536l-3.7071-3.7071
+		C14.5527,1.5527,14.4255,1.5,14.2929,1.5z"/>
+	<path fill="none" stroke="#979593" stroke-miterlimit="10" d="M14.5,1.5v4c0,0.5523,0.4477,1,1,1h3"/>
+	<path fill="#BDBBB8" d="M16.5556,15h-2.1111C14.1988,15,14,14.7764,14,14.5s0.1988-0.5,0.4444-0.5h2.1111
+		C16.8012,14,17,14.2236,17,14.5S16.8012,15,16.5556,15z"/>
+	<path fill="#BDBBB8" d="M16.5556,13h-2.1111C14.1988,13,14,12.7764,14,12.5s0.1988-0.5,0.4444-0.5h2.1111
+		C16.8012,12,17,12.2236,17,12.5S16.8012,13,16.5556,13z"/>
+	<path fill="#BDBBB8" d="M16.5556,11h-2.1111C14.1988,11,14,10.7764,14,10.5s0.1988-0.5,0.4444-0.5h2.1111
+		C16.8012,10,17,10.2236,17,10.5S16.8012,11,16.5556,11z"/>
+	<path fill="#BDBBB8" d="M16.5556,9h-2.1111C14.1988,9,14,8.7764,14,8.5S14.1988,8,14.4444,8h2.1111C16.8012,8,17,8.2236,17,8.5
+		S16.8012,9,16.5556,9z"/>
+	<path fill="#BDBBB8" d="M12.5556,15h-2.1111C10.1988,15,10,14.7764,10,14.5s0.1988-0.5,0.4444-0.5h2.1111
+		C12.8012,14,13,14.2236,13,14.5S12.8012,15,12.5556,15z"/>
+	<path fill="#BDBBB8" d="M12.5556,13h-2.1111C10.1988,13,10,12.7764,10,12.5s0.1988-0.5,0.4444-0.5h2.1111
+		C12.8012,12,13,12.2236,13,12.5S12.8012,13,12.5556,13z"/>
+	<path fill="#BDBBB8" d="M12.5556,11h-2.1111C10.1988,11,10,10.7764,10,10.5s0.1988-0.5,0.4444-0.5h2.1111
+		C12.8012,10,13,10.2236,13,10.5S12.8012,11,12.5556,11z"/>
+	<path fill="#BDBBB8" d="M12.5556,9h-2.1111C10.1988,9,10,8.7764,10,8.5S10.1988,8,10.4444,8h2.1111C12.8012,8,13,8.2236,13,8.5
+		S12.8012,9,12.5556,9z"/>
+	<path fill="#107C41" d="M2,16h8c0.5523,0,1-0.4477,1-1V7c0-0.5523-0.4477-1-1-1H2C1.4477,6,1,6.4477,1,7v8
+		C1,15.5523,1.4477,16,2,16z"/>
+	<g>
+		<g>
+			<polygon fill="#FFFFFF" points="4.6065,14 8.3125,8 7.1507,8 3.3958,14 			"/>
+		</g>
+		<g>
+			<polygon fill="#FFFFFF" points="7.3727,14 3.6667,8 4.8285,8 8.5833,14 			"/>
+		</g>
+	</g>
+</g>
+<g id="CENTERED_x5F_MARGINS" display="none">
+</g>
+<g id="_x5F_FILE_x5F_CENTER" display="none">
+</g>
+<g id="_x5F_RIGHT_x5F_MARGIN" display="none" opacity="0.5">
+	<g display="inline">
+		<rect x="16" fill="#00FFFF" width="4" height="20"/>
+	</g>
+	<g display="inline">
+		<rect x="16" opacity="0.3" fill="#00FFFF" width="4" height="20"/>
+	</g>
+</g>
+<g id="_x5F_THREE_x5F_HEIGHTS" display="none">
+	<rect x="10" y="8" display="inline" opacity="0.2" fill="#F7931E" width="10" height="10"/>
+</g>
+<g id="FOLDER_x5F_INCIDACTORS" display="none">
+</g>
+</svg>

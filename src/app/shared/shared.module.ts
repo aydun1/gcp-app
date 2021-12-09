@@ -21,11 +21,15 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BigButtonComponent } from './big-button/big-button.component';
 import { MatNativeDateModule } from '@angular/material/core';
-import { PipeModule } from './pipe.module';
+import { PipeModule } from './pipes/pipe.module';
+import { ControlsModule } from './controls/controls.module';
+import { DocsComponent } from './docs/docs.component';
+import { DocsModule } from './docs/docs.module';
 
 @NgModule({
   declarations: [
-    BigButtonComponent
+    BigButtonComponent,
+    DocsComponent
   ],
   imports: [
     CommonModule,
@@ -53,7 +57,9 @@ import { PipeModule } from './pipe.module';
     FormsModule,
     ReactiveFormsModule,
     BigButtonComponent,
-    PipeModule
+    PipeModule,
+    ControlsModule,
+    DocsModule
   ]
 })
 export class SharedModule {

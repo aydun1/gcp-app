@@ -11,9 +11,9 @@
   <div class="header">
     <h2>Transfer details</h2>
     <ng-container *ngIf="!transfer.summary.cancelled">
-      <button *ngIf="(transport || sender) && !transfer.summary.approved" mat-button mat-raised-button (click)="cancel(transfer.summary.id)" [disabled]="loading">Cancel transfer</button>
-      <button *ngIf="(transport || receiver) && !transfer.summary.approved" mat-button mat-raised-button color="primary" (click)="approve(transfer.summary.id)" [disabled]="loading">Approve</button>
-      <button *ngIf="(transport || sender) && transfer.summary.approved && !transfer.summary.transferred" mat-button mat-raised-button color="primary" (click)="transferp(transfer.summary.id)" [disabled]="loading">Mark as transferred</button>
+      <button *ngIf="(transport || sender) && !transfer.summary.approved" mat-raised-button class="action" (click)="cancel(transfer.summary.id)" [disabled]="loading">Cancel transfer</button>
+      <button *ngIf="(transport || receiver) && !transfer.summary.approved" mat-raised-button class="action" color="primary" (click)="approve(transfer.summary.id)" [disabled]="loading">Approve</button>
+      <button *ngIf="(transport || sender) && transfer.summary.approved && !transfer.summary.transferred" mat-raised-button class="action" color="primary" (click)="transferp(transfer.summary.id)" [disabled]="loading">Mark as transferred</button>
     </ng-container>
   </div>
   <form (ngSubmit)="setQuantity(transfer.summary.id)">
@@ -108,6 +108,13 @@
         </mat-list-item>
       </mat-list>
     </div>
+  </mat-card>
+  <mat-card class="inner">
+    <mat-card-header>
+      <mat-card-title>Attachments</mat-card-title>
+    </mat-card-header>
+    <gcp-doc-upload [id]="transfer.summary.id">
+    </gcp-doc-upload>
   </mat-card>
   </form>
 </div>

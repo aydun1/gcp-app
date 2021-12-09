@@ -29,6 +29,7 @@ input {
 
 .inner {
   margin: 0 10px;
+  margin-bottom: 20px;
   position: relative;
 }
 
@@ -55,6 +56,10 @@ input {
 .arrow {
   align-self: center;
   margin: 0 40px;
+}
+
+.action {
+  margin-left: 10px;
 }
 
 @media (max-width: 600px) {

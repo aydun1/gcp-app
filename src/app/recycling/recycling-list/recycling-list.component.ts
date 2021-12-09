@@ -20,7 +20,7 @@ export class RecyclingListComponent implements OnInit {
   public assetTypeFilter = new FormControl('');
   public customers$: Observable<any[]>;
   public weight: number;
-  public displayedColumns = ['cageNumber', 'assetType', 'status', 'weight'];
+  public displayedColumns = ['cageNumber', 'assetType', 'status', 'updated', 'weight'];
   public choices$: Observable<any>;
 
   constructor(

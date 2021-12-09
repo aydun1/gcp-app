@@ -16,6 +16,7 @@ import { NavigationService } from '../../navigation.service';
 export class PalletInterstateTransferViewComponent implements OnInit {
   private transferSource$: Subject<string>;
   public transfer$: Observable<any>;
+  public files$: Observable<any>;
   public loading: boolean;
   public editQuantity: boolean;
   public loscamQuantity: number;
@@ -31,7 +32,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     private snackBar: MatSnackBar,
     private sharedService: SharedService,
     private navService: NavigationService,
-    private palletsService: PalletsService
+    private palletsService: PalletsService,
   ) { }
 
   ngOnInit(): void {
@@ -49,9 +50,6 @@ export class PalletInterstateTransferViewComponent implements OnInit {
       }),
       map(_ => _[0])
     );
-
-
-
   }
 
   getTransfer(id: string) {

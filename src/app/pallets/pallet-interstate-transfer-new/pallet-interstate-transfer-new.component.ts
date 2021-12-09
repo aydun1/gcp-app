@@ -6,6 +6,7 @@ import { catchError, tap, throwError } from 'rxjs';
 import { SharedService } from '../../shared.service';
 import { NavigationService } from '../../navigation.service';
 import { PalletsService } from '../shared/pallets.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer-new',
@@ -32,6 +33,7 @@ export class PalletInterstateTransferNewComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private router: Router,
     private snackBar: MatSnackBar,
     private sharedService: SharedService,
     private navService: NavigationService,
@@ -74,6 +76,8 @@ export class PalletInterstateTransferNewComponent implements OnInit {
     this.palletService.createInterstatePalletTransfer(payload).pipe(
       tap(_ => {
         this.goBack();
+        this.router.navigate(['pallets/transfer', _.id], {replaceUrl: true});
+
         this.snackBar.open('Added interstate transfer', '', {duration: 3000});
       }),
       catchError(err => {

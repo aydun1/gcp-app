@@ -51,7 +51,7 @@
 
 <mat-menu #menu="matMenu" xPosition="before" >
   <ng-template matMenuContent let-customer="customer">
-    <button mat-menu-item (click)="setSite(customer, null)">
+    <button mat-menu-item (click)="setSite(customer.accountnumber, null)">
       <span>All sites</span>
     </button>
     <button mat-menu-item *ngFor="let site of sites" (click)="setSite(customer.accountnumber, site.fields.Title)">

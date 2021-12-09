@@ -2,9 +2,11 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
+import { MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 import { MsalGuard, MsalInterceptor, MsalGuardConfiguration, MSAL_GUARD_CONFIG, MsalInterceptorConfiguration, MSAL_INTERCEPTOR_CONFIG, MSAL_INSTANCE, MsalService, MsalBroadcastService } from '@azure/msal-angular';
 import { BrowserCacheLocation, InteractionType, IPublicClientApplication, PublicClientApplication } from '@azure/msal-browser';
@@ -16,8 +18,6 @@ import { ProfileComponent } from './profile/profile.component';
 import { FailedComponent } from './failed/failed.component';
 import { environment } from '../environments/environment';
 import { SharedModule } from './shared/shared.module';
-import { MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
-import { ServiceWorkerModule } from '@angular/service-worker';
 
 
 
@@ -50,11 +50,10 @@ function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
 
 function MSALGuardConfigFactory(): MsalGuardConfiguration {
   return {
-    interactionType: InteractionType.Redirect,
+    interactionType: InteractionType.Popup,
     authRequest: {
       scopes: ['user.read', 'Sites.ReadWrite.All', 'https://gardencityplastics.crm6.dynamics.com//user_impersonation']
-    },
-    loginFailedRoute: '/login-failed'
+    }
   };
 }
 

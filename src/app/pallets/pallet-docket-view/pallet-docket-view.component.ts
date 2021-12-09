@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { map, startWith, switchMap, tap } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs';
 import { Pallet } from '../shared/pallet';
 import { PalletsService } from '../shared/pallets.service';
 
@@ -17,10 +17,13 @@ export class PalletDocketViewComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private renderer: Renderer2,
     private palletService: PalletsService
   ) { }
 
   ngOnInit(): void {
+    this.renderer.addClass(document.body, 'print');
+
     this.route.paramMap.pipe(
       map(params => params.get('id')),
       switchMap(id => this.palletService.getPalletTransfer(id)),
@@ -28,11 +31,10 @@ export class PalletDocketViewComponent implements OnInit {
       switchMap(transfer => this.palletService.getCustomerPalletQuantities(transfer.fields.CustomerNumber, transfer.fields.Site)),
       tap(_ => this.quantities = _)
     ).subscribe()
-
-
-
-
-
   }
 
+
+  ngOnDestroy() {
+    this.renderer.removeClass(document.body, 'print');
+  }
 }

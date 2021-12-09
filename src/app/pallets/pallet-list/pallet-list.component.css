@@ -44,6 +44,14 @@ h2 {
   text-decoration: none;
 }
 
+.mat-column-notes {
+  flex: 0 1 180px;
+}
+
+.mat-column-recepient {
+  flex: 0 1 300px;
+}
+
 .mat-column-pallet, .mat-column-date {
   flex: 0 1 115px;
 }

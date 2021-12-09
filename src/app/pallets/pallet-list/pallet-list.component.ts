@@ -13,6 +13,7 @@ import { PalletsService } from '../shared/pallets.service';
   styleUrls: ['./pallet-list.component.css']
 })
 export class PalletListComponent implements OnInit {
+  private _loadList: boolean;
   public pallets$: Observable<Pallet[]>;
   public binFilter = new FormControl('');
   public branchFilter = new FormControl('');
@@ -20,12 +21,12 @@ export class PalletListComponent implements OnInit {
   public palletFilter = new FormControl('');
   public nameFilter = new FormControl('');
   public customers$: Observable<any[]>;
+  public loading: boolean;
   public totalOut = 0;
   public totalIn = 0;
-  private _loadList: boolean;
   public states = this.sharedService.branches;
   public pallets = ['Loscam', 'Chep', 'Plain'];
-  public displayedColumns = ['date', 'recepient', 'pallet', 'out', 'in', 'docket'];
+  public displayedColumns = ['date', 'notes', 'recepient', 'pallet', 'out', 'in', 'docket'];
   public alll$;
   public choices$: Observable<any>;
   public Status: any;
@@ -63,10 +64,14 @@ export class PalletListComponent implements OnInit {
         this.totalOut = 0;
       }),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
-      tap(pallets => this.totalOut = pallets.map(_ => _.fields.Out).filter(_ => _).reduce((acc, val) => acc + val, 0)),
-      tap(pallets => this.totalIn = pallets.map(_ => _.fields.In).filter(_ => _).reduce((acc, val) => acc + val, 0))
+      tap(pallets => {
+        this.totalOut = pallets.map(_ => _.fields.Out).filter(_ => _).reduce((acc, val) => acc + val, 0);
+        this.totalIn = pallets.map(_ => _.fields.In).filter(_ => _).reduce((acc, val) => acc + val, 0);
+      })
     )
-        this.palletsService.getColumns()
+
+    this.palletsService.getColumns();
+
     this.nameFilter.valueChanges.pipe(
       debounceTime(200),
       map(_ => _.length > 0 ? _ : null),

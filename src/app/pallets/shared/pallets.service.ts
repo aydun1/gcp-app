@@ -31,7 +31,7 @@ export class PalletsService {
 
   private createUrl(filters: any): string {
     const filterKeys = Object.keys(filters);
-    let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created,Title,Pallet,In,Out,From,To,Quantity,Reference,Status,Notes)`;
+    let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created,Title,Pallet,In,Out,From,To,Quantity,Reference,Status,Notes,Attachment,Site)`;
 
     const parsed = filterKeys.map(key => {
       switch (key) {
@@ -79,8 +79,10 @@ export class PalletsService {
     );
   }
 
-  getOwed(branch: string, pallet: string) {
-    let url = `${this.palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}'`;
+  getOwed(branch: string, pallet: string, date: Date) {
+    const eod = new Date(date.setHours(23,59,59,999)).toISOString();
+    let url = `${this.palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null`;
+    url += ` and fields/Created lt '${eod}'`;
     return this.http.get(url).pipe(
       //tap(_ => this._nextPage = paginate ? _['@odata.nextLink'] : this._nextPage),
       map((res: {value: Pallet[]}) => res.value.reduce((acc, cur) => acc + +cur.fields.Out - +cur.fields.In, 0))
@@ -162,7 +164,7 @@ export class PalletsService {
 
   approveInterstatePalletTransfer(id: string, approval: boolean): Observable<any> {
     const payload = {fields: {
-      Status: approval ? 'Approved' : 'Rejected',
+      Status: approval ? 'Approved' : 'Rejected'
     }};
     return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${id}')`, payload).pipe(
       switchMap(res => this.updateList(res))
@@ -198,7 +200,14 @@ public i = 0;
   }
 
   cancelInterstatePalletTransfer(id: string): Observable<any> {
-    const payload = {fields: {Status: 'Cancelled',}};
+    const payload = {fields: {Status: 'Cancelled'}};
+    return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${id}')`, payload).pipe(
+      switchMap(res => this.updateList(res))
+    );
+  }
+
+  attachToInterstatePalletTransfer(id: string): Observable<any> {
+    const payload = {fields: {Attachment: true}};
     return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${id}')`, payload).pipe(
       switchMap(res => this.updateList(res))
     );

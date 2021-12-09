@@ -20,8 +20,8 @@ export class CustomerSiteDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<CustomerSiteDialogComponent>,
-    public fb: FormBuilder,
-    public snackBar: MatSnackBar,
+    private fb: FormBuilder,
+    private snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: {customer: Customer},
     private customerService: CustomersService
   ) { }
