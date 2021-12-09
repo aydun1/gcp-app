@@ -24,10 +24,7 @@ export class CustomerListComponent implements OnInit {
   public territoryFilter = new FormControl('');
   public customers$: Observable<Customer[]>;
   public territories$: Observable<Territory[]>;
-
-  public territories = [
-    'NSW', 'QLD', 'SA', 'TAS', 'VIC', 'WA', 'INT', 'NATIONAL'
-  ];
+  public get territories(): Array<string> {return this.sharedService.territoryNames};
 
   private loadList: boolean;
   public displayedColumns = ['name', 'accountnumber'];

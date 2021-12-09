@@ -7,3 +7,9 @@
 .mat-form-field {
   width: 100%;
 }
+
+.header {
+  align-items: flex-end;
+  display: flex;
+  justify-content: space-between;
+}

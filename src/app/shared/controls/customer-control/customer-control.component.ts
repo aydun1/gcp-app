@@ -3,8 +3,8 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Component, ElementRef, Input, OnDestroy, Optional, Self, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material/form-field';
-import { Subject, Observable, of } from 'rxjs';
-import { debounceTime, startWith, map, mergeMap, tap, catchError } from 'rxjs/operators';
+import { Subject, Observable, combineLatest } from 'rxjs';
+import { debounceTime, map, tap, switchMap } from 'rxjs/operators';
 
 import { CustomersService } from '../../../customers/shared/customers.service';
 import { Customer } from '../../../customers/shared/customer';
@@ -30,7 +30,7 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
   public customer: Customer;
   public filteredOptions: Observable<any[]>;  
   public isDisabled = false;
-  public myControl = new FormControl('', this.uniqueCageValidator2);
+  public myControl = new FormControl('', this.customerPickedValidator);
 
   onChange = (_: any) => {};
   onTouched = () => {};
@@ -81,6 +81,12 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
     this.stateChanges.next();
   }
 
+  @Input()
+  set territory(value: string) {
+    this._territory$.next(value);
+  }
+  private _territory$ = new Subject<string>();
+
   get errorState(): boolean {
     return this.myControl.invalid && this.touched;
   }
@@ -106,12 +112,11 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
   }
 
   ngOnInit() {
-    this.filteredOptions = this.myControl.valueChanges.pipe(
-      tap(value => {if (!value) {this.customer = {} as Customer; this.addCustomer();}}),
+    this.filteredOptions = combineLatest([this.myControl.valueChanges, this._territory$]).pipe(
+      tap(([value, state]) => {if (!value) {this.customer = {} as Customer; this.addCustomer();}}),
       debounceTime(200),
-      startWith<string | any>(''),
-      map(value => typeof value === 'string' ? value : value.name),
-      mergeMap((name: string) => this.customersService.getFirstPage({name}))
+      map(([value, state]) => [typeof value === 'string' ? value : value.name, state]),
+      switchMap(([name, state]) => this.customersService.getFirstPage({name, territory: state}))
     );
   }
 
@@ -150,21 +155,9 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
     this.onChange(this.customer);
   }
 
-  uniqueCageValidator2(control: FormControl) {
-    console.log(control.value);
+  customerPickedValidator(control: FormControl) {
     if (control.value.accountnumber) return null;
     return {unselected: true};
-  }
-
-  uniqueCageValidator() {
-    return (control: AbstractControl): Observable<ValidationErrors | null> => {
-      console.log(2);
-      return of(control.value).pipe(
-        tap(_ => console.log(_)),
-        map((exists) => (!exists ? { cageExists: true } : null)),
-        catchError((err) => null)
-      );
-    };
   }
 
   customerDisplayFn(customer: Customer): string {

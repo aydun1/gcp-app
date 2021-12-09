@@ -11,6 +11,7 @@ export interface Pallet {
   fields: {
     id: string,
     Title: string,
+    Branch: string,
     From: string,
     To: string,
     Pallet: string,
