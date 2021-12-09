@@ -8,7 +8,14 @@ import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
   providedIn: 'root'
 })
 export class SharedService {
-  public branches = ['NSW', 'QLD', 'SA', 'VIC', 'WA'];
+  public territories = {
+    'NSW': ['NSW', 'NSWSALES'],
+    'QLD': ['QLD', 'QLDSALES'],
+    'SA': ['SA', 'SASALES'],
+    'VIC': ['ACT', 'HEATH', 'MISC', 'NT', 'NZ', 'OTHER', 'PRIMARY', 'VIC', 'VICSALES'],
+    'WA': ['WA', 'WASALES']
+  };
+  public branches = Object.keys(this.territories);
   private _state$ = new BehaviorSubject<string>('');
 
   constructor(
@@ -40,4 +47,7 @@ export class SharedService {
     return activeAccount.name;
   }
 
+  sanitiseName(name: string) {
+    return encodeURIComponent(name.replace('\'', '\'\''));
+  }
 }

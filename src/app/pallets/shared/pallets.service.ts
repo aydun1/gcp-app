@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
 import { BehaviorSubject, combineLatest, map, Observable, of, switchMap, take, tap, timer } from 'rxjs';
 
+import { SharedService } from 'src/app/shared.service';
 import { Pallet } from './pallet';
 
 interface PalletQuantities {
@@ -26,7 +27,8 @@ export class PalletsService {
   private _palletsSubject$ = new BehaviorSubject<Pallet[]>([]);
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private shared: SharedService
   ) { }
 
   private createUrl(filters: any): string {
@@ -173,8 +175,10 @@ export class PalletsService {
 
 
 public i = 0;
+public month = 12;
+public year = 2021
 
-  getAll(): Observable<number> {
+  updateGP(): Observable<number> {
     let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created)&filter=fields/CustomerNumber ne null &top=2000`;
     const a$: Observable<string[]> = this.http.get(url).pipe(
       map((res: {value: Pallet[]}) => res.value),
@@ -187,10 +191,61 @@ public i = 0;
       tap(() => this.i += 1),
       map(_ => this.i)
     )
-
-
   }
 
+  getAll(): Observable<any> {
+    let url = `${this.palletTrackerUrl}/items?expand=fields(select=CustomerNumber,Created,Pallet,Out,In,Branch,Site)&filter=fields/CustomerNumber ne null and fields/Created ge '${this.year}-${this.month}-01T00:00:00Z'&top=2000`;
+    const a$: Observable<any> = this.http.get(url).pipe(
+      map((res: {value: Pallet[]}) => res.value),
+      tap(_ => console.log(_[_.length - 1])),
+      map(pallets => {
+        const totals = {}
+        pallets.forEach(_ => {
+          const key = `${_.fields.Branch},${_.fields.Pallet},${_.fields.CustomerNumber},${_.fields.Site ? _.fields.Site : ''}`;
+          const change = _.fields.Out - _.fields.In;
+          if (key in totals) {
+            totals[key] += change;
+          } else {
+            totals[key] = change;
+          }
+        });
+        return Object.keys(totals).map(_ => {return {k: _, v: totals[_]}})
+      }),
+      tap(_ => console.log(_.length)),
+
+    );
+    const b$ = timer(1000, 2000);
+    return combineLatest([a$, b$]).pipe(
+      switchMap(([a, b]) => this.updateTotals(a[this.i])),
+      tap(() => this.i += 1),
+      tap(_ => console.log(this.i, _['fields'].Title)),
+
+      map(_ => this.i)
+    )
+  }
+
+  updateTotals(a: any) {
+    const url = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists/99fec67b-8681-43e8-8b63-7bf0b09fd010'
+    const parts = a['k'].split(',');
+    const branch = parts[0];
+    const pallet = parts[1];
+    const customer = parts[2];
+    const dateInt = parseInt(`${this.year}${this.month}`);
+  
+    const site = parts[3];
+    return this.http.get(url + `/items?filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/Title eq '${this.shared.sanitiseName(customer)}' and fields/DateInt eq '${dateInt}'` + (site ? ` and fields/Site eq '${site}'` : '')).pipe(
+      map(res => res['value']),
+      switchMap(res => {
+        const payload = {fields: {Title: customer, Branch: branch, Owing: a['v'], Site: site, Pallet: pallet, Year: this.year, Month: this.month, DateInt: dateInt}};
+        if (res.length > 0) {
+          const id = res[0]['id'];
+          return this.http.patch(`${url}/items('${id}')`, payload);
+        } else {
+          return this.http.post(`${url}/items`, payload);
+        }
+      })
+    );
+  }
 
   removeId(id: string): Observable<any> {
     const payload = {fields: {ImportID: null,}};
@@ -243,8 +298,8 @@ public i = 0;
   }
 
   getCustomerPallets(custnmbr: string, site = ''): Observable<Pallet[]> {
-    let url = this.palletTrackerUrl + `/items?expand=fields(select=Title,Pallet,Out,In)&filter=(fields/From eq '${encodeURIComponent(custnmbr)}' or fields/To eq '${encodeURIComponent(custnmbr)}')`;
-    if (site) url += `and fields/Site eq '${encodeURIComponent(site)}'`;
+    let url = this.palletTrackerUrl + `/items?expand=fields(select=Title,Pallet,Out,In)&filter=(fields/From eq '${this.shared.sanitiseName(custnmbr)}' or fields/To eq '${this.shared.sanitiseName(custnmbr)}')`;
+    if (site) url += `and fields/Site eq '${this.shared.sanitiseName(site)}'`;
     return this.http.get(url).pipe(map((_: any) => _.value));
   }
 
@@ -261,7 +316,7 @@ public i = 0;
   getInTransitOff(branch: string, pallet: string): Observable<Pallet[]> {
     const melbourneMidnight = new Date(new Date(new Date().toLocaleString('en-US', {timeZone: 'Australia/Melbourne'})).setHours(0,0,0,0)).toISOString();
     let url = this.palletTrackerUrl + '/items?expand=fields(select=Quantity)';
-    url += `&filter=fields/From eq '${encodeURIComponent(branch)}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;
+    url += `&filter=fields/From eq '${branch}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;
     url += ` and (fields/Status ne 'Transferred' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
     return this.http.get(url).pipe(map((_: any) => _.value.reduce((acc, val) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
@@ -269,7 +324,7 @@ public i = 0;
   getInTransitOn(branch: string, pallet: string): Observable<Pallet[]> {
     const melbourneMidnight = new Date(new Date(new Date().toLocaleString('en-US', {timeZone: 'Australia/Melbourne'})).setHours(0,0,0,0)).toISOString();
     let url = this.palletTrackerUrl + '/items?expand=fields(select=Quantity)';
-    url += `&filter=fields/To eq '${encodeURIComponent(branch)}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;
+    url += `&filter=fields/To eq '${branch}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;
     url += ` and (fields/Status eq 'Approved' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
     return this.http.get(url).pipe(map((_: any) => _.value.reduce((acc, val) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }

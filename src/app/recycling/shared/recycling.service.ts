@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
+import { SharedService } from '../../shared.service';
 import { Cage } from './cage';
 
 
@@ -18,7 +19,8 @@ export class RecyclingService {
   private _cageTrackerUrl = `${this._dataGroupUrl}/e96c2778-2322-46d6-8de9-3d0c8ca5aefd`;
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private shared: SharedService
   ) { }
 
   getColumns() {
@@ -151,8 +153,8 @@ export class RecyclingService {
   }
 
   getCagesWithCustomer(custnmbr: string, site = ''): Observable<Cage[]> {
-    let url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/Modified desc&filter=fields/CustomerNumber eq '${encodeURIComponent(custnmbr)}'`;
-    if (site) url += `and fields/Site eq '${encodeURIComponent(site)}'`;
+    let url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/Modified desc&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
+    if (site) url += `and fields/Site eq '${this.shared.sanitiseName(site)}'`;
     return this.getCages(url);
   }
 

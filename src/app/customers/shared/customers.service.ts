@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { SharedService } from 'src/app/shared.service';
 import { Customer } from './customer';
 import { Site } from './site';
 
@@ -14,37 +15,28 @@ export class CustomersService {
   private nextPage: string;
   private customersSubject$ = new BehaviorSubject<Customer[]>([]);
   private loadingCustomers: boolean;
-  public territories = {
-    'NSW': ['NSW', 'NSWSALES'],
-    'QLD': ['QLD', 'QLDSALES'],
-    'SA': ['SA', 'SASALES'],
-    'VIC': ['ACT', 'HEATH', 'MISC', 'NT', 'NZ', 'OTHER', 'PRIMARY', 'VIC', 'VICSALES'],
-    'WA': ['WA', 'WASALES']
-  };
+
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private shared: SharedService
   ) { }
-
-  private cleanName(name: string) {
-    return encodeURIComponent(name.replace('\'', '\'\''));
-  }
 
   private createUrl(filters: any) {
     let url = `${this.url}/accounts?$select=name,accountnumber,territoryid`;
-    const cleanedFilters = Object.fromEntries(Object.entries(filters).filter(([_, v]) => v != null)) as any;
-    const filterCount = Object.keys(cleanedFilters).length;
-    if(filterCount > 0) {
-      url += '&$filter=';
-      if ('name' in cleanedFilters) url += `(contains(name,'${this.cleanName(cleanedFilters.name)}') or startswith(accountnumber,'${this.cleanName(cleanedFilters.name)}'))`;
-      if (filterCount > 1) url += ' and ';
-      if ('territory' in cleanedFilters) {
-        if (cleanedFilters['territory'] in this.territories) {
-          url += '(' + this.territories[cleanedFilters.territory].map(_ => `territoryid/name eq '${_}'`).join(' or ') + ')'
-        } else {
-          url += `territoryid/name eq '${cleanedFilters.territory}'`
-        } };
+    const filterArray = [];
+    if (filters?.name) filterArray.push(`(contains(name,'${this.shared.sanitiseName(filters.name)}') or startswith(accountnumber,'${this.shared.sanitiseName(filters.name)}'))`);
+    if (filters?.territory) {
+      if (filters['territory'] in this.shared.territories) {
+        filterArray.push('(' + this.shared.territories[filters.territory].map(_ => `territoryid/name eq '${_}'`).join(' or ') + ')');
+      } else {
+        filterArray.push(`territoryid/name eq '${filters.territory}'`);
+      }
     }
+    filterArray.push('statecode eq 0');
+    filterArray.push('accountnumber ne null');
+
+    url += `&$filter=${filterArray.join(' and ')}`;
     url += `&$orderby=name`;
     return url;
   }
@@ -90,7 +82,7 @@ export class CustomersService {
 
   getSites(customer: string): Observable<Site[]> {
     if (!customer) return of([]);
-    const url = `${this.sitesUrl}/items?expand=fields(select=Title, Customer)&filter=fields/Customer eq '${this.cleanName(customer)}'`;
+    const url = `${this.sitesUrl}/items?expand=fields(select=Title, Customer)&filter=fields/Customer eq '${this.shared.sanitiseName(customer)}'`;
     return this.http.get(url).pipe(map(_ => _['value']));
   }
 
