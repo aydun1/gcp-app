@@ -133,15 +133,15 @@ export class PalletListComponent implements OnInit {
     return sameBranch && samePallet && sameName && this._loadList;
   }
 
-  setBranch(branch: MatSelectChange ) {
+  setBranch(branch: MatSelectChange) {
     this.router.navigate(['pallets/history'], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setStatus(status: MatSelectChange ) {
+  setStatus(status: MatSelectChange) {
     this.router.navigate(['pallets/history'], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setPallet(pallet: MatSelectChange ) {
+  setPallet(pallet: MatSelectChange) {
     this.router.navigate(['pallets/history'], { queryParams: {pallet: pallet.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 

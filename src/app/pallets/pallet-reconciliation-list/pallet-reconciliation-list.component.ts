@@ -96,11 +96,11 @@ export class PalletReconciliationListComponent implements OnInit {
     return sameBranch && samePallet && this._loadList;
   }
 
-  setBranch(branch: MatSelectChange ) {
+  setBranch(branch: MatSelectChange) {
     this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setPallet(pallet: MatSelectChange ) {
+  setPallet(pallet: MatSelectChange) {
     this.router.navigate([], { queryParams: {pallet: pallet.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 

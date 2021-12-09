@@ -110,19 +110,20 @@ export class PalletInterstateTransferListComponent implements OnInit {
     return sameFrom && sameTo && sameStatus && this._loadList;
   }
 
-  setFrom(from: MatSelectChange ) {
+  setFrom(from: MatSelectChange) {
     this.router.navigate([], { queryParams: {from: from.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setTo(to: MatSelectChange ) {
+  setTo(to: MatSelectChange) {
     this.router.navigate([], { queryParams: {to: to.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setStatus(status: MatSelectChange ) {
+  setStatus(status: MatSelectChange) {
     this.router.navigate([], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
+  
 
-  setAssetType(assetType: MatSelectChange ) {
+  setAssetType(assetType: MatSelectChange) {
     this.router.navigate([], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
