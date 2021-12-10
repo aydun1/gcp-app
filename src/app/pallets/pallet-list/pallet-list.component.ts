@@ -27,7 +27,6 @@ export class PalletListComponent implements OnInit {
   public states = this.sharedService.branches;
   public pallets = ['Loscam', 'Chep', 'Plain'];
   public displayedColumns = ['date', 'notes', 'recepient', 'pallet', 'out', 'in', 'docket'];
-  public alll$;
   public choices$: Observable<any>;
   public Status: any;
 
@@ -46,8 +45,6 @@ export class PalletListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.alll$ = this.palletsService.getAll();
-
     const state$ = this.sharedService.getBranch();
     this.pallets$ = this.route.queryParams.pipe(
       startWith({}),
@@ -160,8 +157,4 @@ export class PalletListComponent implements OnInit {
     return item.id;
   }
 
-
-  removeid(id) {
-    this.palletsService.removeId(id).subscribe();
-  }
 }

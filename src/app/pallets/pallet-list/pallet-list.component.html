@@ -28,7 +28,6 @@
     </div>
   </div>
 
-  <div *ngIf="(alll$ | async) as a">{{ a }}</div>
   <div *ngIf="(pallets$ | async) as pallets" class="inner">
     <mat-table #table [dataSource]="pallets" [trackBy]="trackByFn">
 
@@ -51,7 +50,7 @@
       <ng-container matColumnDef="docket">
         <mat-header-cell *matHeaderCellDef> Docket </mat-header-cell>
         <mat-cell *matCellDef="let pallet">
-          <mat-icon *ngIf="pallet.fields.Title" (click)="removeid(pallet.id)">receipt</mat-icon>
+          <a [routerLink]="[pallet.id]" *ngIf="pallet.fields.Title"><mat-icon>receipt</mat-icon></a>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
       </ng-container>
