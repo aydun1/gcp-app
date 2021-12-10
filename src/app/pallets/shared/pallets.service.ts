@@ -85,7 +85,7 @@ export class PalletsService {
   getOwed(branch: string, pallet: string, date: Date) {
     const eod = new Date(date.setHours(23,59,59,999)).toISOString();
     let url = `${this.palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null`;
-    url += ` and fields/Created lt '${eod}'`;
+    url += ` and fields/Created lt '${eod}'&top=2000`;
     return this.http.get(url).pipe(
       //tap(_ => this._nextPage = paginate ? _['@odata.nextLink'] : this._nextPage),
       map((res: {value: Pallet[]}) => res.value.reduce((acc, cur) => acc + +cur.fields.Out - +cur.fields.In, 0))
