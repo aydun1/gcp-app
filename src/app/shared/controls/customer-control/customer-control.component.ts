@@ -3,7 +3,7 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Component, ElementRef, Input, OnDestroy, Optional, Self, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material/form-field';
-import { Subject, Observable, combineLatest } from 'rxjs';
+import { Subject, Observable, combineLatest, BehaviorSubject } from 'rxjs';
 import { debounceTime, map, tap, switchMap } from 'rxjs/operators';
 
 import { CustomersService } from '../../../customers/shared/customers.service';
@@ -85,7 +85,7 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
   set territory(value: string) {
     this._territory$.next(value);
   }
-  private _territory$ = new Subject<string>();
+  private _territory$ = new BehaviorSubject<string>('');
 
   get errorState(): boolean {
     return this.myControl.invalid && this.touched;
