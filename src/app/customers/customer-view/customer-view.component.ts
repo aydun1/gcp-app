@@ -28,7 +28,7 @@ export class CustomerViewComponent implements OnInit {
   public site: string;
   public sites: Array<Site>;
   public pallets: any;
-  public cages: {weight: number};
+  public cages: {count: number, weight: number};
 
   constructor(
     private route: ActivatedRoute,
@@ -53,8 +53,9 @@ export class CustomerViewComponent implements OnInit {
     this.cagesSubject$.pipe(
       switchMap(id => this.recyclingService.getCagesWithCustomer(id)),
       map(cages => {
+        const activeCages = cages.filter(_ => _.fields.Status !== 'Complete').map(_ => 1).reduce((acc, curr) => acc + curr, 0);
         const totalWeight = cages.map(_ => +_.fields.NetWeight || 0).reduce((acc, curr) => acc + curr, 0);
-        return {weight: totalWeight};
+        return {count: activeCages, weight: totalWeight};
       })
     ).subscribe(cages => this.cages = cages);
 

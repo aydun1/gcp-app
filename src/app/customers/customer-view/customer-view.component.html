@@ -37,7 +37,11 @@
           Cages
         </h3>
         <dl>
-          <dt>Weight</dt>
+          <dt>Active</dt>
+          <dd>{{ cages ? cages.count : '...' }}</dd>
+        </dl>
+        <dl>
+          <dt>All time weight</dt>
           <dd>{{ cages ? cages.weight +' kg'  : '...' }}</dd>
         </dl>
       </div>
