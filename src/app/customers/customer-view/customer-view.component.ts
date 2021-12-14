@@ -53,7 +53,7 @@ export class CustomerViewComponent implements OnInit {
     this.cagesSubject$.pipe(
       switchMap(id => this.recyclingService.getCagesWithCustomer(id)),
       map(cages => {
-        const activeCages = cages.filter(_ => _.fields.Status !== 'Complete').map(_ => 1).reduce((acc, curr) => acc + curr, 0);
+        const activeCages = cages.filter(_ => _.fields.Status === 'Delivered to customer').map(_ => 1).reduce((acc, curr) => acc + curr, 0);
         const totalWeight = cages.map(_ => +_.fields.NetWeight || 0).reduce((acc, curr) => acc + curr, 0);
         return {count: activeCages, weight: totalWeight};
       })
