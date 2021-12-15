@@ -31,8 +31,8 @@ export class DocUploadComponent implements OnInit {
       map(_ => [..._[0], ..._[1]]),
       tap(_ => {
         const complete = _.filter(d => d.id).length || 0;
-        const docCountChanged = this._docCount !== undefined && this._docCount !== complete;
-        if (docCountChanged) this.palletsService.markFileAttached(this.id, complete > 0).subscribe();
+        const attachStatusChanged = this._docCount !== undefined && this._docCount !== complete && (this._docCount === 0 || complete === 0);
+        if (attachStatusChanged) this.palletsService.markFileAttached(this.id, complete > 0).subscribe();
         this._docCount = complete;
       })
     );
