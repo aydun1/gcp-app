@@ -180,8 +180,8 @@ export class PalletsService {
     );
   }
 
-  attachToInterstatePalletTransfer(id: string): Observable<any> {
-    const payload = {fields: {Attachment: true}};
+  markFileAttached(id: string, status: boolean): Observable<any> {
+    const payload = {fields: {Attachment: status}};
     return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${id}')`, payload).pipe(
       switchMap(res => this.updateList(res))
     );

@@ -9,6 +9,7 @@ export interface Doc {
   file: {
     mimeType: string,
   },
+  id: string,
   oldName: string,
   name: string,
   size: number,
