@@ -20,7 +20,7 @@ export class PalletReconciliationListComponent implements OnInit {
   public customers$: Observable<any[]>;
   public total: number;
   private _loadList: boolean;
-  public displayedColumns = ['date', 'branch', 'pallet', 'surplus', 'deficit'];
+  public displayedColumns = ['date', 'reference', 'branch', 'pallet', 'surplus', 'deficit'];
   public states = this.sharedService.branches;
   public pallets = ['Loscam', 'Chep', 'Plain']
   public choices$: Observable<any>;
@@ -30,7 +30,6 @@ export class PalletReconciliationListComponent implements OnInit {
     private el: ElementRef,
     private route: ActivatedRoute,
     private router: Router,
-    private palletsService: PalletsService,
     private palletsReconciliationService: PalletsReconciliationService,
     private sharedService: SharedService
   ) { }

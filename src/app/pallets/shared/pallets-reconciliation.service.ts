@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
-import { BehaviorSubject, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, switchMap, take, tap } from 'rxjs';
 
 import { Reconciliation } from '../shared/reconciliation';
 
@@ -11,7 +11,6 @@ import { Reconciliation } from '../shared/reconciliation';
 export class PalletsReconciliationService {
   private endpoint = 'https://graph.microsoft.com/v1.0';
   private dataGroupUrl = 'sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists/920f186f-60f2-4c7e-ba8e-855ff2d9c8aa';
-  private _columns$ = new BehaviorSubject<any>(null);
   private reconciliationTrackerUrl = `${this.endpoint}/${this.dataGroupUrl}`;
 
 
@@ -86,6 +85,11 @@ export class PalletsReconciliationService {
     return this.http.post<Reconciliation>(`${this.reconciliationTrackerUrl}/items`, payload).pipe(
       switchMap(res => this.updateList(res))
     );
+  }
+
+  getReconciliation(id: string) {
+    const url = `${this.reconciliationTrackerUrl}/items('${id}')`;
+    return this.http.get<Reconciliation>(url);
   }
 
   private updateList(res: Reconciliation) {

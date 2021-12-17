@@ -31,6 +31,14 @@
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
 
+      <ng-container matColumnDef="reference">
+        <mat-header-cell *matHeaderCellDef> Ref </mat-header-cell>
+        <mat-cell *matCellDef="let pallet" [routerLink]="[pallet.id]">
+          <a [routerLink]="[pallet.id]" class="customer-link">#{{ pallet.id }}</a>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
       <ng-container matColumnDef="pallet">
         <mat-header-cell *matHeaderCellDef> Pallet </mat-header-cell>
         <mat-cell *matCellDef="let pallet">

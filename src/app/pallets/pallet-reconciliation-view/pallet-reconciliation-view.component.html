@@ -1,1 +1,10 @@
-<p>pallet-reconciliation-view works!</p>
+<mat-toolbar>
+  <button mat-icon-button (click)="goBack()" class="mobile-button">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <ng-container>
+    <div class="title">Stocktake</div>
+  </ng-container>
+</mat-toolbar>
+
+<div *ngIf="stocktake$ | async as stocktake"></div>
