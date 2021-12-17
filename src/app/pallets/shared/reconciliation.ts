@@ -10,13 +10,16 @@ export interface Reconciliation {
   }
   fields: {
     Title: string,
-    From: string,
-    To: string,
+    Branch: string,
     Pallet: string,
-    In: number,
-    Out: number,
-    Quantity: string,
-    Change?: number,
-    Status: string,
+    CurrentBalance: number,
+    OnSite: number,
+    OffSite: number,
+    ToBeCollected: number,
+    ToBeRepaid: number,
+    InTransitOff: number,
+    InTransitOn: number,
+    Surplus: number,
+    Deficit: number
   }
 }

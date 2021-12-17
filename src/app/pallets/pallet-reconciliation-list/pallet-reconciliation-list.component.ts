@@ -4,7 +4,6 @@ import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { SharedService } from 'src/app/shared.service';
-import { PalletsService } from '../shared/pallets.service';
 import { PalletsReconciliationService } from '../shared/pallets-reconciliation.service';
 import { Pallet } from '../shared/pallet';
 
