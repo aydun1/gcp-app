@@ -4,7 +4,6 @@ import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { SharedService } from 'src/app/shared.service';
-import { PalletsService } from '../shared/pallets.service';
 import { PalletsReconciliationService } from '../shared/pallets-reconciliation.service';
 import { Pallet } from '../shared/pallet';
 
@@ -20,7 +19,7 @@ export class PalletReconciliationListComponent implements OnInit {
   public customers$: Observable<any[]>;
   public total: number;
   private _loadList: boolean;
-  public displayedColumns = ['date', 'branch', 'pallet', 'surplus', 'deficit'];
+  public displayedColumns = ['date', 'reference', 'branch', 'pallet', 'surplus', 'deficit'];
   public states = this.sharedService.branches;
   public pallets = ['Loscam', 'Chep', 'Plain']
   public choices$: Observable<any>;
@@ -30,7 +29,6 @@ export class PalletReconciliationListComponent implements OnInit {
     private el: ElementRef,
     private route: ActivatedRoute,
     private router: Router,
-    private palletsService: PalletsService,
     private palletsReconciliationService: PalletsReconciliationService,
     private sharedService: SharedService
   ) { }

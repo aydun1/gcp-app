@@ -80,7 +80,7 @@ export class PalletReconciliationNewComponent implements OnInit {
     this.loading = true;
     const offs = this.palletsService.getInTransitOff(this.state, pallet);
     const ons = this.palletsService.getInTransitOn(this.state, pallet);
-    const owed = this.palletsService.getOwed(this.state, pallet, date);
+    const owed = this.palletsService.getPalletsOwedToBranch(this.state, pallet, date);
     combineLatest([offs, ons, owed]).subscribe(([a, b, c]) => {
       this.palletRecForm.patchValue({
         inTransitOff: a,

@@ -4,6 +4,7 @@ import { MsalGuard } from '@azure/msal-angular';
 
 import { FailedComponent } from './failed/failed.component';
 import { HomeComponent } from './home/home.component';
+import { LogoutComponent } from './logout/logout.component';
 import { ProfileComponent } from './profile/profile.component';
 
 const routes: Routes = [
@@ -19,6 +20,10 @@ const routes: Routes = [
   {
     path: 'login-failed',
     component: FailedComponent
+  },
+  {
+    path: 'logout',
+    component: LogoutComponent
   },
   { path: 'customers', canActivate: [MsalGuard], loadChildren: () => import('./customers/customers.module').then(m => m.CustomersModule) },
   { path: 'recycling', canActivate: [MsalGuard], loadChildren: () => import('./recycling/recycling.module').then(m => m.RecyclingModule) },

@@ -3,6 +3,7 @@ import { BehaviorSubject, combineLatest, map, Observable, switchMap, take, tap }
 
 import { Doc } from '../../doc';
 import { DocsService } from '../../docs.service';
+import { PalletsService } from '../../../pallets/shared/pallets.service';
 
 @Component({
   selector: 'gcp-doc-upload',
@@ -13,19 +14,27 @@ export class DocUploadComponent implements OnInit {
   @Input() id: string;
   @Output() complete = new EventEmitter<boolean>();
 
+  private _docCount: number;
+  private _uploads$ = new BehaviorSubject<Doc[]>([]);
+  private _docStarter$ = new BehaviorSubject<string>('');
   public docs$: Observable<Doc[]>;
-  private uploads$ = new BehaviorSubject<Doc[]>([]);
-  public docStarter$ = new BehaviorSubject<string>('');
 
   constructor(
-    private docsService: DocsService
+    private docsService: DocsService,
+    private palletsService: PalletsService
   ) { }
 
   ngOnInit(): void {
-    this.docStarter$.next(this.id)
-    this.docs$ = this.docStarter$.pipe(
-      switchMap(_ => combineLatest([this.uploads$, this.docsService.listFiles(_).pipe(tap(() => this.uploads$.next([])))])),
-      map(_ => [..._[0], ..._[1]])
+    this._docStarter$.next(this.id);
+    this.docs$ = this._docStarter$.pipe(
+      switchMap(_ => combineLatest([this._uploads$, this.docsService.listFiles(_).pipe(tap(() => this._uploads$.next([])))])),
+      map(_ => [..._[0], ..._[1]]),
+      tap(_ => {
+        const complete = _.filter(d => d.id).length || 0;
+        const attachStatusChanged = this._docCount !== undefined && this._docCount !== complete && (this._docCount === 0 || complete === 0);
+        if (attachStatusChanged) this.palletsService.markFileAttached(this.id, complete > 0).subscribe();
+        this._docCount = complete;
+      })
     );
   }
 
@@ -41,18 +50,18 @@ export class DocUploadComponent implements OnInit {
   uploadFile(id: string, file: File): void {
     const date = new Date();
     this.docsService.createUploadSession(id, file).pipe(
-      switchMap(upload => this.uploads$.pipe(
+      switchMap(upload => this._uploads$.pipe(
         take(1),
         map(pending => {
           const index = pending.findIndex(_ => file.name === _.oldName || file.name === _.name);
           const percent = Math.min(upload.percent, 100) || 0;
-          if (percent === 100) this.docStarter$.next(this.id);
+          if (percent === 100) this._docStarter$.next(this.id);
           const doc = {oldName: upload.file ? '' : file.name, name: upload.name || file.name, percent: percent, createdDateTime: date.toISOString(), webUrl: upload.webUrl, createdBy: upload.createdBy, file: upload.file} as Doc;
           return index === -1 ? [doc, ...pending] : pending.map(obj => obj.name === file.name ? doc : obj)
           }
         ),
       )),
-      tap(_ => this.uploads$.next(_))
+      tap(_ => this._uploads$.next(_))
     ).subscribe();
   }
 
@@ -74,7 +83,7 @@ export class DocUploadComponent implements OnInit {
 
   deleteFile(id: string): void {
     this.docsService.deleteFile(this.id, id).subscribe(
-      _ => this.docStarter$.next(this.id)
+      _ => this._docStarter$.next(this.id)
     );
   }
 

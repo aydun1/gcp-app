@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MsalBroadcastService, MsalService } from '@azure/msal-angular';
 import { EventMessage, EventType, InteractionStatus } from '@azure/msal-browser';
-import { filter } from 'rxjs/operators';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'gcp-home',

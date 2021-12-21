@@ -9,7 +9,7 @@ export interface Cage {
     CageWeight: number,
     GrossWeight: number,
     NetWeight: number,
-    Status: string,
+    Status: string | 'Available' | 'Allocated to customer' | 'Delivered to customer' | 'Collected from customer' | 'Delivered to Polymer' | 'Collected from Polymer' | 'Complete',
     AssetType: string,
     Date1: string | Date,
     Date2: string | Date,

@@ -6,8 +6,7 @@ import { Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { AuthenticationResult, InteractionStatus, PopupRequest, EventMessage, EventType, AccountInfo } from '@azure/msal-browser';
-import { Observable, Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, Observable, Subject, takeUntil } from 'rxjs';
 
 import { SharedService } from './shared.service';
 
@@ -78,6 +77,8 @@ export class AppComponent implements OnInit, OnDestroy {
     const accounts = this.authService.instance.getAllAccounts();
     this.accounts = accounts;
     this.loginDisplay = accounts.length > 0;
+    console.log(window.location.pathname)
+    if (!this.loginDisplay && window.location.pathname === '/logout') this.router.navigate(['/']);
     if (this.loginDisplay) this.getPhoto();
   }
 
@@ -104,10 +105,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.authService.instance.setActiveAccount(response.account)
       );
     }
-  }
-
-  logout() {
-    this.authService.logout();
   }
 
   urlActive(url: string) {

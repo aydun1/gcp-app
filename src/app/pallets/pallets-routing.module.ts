@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { MsalGuard } from '@azure/msal-angular';
 
 import { PalletsComponent } from './pallets.component';
 import { PalletListComponent } from './pallet-list/pallet-list.component';
@@ -10,6 +9,7 @@ import { PalletInterstateTransferListComponent } from './pallet-interstate-trans
 import { PalletInterstateTransferViewComponent } from './pallet-interstate-transfer-view/pallet-interstate-transfer-view.component';
 import { PalletReconciliationNewComponent } from './pallet-reconciliation-new/pallet-reconciliation-new.component';
 import { PalletDocketViewComponent } from './pallet-docket-view/pallet-docket-view.component';
+import { PalletReconciliationViewComponent } from './pallet-reconciliation-view/pallet-reconciliation-view.component';
 
 
 const routes: Routes = [
@@ -31,6 +31,9 @@ const routes: Routes = [
     children: [{
       path: 'new',
       component: PalletReconciliationNewComponent
+    }, {
+      path: ':id',
+      component: PalletReconciliationViewComponent
     }]
   },
   {

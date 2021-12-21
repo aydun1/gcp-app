@@ -43,7 +43,7 @@
 <mat-menu #menu="matMenu">
   <div class="menu-upper">
     <div class="menu-company">Garden City Plastics</div>
-    <button mat-button (click)="logout()" class="menu-logout">Logout</button>
+    <a mat-button routerLink="/logout" class="menu-logout">Logout</a>
   </div>
   <mat-list>
     <mat-list-item class="menu-accounts" *ngFor="let account of accounts">
