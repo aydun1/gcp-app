@@ -46,7 +46,8 @@ export class PalletsService {
         case 'branch':
           return `(fields/From eq '${filters.branch}' or fields/To eq '${filters.branch}')`;
         case 'name':
-          return `(startswith(fields/CustomerNumber, '${filters.name}') or startswith(fields/Title, '${filters.name}'))`;
+          const cleanName = this.shared.sanitiseName(filters.name);
+          return `(startswith(fields/CustomerNumber, '${cleanName}') or startswith(fields/Title, '${cleanName}'))`;
         case 'status':
           return `fields/Status eq '${filters.status}'`;
         case 'pallet':
