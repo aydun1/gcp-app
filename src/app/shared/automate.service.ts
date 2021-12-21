@@ -1,16 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Params } from '@angular/router';
-import { BehaviorSubject, combineLatest, map, Observable, of, switchMap, take, tap, timer } from 'rxjs';
+import { combineLatest, map, Observable, switchMap, tap, timer } from 'rxjs';
 
 import { SharedService } from 'src/app/shared.service';
 import { Pallet } from '../pallets/shared/pallet';
-
-interface PalletQuantities {
-  Loscam: number,
-  Chep: number,
-  Plain: number
-}
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +12,6 @@ export class PalletsService {
   private endpoint = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4';
   private palletsUrl = 'lists/38f14082-02e5-4978-bf92-f42be2220166';
   private palletsOwedUrl = 'lists/99fec67b-8681-43e8-8b63-7bf0b09fd010';
-  private _columns$ = new BehaviorSubject<any>(null);
   private palletTrackerUrl = `${this.endpoint}/${this.palletsUrl}`;
 
   public i = 0;
