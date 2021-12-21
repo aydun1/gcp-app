@@ -12,6 +12,7 @@ import { RecyclingService } from '../../recycling/shared/recycling.service';
 import { PalletsService } from '../../pallets/shared/pallets.service';
 import { CustomerSiteDialogComponent } from '../shared/customer-site-dialog/customer-site-dialog.component';
 import { NavigationService } from '../../navigation.service';
+import { PalletTotals } from 'src/app/pallets/shared/pallet-totals';
 
 @Component({
   selector: 'gcp-customer-view',
@@ -27,6 +28,10 @@ export class CustomerViewComponent implements OnInit {
   public site: string;
   public sites: Array<Site>;
   public pallets: any;
+  public palletsOwing: Array<PalletTotals>;
+  public loscams: number;
+  public cheps: number;
+  public plains: number;
   public cages: {count: number, weight: number};
 
   constructor(
@@ -46,8 +51,15 @@ export class CustomerViewComponent implements OnInit {
 
     this.palletsSubject$.pipe(
       switchMap(id => this.palletsService.getCustomerPalletQuantities(id, this.site)),
-
     ).subscribe(pallets => this.pallets = pallets);
+
+    this.palletsSubject$.pipe(
+      switchMap(id => this.palletsService.getPalletsOwedByCustomer(id, this.site)),
+    ).subscribe(palletsOwing => {
+      this.loscams = palletsOwing.find(_ => _.fields.Pallet === 'Loscam')?.fields.Owing || 0;
+      this.cheps = palletsOwing.find(_ => _.fields.Pallet === 'Chep')?.fields.Owing || 0;
+      this.plains = palletsOwing.find(_ => _.fields.Pallet === 'Plain')?.fields.Owing || 0;
+    });
 
     this.cagesSubject$.pipe(
       switchMap(id => this.recyclingService.getCagesWithCustomer(id)),

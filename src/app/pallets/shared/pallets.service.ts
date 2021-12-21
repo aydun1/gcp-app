@@ -5,6 +5,7 @@ import { BehaviorSubject, map, Observable, of, switchMap, take, tap } from 'rxjs
 
 import { SharedService } from 'src/app/shared.service';
 import { Pallet } from './pallet';
+import { PalletTotals } from './pallet-totals';
 
 interface PalletQuantities {
   Loscam: number,
@@ -16,10 +17,11 @@ interface PalletQuantities {
   providedIn: 'root'
 })
 export class PalletsService {
-  private endpoint = 'https://graph.microsoft.com/v1.0';
-  private dataGroupUrl = 'sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists/38f14082-02e5-4978-bf92-f42be2220166';
+  private endpoint = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4';
+  private palletsUrl = 'lists/38f14082-02e5-4978-bf92-f42be2220166';
+  private palletsOwedUrl = 'lists/99fec67b-8681-43e8-8b63-7bf0b09fd010';
   private _columns$ = new BehaviorSubject<any>(null);
-  private palletTrackerUrl = `${this.endpoint}/${this.dataGroupUrl}`;
+  private palletTrackerUrl = `${this.endpoint}/${this.palletsUrl}`;
 
 
   private _loadingPallets: boolean;
@@ -81,7 +83,7 @@ export class PalletsService {
     );
   }
 
-  getOwed(branch: string, pallet: string, date: Date) {
+  getPalletsOwedToBranch(branch: string, pallet: string, date: Date) {
     const eod = new Date(date.setHours(23,59,59,999)).toISOString();
     let url = `${this.palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null`;
     url += ` and fields/Created lt '${eod}'&top=2000`;
@@ -218,6 +220,12 @@ export class PalletsService {
 
   getCustomerPallets(custnmbr: string, site = ''): Observable<Pallet[]> {
     let url = this.palletTrackerUrl + `/items?expand=fields(select=Title,Pallet,Out,In)&filter=(fields/From eq '${this.shared.sanitiseName(custnmbr)}' or fields/To eq '${this.shared.sanitiseName(custnmbr)}')`;
+    if (site) url += `and fields/Site eq '${this.shared.sanitiseName(site)}'`;
+    return this.http.get(url).pipe(map((_: any) => _.value));
+  }
+
+  getPalletsOwedByCustomer(custnmbr: string, site = ''): Observable<PalletTotals[]> {
+    let url = `${this.endpoint}/${this.palletsOwedUrl}/items?expand=fields(select=Title,Pallet,Owing)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt eq null`;
     if (site) url += `and fields/Site eq '${this.shared.sanitiseName(site)}'`;
     return this.http.get(url).pipe(map((_: any) => _.value));
   }
