@@ -18,8 +18,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { FailedComponent } from './failed/failed.component';
 import { environment } from '../environments/environment';
 import { SharedModule } from './shared/shared.module';
-
-
+import { LogoutComponent } from './logout/logout.component';
 
 function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
@@ -62,7 +61,8 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     AppComponent,
     HomeComponent,
     ProfileComponent,
-    FailedComponent
+    FailedComponent,
+    LogoutComponent
   ],
   imports: [
     BrowserAnimationsModule,

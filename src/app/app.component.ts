@@ -77,6 +77,8 @@ export class AppComponent implements OnInit, OnDestroy {
     const accounts = this.authService.instance.getAllAccounts();
     this.accounts = accounts;
     this.loginDisplay = accounts.length > 0;
+    console.log(window.location.pathname)
+    if (!this.loginDisplay && window.location.pathname === '/logout') this.router.navigate(['/']);
     if (this.loginDisplay) this.getPhoto();
   }
 
@@ -103,10 +105,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.authService.instance.setActiveAccount(response.account)
       );
     }
-  }
-
-  logout() {
-    this.authService.logout();
   }
 
   urlActive(url: string) {
