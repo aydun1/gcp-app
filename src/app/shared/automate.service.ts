@@ -8,15 +8,16 @@ import { Pallet } from '../pallets/shared/pallet';
 @Injectable({
   providedIn: 'root'
 })
-export class PalletsService {
+export class AutomateService {
   private endpoint = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4';
   private palletsUrl = 'lists/38f14082-02e5-4978-bf92-f42be2220166';
   private palletsOwedUrl = 'lists/99fec67b-8681-43e8-8b63-7bf0b09fd010';
   private palletTrackerUrl = `${this.endpoint}/${this.palletsUrl}`;
+  private i = 0;
 
-  public i = 0;
-  public month = 12;
-  public year = 2021
+  private month = 12;
+  private year = 2021
+  private branch = 'QLD';
 
   constructor(
     private http: HttpClient,
@@ -39,10 +40,15 @@ export class PalletsService {
   }
 
   getAll(): Observable<any> {
-    let url = `${this.palletTrackerUrl}/items?expand=fields(select=CustomerNumber,Created,Pallet,Out,In,Branch,Site)&filter=fields/CustomerNumber ne null and fields/Created ge '${this.year}-${this.month}-01T00:00:00Z'&top=2000`;
-    const a$: Observable<any> = this.http.get(url).pipe(
+    const nextMonth = this.month < 12 ? this.month + 1 : 1;
+    const nextYear = this.year < 12 ? this.year + 1 : this.year + 1;
+
+    const filters = `fields/Branch ne '${this.branch}' and fields/CustomerNumber ne null and fields/Created ge '${this.year}-${this.month}-01T00:00:00Z' and fields/Created lt '${nextYear}-${nextMonth}-01T00:00:00Z'`;
+    const url = `${this.palletTrackerUrl}/items?expand=fields(select=CustomerNumber,Created,Pallet,Out,In,Branch,Site)&filter=${filters}&top=2000`;
+
+    return this.http.get(url).pipe(
       map((res: {value: Pallet[]}) => res.value),
-      tap(_ => console.log(_[_.length - 1])),
+      tap(_ => console.log(`Got ${_.length} items.`)),
       map(pallets => {
         const totals = {}
         pallets.forEach(_ => {
@@ -56,21 +62,24 @@ export class PalletsService {
         });
         return Object.keys(totals).map(_ => {return {k: _, v: totals[_]}})
       }),
-      tap(_ => console.log(_.length)),
-
+      tap(_ => console.log(`Reduced to ${_.length} items.`)),
+      tap(_ => console.log(_))
     );
+  }
+
+  doAction() {
+    const a$ = this.getAll();
     const b$ = timer(1000, 2000);
     return combineLatest([a$, b$]).pipe(
       switchMap(([a, b]) => this.updateTotals(a[this.i])),
       tap(() => this.i += 1),
       tap(_ => console.log(this.i, _['fields'].Title)),
-
       map(_ => this.i)
     )
   }
 
   updateTotals(a: any) {
-    const url = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists/99fec67b-8681-43e8-8b63-7bf0b09fd010'
+    const url = `${this.endpoint}/${this.palletsOwedUrl}`
     const parts = a['k'].split(',');
     const branch = parts[0];
     const pallet = parts[1];

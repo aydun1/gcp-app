@@ -19,6 +19,7 @@ import { FailedComponent } from './failed/failed.component';
 import { environment } from '../environments/environment';
 import { SharedModule } from './shared/shared.module';
 import { LogoutComponent } from './logout/logout.component';
+import { AutomateService } from './shared/automate.service';
 
 function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
@@ -100,7 +101,8 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     MsalService,
     MsalGuard,
     MsalBroadcastService,
-    NativeDateAdapter
+    NativeDateAdapter,
+    AutomateService
   ],
   bootstrap: [AppComponent]
 })
