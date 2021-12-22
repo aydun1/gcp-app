@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
-import { BehaviorSubject, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
 import { SharedService } from 'src/app/shared.service';
 import { Pallet } from './pallet';
@@ -220,15 +220,35 @@ export class PalletsService {
   }
 
   getCustomerPallets(custnmbr: string, site = ''): Observable<Pallet[]> {
-    let url = this.palletTrackerUrl + `/items?expand=fields(select=Title,Pallet,Out,In)&filter=(fields/From eq '${this.shared.sanitiseName(custnmbr)}' or fields/To eq '${this.shared.sanitiseName(custnmbr)}')`;
+    let url = this.palletTrackerUrl + `/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
     if (site) url += `and fields/Site eq '${this.shared.sanitiseName(site)}'`;
     return this.http.get(url).pipe(map((_: any) => _.value));
   }
 
-  getPalletsOwedByCustomer(custnmbr: string, site = ''): Observable<PalletTotals[]> {
-    let url = `${this.endpoint}/${this.palletsOwedUrl}/items?expand=fields(select=Title,Pallet,Owing)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt eq null`;
-    if (site) url += `and fields/Site eq '${this.shared.sanitiseName(site)}'`;
-    return this.http.get(url).pipe(map((_: any) => _.value));
+  getPalletsOwedByCustomer(custnmbr: string, site = ''): Observable<PalletQuantities> {
+    const date = new Date();
+    const startOfMonth = new Date(Date.UTC(date.getFullYear(), date.getUTCMonth(), 1)).toISOString();
+    const dateInt = `${date.getUTCFullYear()}${date.getUTCMonth() + 1}`;
+    let url = `${this.endpoint}/${this.palletsOwedUrl}/items?expand=fields(select=Title,Pallet,Owing)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt lt '${dateInt}'`;
+    let url2 = `${this.palletTrackerUrl}/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}' and fields/Created ge '${startOfMonth}'`;
+
+    if (site) {
+      const filter = `and fields/Site eq '${this.shared.sanitiseName(site)}'`;
+      url += filter;
+      url2 += filter;
+    }
+
+    const currMonth: Observable<Pallet[]> = this.http.get(url2).pipe(map((_: any) => _.value));
+    const prevMonths: Observable<PalletTotals[]> = this.http.get(url).pipe(map((_: any) => _.value));
+
+    return combineLatest([prevMonths, currMonth]).pipe(
+      map(([pastMonths, thisMonth]) => ['Loscam', 'Chep', 'Plain'].reduce((acc,curr) => {
+        const count1 = pastMonths.filter(_ => _.fields.Pallet === curr).reduce((subtotal, qty) => subtotal + qty.fields.Owing, 0);
+        const count2 = thisMonth.filter(_ => _.fields.Pallet === curr).reduce((subtotal, qty) => subtotal + qty.fields.Out - qty.fields.In, 0);
+        acc[curr] = count1 + count2;
+        return acc;
+      }, {} as PalletQuantities))
+    )
   }
 
   getCustomerPalletQuantities(custnmbr: string, site = ''): Observable<PalletQuantities> {
