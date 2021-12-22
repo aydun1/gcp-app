@@ -11,13 +11,13 @@ import { Pallet } from '../pallets/shared/pallet';
 export class AutomateService {
   private endpoint = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4';
   private palletsUrl = 'lists/38f14082-02e5-4978-bf92-f42be2220166';
-  private palletsOwedUrl = 'lists/99fec67b-8681-43e8-8b63-7bf0b09fd010';
+  private palletsOwedUrl = 'lists/8ed9913e-a20e-41f1-9a2e-0142c09f2344';
   private palletTrackerUrl = `${this.endpoint}/${this.palletsUrl}`;
   private i = 0;
 
   private month = 12;
   private year = 2021
-  private branch = 'QLD';
+  private branch = 'VIC';
 
   constructor(
     private http: HttpClient,
@@ -41,9 +41,9 @@ export class AutomateService {
 
   getAll(): Observable<any> {
     const nextMonth = this.month < 12 ? this.month + 1 : 1;
-    const nextYear = this.year < 12 ? this.year + 1 : this.year + 1;
+    const nextYear = this.month < 12 ? this.year : this.year + 1;
 
-    const filters = `fields/Branch ne '${this.branch}' and fields/CustomerNumber ne null and fields/Created ge '${this.year}-${this.month}-01T00:00:00Z' and fields/Created lt '${nextYear}-${nextMonth}-01T00:00:00Z'`;
+    const filters = `fields/CustomerNumber ne null and fields/Created ge '${this.year}-${this.month}-01T00:00:00Z' and fields/Created lt '${nextYear}-${nextMonth}-01T00:00:00Z'`;
     const url = `${this.palletTrackerUrl}/items?expand=fields(select=CustomerNumber,Created,Pallet,Out,In,Branch,Site)&filter=${filters}&top=2000`;
 
     return this.http.get(url).pipe(
@@ -69,7 +69,7 @@ export class AutomateService {
 
   doAction() {
     const a$ = this.getAll();
-    const b$ = timer(1000, 2000);
+    const b$ = timer(1000, 1000);
     return combineLatest([a$, b$]).pipe(
       switchMap(([a, b]) => this.updateTotals(a[this.i])),
       tap(() => this.i += 1),
