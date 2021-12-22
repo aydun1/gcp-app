@@ -28,7 +28,7 @@ export class CustomerViewComponent implements OnInit {
   public site: string;
   public sites: Array<Site>;
   public pallets: any;
-  public palletsOwing: Array<PalletTotals>;
+  public palletsOwing: any;
   public loscams: number;
   public cheps: number;
   public plains: number;
@@ -50,16 +50,12 @@ export class CustomerViewComponent implements OnInit {
     ).subscribe();
 
     this.palletsSubject$.pipe(
-      switchMap(id => this.palletsService.getCustomerPalletQuantities(id, this.site)),
+      switchMap(id => this.palletsService.getCustomerPalletQuantities(id, this.site))
     ).subscribe(pallets => this.pallets = pallets);
 
     this.palletsSubject$.pipe(
-      switchMap(id => this.palletsService.getPalletsOwedByCustomer(id, this.site)),
-    ).subscribe(palletsOwing => {
-      this.loscams = palletsOwing.find(_ => _.fields.Pallet === 'Loscam')?.fields.Owing || 0;
-      this.cheps = palletsOwing.find(_ => _.fields.Pallet === 'Chep')?.fields.Owing || 0;
-      this.plains = palletsOwing.find(_ => _.fields.Pallet === 'Plain')?.fields.Owing || 0;
-    });
+      switchMap(id => this.palletsService.getPalletsOwedByCustomer(id, this.site))
+    ).subscribe(pallets => this.palletsOwing = pallets);
 
     this.cagesSubject$.pipe(
       switchMap(id => this.recyclingService.getCagesWithCustomer(id)),
