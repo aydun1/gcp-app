@@ -27,7 +27,6 @@ export class CustomerViewComponent implements OnInit {
   public customer$: Observable<any>;
   public site: string;
   public sites: Array<Site>;
-  public pallets: any;
   public palletsOwing: any;
   public loscams: number;
   public cheps: number;
@@ -48,10 +47,6 @@ export class CustomerViewComponent implements OnInit {
       switchMap(id => this.cutomersService.getSites(id)),
       tap(sites => this.sites = sites)
     ).subscribe();
-
-    this.palletsSubject$.pipe(
-      switchMap(id => this.palletsService.getCustomerPalletQuantities(id, this.site))
-    ).subscribe(pallets => this.pallets = pallets);
 
     this.palletsSubject$.pipe(
       switchMap(id => this.palletsService.getPalletsOwedByCustomer(id, this.site))

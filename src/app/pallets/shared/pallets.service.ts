@@ -19,7 +19,7 @@ interface PalletQuantities {
 export class PalletsService {
   private endpoint = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4';
   private palletsUrl = 'lists/38f14082-02e5-4978-bf92-f42be2220166';
-  private palletsOwedUrl = 'lists/99fec67b-8681-43e8-8b63-7bf0b09fd010';
+  private palletsOwedUrl = 'lists/8ed9913e-a20e-41f1-9a2e-0142c09f2344';
   private _columns$ = new BehaviorSubject<any>(null);
   private palletTrackerUrl = `${this.endpoint}/${this.palletsUrl}`;
 
