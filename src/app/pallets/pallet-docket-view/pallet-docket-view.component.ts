@@ -28,7 +28,7 @@ export class PalletDocketViewComponent implements OnInit {
       map(params => params.get('id')),
       switchMap(id => this.palletService.getPalletTransfer(id)),
       tap(_ => this.transfer = _),
-      switchMap(transfer => this.palletService.getCustomerPalletQuantities(transfer.fields.CustomerNumber, transfer.fields.Site)),
+      switchMap(transfer => this.palletService.getPalletsOwedByCustomer(transfer.fields.CustomerNumber, transfer.fields.Site)),
       tap(_ => this.quantities = _)
     ).subscribe()
   }
