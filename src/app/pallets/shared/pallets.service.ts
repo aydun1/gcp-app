@@ -84,6 +84,10 @@ export class PalletsService {
     );
   }
 
+  private dateInt(date: Date) {
+    return `${date.getUTCFullYear()}${('00' + (date.getUTCMonth() + 1)).slice(-2)}`;
+  }
+
   getColumns() {
     this._columns$.pipe(
       take(1),
@@ -217,7 +221,7 @@ export class PalletsService {
 
   getPalletsOwedToBranch(branch: string, pallet: string, date: Date) {
     const startOfMonth = new Date(Date.UTC(date.getFullYear(), date.getUTCMonth(), 1)).toISOString();
-    const dateInt = `${date.getUTCFullYear()}${date.getUTCMonth() + 1}`;
+    const dateInt = this.dateInt(date);
     const eod = new Date(date.setHours(23,59,59,999)).toISOString();
 
     let url = `${this.endpoint}/${this.palletsOwedUrl}/items?expand=fields(select=Owing)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/DateInt lt '${dateInt}'&top=2000`;
@@ -238,7 +242,8 @@ export class PalletsService {
   getPalletsOwedByCustomer(custnmbr: string, site = ''): Observable<PalletQuantities> {
     const date = new Date();
     const startOfMonth = new Date(Date.UTC(date.getFullYear(), date.getUTCMonth(), 1)).toISOString();
-    const dateInt = `${date.getUTCFullYear()}${date.getUTCMonth() + 1}`;
+    const dateInt = this.dateInt(date);
+
     let url = `${this.endpoint}/${this.palletsOwedUrl}/items?expand=fields(select=Title,Pallet,Owing)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt lt '${dateInt}'`;
     let url2 = `${this.palletTrackerUrl}/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}' and fields/Created ge '${startOfMonth}'`;
 
