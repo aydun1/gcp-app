@@ -1,0 +1,7 @@
+{
+  "name": "gcp-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

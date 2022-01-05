@@ -19,6 +19,7 @@ import { FailedComponent } from './failed/failed.component';
 import { environment } from '../environments/environment';
 import { SharedModule } from './shared/shared.module';
 import { LogoutComponent } from './logout/logout.component';
+import { IonicModule } from '@ionic/angular';
 
 function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
@@ -76,7 +77,8 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       registrationStrategy: 'registerWhenStable:30000'
-    })
+    }),
+    IonicModule.forRoot()
   ],
   providers: [
     {provide: MAT_DATE_LOCALE, useValue: 'en-AU'},
