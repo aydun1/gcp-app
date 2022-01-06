@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, tap, throwError } from 'rxjs';
@@ -9,11 +9,12 @@ import { RecyclingReceiptsService } from '../shared/recycling-receipts.service';
 
 @Component({
   selector: 'gcp-recycling-receipt-new',
-  host: {class:'app-component'},
   templateUrl: './recycling-receipt-new.component.html',
   styleUrls: ['./recycling-receipt-new.component.css']
 })
 export class RecyclingReceiptNewComponent implements OnInit {
+  @HostBinding('class') class = 'app-component';
+
   public newReceiptForm: FormGroup;
   public loading: boolean;
   public state: string;

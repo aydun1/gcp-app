@@ -23,13 +23,11 @@ import { BigButtonComponent } from './big-button/big-button.component';
 import { MatNativeDateModule } from '@angular/material/core';
 import { PipeModule } from './pipes/pipe.module';
 import { ControlsModule } from './controls/controls.module';
-import { DocsComponent } from './docs/docs.component';
 import { DocsModule } from './docs/docs.module';
 
 @NgModule({
   declarations: [
-    BigButtonComponent,
-    DocsComponent
+    BigButtonComponent
   ],
   imports: [
     CommonModule,

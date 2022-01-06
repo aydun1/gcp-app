@@ -17,6 +17,7 @@ export interface Cage {
     Date4: string | Date,
     CustomerNumber: string,
     Customer: string,
+    Notes: string,
     id: string,
     Modified: string | Date,
     Created: string | Date,

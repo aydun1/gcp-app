@@ -214,6 +214,11 @@ export class RecyclingService {
     return this.updateStatus(id, payload);
   }
 
+  setNotes(id: string, notes: string): Observable<Cage> {
+    const payload = {fields: {Notes: notes}};
+    return this.updateStatus(id, payload);
+  }
+
   addNewCage(cageNumber: number, branch: string, assetType: string, cageWeight: number): Observable<any> {
     const url = this._cageTrackerUrl + `/items`;
     const payload = {fields: {Status: 'Available', CageNumber: cageNumber, Branch: branch, AssetType: assetType, CageWeight: cageWeight}};

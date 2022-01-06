@@ -1,6 +1,6 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { Component, ElementRef, Input, OnDestroy, Optional, Self, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostBinding, Input, OnDestroy, OnInit, Optional, Self, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject, switchMap, tap } from 'rxjs';
@@ -12,19 +12,20 @@ import { Customer } from '../../../customers/shared/customer';
   selector: 'gcp-customer-control',
   templateUrl: 'customer-control.component.html',
   styleUrls: ['customer-control.component.css'],
-  providers: [{provide: MatFormFieldControl, useExisting: CustomerControlComponent}],
-  host: {
-    '[class.example-floating]': 'shouldLabelFloat',
-    '[id]': 'id',
-    '[attr.aria-describedby]': 'describedBy',
-  }
+  providers: [{provide: MatFormFieldControl, useExisting: CustomerControlComponent}]
 })
-export class CustomerControlComponent implements ControlValueAccessor, MatFormFieldControl<Customer>, OnDestroy {
+export class CustomerControlComponent implements ControlValueAccessor, MatFormFieldControl<Customer>, OnDestroy, OnInit {
+  @Input('aria-describedby') userAriaDescribedBy: string;
+  @HostBinding() id = `customer-input-${CustomerControlComponent.nextId++}`;
+  @HostBinding('class.floating')
+  get shouldLabelFloat() {
+    return this.focused || !this.empty;
+  }
+
   static nextId = 0;
   public stateChanges = new Subject<void>();
   public focused = false;
   public touched = false;
-  public id = `customer-input-${CustomerControlComponent.nextId++}`;
   public describedBy = '';
   public customer: Customer;
   public filteredOptions: Observable<any[]>;  
@@ -39,8 +40,6 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
   get empty() {
     return !this.myControl.value;
   }
-
-  get shouldLabelFloat() { return this.focused || !this.empty; }
 
   @Input()
   get placeholder(): string { return this._placeholder; }
@@ -141,7 +140,9 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
   }
 
   setDescribedByIds(ids: string[]) {
-    this.describedBy = ids.join(' ');
+    const controlElement = this._elementRef.nativeElement
+      .querySelector('.customer-input-container')!;
+    controlElement.setAttribute('aria-describedby', ids.join(' '));
   }
 
   onContainerClick(event: MouseEvent) {
