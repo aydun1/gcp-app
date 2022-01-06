@@ -1,15 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'gcp-pallet-view',
   templateUrl: './pallet-view.component.html',
   styleUrls: ['./pallet-view.component.css']
 })
-export class PalletViewComponent implements OnInit {
+export class PalletViewComponent {
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }

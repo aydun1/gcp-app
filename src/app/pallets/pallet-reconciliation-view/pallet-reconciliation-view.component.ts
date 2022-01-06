@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, switchMap } from 'rxjs';
 
@@ -8,11 +8,12 @@ import { Reconciliation } from '../shared/reconciliation';
 
 @Component({
   selector: 'gcp-pallet-reconciliation-view',
-  host: {class:'app-component'},
   templateUrl: './pallet-reconciliation-view.component.html',
   styleUrls: ['./pallet-reconciliation-view.component.css']
 })
 export class PalletReconciliationViewComponent implements OnInit {
+  @HostBinding('class') class = 'app-component';
+
   public stocktake$: Observable<Reconciliation>;
 
   constructor(

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, combineLatest, tap, throwError } from 'rxjs';
@@ -10,11 +10,12 @@ import { NavigationService } from '../../navigation.service';
 
 @Component({
   selector: 'gcp-pallet-reconciliation-new',
-  host: {class:'app-component'},
   templateUrl: './pallet-reconciliation-new.component.html',
   styleUrls: ['./pallet-reconciliation-new.component.css']
 })
 export class PalletReconciliationNewComponent implements OnInit {
+  @HostBinding('class') class = 'app-component';
+
   public palletRecForm: FormGroup;
   public adjBalance = 0;
   public stocktakeResult = 0;

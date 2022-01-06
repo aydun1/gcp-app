@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import jsPDF from 'jspdf';
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
@@ -10,11 +10,11 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
 @Component({
   selector: 'gcp-pallet-docket-view',
-  host: {class:'app-component'},
   templateUrl: './pallet-docket-view.component.html',
   styleUrls: ['./pallet-docket-view.component.css']
 })
-export class PalletDocketViewComponent implements OnInit {
+export class PalletDocketViewComponent implements OnDestroy, OnInit {
+  @HostBinding('class') class = 'app-component';
 
   public transfer: Pallet;
   public quantities: {Loscam: number, Chep: number, Plain: number}

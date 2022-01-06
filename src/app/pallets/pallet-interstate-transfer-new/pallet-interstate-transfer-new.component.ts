@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, tap, throwError } from 'rxjs';
@@ -10,11 +10,12 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer-new',
-  host: {class:'app-component'},
   templateUrl: './pallet-interstate-transfer-new.component.html',
   styleUrls: ['./pallet-interstate-transfer-new.component.css']
 })
 export class PalletInterstateTransferNewComponent implements OnInit {
+  @HostBinding('class') class = 'app-component';
+
   public palletTransferForm: FormGroup;
   public states = this.sharedService.branches;
   public state: string;

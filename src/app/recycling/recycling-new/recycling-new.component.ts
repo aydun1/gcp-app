@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -9,11 +9,12 @@ import { NavigationService } from '../../navigation.service';
 
 @Component({
   selector: 'gcp-recycling-new',
-  host: {class:'app-component'},
   templateUrl: './recycling-new.component.html',
   styleUrls: ['./recycling-new.component.css']
 })
 export class RecyclingNewComponent implements OnInit {
+  @HostBinding('class') class = 'app-component';
+
   public cageForm: FormGroup;
   public loading: boolean;
   public choices$: Observable<any>;
