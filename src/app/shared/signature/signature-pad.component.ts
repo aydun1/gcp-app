@@ -1,5 +1,5 @@
 import { ViewportRuler } from '@angular/cdk/scrolling';
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { Subscription, tap } from 'rxjs';
 import SignaturePad from 'signature_pad';
 
@@ -8,7 +8,7 @@ import SignaturePad from 'signature_pad';
   templateUrl: './signature-pad.component.html',
   styleUrls: ['./signature-pad.component.css']
 })
-export class SignaturePadComponent implements OnInit, AfterViewInit {
+export class SignaturePadComponent implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('sPad', {static: true}) signaturePadElement: ElementRef<HTMLCanvasElement>;
   private signaturePad: SignaturePad;
   private viewportChange: Subscription;

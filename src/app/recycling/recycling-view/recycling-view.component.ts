@@ -1,19 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, combineLatest, Observable, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, switchMap, tap } from 'rxjs';
 
 import { RecyclingService } from '../shared/recycling.service';
 import { NavigationService } from '../../navigation.service';
 
 @Component({
   selector: 'gcp-recycling-view',
-  host: {class:'app-component'},
   templateUrl: './recycling-view.component.html',
   styleUrls: ['./recycling-view.component.css']
 })
 export class RecyclingViewComponent implements OnInit {
-  private cageSource$ = new BehaviorSubject<void>(null);
+  @HostBinding('class') class = 'app-component';
 
+  private cageSource$ = new BehaviorSubject<void>(null);
   public cage$: Observable<any>;
   public cageHistory$: Observable<any>;
   public noHistory: boolean;

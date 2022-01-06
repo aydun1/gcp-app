@@ -1,15 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'gcp-recycling',
   templateUrl: './recycling.component.html',
   styleUrls: ['./recycling.component.css']
 })
-export class RecyclingComponent implements OnInit {
+export class RecyclingComponent {
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }

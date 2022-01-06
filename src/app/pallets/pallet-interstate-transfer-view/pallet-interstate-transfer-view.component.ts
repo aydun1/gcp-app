@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, catchError, combineLatest, map, Observable, Subject, switchMap, tap, throwError } from 'rxjs';
@@ -9,11 +9,12 @@ import { NavigationService } from '../../navigation.service';
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer-view',
-  host: {class:'app-component'},
   templateUrl: './pallet-interstate-transfer-view.component.html',
   styleUrls: ['./pallet-interstate-transfer-view.component.css']
 })
 export class PalletInterstateTransferViewComponent implements OnInit {
+  @HostBinding('class') class = 'app-component';
+
   private transferSource$: Subject<string>;
   public transfer$: Observable<any>;
   public files$: Observable<any>;
@@ -22,7 +23,6 @@ export class PalletInterstateTransferViewComponent implements OnInit {
   public loscamQuantity: number;
   public chepQuantity: number;
   public plainQuantity: number;
-
   public sender: boolean;
   public receiver: boolean;
   public transport: boolean;

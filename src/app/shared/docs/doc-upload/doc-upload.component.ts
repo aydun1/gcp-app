@@ -12,7 +12,6 @@ import { PalletsService } from '../../../pallets/shared/pallets.service';
 })
 export class DocUploadComponent implements OnInit {
   @Input() id: string;
-  @Output() complete = new EventEmitter<boolean>();
 
   private _docCount: number;
   private _uploads$ = new BehaviorSubject<Doc[]>([]);

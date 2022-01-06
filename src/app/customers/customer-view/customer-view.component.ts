@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { map, Observable, Subject, switchMap, tap } from 'rxjs';
@@ -16,11 +16,12 @@ import { PalletTotals } from 'src/app/pallets/shared/pallet-totals';
 
 @Component({
   selector: 'gcp-customer-view',
-  host: {class:'app-component'},
   templateUrl: './customer-view.component.html',
   styleUrls: ['./customer-view.component.css']
 })
 export class CustomerViewComponent implements OnInit {
+  @HostBinding('class') class = 'app-component';
+
   private sitesSubject$ = new Subject<string>();
   private palletsSubject$ = new Subject<string>();
   private cagesSubject$ = new Subject<string>();

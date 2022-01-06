@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { map, switchMap, tap } from 'rxjs';
 import { Pallet } from '../shared/pallet';
@@ -6,11 +6,11 @@ import { PalletsService } from '../shared/pallets.service';
 
 @Component({
   selector: 'gcp-pallet-docket-view',
-  host: {class:'app-component'},
   templateUrl: './pallet-docket-view.component.html',
   styleUrls: ['./pallet-docket-view.component.css']
 })
-export class PalletDocketViewComponent implements OnInit {
+export class PalletDocketViewComponent implements OnDestroy, OnInit {
+  @HostBinding('class') class = 'app-component';
 
   public transfer: Pallet;
   public quantities: {Loscam: number, Chep: number, Plain: number}
