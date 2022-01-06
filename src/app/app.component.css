@@ -8,6 +8,14 @@
   right: 0;
 }
 
+.title {
+  color: white;
+  margin-right: 10px;
+  overflow-x: hidden;
+  text-decoration: none;
+  text-overflow: ellipsis;
+}
+
 .mat-toolbar {
   flex-grow: 0;
   flex-shrink: 0;
@@ -28,6 +36,8 @@
 
 .photo-button {
   border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
   height: 36px;
   overflow: hidden;
   width: 36px;
@@ -38,11 +48,6 @@
   max-width: 100%;
   object-fit: cover;
   width: 100%;
-}
-
-a.title {
-  color: white;
-  text-decoration: none;
 }
 
 ::ng-deep .mat-menu-content{

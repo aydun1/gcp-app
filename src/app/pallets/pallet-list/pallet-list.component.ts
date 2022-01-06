@@ -15,20 +15,15 @@ import { PalletsService } from '../shared/pallets.service';
 export class PalletListComponent implements OnInit {
   private _loadList: boolean;
   public pallets$: Observable<Pallet[]>;
-  public binFilter = new FormControl('');
   public branchFilter = new FormControl('');
-  public statusFilter = new FormControl('');
   public palletFilter = new FormControl('');
   public nameFilter = new FormControl('');
-  public customers$: Observable<any[]>;
   public loading: boolean;
   public totalOut = 0;
   public totalIn = 0;
   public states = this.sharedService.branches;
   public pallets = ['Loscam', 'Chep', 'Plain'];
   public displayedColumns = ['date', 'notes', 'recepient', 'pallet', 'out', 'in', 'docket'];
-  public choices$: Observable<any>;
-  public Status: any;
 
   constructor(
     private el: ElementRef,
@@ -46,6 +41,7 @@ export class PalletListComponent implements OnInit {
 
   ngOnInit(): void {
     const state$ = this.sharedService.getBranch();
+
     this.pallets$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
@@ -67,8 +63,6 @@ export class PalletListComponent implements OnInit {
       })
     )
 
-    this.palletsService.getColumns();
-
     this.nameFilter.valueChanges.pipe(
       debounceTime(200),
       map(_ => _.length > 0 ? _ : null),
@@ -80,13 +74,10 @@ export class PalletListComponent implements OnInit {
     return this.palletsService.getFirstPage(params).pipe(
       map(_=>
         _.map(pallet =>  {
-          const source = pallet.fields.From === this.branchFilter.value;
-          const inn = source ? null: +pallet.fields.Quantity;
-          const out = source ? +pallet.fields.Quantity : null;
-          pallet.fields['To'] = source ? pallet.fields.To : pallet.fields.From;
-          pallet.fields['In'] = inn;
-          pallet.fields['Out'] = out;
-          pallet.fields['Change'] = pallet.fields.From === this.branchFilter.value ? -pallet.fields.Quantity : +pallet.fields.Quantity;
+          const isSource = pallet.fields.From === this.branchFilter.value;
+          pallet.fields['To'] = isSource ? pallet.fields.To : pallet.fields.From;
+          pallet.fields['In'] = isSource ? null : +pallet.fields.Quantity;
+          pallet.fields['Out'] = isSource ? +pallet.fields.Quantity : null;
           return pallet;
         })
       )
@@ -143,10 +134,6 @@ export class PalletListComponent implements OnInit {
 
   setPallet(pallet: MatSelectChange) {
     this.router.navigate(['pallets/history'], { queryParams: {pallet: pallet.value}, queryParamsHandling: 'merge', replaceUrl: true});
-  }
-
-  clearBinFilter() {
-    this.binFilter.patchValue('');
   }
 
   clearNameFilter() {

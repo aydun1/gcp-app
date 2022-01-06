@@ -19,7 +19,7 @@ interface PalletQuantities {
 export class PalletsService {
   private endpoint = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4';
   private palletsUrl = 'lists/38f14082-02e5-4978-bf92-f42be2220166';
-  private palletsOwedUrl = 'lists/99fec67b-8681-43e8-8b63-7bf0b09fd010';
+  private palletsOwedUrl = 'lists/8ed9913e-a20e-41f1-9a2e-0142c09f2344';
   private _columns$ = new BehaviorSubject<any>(null);
   private palletTrackerUrl = `${this.endpoint}/${this.palletsUrl}`;
 
@@ -84,14 +84,8 @@ export class PalletsService {
     );
   }
 
-  getPalletsOwedToBranch(branch: string, pallet: string, date: Date) {
-    const eod = new Date(date.setHours(23,59,59,999)).toISOString();
-    let url = `${this.palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null`;
-    url += ` and fields/Created lt '${eod}'&top=2000`;
-    return this.http.get(url).pipe(
-      //tap(_ => this._nextPage = paginate ? _['@odata.nextLink'] : this._nextPage),
-      map((res: {value: Pallet[]}) => res.value.reduce((acc, cur) => acc + +cur.fields.Out - +cur.fields.In, 0))
-    );
+  private dateInt(date: Date) {
+    return `${date.getUTCFullYear()}${('00' + (date.getUTCMonth() + 1)).slice(-2)}`;
   }
 
   getColumns() {
@@ -225,10 +219,31 @@ export class PalletsService {
     return this.http.get(url).pipe(map((_: any) => _.value));
   }
 
+  getPalletsOwedToBranch(branch: string, pallet: string, date: Date) {
+    const startOfMonth = new Date(Date.UTC(date.getFullYear(), date.getUTCMonth(), 1)).toISOString();
+    const dateInt = this.dateInt(date);
+    const eod = new Date(date.setHours(23,59,59,999)).toISOString();
+
+    let url = `${this.endpoint}/${this.palletsOwedUrl}/items?expand=fields(select=Owing)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/DateInt lt '${dateInt}'&top=2000`;
+    let url2 = `${this.palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null and fields/Created ge '${startOfMonth}' and fields/Created lt '${eod}'&top=2000`;
+
+    const prevMonths: Observable<PalletTotals[]> = this.http.get(url).pipe(map((_: any) => _.value));
+    const currMonth: Observable<Pallet[]> = this.http.get(url2).pipe(map((_: any) => _.value));
+
+    return combineLatest([prevMonths, currMonth]).pipe(
+      map(([pastMonths, thisMonth]) => {
+        const count1 = pastMonths.reduce((subtotal, qty) => subtotal + qty.fields.Owing, 0);
+        const count2 = thisMonth.reduce((subtotal, qty) => subtotal + qty.fields.Out - qty.fields.In, 0);
+        return count1 + count2;
+      })
+    )
+  }
+
   getPalletsOwedByCustomer(custnmbr: string, site = ''): Observable<PalletQuantities> {
     const date = new Date();
     const startOfMonth = new Date(Date.UTC(date.getFullYear(), date.getUTCMonth(), 1)).toISOString();
-    const dateInt = `${date.getUTCFullYear()}${date.getUTCMonth() + 1}`;
+    const dateInt = this.dateInt(date);
+
     let url = `${this.endpoint}/${this.palletsOwedUrl}/items?expand=fields(select=Title,Pallet,Owing)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt lt '${dateInt}'`;
     let url2 = `${this.palletTrackerUrl}/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}' and fields/Created ge '${startOfMonth}'`;
 
@@ -246,16 +261,6 @@ export class PalletsService {
         const count1 = pastMonths.filter(_ => _.fields.Pallet === curr).reduce((subtotal, qty) => subtotal + qty.fields.Owing, 0);
         const count2 = thisMonth.filter(_ => _.fields.Pallet === curr).reduce((subtotal, qty) => subtotal + qty.fields.Out - qty.fields.In, 0);
         acc[curr] = count1 + count2;
-        return acc;
-      }, {} as PalletQuantities))
-    )
-  }
-
-  getCustomerPalletQuantities(custnmbr: string, site = ''): Observable<PalletQuantities> {
-    return this.getCustomerPallets(custnmbr, site).pipe(
-      map(pallets => ['Loscam', 'Chep', 'Plain'].reduce((acc,curr) => {
-        const count = pallets.filter(_ => _.fields.Pallet === curr).reduce((subtotal, qty) => subtotal + qty.fields.Out - qty.fields.In, 0);
-        acc[curr] = count;
         return acc;
       }, {} as PalletQuantities))
     )

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { map, Observable, Subject, switchMap, tap } from 'rxjs';
@@ -16,18 +16,18 @@ import { PalletTotals } from 'src/app/pallets/shared/pallet-totals';
 
 @Component({
   selector: 'gcp-customer-view',
-  host: {class:'app-component'},
   templateUrl: './customer-view.component.html',
   styleUrls: ['./customer-view.component.css']
 })
 export class CustomerViewComponent implements OnInit {
+  @HostBinding('class') class = 'app-component';
+
   private sitesSubject$ = new Subject<string>();
   private palletsSubject$ = new Subject<string>();
   private cagesSubject$ = new Subject<string>();
   public customer$: Observable<any>;
   public site: string;
   public sites: Array<Site>;
-  public pallets: any;
   public palletsOwing: any;
   public loscams: number;
   public cheps: number;
@@ -48,10 +48,6 @@ export class CustomerViewComponent implements OnInit {
       switchMap(id => this.cutomersService.getSites(id)),
       tap(sites => this.sites = sites)
     ).subscribe();
-
-    this.palletsSubject$.pipe(
-      switchMap(id => this.palletsService.getCustomerPalletQuantities(id, this.site))
-    ).subscribe(pallets => this.pallets = pallets);
 
     this.palletsSubject$.pipe(
       switchMap(id => this.palletsService.getPalletsOwedByCustomer(id, this.site))
