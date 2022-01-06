@@ -84,9 +84,9 @@ export class PalletReconciliationNewComponent implements OnInit {
     const owed = this.palletsService.getPalletsOwedToBranch(this.state, pallet, date);
     combineLatest([offs, ons, owed]).subscribe(([a, b, c]) => {
       this.palletRecForm.patchValue({
-        inTransitOff: a,
-        inTransitOn: b,
-        [c > 0 ? 'toBeCollected' : 'toBeRepaid']: Math.abs(c),
+        inTransitOff: a || 0,
+        inTransitOn: b || 0,
+        [c > 0 ? 'toBeCollected' : 'toBeRepaid']: Math.abs(c) || 0,
         [c > 0 ? 'toBeRepaid' : 'toBeCollected']: 0
       })
       this.loading = false;
