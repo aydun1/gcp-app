@@ -270,7 +270,7 @@ export class PalletsService {
     const melbourneMidnight = new Date(new Date(new Date().toLocaleString('en-US', {timeZone: 'Australia/Melbourne'})).setHours(0,0,0,0)).toISOString();
     let url = this.palletTrackerUrl + `/items?expand=fields(select=Quantity,${pallet})`;
     url += `&filter=fields/From eq '${branch}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;
-    url += ` and (fields/Status ne 'Transferred' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
+    url += ` and fields/Status ne 'Cancelled' and (fields/Status ne 'Transferred' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
     return this.http.get(url).pipe(map((_: any) => _.value.reduce((acc, val) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
 
@@ -278,7 +278,7 @@ export class PalletsService {
     const melbourneMidnight = new Date(new Date(new Date().toLocaleString('en-US', {timeZone: 'Australia/Melbourne'})).setHours(0,0,0,0)).toISOString();
     let url = this.palletTrackerUrl + `/items?expand=fields(select=Quantity,${pallet})`;
     url += `&filter=fields/To eq '${branch}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;
-    url += ` and (fields/Status eq 'Approved' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
+    url += ` and fields/Status ne 'Cancelled' and (fields/Status eq 'Approved' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
     return this.http.get(url).pipe(map((_: any) => _.value.reduce((acc, val) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
 
