@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { AuthenticationResult, InteractionStatus, PopupRequest, EventMessage, EventType, AccountInfo } from '@azure/msal-browser';
-import { filter, interval, Observable, Subject, takeUntil, tap, withLatestFrom } from 'rxjs';
+import { filter, interval, Observable, Subject, takeUntil, withLatestFrom } from 'rxjs';
 
 import { SharedService } from './shared.service';
 
@@ -123,6 +123,5 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._destroying$.next(undefined);
-    this._destroying$.complete();
   }
 }
