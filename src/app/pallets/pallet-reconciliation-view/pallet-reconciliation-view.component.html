@@ -34,11 +34,11 @@
       </mat-list-item>
       <mat-divider></mat-divider>
       <mat-list-item *ngIf="stocktake.fields.Surplus">
-        <div mat-line>{{ stocktake.fields.Surplus }}</div>
+        <div mat-line class="green">{{ stocktake.fields.Surplus }}</div>
         <div mat-line>Surplus (Physical > Invoice)</div>
       </mat-list-item>
       <mat-list-item *ngIf="stocktake.fields.Deficit">
-        <div mat-line>{{ stocktake.fields.Deficit }}</div>
+        <div mat-line class="red">{{ stocktake.fields.Deficit }}</div>
         <div mat-line>Deficit (Physical < Invoice)</div>
       </mat-list-item>
     </mat-list>
