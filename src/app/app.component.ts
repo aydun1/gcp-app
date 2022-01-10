@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { AuthenticationResult, InteractionStatus, PopupRequest, EventMessage, EventType, AccountInfo } from '@azure/msal-browser';
-import { filter, Observable, Subject, takeUntil, tap } from 'rxjs';
+import { filter, interval, Observable, Subject, takeUntil, tap, withLatestFrom } from 'rxjs';
 
 import { SharedService } from './shared.service';
 
@@ -18,6 +18,7 @@ import { SharedService } from './shared.service';
 })
 export class AppComponent implements OnInit, OnDestroy {
   private readonly _destroying$ = new Subject<void>();
+  private checkInterval = 1000 * 60 * 60 * 6;  // 6 hours
   public title = 'Pallet Management System';
   public loginDisplay: boolean;
   public accounts: AccountInfo[];
@@ -61,20 +62,26 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     if (this.swUpdate.isEnabled) {
+      withLatestFrom()
       this.swUpdate.versionUpdates.pipe(
         filter(evt => evt.type === 'VERSION_READY')
       ).subscribe(() => {
-        location.reload()
+        location.reload();
         //this.swUpdate.activateUpdate().then(_ => console.log(_));
         //const snackBarRef = this.snackBar.open('Application updated. Refresh page to apply changes.', 'Refresh');
         //snackBarRef.onAction().subscribe(() => location.reload());
       });
-      this.swUpdate.checkForUpdate().then(
-        () => console.log('Checking for application updates')
-      ).catch(
-        e => console.error('error when checking for update', e)
-      );
+      this.checkForUpdates();
+      interval(this.checkInterval).subscribe(() => this.checkForUpdates());
     }
+  }
+
+  checkForUpdates() {
+    this.swUpdate.checkForUpdate().then(
+      () => console.log('Checking for application updates')
+    ).catch(
+      e => console.error('error when checking for update', e)
+    );
   }
 
   setLoginDisplay() {
