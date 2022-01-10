@@ -2,11 +2,12 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SafeUrl } from '@angular/platform-browser';
+import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { AuthenticationResult, InteractionStatus, PopupRequest, EventMessage, EventType, AccountInfo } from '@azure/msal-browser';
-import { filter, Observable, Subject, takeUntil } from 'rxjs';
+import { filter, Observable, Subject, takeUntil, tap } from 'rxjs';
 
 import { SharedService } from './shared.service';
 
@@ -19,7 +20,6 @@ export class AppComponent implements OnInit, OnDestroy {
   private readonly _destroying$ = new Subject<void>();
   public title = 'Pallet Management System';
   public loginDisplay: boolean;
-  public loginDisplay$ = new Subject<boolean>();
   public accounts: AccountInfo[];
   public photo$: Observable<SafeUrl>;
   public mobileQuery: MediaQueryList;
@@ -30,6 +30,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private swUpdate: SwUpdate, 
     private snackBar: MatSnackBar,
     private authService: MsalService,
+    private location: Location,
     private msalBroadcastService: MsalBroadcastService,
     private router: Router,
     private sharedService: SharedService,
@@ -40,11 +41,12 @@ export class AppComponent implements OnInit, OnDestroy {
     this.setLoginDisplay();
     this.observer.observe(['(max-width: 600px)']).subscribe(_ => this.isMobile = _.matches);
     this.authService.instance.enableAccountStorageEvents();
+
     this.msalBroadcastService.msalSubject$.pipe(
       filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED)
     ).subscribe((result: EventMessage) => {
       if (this.authService.instance.getAllAccounts().length === 0) {
-        window.location.pathname = '/';
+        this.router.navigate(['/']);
       } else {
         this.setLoginDisplay();
       }
@@ -77,8 +79,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const accounts = this.authService.instance.getAllAccounts();
     this.accounts = accounts;
     this.loginDisplay = accounts.length > 0;
-    console.log(window.location.pathname)
-    if (!this.loginDisplay && window.location.pathname === '/logout') this.router.navigate(['/']);
+    if (!this.loginDisplay && this.location.path() === '/logout') this.router.navigate(['/']);
     if (this.loginDisplay) this.getPhoto();
   }
 
@@ -88,9 +89,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
   checkAndSetActiveAccount(){
     const activeAccount = this.authService.instance.getActiveAccount();
-    if (!activeAccount && this.authService.instance.getAllAccounts().length > 0) {
-      const accounts = this.authService.instance.getAllAccounts();
-      this.authService.instance.setActiveAccount(accounts[0]);
+    const allAccounts = this.authService.instance.getAllAccounts();
+    if (!activeAccount && allAccounts.length > 0) {
+      this.authService.instance.setActiveAccount(allAccounts[0]);
     }
   }
 
