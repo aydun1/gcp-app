@@ -64,6 +64,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.swUpdate.versionUpdates.pipe(
         filter(evt => evt.type === 'VERSION_READY')
       ).subscribe(() => {
+        this.swUpdate.activateUpdate().then(_ => console.log(_));
         const snackBarRef = this.snackBar.open('Application updated. Refresh page to apply changes.', 'Refresh');
         snackBarRef.onAction().subscribe(() => location.reload());
       });
