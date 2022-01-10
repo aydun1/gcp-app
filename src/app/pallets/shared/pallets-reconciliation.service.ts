@@ -12,8 +12,6 @@ export class PalletsReconciliationService {
   private endpoint = 'https://graph.microsoft.com/v1.0';
   private dataGroupUrl = 'sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists/920f186f-60f2-4c7e-ba8e-855ff2d9c8aa';
   private reconciliationTrackerUrl = `${this.endpoint}/${this.dataGroupUrl}`;
-
-
   private _loadingPallets: boolean;
   private _nextPage: string;
   private _palletsSubject$ = new BehaviorSubject<Reconciliation[]>([]);
@@ -25,7 +23,6 @@ export class PalletsReconciliationService {
   private createUrl(filters: any): string {
     const filterKeys = Object.keys(filters);
     let url = `${this.reconciliationTrackerUrl}/items?expand=fields`;
-    console.log(filters)
     const parsed = filterKeys.map(key => {
       switch (key) {
         case 'branch':

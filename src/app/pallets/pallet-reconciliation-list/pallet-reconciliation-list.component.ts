@@ -56,8 +56,8 @@ export class PalletReconciliationListComponent implements OnInit {
     )
   }
 
-  getFirstPage(_: any) {
-    this.sharedService.getBranch().subscribe(_ => console.log(_))
+  getFirstPage(_: Params) {
+    this.sharedService.getBranch().subscribe()
     return this.palletsReconciliationService.getFirstPage(_);
   }
 
