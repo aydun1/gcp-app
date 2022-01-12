@@ -15,6 +15,7 @@ export class PalletsReconciliationService {
   private _loadingPallets: boolean;
   private _nextPage: string;
   private _palletsSubject$ = new BehaviorSubject<Reconciliation[]>([]);
+  public loading = new BehaviorSubject<boolean>(false);
 
   constructor(
     private http: HttpClient
@@ -39,9 +40,11 @@ export class PalletsReconciliationService {
   }
 
   private getReconciliations(url: string, paginate = false): Observable<Reconciliation[]> {
+    this.loading.next(true);
     return this.http.get(url).pipe(
       tap(_ => this._nextPage = paginate ? _['@odata.nextLink'] : this._nextPage),
-      map((res: {value: Reconciliation[]}) => res.value)
+      map((res: {value: Reconciliation[]}) => res.value),
+      tap(() => this.loading.next(false))
     );
   }
 

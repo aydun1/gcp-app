@@ -17,7 +17,7 @@ export class PalletReconciliationListComponent implements OnInit {
   public pallets$: Observable<Pallet[]>;
   public branchFilter = new FormControl('');
   public palletFilter = new FormControl('');
-  public loading: boolean;
+  public loading = this.palletsReconciliationService.loading;
   public total: number;
   public displayedColumns = ['date', 'reference', 'branch', 'pallet', 'surplus', 'deficit'];
   public states = this.sharedService.branches;
@@ -38,7 +38,6 @@ export class PalletReconciliationListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loading = true;
     this.pallets$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
@@ -52,7 +51,6 @@ export class PalletReconciliationListComponent implements OnInit {
       tap(() => this.total = 0),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
       tap(pallets => this.total = pallets.map(_ => _.fields.Quantity).filter(_ => _).reduce((acc, val) => acc + val, 0)),
-      tap(() => this.loading = false)
     )
   }
 
