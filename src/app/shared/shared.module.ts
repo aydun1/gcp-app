@@ -24,6 +24,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { PipeModule } from './pipes/pipe.module';
 import { ControlsModule } from './controls/controls.module';
 import { DocsModule } from './docs/docs.module';
+import { LoadingRowModule } from './loading-row/loading-row.module';
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import { DocsModule } from './docs/docs.module';
     FormsModule,
     ReactiveFormsModule,
     BigButtonComponent,
+    LoadingRowModule,
     PipeModule,
     ControlsModule,
     DocsModule

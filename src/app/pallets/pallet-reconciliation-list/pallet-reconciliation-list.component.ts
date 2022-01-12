@@ -13,17 +13,15 @@ import { Pallet } from '../shared/pallet';
   styleUrls: ['./pallet-reconciliation-list.component.css']
 })
 export class PalletReconciliationListComponent implements OnInit {
+  private _loadList: boolean;
   public pallets$: Observable<Pallet[]>;
   public branchFilter = new FormControl('');
   public palletFilter = new FormControl('');
-  public customers$: Observable<any[]>;
+  public loading: boolean;
   public total: number;
-  private _loadList: boolean;
   public displayedColumns = ['date', 'reference', 'branch', 'pallet', 'surplus', 'deficit'];
   public states = this.sharedService.branches;
   public pallets = ['Loscam', 'Chep', 'Plain']
-  public choices$: Observable<any>;
-  public Status: any;
 
   constructor(
     private el: ElementRef,
@@ -40,6 +38,7 @@ export class PalletReconciliationListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loading = true;
     this.pallets$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
@@ -52,12 +51,13 @@ export class PalletReconciliationListComponent implements OnInit {
       map(_ => {return {..._, type: 'Transfer'}}),
       tap(() => this.total = 0),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
-      tap(pallets => this.total = pallets.map(_ => _.fields.Quantity).filter(_ => _).reduce((acc, val) => acc + val, 0))
+      tap(pallets => this.total = pallets.map(_ => _.fields.Quantity).filter(_ => _).reduce((acc, val) => acc + val, 0)),
+      tap(() => this.loading = false)
     )
   }
 
   getFirstPage(_: Params) {
-    this.sharedService.getBranch().subscribe()
+    this.sharedService.getBranch().subscribe();
     return this.palletsReconciliationService.getFirstPage(_);
   }
 
