@@ -42,6 +42,18 @@
   flex: 1;
 }
 
+.mat-column-updated {
+  flex: 0 1 100px;
+}
+
+.mat-column-weight {
+  flex: 0 1 80px;
+}
+
+.mat-column-nav {
+  flex: 0 1 60px;
+}
+
 .last-icon {
   order: 9;
 }

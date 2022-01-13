@@ -18,7 +18,7 @@ export class PalletListComponent implements OnInit {
   public branchFilter = new FormControl('');
   public palletFilter = new FormControl('');
   public nameFilter = new FormControl('');
-  public loading: boolean;
+  public loading = this.palletsService.loading;
   public totalOut = 0;
   public totalIn = 0;
   public states = this.sharedService.branches;

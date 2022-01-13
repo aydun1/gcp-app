@@ -7,7 +7,8 @@
   </ng-container>
 </mat-toolbar>
 
-<div class="content" *ngIf="cage$ | async as cage">
+<gcp-loading-page *ngIf="loading | async"></gcp-loading-page>
+<div *ngIf="cage$ | async as cage" class="content">
   <div class="inner">
     <div class="header">
       <div *ngIf="isCage">
@@ -82,10 +83,22 @@
         </mat-cell>
         <mat-footer-cell *matFooterCellDef> {{ totalWeight || 0 }} kg </mat-footer-cell>
       </ng-container>
+
+      <ng-container matColumnDef="nav">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let cage">
+          <a *ngIf="cage.fields.id !== cageId" [routerLink]="['..', cage.fields.id]" class="pallet-link"><mat-icon>arrow_forward</mat-icon></a>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
+    <div *ngIf="loadingHistory | async" class="note">
+      Loading history...
+    </div>
     <div *ngIf="noHistory" class="note">
       No cage history
     </div>
