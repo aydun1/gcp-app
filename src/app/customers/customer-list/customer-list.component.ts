@@ -19,13 +19,13 @@ type Territory = {
   styleUrls: ['./customer-list.component.css']
 })
 export class CustomerListComponent implements OnInit {
+  private loadList: boolean;
   public nameFilter = new FormControl('');
   public territoryFilter = new FormControl('');
   public customers$: Observable<Customer[]>;
   public territories$: Observable<Territory[]>;
   public get territories(): Array<string> {return this.sharedService.territoryNames};
-
-  private loadList: boolean;
+  public loading = this.customersService.loading;
   public displayedColumns = ['name', 'accountnumber'];
 
   constructor(

@@ -21,6 +21,7 @@ export class RecyclingDialogComponent implements OnInit {
   public weightForm: FormGroup;
   public assigning: boolean;
   public availableCages$: Observable<Cage[]>;
+  public loadingCages$ = new BehaviorSubject<boolean>(true);
 
   constructor(
       public dialogRef: MatDialogRef<RecyclingDialogComponent>,
@@ -38,11 +39,13 @@ export class RecyclingDialogComponent implements OnInit {
   }
 
   getContainers() {
+    this.loadingCages$.next(true);
     return this.recyclingService.getCagesWithCustomer(this.data.customer.accountnumber, this.data.site).subscribe(
       _ => {
         this.noActiveCages = _.filter(c => c['fields']['Status'] !== 'Complete').length === 0;
         this.noCageHistory = _.filter(c => c['fields']['Status'] === 'Complete').length === 0;
         this.cages$.next(_);
+        this.loadingCages$.next(false);
       }
     );
   }

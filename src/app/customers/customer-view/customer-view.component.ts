@@ -1,7 +1,7 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { map, Observable, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, Subject, switchMap, tap } from 'rxjs';
 
 import { Customer } from '../shared/customer';
 import { Site } from '../shared/site';
@@ -12,7 +12,6 @@ import { RecyclingService } from '../../recycling/shared/recycling.service';
 import { PalletsService } from '../../pallets/shared/pallets.service';
 import { CustomerSiteDialogComponent } from '../shared/customer-site-dialog/customer-site-dialog.component';
 import { NavigationService } from '../../navigation.service';
-import { PalletTotals } from 'src/app/pallets/shared/pallet-totals';
 
 @Component({
   selector: 'gcp-customer-view',
@@ -33,6 +32,7 @@ export class CustomerViewComponent implements OnInit {
   public cheps: number;
   public plains: number;
   public cages: {count: number, weight: number};
+  public loading = new BehaviorSubject<boolean>(true);
 
   constructor(
     private route: ActivatedRoute,
@@ -69,10 +69,14 @@ export class CustomerViewComponent implements OnInit {
   }
 
   getCustomer(id: string) {
+    this.loading.next(true);
     return this.cutomersService.getCustomer(id).pipe(
-      tap(_ => this.refreshSites(_.accountnumber)),
-      tap(_ => this.refreshPallets(_.accountnumber)),
-      tap(_ => this.refreshCages(_.accountnumber))
+      tap(_ => {
+        this.refreshSites(_.accountnumber);
+        this.refreshPallets(_.accountnumber);
+        this.refreshCages(_.accountnumber);
+        this.loading.next(false);
+      })
     );
   }
 

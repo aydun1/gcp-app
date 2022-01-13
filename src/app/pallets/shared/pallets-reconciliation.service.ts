@@ -41,10 +41,14 @@ export class PalletsReconciliationService {
 
   private getReconciliations(url: string, paginate = false): Observable<Reconciliation[]> {
     this.loading.next(true);
+    this._loadingPallets = true;
     return this.http.get(url).pipe(
-      tap(_ => this._nextPage = paginate ? _['@odata.nextLink'] : this._nextPage),
-      map((res: {value: Reconciliation[]}) => res.value),
-      tap(() => this.loading.next(false))
+      tap(_ => {
+        this._nextPage = paginate ? _['@odata.nextLink'] : this._nextPage;
+        this.loading.next(false);
+        this._loadingPallets = false;
+      }),
+      map((res: {value: Reconciliation[]}) => res.value)
     );
   }
 
@@ -58,12 +62,10 @@ export class PalletsReconciliationService {
 
   getNextPage(): void {
     if (!this._nextPage || this._loadingPallets) return null;
-    this._loadingPallets = true;
     this._palletsSubject$.pipe(
       take(1),
       switchMap(acc => this.getReconciliations(this._nextPage, true).pipe(
         map(curr => [...acc, ...curr]),
-        tap(() => this._loadingPallets = false)
       ))
     ).subscribe(_ => this._palletsSubject$.next(_));
   }

@@ -38,6 +38,7 @@
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
+    <gcp-loading-row *ngIf="loading | async"></gcp-loading-row>
   </div>
 </div>
 <router-outlet></router-outlet>

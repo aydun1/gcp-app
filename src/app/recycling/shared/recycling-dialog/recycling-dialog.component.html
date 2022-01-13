@@ -27,12 +27,18 @@
             <h3 class="section-title">Active cages</h3>
             <button mat-raised-button color="primary" (click)="assigning=true">Assign a cage</button>
           </div>
+          <p *ngIf="loadingCages$ | async" class="note">
+            Loading...
+          </p>
           <p *ngIf="noActiveCages" class="note">
             No active cages
           </p>
         </ng-container>
         <ng-container *ngIf="indexOfelement === 1" >
           <h3 class="section-title">History</h3>
+          <p *ngIf="loadingCages$ | async" class="note">
+            Loading...
+          </p>
           <p *ngIf="noCageHistory" class="note">
             No cage history
           </p>

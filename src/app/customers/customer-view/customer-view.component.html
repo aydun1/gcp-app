@@ -7,6 +7,7 @@
   </ng-container>
 </mat-toolbar>
 
+<gcp-loading-page *ngIf="loading | async"></gcp-loading-page>
 <div *ngIf="customer$ | async as customer" class="content">
   <div class="top-buttons">
     <div>

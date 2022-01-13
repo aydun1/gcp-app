@@ -11,11 +11,11 @@ import { Site } from './site';
 export class CustomersService {
   private url = 'https://gardencityplastics.crm6.dynamics.com/api/data/v9.2';
   private sitesUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists/1e955039-1d2e-41f8-98a2-688319720410';
-
   private nextPage: string;
   private customersSubject$ = new BehaviorSubject<Customer[]>([]);
-  private loadingCustomers: boolean;
+  private _loadingCustomers: boolean;
 
+  public loading = new BehaviorSubject<boolean>(false);
 
   constructor(
     private http: HttpClient,
@@ -48,14 +48,14 @@ export class CustomersService {
 
   getFirstPage(filters: any) {
     this.nextPage = '';
-    this.loadingCustomers = false;
+    this._loadingCustomers = false;
     const url = this.createUrl(filters);
     this.getCustomers(url).subscribe(_ => this.customersSubject$.next(_));
     return this.customersSubject$;
   }
 
   getNextPage() {
-    if (!this.nextPage || this.loadingCustomers) return null;
+    if (!this.nextPage || this._loadingCustomers) return null;
     this.customersSubject$.pipe(
       take(1),
       switchMap(acc => this.getCustomers(this.nextPage).pipe(map(
@@ -65,11 +65,13 @@ export class CustomersService {
   }
 
   getCustomers(url: string) {
-    this.loadingCustomers = true;
+    this._loadingCustomers = true;
+    this.loading.next(true);
     return this.http.get(url, {headers: {Prefer: 'odata.maxpagesize=25'}}).pipe(
       tap(_ => {
         this.nextPage = _['@odata.nextLink'];
-        this.loadingCustomers = false;
+        this._loadingCustomers = false;
+        this.loading.next(false);
       }),
       map((_: {value: Customer[]}) => _.value as Customer[])
     );
