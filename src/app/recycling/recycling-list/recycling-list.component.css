@@ -36,10 +36,6 @@
   margin: 10px 10px;
 }
 
-.cage-link {
-  text-decoration: none;
-}
-
 @media print {
   :host {
     overflow-y: auto;
