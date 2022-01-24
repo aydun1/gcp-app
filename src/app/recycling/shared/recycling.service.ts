@@ -159,10 +159,11 @@ export class RecyclingService {
   }
 
   allocateToCustomer(id: string, custnmbr: string, customerName: string, site: string): Observable<any> {
-    const branch = this.shared.getBranch();
-    const payload = {fields: {Status: 'Allocated to customer', CustomerNumber: custnmbr, Customer: customerName, Branch: branch}};
+    const payload = {fields: {Status: 'Allocated to customer', CustomerNumber: custnmbr, Customer: customerName}};
     if (site) payload['fields']['Site'] = site;
-    return this.updateStatus(id, payload);
+    return this.shared.getBranch().pipe(
+      switchMap(_ => this.updateStatus(id, {...payload, Branch: _}))
+    )
   }
 
   readyForCustomer(id: string): Observable<any> {
