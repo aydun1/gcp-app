@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
@@ -240,14 +240,15 @@ export class RecyclingService {
     return this.getCages(url);
   }
 
-  checkCageNumber(cageNumber: string): Observable<Cage> {
-    const url = this._cageTrackerUrl + `/items?expand=fields&filter=fields/CageNumber eq ${cageNumber} and fields/Status ne 'Complete'`;
+  checkCageNumber(cageNumber: string, cageType: string): Observable<Cage> {
+    let url = this._cageTrackerUrl + `/items?expand=fields(select=id)&filter=fields/CageNumber eq ${cageNumber} and fields/Status ne 'Complete'`;
+    if (cageType) url += ` and fields/AssetType eq '${cageType}'`;
     return this.getCages(url).pipe(map(res => res[0]));
   }
 
-  uniqueCageValidator() {
+  uniqueCageValidator(assetTypeControl: FormControl) {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
-      return this.checkCageNumber(control.value).pipe(
+      return this.checkCageNumber(control.value, assetTypeControl.value).pipe(
         map((exists) => (exists ? { cageExists: true } : null)),
         catchError((err) => null)
       );

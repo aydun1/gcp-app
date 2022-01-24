@@ -1,5 +1,5 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, Observable, tap, throwError } from 'rxjs';
@@ -14,13 +14,14 @@ import { NavigationService } from '../../navigation.service';
 })
 export class RecyclingNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
+  private assetType = new FormControl('', Validators.required);
 
   public cageForm: FormGroup;
   public loading: boolean;
   public choices$: Observable<any>;
 
   public get isCage() {
-    return this.cageForm ? this.cageForm.get('assetType').value.startsWith('Cage') : false;
+    return this.assetType.value.startsWith('Cage');
   }
 
   constructor(
@@ -35,8 +36,8 @@ export class RecyclingNewComponent implements OnInit {
     this.getOptions();
 
     this.cageForm = this.fb.group({
-      assetType: ['', Validators.required],
-      cageNumber: [{value:'', disabled: true}, Validators.required, this.recyclingService.uniqueCageValidator()],
+      assetType: this.assetType,
+      cageNumber: [{value:'', disabled: true}, Validators.required, this.recyclingService.uniqueCageValidator(this.assetType)],
       cageWeight: [{value:'', disabled: true}, Validators.required],
       branch: ['', Validators.required]
     });
