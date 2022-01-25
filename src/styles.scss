@@ -1,0 +1,105 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+// Define a light theme
+$light-primary: mat.define-palette(mat.$indigo-palette);
+$light-accent: mat.define-palette(mat.$pink-palette);
+$light-theme: mat.define-light-theme((
+ color: (
+   primary: $light-primary,
+   accent: $light-accent,
+ )
+));
+
+// Define a dark theme
+$dark-primary: mat.define-palette(mat.$pink-palette);
+$dark-accent: mat.define-palette(mat.$blue-gray-palette);
+$dark-theme: mat.define-dark-theme((
+ color: (
+   primary: $dark-primary,
+   accent: $dark-accent,
+ )
+));
+
+// Apply the dark theme by default
+@include mat.core-theme($dark-theme);
+@include mat.button-theme($dark-theme);
+
+// Apply the light theme only when the `.my-light-theme` CSS class is applied
+// to an ancestor element of the components (such as `body`).
+.my-light-theme {
+ @include mat.core-color($light-theme);
+ @include mat.button-color($light-theme);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: #1976d2;
+}
+
+.mat-cell:hover a, a:hover {
+  text-decoration: underline;
+}
+
+.mat-toolbar {
+  background-color: #343a40;
+  color: white;
+}
+
+.mat-dialog-container {
+  position: relative;
+}
+
+.home-cards {
+  width: 400px;
+  margin: 0 auto;
+}
+
+.app-component {
+  background: white;
+  bottom: 0;
+  left: 0;
+  overflow-y: auto;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 6;
+}
+
+.loading:before {
+  content: "";
+  background: #e3e3e3b8;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+
+.print .outer {
+  display: none;
+}
+
+@media (max-width: 800px) {
+  .home-cards {
+    width: calc(100% - 20px);
+    margin: 0 10px;
+  }
+}
+
+@media print {
+  @page {
+    size: portrait;
+  }
+}
