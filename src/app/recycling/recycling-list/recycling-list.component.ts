@@ -20,6 +20,7 @@ export class RecyclingListComponent implements OnInit {
   public assetTypeFilter = new FormControl('');
   public customers$: Observable<any[]>;
   public weight: number;
+  public count: number;
   public displayedColumns = ['cageNumber', 'assetType', 'status', 'updated', 'weight'];
   public choices$: Observable<any>;
 
@@ -48,8 +49,11 @@ export class RecyclingListComponent implements OnInit {
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       tap(_ => this.parseParams(_)),
       tap(() => this.weight = 0),
+      tap(() => this.count = 0),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
-      tap(cages => this.weight = cages.map(_ => _.fields.Weight).filter(_ => _).reduce((acc, val) => acc + val, 0))
+      tap(cages => this.weight = cages.map(_ => _.fields.Weight).filter(_ => _).reduce((acc, val) => acc + val, 0)),
+      tap(cages => this.count = cages.map(() => 1).reduce((acc, val) => acc + val, 0))
+
     )
 
     this.binFilter.valueChanges.pipe(
