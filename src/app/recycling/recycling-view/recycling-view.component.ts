@@ -42,7 +42,7 @@ export class RecyclingViewComponent implements OnInit {
         this.cageId = _.fields.id;
         this.isCage = _.fields.AssetType.startsWith('Cage');
         this.currentCageNotes = _.fields.Notes;
-        this.getCageHistory(_.fields.CageNumber);
+        this.getCageHistory(_.fields.CageNumber, _.fields.AssetType);
         this.loading.next(false);
       }),
     );
@@ -53,9 +53,9 @@ export class RecyclingViewComponent implements OnInit {
     this.cageSource$.next();
   }
 
-  getCageHistory(bin: number) {
+  getCageHistory(bin: number, cageType: string) {
     this.loadingHistory.next(true);
-    this.cageHistory$ = this.recyclingService.getCageHistory(bin).pipe(
+    this.cageHistory$ = this.recyclingService.getCageHistory(bin, cageType).pipe(
       tap(cages => {
         this.totalWeight = cages.map(_ => _.fields.NetWeight).filter(_ => _).reduce((acc, val) => acc + +val, 0);
         this.noHistory = cages.length === 0;

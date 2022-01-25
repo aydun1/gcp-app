@@ -142,8 +142,10 @@ export class RecyclingService {
     ).subscribe(_ => this._cagesSubject$.next(_));
   }
 
-  getCageHistory(cageNumber: number) {
-    const url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/Modified desc&filter=fields/Status eq 'Complete' and fields/CageNumber eq ${cageNumber}`;
+  getCageHistory(cageNumber: number, cageType: string) {
+    let url = this._cageTrackerUrl + `/items?expand=fields(select=id,Customer,NetWeight,Modified)&orderby=fields/Modified desc&filter=fields/Status eq 'Complete'`;
+    url += ` and fields/CageNumber eq ${cageNumber}`;
+    url += ` and fields/AssetType eq '${cageType}'`;
     return this.getCages(url);
   }
 
