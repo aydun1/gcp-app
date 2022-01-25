@@ -36,6 +36,26 @@
   margin: 10px 10px;
 }
 
+.mat-column-cageNumber {
+  flex: 0 1 120px;
+}
+
+.mat-column-updated {
+  flex: 0 1 160px;
+}
+
+.mat-column-assetType {
+  flex: 0 1 280px;
+}
+
+.mat-column-status {
+  flex: 0 1 280px;
+}
+
+.mat-column-weight {
+  flex: 0 1 120px;
+}
+
 @media print {
   :host {
     overflow-y: auto;

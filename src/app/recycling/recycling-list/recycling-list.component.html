@@ -52,7 +52,7 @@
         <mat-cell *matCellDef="let cage">
           {{ cage.fields.AssetType }}
         </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        <mat-footer-cell *matFooterCellDef> {{ count || 0 }} </mat-footer-cell>
       </ng-container>
 
       <ng-container matColumnDef="updated">
