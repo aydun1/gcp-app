@@ -32,7 +32,6 @@ export class RecyclingService {
           map((_: any) => _.value),
           map(_ => _.reduce((a, v) => ({ ...a, [v.name]: v}), {})),
           tap(_ => this._columns$.next(_)),
-          tap(_ => console.log(_))
         );
       }),
       switchMap(_ => _)
