@@ -236,6 +236,11 @@ export class RecyclingService {
     return forkJoin([patchRequest, newRequest]);
   }
 
+  resetCage(id: string): Observable<any> {
+    const payload = {fields: {Status: 'Available', CustomerNumber: null, Customer: null, Date1: null, Date2: null, Date3: null, Date4: null, GrossWeight: null}};
+    return this.updateStatus(id, payload);
+  }
+
   getAvailableCages(): Observable<Cage[]> {
     const url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/CageNumber asc&filter=fields/Status eq 'Available'`;
     return this.getCages(url);
