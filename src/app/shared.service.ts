@@ -10,10 +10,10 @@ import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
 export class SharedService {
   public territories = {
     'NSW': ['NSW', 'NSWSALES'],
-    'QLD': ['QLD', 'QLDSALES'],
-    'SA': ['SA', 'SASALES'],
-    'VIC': ['ACT', 'HEATH', 'MISC', 'NT', 'NZ', 'OTHER', 'PRIMARY', 'VIC', 'VICSALES'],
-    'WA': ['WA', 'WASALES']
+    'QLD': ['QLD'],
+    'SA': ['SA'],
+    'VIC': ['ACT', 'HEATH', 'MISC', 'NT', 'NZ', 'OTHER', 'PRIMARY', 'TAS', 'VIC', 'VICSALES'],
+    'WA': ['WA']
   };
   public branches = Object.keys(this.territories);
   public territoryNames = this.branches.concat(['INT', 'NATIONAL']);
