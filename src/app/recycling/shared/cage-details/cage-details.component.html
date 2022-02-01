@@ -8,6 +8,14 @@
     <div mat-line>{{ cage.fields.Date3 | date: 'dd/MM/yyyy' }}</div>
     <div mat-line>Delivered to Polymer</div>
   </mat-list-item>
+  <mat-list-item *ngIf="cage.fields.FromLocalProcessing">
+    <div mat-line>{{ cage.fields.FromLocalProcessing | date: 'dd/MM/yyyy' }}</div>
+    <div mat-line>Collected from local processing</div>
+  </mat-list-item>
+  <mat-list-item *ngIf="cage.fields.ToLocalProcessing">
+    <div mat-line>{{ cage.fields.ToLocalProcessing | date: 'dd/MM/yyyy' }}</div>
+    <div mat-line>Delivered to local processing</div>
+  </mat-list-item>
   <mat-list-item *ngIf="cage.fields.Date2">
     <div mat-line>{{ cage.fields.Date2 | date: 'dd/MM/yyyy' }}</div>
     <div mat-line>Collected from customer</div>

@@ -7,6 +7,6 @@
   flex: 1;
 }
 
-.menu {
+.menu, .action {
   margin-left: 10px;
 }

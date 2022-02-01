@@ -67,16 +67,18 @@ export class RecyclingService {
   }
 
   private assignStatus(cage: Cage): Cage {
-    cage['Date'] = cage.fields.Date4 || cage.fields.Date3 || cage.fields.Date2 || cage.fields.Date1 || cage.fields.Created; 
+    cage['Date'] = cage.fields.Date4 || cage.fields.Date3 || cage.fields.ToLocalProcessing || cage.fields.Date2 || cage.fields.Date1 || cage.fields.Created; 
     if (cage.fields.Status === 'Available') {
       cage['statusId'] = 0;
     } else if (cage.fields.Status === 'Complete') {
+      cage['statusId'] = 7;
+    } else if ((cage.fields.Date4 || cage.fields.FromLocalProcessing) && cage.fields.Status !== 'Complete') {
       cage['statusId'] = 6;
-    } else if (cage.fields.Date4 && cage.fields.Status !== 'Complete') {
-      cage['statusId'] = 5;
     } else if (cage.fields.Date3 && !cage.fields.Date4) {
+      cage['statusId'] = 5;
+    } else if (cage.fields.ToLocalProcessing && !cage.fields.FromLocalProcessing) {
       cage['statusId'] = 4;
-    } else if (cage.fields.Date2 && !cage.fields.Date3) {
+    } else if ((cage.fields.Date2) && !(cage.fields.Date3)) {
       cage['statusId'] = 3;
     } else if (cage.fields.Date1 && !cage.fields.Date2) {
       cage['statusId'] = 2;
@@ -187,6 +189,11 @@ export class RecyclingService {
     return this.updateStatus(id, payload);
   }
 
+  deliverToProcessing(id: string): Observable<any> {
+    const payload = {fields: {Status: 'Delivered to local processing', ToLocalProcessing: new Date()}};
+    return this.updateStatus(id, payload);
+  }
+
   readyForPolymer(id: string): Observable<any> {
     const payload = {fields: {Status: 'Ready for delivery to Polymer'}};
     return this.updateStatus(id, payload);
@@ -197,6 +204,11 @@ export class RecyclingService {
     return this.updateStatus(id, payload);
   }
 
+  collectFromProcessing(id: string): Observable<any> {
+    const payload = {fields: {Status: 'Collected from local processing', FromLocalProcessing: new Date()}};
+    return this.updateStatus(id, payload);
+  }
+  
   markCageComplete(id: string) {
     const payload = {fields: {Status: 'Complete'}};
     return this.updateStatus(id, payload);
