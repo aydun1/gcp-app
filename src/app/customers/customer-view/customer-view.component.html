@@ -7,8 +7,7 @@
   </ng-container>
 </mat-toolbar>
 
-<gcp-loading-page *ngIf="loading | async"></gcp-loading-page>
-<div *ngIf="customer$ | async as customer" class="content">
+<div *ngIf="customer$ | async as customer; else loadingPage" class="content">
   <div class="top-buttons">
     <div>
       <h2 class="name">{{ customer.name || 'Unnamed customer' }}</h2>
@@ -68,3 +67,7 @@
     </button>
   </ng-template>
 </mat-menu>
+
+<ng-template #loadingPage>
+  <gcp-loading-page></gcp-loading-page>
+</ng-template>

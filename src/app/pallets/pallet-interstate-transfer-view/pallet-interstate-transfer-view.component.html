@@ -7,7 +7,7 @@
   </ng-container>
 </mat-toolbar>
 
-<div class="content" *ngIf="transfer$ | async as transfer">
+<div class="content" *ngIf="transfer$ | async as transfer; else loadingPage">
   <div class="header">
     <h2>Transfer details</h2>
     <ng-container *ngIf="!transfer.summary.cancelled">
@@ -118,3 +118,7 @@
   </mat-card>
   </form>
 </div>
+
+<ng-template #loadingPage>
+  <gcp-loading-page></gcp-loading-page>
+</ng-template>

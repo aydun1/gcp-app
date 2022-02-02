@@ -7,7 +7,7 @@
   </ng-container>
 </mat-toolbar>
 
-<div *ngIf="stocktake$ | async as stocktake" class="outer">
+<div *ngIf="stocktake$ | async as stocktake; else loadingPage" class="outer">
   <mat-card>
     <mat-card-title>Stocktake results</mat-card-title>
     <mat-list>
@@ -85,3 +85,7 @@
     </mat-list>
   </mat-card>
 </div>
+
+<ng-template #loadingPage>
+  <gcp-loading-page></gcp-loading-page>
+</ng-template>

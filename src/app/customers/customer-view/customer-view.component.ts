@@ -32,7 +32,6 @@ export class CustomerViewComponent implements OnInit {
   public cheps: number;
   public plains: number;
   public cages: {count: number, weight: number};
-  public loading = new BehaviorSubject<boolean>(true);
 
   constructor(
     private route: ActivatedRoute,
@@ -71,13 +70,11 @@ export class CustomerViewComponent implements OnInit {
   }
 
   getCustomer(id: string) {
-    this.loading.next(true);
     return this.cutomersService.getCustomer(id).pipe(
       tap(_ => {
         this.refreshSites(_.accountnumber);
         this.refreshPallets(_.accountnumber);
         this.refreshCages(_.accountnumber);
-        this.loading.next(false);
       })
     );
   }

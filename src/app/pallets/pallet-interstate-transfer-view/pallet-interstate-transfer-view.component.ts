@@ -26,6 +26,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
   public sender: boolean;
   public receiver: boolean;
   public transport: boolean;
+  public loadingPage = new BehaviorSubject<boolean>(true);
 
   constructor(
     private route: ActivatedRoute,
@@ -41,6 +42,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     this.transfer$ = this.transferSource$.pipe(
       switchMap(_ => combineLatest([this.palletsService.getInterstatePalletTransfer(_), this.sharedService.getBranch()])),
       tap(([transfer, state]) => {
+        this.loadingPage.next(false);
         this.loscamQuantity = transfer.summary.loscam;
         this.chepQuantity = transfer.summary.chep;
         this.plainQuantity = transfer.summary.plain;
