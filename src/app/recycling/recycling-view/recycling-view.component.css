@@ -66,3 +66,8 @@
 .last-icon {
   order: 9;
 }
+
+.active {
+  background: #f3f2f1;
+  border-left: 2px solid red;
+}

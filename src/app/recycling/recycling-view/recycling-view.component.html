@@ -101,7 +101,7 @@
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;let cage" [class.active]="cage.fields.id === cageId"></mat-row>
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
     <div *ngIf="loadingHistory | async" class="note">
