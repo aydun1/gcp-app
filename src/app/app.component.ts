@@ -1,6 +1,5 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { SafeUrl } from '@angular/platform-browser';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
@@ -28,8 +27,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
-    private swUpdate: SwUpdate, 
-    private snackBar: MatSnackBar,
+    private swUpdate: SwUpdate,
     private authService: MsalService,
     private location: Location,
     private msalBroadcastService: MsalBroadcastService,
