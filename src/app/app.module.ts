@@ -41,7 +41,7 @@ function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   protectedResourceMap.set('https://graph.microsoft.com/beta/me', ['user.read']);
   protectedResourceMap.set('https://gardencityplastics.crm6.dynamics.com/api/data/v9.2', ['https://gardencityplastics.crm6.dynamics.com//user_impersonation']);
   return {
-    interactionType: InteractionType.Redirect,
+    interactionType: InteractionType.Popup,
     protectedResourceMap
   };
 }
@@ -51,7 +51,8 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     interactionType: InteractionType.Popup,
     authRequest: {
       scopes: ['user.read', 'Sites.ReadWrite.All', 'https://gardencityplastics.crm6.dynamics.com//user_impersonation']
-    }
+    },
+    loginFailedRoute: "/"
   };
 }
 
