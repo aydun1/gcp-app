@@ -71,7 +71,15 @@
       <ng-container matColumnDef="customer">
         <mat-header-cell *matHeaderCellDef> Customer </mat-header-cell>
         <mat-cell *matCellDef="let cage">
-          {{ cage.fields.Customer }}
+          {{ cage.fields.Customer || 'Unallocated' }}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+        <mat-cell *matCellDef="let cage">
+          <div class="chip">{{ cage.fields.Status }}</div>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>

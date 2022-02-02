@@ -47,12 +47,20 @@
   flex: 0 1 100px;
 }
 
+.mat-column-customer {
+  flex: 1 1 250px;
+}
+
+.mat-column-status {
+  flex: 0 1 180px;
+}
+
 .mat-column-weight {
   flex: 0 1 80px;
 }
 
 .mat-column-nav {
-  flex: 0 1 60px;
+  flex: 0 1 40px;
 }
 
 .last-icon {
