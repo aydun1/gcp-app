@@ -27,7 +27,7 @@
     "@angular/platform-server": "~13.2.0",
     "@angular/router": "~13.2.0",
     "@angular/service-worker": "~13.2.0",
-    "@azure/msal-angular": "^2.1.0",
+    "@azure/msal-angular": "https://github.com/sandrooco/microsoft-authentication-library-for-js.git",
     "@azure/msal-browser": "^2.21.0",
     "@microsoft/microsoft-graph-client": "^3.0.1",
     "@nguniversal/express-engine": "^13.0.2",
