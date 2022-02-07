@@ -5,7 +5,7 @@
     </button>
     <a class="title" [routerLink]="['/']">{{ title }}</a>
     <div class="toolbar-spacer"></div>
-    <div *ngIf="photo$ | async as photo; else noPic" class="photo-button" mat-button [matMenuTriggerFor]="menu"><img [src]="photo"></div>
+    <div *ngIf="photo$ | async as photo; else noPic" class="photo-button" mat-button [matMenuTriggerFor]="menu"><img [src]="photo" [alt]="accounts[0].name"></div>
     <ng-template #noPic>
       <button *ngIf="loginDisplay" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>arrow_drop_down</mat-icon></button>
     </ng-template>
@@ -38,24 +38,26 @@
       <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>
+
+  <mat-menu #menu="matMenu">
+    <div class="menu-upper">
+      <div class="menu-company">Garden City Plastics</div>
+      <a mat-button routerLink="/logout" class="menu-logout">Logout</a>
+    </div>
+    <mat-list>
+      <mat-list-item class="menu-accounts" *ngFor="let account of accounts">
+        <div mat-line>{{ account.name }}</div>
+        <div mat-line>{{ account.username }}</div>
+      </mat-list-item>
+    </mat-list>
+  </mat-menu>
 </ng-container>
 
-<mat-menu #menu="matMenu">
-  <div class="menu-upper">
-    <div class="menu-company">Garden City Plastics</div>
-    <a mat-button routerLink="/logout" class="menu-logout">Logout</a>
-  </div>
-  <mat-list>
-    <mat-list-item class="menu-accounts" *ngFor="let account of accounts">
-      <div mat-line>{{ account.name }}</div>
-      <div mat-line>{{ account.username }}</div>
-    </mat-list-item>
-  </mat-list>
-</mat-menu>
-
-<mat-card *ngIf="!loginDisplay" class="login-card">
-  <img src="/assets/bannerlogo.png" class="logo">
-  <p>Welcome to the Garden City Plastics pallet management system.</p>
-  <p>Click below to login.</p>
-  <button mat-button (click)="login()">Login</button>
-</mat-card>
+<div *ngIf="!loginDisplay" class="login">
+  <mat-card class="login-card">
+    <img src="/assets/bannerlogo.png" class="logo" alt="Garden City Plastics logo">
+    <p>Welcome to the Garden City Plastics pallet management system.</p>
+    <p>Click below to login.</p>
+    <button mat-button (click)="login()">Login</button>
+  </mat-card>
+</div>

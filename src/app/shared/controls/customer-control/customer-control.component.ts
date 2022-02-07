@@ -28,7 +28,7 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
   public touched = false;
   public describedBy = '';
   public customer: Customer;
-  public filteredOptions: Observable<any[]>;  
+  public filteredOptions: Observable<Customer[]>;  
   public isDisabled = false;
   public myControl = new FormControl('', this.customerPickedValidator);
 
@@ -109,7 +109,7 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.filteredOptions = combineLatest([this.myControl.valueChanges, this._territory$]).pipe(
       tap(([value, state]) => {if (!value) {this.customer = {} as Customer; this.addCustomer();}}),
       debounceTime(200),
@@ -118,7 +118,7 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
     );
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.stateChanges.complete();
     this._focusMonitor.stopMonitoring(this._elementRef);
   }
@@ -130,7 +130,7 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
     }
   }
 
-  onFocusOut(event: FocusEvent) {
+  onFocusOut(event: FocusEvent): void {
     if (!this._elementRef.nativeElement.contains(event.relatedTarget as Element)) {
       this.touched = true;
       this.focused = false;
@@ -139,23 +139,23 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
     }
   }
 
-  setDescribedByIds(ids: string[]) {
+  setDescribedByIds(ids: string[]): void {
     const controlElement = this._elementRef.nativeElement
       .querySelector('.customer-input-container')!;
     controlElement.setAttribute('aria-describedby', ids.join(' '));
   }
 
-  onContainerClick(event: MouseEvent) {
+  onContainerClick(event: MouseEvent): void {
     this.customerInput.nativeElement.focus();
   }
 
-  addCustomer() {
+  addCustomer(): void {
     const customer = this.myControl.value;
     this.customer = customer;
     this.onChange(this.customer);
   }
 
-  customerPickedValidator(control: FormControl) {
+  customerPickedValidator(control: FormControl): {unselected: boolean} {
     if (control.value.accountnumber) return null;
     return {unselected: true};
   }

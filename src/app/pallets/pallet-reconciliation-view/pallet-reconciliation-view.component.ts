@@ -1,6 +1,6 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
 
 import { NavigationService } from '../../navigation.service';
 import { PalletsReconciliationService } from '../shared/pallets-reconciliation.service';

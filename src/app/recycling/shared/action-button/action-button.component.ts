@@ -57,7 +57,24 @@ export class ActionButtonComponent implements OnInit {
     });
   }
 
-  markReturnedEmpty(id: string, assetType: string): void {
+  markWithProcessing(id: string): void {
+    this.loading = true;
+    this.recyclingService.deliverToProcessing(id).subscribe(() => {
+      this.loading = false;
+      this.updated.next(true);
+    });
+  }
+
+  collectFromProcessing(id: string, assetType: string): void {
+    this.loading = true;
+    const action = assetType.startsWith('Cage') ? this.recyclingService.collectFromProcessing(id): this.recyclingService.collectAndComplete(id);
+    action.subscribe(() => {
+      this.loading = false;
+      this.updated.next(true);
+    });
+  }
+
+  collectFromPolymer(id: string, assetType: string): void {
     this.loading = true;
     const action = assetType.startsWith('Cage') ? this.recyclingService.collectFromPolymer(id): this.recyclingService.collectAndComplete(id);
     action.subscribe(() => {
@@ -69,8 +86,9 @@ export class ActionButtonComponent implements OnInit {
   markAvailable(id: string, cageNumber: number, branch: string, assetType: string, cageWeight: number): void {
     this.loading = true;
     this.recyclingService.markCageAvailable(id, cageNumber, branch, assetType, cageWeight).subscribe(_ => {
-      this.router.navigate(['recycling/cages', _[1]['id']], {replaceUrl: true});
+      if (this.router.url.startsWith('/recycling')) this.router.navigate(['recycling/cages', _[1]['id']], {replaceUrl: true});
       this.loading = false;
+      this.updated.next(true);
     });
   }
 
@@ -89,6 +107,14 @@ export class ActionButtonComponent implements OnInit {
     if (this.weightForm.invalid) return;
     const netWeight = this.weightForm.value.weight - this.cage.fields.CageWeight;
     this.recyclingService.setGrossWeight(id, netWeight).subscribe(() => {
+      this.loading = false;
+      this.updated.next(true);
+    });
+  }
+
+  reset(id: string): void {
+    this.loading = true;
+    this.recyclingService.resetCage(id).subscribe(_ => {
       this.loading = false;
       this.updated.next(true);
     });

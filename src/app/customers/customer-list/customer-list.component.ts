@@ -2,7 +2,7 @@ import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { AutomateService } from 'src/app/shared/automate.service';
 
 import { SharedService } from '../../shared.service';
@@ -20,14 +20,14 @@ type Territory = {
   styleUrls: ['./customer-list.component.css']
 })
 export class CustomerListComponent implements OnInit {
+  private loadList: boolean;
   public nameFilter = new FormControl('');
   public territoryFilter = new FormControl('');
   public customers$: Observable<Customer[]>;
   public territories$: Observable<Territory[]>;
   public get territories(): Array<string> {return this.sharedService.territoryNames};
-
-  private loadList: boolean;
-  public displayedColumns = ['name', 'accountnumber'];
+  public loading = this.customersService.loading;
+  public displayedColumns = ['name', 'accountnumber', 'loscam', 'chep', 'plain'];
 
   constructor(
     private el: ElementRef,
@@ -39,12 +39,12 @@ export class CustomerListComponent implements OnInit {
   ) { }
 
   @HostListener('scroll', ['$event'])
-  onScroll(e: any) {
+  onScroll(e: Event): void {
     const bottomPosition = this.el.nativeElement.offsetHeight + this.el.nativeElement.scrollTop - this.el.nativeElement.scrollHeight;
     if (bottomPosition >= -250) this.getNextPage();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     const state$ = this.sharedService.getBranch();
     this.customers$ = this.route.queryParams.pipe(
       startWith({}),
@@ -71,21 +71,21 @@ export class CustomerListComponent implements OnInit {
 
   getTerritories(): Observable<Territory[]> {
     return this.customersService.getRegions().pipe(
-      map((_: any) => _.value)
+      map(_ => _['value'])
     );
   }
 
-  getFirstPage(_: any) {
+  getFirstPage(_: Params): BehaviorSubject<Customer[]> {
     return this.customersService.getFirstPage(_);
   }
 
-  getNextPage() {
-    return this.customersService.getNextPage();
+  getNextPage(): void {
+    this.customersService.getNextPage();
   }
 
-  parseParams(params: Params) {
+  parseParams(params: Params): void {
     if (!params) return;
-    const filters: any = {};
+    const filters = {};
     if ('territory' in params) {
       this.territoryFilter.patchValue(params['territory']);
       filters['territory'] = params['territory'];
@@ -101,7 +101,7 @@ export class CustomerListComponent implements OnInit {
     }
   }
 
-  compareQueryStrings(prev: Params, curr: Params) {
+  compareQueryStrings(prev: Params, curr: Params): boolean {
     if (!this.loadList && this.route.children.length === 0) {
       this.loadList = true;
       return false;
@@ -113,15 +113,15 @@ export class CustomerListComponent implements OnInit {
     return sameName && sameTerritory && this.loadList;
   }
 
-  setRegion(territory: MatSelectChange) {
+  setRegion(territory: MatSelectChange): void {
     this.router.navigate([], { queryParams: {territory: territory.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  clearNameFilter() {
+  clearNameFilter(): void {
     this.nameFilter.patchValue('');
   }
 
-  trackByFn(index: number, item: Customer) {
+  trackByFn(index: number, item: Customer): string {
     return item.accountid;
   }
 }

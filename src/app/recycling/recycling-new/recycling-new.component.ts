@@ -1,8 +1,8 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
 import { RecyclingService } from '../shared/recycling.service';
 import { NavigationService } from '../../navigation.service';
@@ -14,13 +14,14 @@ import { NavigationService } from '../../navigation.service';
 })
 export class RecyclingNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
+  private assetType = new FormControl('', Validators.required);
 
   public cageForm: FormGroup;
   public loading: boolean;
-  public choices$: Observable<any>;
+  public choices$: BehaviorSubject<any>;
 
-  public get isCage() {
-    return this.cageForm ? this.cageForm.get('assetType').value.startsWith('Cage') : false;
+  public get isCage(): boolean {
+    return this.assetType.value.startsWith('Cage');
   }
 
   constructor(
@@ -35,8 +36,8 @@ export class RecyclingNewComponent implements OnInit {
     this.getOptions();
 
     this.cageForm = this.fb.group({
-      assetType: ['', Validators.required],
-      cageNumber: [{value:'', disabled: true}, Validators.required, this.recyclingService.uniqueCageValidator()],
+      assetType: this.assetType,
+      cageNumber: [{value:'', disabled: true}, Validators.required, this.recyclingService.uniqueCageValidator(this.assetType)],
       cageWeight: [{value:'', disabled: true}, Validators.required],
       branch: ['', Validators.required]
     });
@@ -53,7 +54,7 @@ export class RecyclingNewComponent implements OnInit {
     this.choices$ = this.recyclingService.getColumns();
   }
 
-  addCage() {
+  addCage(): void {
     if (this.cageForm.invalid) return;
     const d = this.cageForm.value;
     this.loading = true;
@@ -70,7 +71,7 @@ export class RecyclingNewComponent implements OnInit {
     ).subscribe(_ => console.log(_));
   }
 
-  goBack() {
+  goBack(): void {
     this.navService.back();
   }
 }

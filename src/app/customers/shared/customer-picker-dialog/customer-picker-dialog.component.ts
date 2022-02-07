@@ -19,18 +19,18 @@ export class CustomerPickerDialogComponent implements OnInit {
   public loading: boolean;
   public customerForm: FormGroup;
   public sites$: Observable<Site[]>;
-
   public branch: string;
   public get branches(): Array<string> {return this.shared.branches};
 
   constructor(
-    public dialogRef: MatDialogRef<CustomerPickerDialogComponent>,
+    private dialogRef: MatDialogRef<CustomerPickerDialogComponent>,
     private fb: FormBuilder,
-    public snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: {id: string},
+    private snackBar: MatSnackBar,
     private customersService: CustomersService,
     private recyclingService: RecyclingService,
-    private shared: SharedService
+    private shared: SharedService,
+    @Inject(MAT_DIALOG_DATA) private data: {id: string}
+
   ) { }
 
   ngOnInit(): void {
@@ -42,13 +42,13 @@ export class CustomerPickerDialogComponent implements OnInit {
     this.customerForm.get('customer').valueChanges.subscribe(_ => this.getSites(_));
   }
 
-  getSites(customer: Customer) {
+  getSites(customer: Customer): void {
     this.sites$ = this.customersService.getSites(customer.accountnumber).pipe(
       tap(_ => this.customerForm.patchValue({site: _.length > 0 ? _[0] : ''}))
     );
   }
 
-  assignToCustomer() {
+  assignToCustomer(): void {
     if (this.customerForm.invalid) return;
     this.loading = true;
     const customer = this.customerForm.get('customer').value as Customer;
@@ -65,7 +65,7 @@ export class CustomerPickerDialogComponent implements OnInit {
     ).subscribe();
   }
 
-  setBranch(branch: string) {
+  setBranch(branch: string): void {
     this.branch = branch;
   }
 

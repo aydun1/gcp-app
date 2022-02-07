@@ -1,0 +1,9 @@
+.mat-progress-spinner {
+  width: 48px;
+  height: 48px;
+  position: absolute;
+  z-index: 10;
+  right: 0;
+  margin: 20px auto;
+  left: 0;
+}

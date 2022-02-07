@@ -19,10 +19,12 @@ export class NavigationService {
 
   back(): void {
     this.history.pop();
-    if (this.history.length > 0) {
+    const hist = this.history[this.history.length - 1]?.split('/')?.length;
+    const curr = this.router.url.split('/').length;
+    if (this.history.length > 0 && hist !== curr) {
       this.location.back();
     } else {
-      const url = this.router.url.substr(0, this.router.url.lastIndexOf('/'));
+      const url = this.router.url.substring(0, this.router.url.lastIndexOf('/'));
       this.router.navigate([url]);
     }
   }

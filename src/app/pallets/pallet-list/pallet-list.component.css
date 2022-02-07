@@ -40,10 +40,6 @@ h2 {
   margin: 10px 10px;
 }
 
-.cage-link {
-  text-decoration: none;
-}
-
 .mat-column-notes {
   flex: 0 1 180px;
 }
@@ -62,10 +58,6 @@ h2 {
 
 .mat-column-docket {
   flex: 0 1 40px;
-}
-
-a {
-  color: #007449;
 }
 
 @media print {

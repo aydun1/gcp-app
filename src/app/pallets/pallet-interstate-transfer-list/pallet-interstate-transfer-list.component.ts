@@ -2,7 +2,7 @@ import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { SharedService } from 'src/app/shared.service';
 import { PalletsService } from '../shared/pallets.service';
 import { Pallet } from '../shared/pallet';
@@ -13,20 +13,15 @@ import { Pallet } from '../shared/pallet';
   styleUrls: ['./pallet-interstate-transfer-list.component.css']
 })
 export class PalletInterstateTransferListComponent implements OnInit {
+  private _loadList: boolean;
   public pallets$: Observable<Pallet[]>;
   public fromFilter = new FormControl('');
   public toFilter = new FormControl('');
   public statusFilter = new FormControl('');
-  public assetTypeFilter = new FormControl('');
-  public customers$: Observable<any[]>;
   public total: number;
-  private _loadList: boolean;
   public displayedColumns = ['date', 'reference', 'pallet', 'from', 'to', 'quantity', 'status', 'attachment'];
   public statuses = ['Pending', 'Approved', 'Transferred', 'Cancelled'];
-
   public states = this.sharedService.branches.concat('Transport');
-  public choices$: Observable<any>;
-  public Status: any;
 
   constructor(
     private el: ElementRef,
@@ -37,7 +32,7 @@ export class PalletInterstateTransferListComponent implements OnInit {
   ) { }
 
   @HostListener('scroll', ['$event'])
-  onScroll(e: any) {
+  onScroll(e: Event): void {
     const bottomPosition = this.el.nativeElement.offsetHeight + this.el.nativeElement.scrollTop - this.el.nativeElement.scrollHeight;
     if (bottomPosition >= -250) this.getNextPage();
   }
@@ -57,25 +52,20 @@ export class PalletInterstateTransferListComponent implements OnInit {
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
       tap(pallets => this.total = pallets.map(_ => _.fields.Quantity).filter(_ => _).reduce((acc, val) => acc + val, 0))
     )
-    this.getOptions();
   }
 
-  getOptions(): void {
-    this.choices$ = this.palletsService.getColumns();
-  }
-
-  getFirstPage(_: any) {
+  getFirstPage(_: Params): BehaviorSubject<Pallet[]> {
     this.sharedService.getBranch().subscribe(_ => console.log(_))
     return this.palletsService.getFirstPage(_);
   }
 
-  getNextPage() {
-    return this.palletsService.getNextPage();
+  getNextPage(): void {
+    this.palletsService.getNextPage();
   }
 
-  parseParams(params: Params) {
+  parseParams(params: Params): void {
     if (!params) return;
-    const filters: any = {};
+    const filters = {};
     if ('from' in params) {
       this.fromFilter.patchValue(params['from']);
       filters['from'] = params['from'];
@@ -96,7 +86,7 @@ export class PalletInterstateTransferListComponent implements OnInit {
     }
   }
 
-  compareQueryStrings(prev: Params, curr: Params) {
+  compareQueryStrings(prev: Params, curr: Params): boolean {
     if (!this._loadList && this.route.children.length === 0) {
       this._loadList = true;
       return false;
@@ -110,28 +100,28 @@ export class PalletInterstateTransferListComponent implements OnInit {
     return sameFrom && sameTo && sameStatus && this._loadList;
   }
 
-  setFrom(from: MatSelectChange) {
+  setFrom(from: MatSelectChange): void {
     this.router.navigate([], { queryParams: {from: from.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setTo(to: MatSelectChange) {
+  setTo(to: MatSelectChange): void {
     this.router.navigate([], { queryParams: {to: to.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setStatus(status: MatSelectChange) {
+  setStatus(status: MatSelectChange): void {
     this.router.navigate([], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
   
 
-  setAssetType(assetType: MatSelectChange) {
+  setAssetType(assetType: MatSelectChange): void {
     this.router.navigate([], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  approve(id: string) {
+  approve(id: string): void {
     this.palletsService.approveInterstatePalletTransfer(id, true).subscribe();
   }
 
-  trackByFn(index: number, item: Pallet) {
+  trackByFn(index: number, item: Pallet): string {
     return item.id;
   }
 }

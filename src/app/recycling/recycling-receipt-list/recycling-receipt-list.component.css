@@ -36,10 +36,6 @@
   margin: 10px 10px;
 }
 
-.receipt-link {
-  text-decoration: none;
-}
-
 @media print {
   .options {
     display: none;

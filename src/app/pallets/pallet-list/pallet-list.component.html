@@ -52,7 +52,7 @@
         <mat-cell *matCellDef="let pallet">
           <a [routerLink]="[pallet.id]" *ngIf="pallet.fields.Title"><mat-icon>receipt</mat-icon></a>
         </mat-cell>
-        <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+        <mat-footer-cell *matFooterCellDef>{{ totalOut - totalIn }}</mat-footer-cell>
       </ng-container>
 
       <ng-container matColumnDef="from">

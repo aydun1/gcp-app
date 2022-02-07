@@ -28,6 +28,7 @@
   bottom: 0;
   left: 0;
   padding-top: 40px;
+  padding-bottom: 80px;
   position: absolute;
   right: 0;
   text-align: center;
@@ -42,6 +43,31 @@
   flex: 1;
 }
 
+.mat-column-updated {
+  flex: 0 1 100px;
+}
+
+.mat-column-customer {
+  flex: 1 1 250px;
+}
+
+.mat-column-status {
+  flex: 0 1 180px;
+}
+
+.mat-column-weight {
+  flex: 0 1 80px;
+}
+
+.mat-column-nav {
+  flex: 0 1 40px;
+}
+
 .last-icon {
   order: 9;
+}
+
+.active {
+  background: #f3f2f1;
+  border-left: 2px solid red;
 }

@@ -27,7 +27,7 @@ export class CageWeightsComponent implements OnInit {
     this.grossWeight = this.cage.fields.GrossWeight;
   }
 
-  setCageWeight() {
+  setCageWeight(): void {
     this.recyclingService.setCageWeight(this.cage.id, this.cageWeight).pipe(
       tap(() => {
         this.cage.fields.CageWeight = this.cageWeight;
@@ -37,7 +37,7 @@ export class CageWeightsComponent implements OnInit {
     ).subscribe()
   }
 
-  setGrossWeight() {
+  setGrossWeight(): void {
     this.recyclingService.setGrossWeight(this.cage.id, this.grossWeight).pipe(
       tap(() => {
         this.cage.fields.GrossWeight = this.grossWeight;
@@ -47,12 +47,12 @@ export class CageWeightsComponent implements OnInit {
     ).subscribe()
   }
 
-  cancelCageWeight() {
+  cancelCageWeight(): void {
     this.cageWeight = this.cage.fields.CageWeight;
     this.editCageWeight = false
   }
 
-  cancelGrossWeight() {
+  cancelGrossWeight(): void {
     this.cageWeight = this.cage.fields.CageWeight;
     this.editGrossWeight = false;
   }

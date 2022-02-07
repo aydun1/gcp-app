@@ -18,7 +18,7 @@ export class PalletListComponent implements OnInit {
   public branchFilter = new FormControl('');
   public palletFilter = new FormControl('');
   public nameFilter = new FormControl('');
-  public loading: boolean;
+  public loading = this.palletsService.loading;
   public totalOut = 0;
   public totalIn = 0;
   public states = this.sharedService.branches;
@@ -34,7 +34,7 @@ export class PalletListComponent implements OnInit {
   ) { }
 
   @HostListener('scroll', ['$event'])
-  onScroll(e: any) {
+  onScroll(e: Event): void {
     const bottomPosition = this.el.nativeElement.offsetHeight + this.el.nativeElement.scrollTop - this.el.nativeElement.scrollHeight;
     if (bottomPosition >= -250) this.getNextPage();
   }
@@ -70,7 +70,7 @@ export class PalletListComponent implements OnInit {
     ).subscribe();
   }
 
-  getFirstPage(params: Params) {
+  getFirstPage(params: Params): Observable<Pallet[]> {
     return this.palletsService.getFirstPage(params).pipe(
       map(_=>
         _.map(pallet =>  {
@@ -84,13 +84,13 @@ export class PalletListComponent implements OnInit {
     );
   }
 
-  getNextPage() {
-    return this.palletsService.getNextPage();
+  getNextPage(): void {
+    this.palletsService.getNextPage();
   }
 
-  parseParams(params: Params) {
+  parseParams(params: Params): void {
     if (!params) return;
-    const filters: any = {};
+    const filters: Params = {};
     if ('branch' in params) {
       this.branchFilter.patchValue(params['branch']);
       filters['branch'] = params['branch'];
@@ -111,7 +111,7 @@ export class PalletListComponent implements OnInit {
     }
   }
 
-  compareQueryStrings(prev: Params, curr: Params) {
+  compareQueryStrings(prev: Params, curr: Params): boolean {
     if (!this._loadList && this.route.children.length === 0) {
       this._loadList = true;
       return false;
@@ -124,23 +124,23 @@ export class PalletListComponent implements OnInit {
     return sameBranch && samePallet && sameName && this._loadList;
   }
 
-  setBranch(branch: MatSelectChange) {
+  setBranch(branch: MatSelectChange): void {
     this.router.navigate(['pallets/history'], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setStatus(status: MatSelectChange) {
+  setStatus(status: MatSelectChange): void {
     this.router.navigate(['pallets/history'], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setPallet(pallet: MatSelectChange) {
+  setPallet(pallet: MatSelectChange): void {
     this.router.navigate(['pallets/history'], { queryParams: {pallet: pallet.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  clearNameFilter() {
+  clearNameFilter(): void {
     this.nameFilter.patchValue('');
   }
 
-  trackByFn(index: number, item: Pallet) {
+  trackByFn(index: number, item: Pallet): string {
     return item.id;
   }
 

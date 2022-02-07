@@ -10,5 +10,8 @@
   "navigationFallback": {
     "rewrite": "index.html",
     "exclude": ["*.{js,css,ico,txt}"]
+  },
+  "mimeTypes": {
+    ".webmanifest": "application/manifest+json"
   }
 }

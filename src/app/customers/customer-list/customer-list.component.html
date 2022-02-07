@@ -21,23 +21,32 @@
 
   <div *ngIf="(customers$ | async) as customers" class="inner">
     <mat-table #table [dataSource]="customers" [trackBy]="trackByFn">
-      <!-- Position Column -->
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
         <mat-cell *matCellDef="let customer" [routerLink]="[customer.accountid]">
           <a [routerLink]="[customer.accountid]" class="customer-link">{{customer.name}}</a>
         </mat-cell>
       </ng-container>
-
-      <!-- Name Column -->
+      <ng-container matColumnDef="loscam">
+        <mat-header-cell *matHeaderCellDef> Loscams </mat-header-cell>
+        <mat-cell *matCellDef="let customer"> {{customer.new_pallets_loscam || 0}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="chep">
+        <mat-header-cell *matHeaderCellDef> Cheps </mat-header-cell>
+        <mat-cell *matCellDef="let customer"> {{customer.new_pallets_chep || 0}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="plain">
+        <mat-header-cell *matHeaderCellDef> Plains </mat-header-cell>
+        <mat-cell *matCellDef="let customer"> {{customer.new_pallets_plain || 0}} </mat-cell>
+      </ng-container>
       <ng-container matColumnDef="accountnumber">
         <mat-header-cell *matHeaderCellDef> Account number </mat-header-cell>
         <mat-cell *matCellDef="let customer"> {{customer.accountnumber}} </mat-cell>
       </ng-container>
-
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
+    <gcp-loading-row *ngIf="loading | async"></gcp-loading-row>
   </div>
 </div>
 <router-outlet></router-outlet>

@@ -12,7 +12,6 @@ import { RecyclingService } from '../../recycling/shared/recycling.service';
 import { PalletsService } from '../../pallets/shared/pallets.service';
 import { CustomerSiteDialogComponent } from '../shared/customer-site-dialog/customer-site-dialog.component';
 import { NavigationService } from '../../navigation.service';
-import { PalletTotals } from 'src/app/pallets/shared/pallet-totals';
 
 @Component({
   selector: 'gcp-customer-view',
@@ -25,7 +24,7 @@ export class CustomerViewComponent implements OnInit {
   private sitesSubject$ = new Subject<string>();
   private palletsSubject$ = new Subject<string>();
   private cagesSubject$ = new Subject<string>();
-  public customer$: Observable<any>;
+  public customer$: Observable<Customer>;
   public site: string;
   public sites: Array<Site>;
   public palletsOwing: any;
@@ -50,11 +49,13 @@ export class CustomerViewComponent implements OnInit {
     ).subscribe();
 
     this.palletsSubject$.pipe(
+      tap(() => this.palletsOwing = null),
       switchMap(id => this.palletsService.getPalletsOwedByCustomer(id, this.site))
     ).subscribe(pallets => this.palletsOwing = pallets);
 
     this.cagesSubject$.pipe(
-      switchMap(id => this.recyclingService.getCagesWithCustomer(id)),
+      tap(() => this.cages = null),
+      switchMap(id => this.recyclingService.getCagesWithCustomer(id, this.site)),
       map(cages => {
         const activeCages = cages.filter(_ => _.fields.Status === 'Delivered to customer').map(_ => 1).reduce((acc, curr) => acc + curr, 0);
         const totalWeight = cages.map(_ => +_.fields.NetWeight || 0).reduce((acc, curr) => acc + curr, 0);
@@ -68,50 +69,53 @@ export class CustomerViewComponent implements OnInit {
     ))
   }
 
-  getCustomer(id: string) {
+  getCustomer(id: string): Observable<Customer> {
     return this.cutomersService.getCustomer(id).pipe(
-      tap(_ => this.refreshSites(_.accountnumber)),
-      tap(_ => this.refreshPallets(_.accountnumber)),
-      tap(_ => this.refreshCages(_.accountnumber))
+      tap(_ => {
+        this.refreshSites(_.accountnumber);
+        this.refreshPallets(_.accountnumber);
+        this.refreshCages(_.accountnumber);
+      })
     );
   }
 
-  refreshSites(id: string) {
+  refreshSites(id: string): void {
     this.sitesSubject$.next(id);
   }
 
-  refreshPallets(id: string) {
+  refreshPallets(id: string): void {
     this.palletsSubject$.next(id);
   }
 
-  refreshCages(id: string) {
+  refreshCages(id: string): void {
     this.cagesSubject$.next(id);
   }
 
-  openSiteDialog(customer: Customer) {
+  openSiteDialog(customer: Customer): void {
     const data = {customer};
     const dialogRef = this.dialog.open(CustomerSiteDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().subscribe(() => this.refreshSites(data.customer.accountnumber));
   }
 
-  openPalletDialog(customer: Customer) {
+  openPalletDialog(customer: Customer): void {
     const data = {customer, sites: this.sites, site: this.site};
     const dialogRef = this.dialog.open(PalletDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().subscribe(() => this.refreshPallets(data.customer.accountnumber));
   }
 
-  openRecyclingDialog(customer: Customer) {
+  openRecyclingDialog(customer: Customer): void {
     const data = {customer, sites: this.sites, site: this.site};
     const dialogRef = this.dialog.open(RecyclingDialogComponent, {width: '800px', data});
     dialogRef.afterClosed().subscribe(() => this.refreshCages(data.customer.accountnumber));
   }
 
-  setSite(customer: string, site: string) {
+  setSite(customer: string, site: string): void {
     this.site = site;
     this.refreshPallets(customer);
+    this.refreshCages(customer);
   }
 
-  goBack() {
+  goBack(): void {
     this.navService.back();
   }
 }

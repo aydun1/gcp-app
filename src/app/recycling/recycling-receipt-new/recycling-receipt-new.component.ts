@@ -62,7 +62,7 @@ export class RecyclingReceiptNewComponent implements OnInit {
     ).subscribe(_ => console.log(_));
   }
 
-  goBack() {
+  goBack(): void {
     this.navService.back();
   }
 

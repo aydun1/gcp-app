@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Params } from '@angular/router';
 import { BehaviorSubject, map, Observable, switchMap, take, tap } from 'rxjs';
 
 import { Receipt } from './receipt';
@@ -19,14 +20,14 @@ export class RecyclingReceiptsService {
     private http: HttpClient
   ) { }
 
-  private createUrl(filters: any): string {
+  private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
     let url = `${this._receiptTrackerUrl}/items?expand=fields`;
 
     const parsed = filterKeys.map(key => {
       switch (key) {
         case 'branch':
-          return `fields/Branch eq '${filters.branch}'`;
+          return `fields/Branch eq '${filters['branch']}'`;
         default:
           return '';
       }
@@ -46,7 +47,7 @@ export class RecyclingReceiptsService {
     );
   }
 
-  private updateList(res: Receipt) {
+  private updateList(res: Receipt): Observable<Receipt> {
     return this._receiptsSubject$.pipe(
       take(1),
       map(_ => {
@@ -60,7 +61,7 @@ export class RecyclingReceiptsService {
     );
   }
 
-  getFirstPage(filters: any): BehaviorSubject<Receipt[]> {
+  getFirstPage(filters: Params): BehaviorSubject<Receipt[]> {
     this._nextPage = '';
     this._loadingReceipts = false;
     const url = this.createUrl(filters);
@@ -84,7 +85,7 @@ export class RecyclingReceiptsService {
     ).subscribe(_ => this._receiptsSubject$.next(_));
   }
 
-  addNewReceipt(receiptNumber: number, branch: string, netWeight: number, date: Date): Observable<any> {
+  addNewReceipt(receiptNumber: number, branch: string, netWeight: number, date: Date): Observable<Receipt> {
     const url = this._receiptTrackerUrl + `/items`;
     const payload = {fields: {Title: receiptNumber, Branch: branch, NetWeight: netWeight, Date: date}};
     return this.http.post<Receipt>(url, payload).pipe(
