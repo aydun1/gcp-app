@@ -23,13 +23,14 @@ export class CustomerPickerDialogComponent implements OnInit {
   public get branches(): Array<string> {return this.shared.branches};
 
   constructor(
-    public dialogRef: MatDialogRef<CustomerPickerDialogComponent>,
+    private dialogRef: MatDialogRef<CustomerPickerDialogComponent>,
     private fb: FormBuilder,
-    public snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: {id: string},
+    private snackBar: MatSnackBar,
     private customersService: CustomersService,
     private recyclingService: RecyclingService,
-    private shared: SharedService
+    private shared: SharedService,
+    @Inject(MAT_DIALOG_DATA) private data: {id: string}
+
   ) { }
 
   ngOnInit(): void {

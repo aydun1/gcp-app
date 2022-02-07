@@ -20,11 +20,11 @@ export class CustomerSiteDialogComponent implements OnInit {
   public edit: string;
 
   constructor(
-    public dialogRef: MatDialogRef<CustomerSiteDialogComponent>,
+    private dialogRef: MatDialogRef<CustomerSiteDialogComponent>,
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: {customer: Customer},
-    private customerService: CustomersService
+    private customerService: CustomersService,
+    @Inject(MAT_DIALOG_DATA) public data: {customer: Customer}
   ) { }
 
   ngOnInit(): void {
