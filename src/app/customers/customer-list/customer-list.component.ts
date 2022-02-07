@@ -3,7 +3,6 @@ import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
-import { AutomateService } from 'src/app/shared/automate.service';
 
 import { SharedService } from '../../shared.service';
 import { Customer } from '../shared/customer';
@@ -34,8 +33,7 @@ export class CustomerListComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private sharedService: SharedService,
-    private customersService: CustomersService,
-    private automateService: AutomateService
+    private customersService: CustomersService
   ) { }
 
   @HostListener('scroll', ['$event'])
@@ -66,7 +64,6 @@ export class CustomerListComponent implements OnInit {
     ).subscribe();
 
     this.territories$ = this.getTerritories();
-    //this.automateService.doAction().subscribe();
   }
 
   getTerritories(): Observable<Territory[]> {
