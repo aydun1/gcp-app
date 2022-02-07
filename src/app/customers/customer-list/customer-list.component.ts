@@ -26,7 +26,7 @@ export class CustomerListComponent implements OnInit {
   public territories$: Observable<Territory[]>;
   public get territories(): Array<string> {return this.sharedService.territoryNames};
   public loading = this.customersService.loading;
-  public displayedColumns = ['name', 'accountnumber'];
+  public displayedColumns = ['name', 'accountnumber', 'loscam', 'chep', 'plain'];
 
   constructor(
     private el: ElementRef,
