@@ -9,6 +9,7 @@ import { AuthenticationResult, InteractionStatus, PopupRequest, EventMessage, Ev
 import { filter, interval, Observable, Subject, takeUntil, withLatestFrom } from 'rxjs';
 
 import { SharedService } from './shared.service';
+import { AutomateService } from './shared/automate.service';
 
 @Component({
   selector: 'gcp-root',
@@ -33,7 +34,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private msalBroadcastService: MsalBroadcastService,
     private router: Router,
     private sharedService: SharedService,
-    private observer: BreakpointObserver
+    private observer: BreakpointObserver,
+    private automateService: AutomateService,
   ) { }
 
   ngOnInit(): void {

@@ -101,6 +101,41 @@ export class AutomateService {
     );
   }
 
+
+
+
+
+
+
+  updateCrm(accountNumber: string, palletType: string, palletCount: number) {
+    const url = 'https://gardencityplastics.crm6.dynamics.com/api/data/v9.2/accounts';
+    const cleanNumber = accountNumber.replace('&', '%26').replace("'", "''")
+    const urlGet = `${url}?$select=accountnumber&$filter=accountnumber eq '${cleanNumber}'`;
+    console.log(urlGet)
+    this.http.get(urlGet).pipe(
+      map(res => res['value'][0]['accountid']),
+      switchMap(id => {
+        const patchUrl = `${url}(${id})`;
+        const payload = {[palletType]: palletCount};
+        return this.http.patch(patchUrl, payload);
+      })
+    ).subscribe();
+  }
+
+
+  doThing() {
+    let i = 0;
+    const pallets: Array<[string, string, number]> = [
+      ["2TJ'SN11", "new_pallets_loscam", 2]]
+    const source = timer(1000, 1000).subscribe(val => {
+      console.log(pallets[i]);
+      this.updateCrm(pallets[i][0], pallets[i][1], pallets[i][2])
+      i += 1;
+    });
+  }
+
+
+
   removeId(id: string): Observable<any> {
     const payload = {fields: {ImportID: null,}};
     return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${id}')`, payload);
