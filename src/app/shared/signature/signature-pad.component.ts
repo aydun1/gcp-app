@@ -1,6 +1,6 @@
 import { ViewportRuler } from '@angular/cdk/scrolling';
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import { Subscription, tap } from 'rxjs';
+import { Subscription } from 'rxjs';
 import SignaturePad from 'signature_pad';
 
 @Component({
@@ -76,7 +76,7 @@ export class SignaturePadComponent implements AfterViewInit, OnDestroy, OnInit {
     return new Blob([uInt8Array], { type: contentType });
   }
 
-  savePNG() {
+  savePNG(): void {
     if (this.signaturePad.isEmpty()) {
       alert('Please provide a signature first.');
     } else {

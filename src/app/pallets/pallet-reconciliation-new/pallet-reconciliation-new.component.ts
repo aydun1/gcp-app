@@ -33,11 +33,11 @@ export class PalletReconciliationNewComponent implements OnInit {
     private navService: NavigationService
   ) { }
 
-  get surplus() {
+  get surplus(): number {
     return this.stocktakeResult > 0 ? this.stocktakeResult : this.stocktakeResult === 0 ? 0 : null;
   }
 
-  get deficit() {
+  get deficit(): number {
     return this.stocktakeResult < 0 ? Math.abs(this.stocktakeResult) : this.stocktakeResult === 0 ? 0 : null;
   }
 
@@ -74,7 +74,7 @@ export class PalletReconciliationNewComponent implements OnInit {
     this.palletRecForm.get('pallet').valueChanges.subscribe(() => this.updateTransits());    
   }
 
-  updateTransits() {
+  updateTransits(): void {
     const date = this.palletRecForm.get('date').value;
     const pallet = this.palletRecForm.get('pallet').value;
     if (!pallet) return;
@@ -110,7 +110,7 @@ export class PalletReconciliationNewComponent implements OnInit {
     ).subscribe(_ => console.log(_));
   }
 
-  goBack() {
+  goBack(): void {
     this.navService.back();
   }
 }

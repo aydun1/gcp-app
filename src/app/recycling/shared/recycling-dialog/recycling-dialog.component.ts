@@ -38,9 +38,9 @@ export class RecyclingDialogComponent implements OnInit {
     this.availableCages$ = this.recyclingService.getAvailableCages();
   }
 
-  getContainers() {
+  getContainers(): void {
     this.loadingCages$.next(true);
-    return this.recyclingService.getCagesWithCustomer(this.data.customer.accountnumber, this.data.site).subscribe(
+    this.recyclingService.getCagesWithCustomer(this.data.customer.accountnumber, this.data.site).subscribe(
       _ => {
         this.noActiveCages = _.filter(c => c['fields']['Status'] !== 'Complete').length === 0;
         this.noCageHistory = _.filter(c => c['fields']['Status'] === 'Complete').length === 0;
@@ -50,24 +50,24 @@ export class RecyclingDialogComponent implements OnInit {
     );
   }
 
-  assignToCustomer(id: string) {
+  assignToCustomer(id: string): void {
     this.recyclingService.allocateToCustomer(id, this.data.customer.accountnumber, this.data.customer.name, this.data.site).subscribe(() => this.closeAssigningPage());
   }
 
-  closeAssigningPage() {
+  closeAssigningPage(): void {
     this.assigning = false;
     this.getContainers();
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close();
   }
 
-  trackByIndex(index: number, item: Cage) {
+  trackByIndex(index: number, item: Cage): number {
     return index;
   }
 
-  trackByFn(index: number, item: Cage) {
+  trackByFn(index: number, item: Cage): string {
     return item.id;
   }
 }

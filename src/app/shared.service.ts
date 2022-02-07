@@ -1,4 +1,4 @@
-import { HttpClient,  } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { MsalService } from '@azure/msal-angular';
@@ -33,11 +33,11 @@ export class SharedService {
     );
   }
 
-  getBranch(): Observable<any> {
+  getBranch(): Observable<string> {
     const url = 'https://graph.microsoft.com/v1.0/me/state';
     return this._state$.pipe(
       switchMap(cur => cur ? of(cur) : this.http.get(url).pipe(
-        map((_: any) => _.value ? _.value : 'NA'),
+        map(_ => _['value'] ? _['value'] : 'NA'),
         tap(_ => this._state$.next(_))
       ))
     )
@@ -48,7 +48,7 @@ export class SharedService {
     return activeAccount.name;
   }
 
-  sanitiseName(name: string) {
+  sanitiseName(name: string): string {
     return encodeURIComponent(name.replace('\'', '\'\''));
   }
 }

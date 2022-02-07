@@ -4,6 +4,7 @@ import { BehaviorSubject, combineLatest, map, Observable, switchMap, tap } from 
 
 import { RecyclingService } from '../shared/recycling.service';
 import { NavigationService } from '../../navigation.service';
+import { Cage } from '../shared/cage';
 
 @Component({
   selector: 'gcp-recycling-view',
@@ -14,9 +15,9 @@ export class RecyclingViewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
 
   private cageSource$ = new BehaviorSubject<void>(null);
-  public cage$: Observable<any>;
+  public cage$: Observable<Cage>;
   public cageId: string;
-  public cageHistory$: Observable<any>;
+  public cageHistory$: Observable<Cage[]>;
   public noHistory: boolean;
   public displayedColumns = ['updated', 'customer', 'status', 'weight', 'nav'];
   public totalWeight: number;
@@ -49,11 +50,11 @@ export class RecyclingViewComponent implements OnInit {
     this.getCage();
   }
 
-  getCage() {
+  getCage(): void {
     this.cageSource$.next();
   }
 
-  getCageHistory(bin: number, cageType: string) {
+  getCageHistory(bin: number, cageType: string): void {
     this.cageHistory$ = this.recyclingService.getCageHistory(bin, cageType).pipe(
       tap(cages => {
         this.totalWeight = cages.map(_ => _.fields.NetWeight).filter(_ => _).reduce((acc, val) => acc + +val, 0);
@@ -63,21 +64,21 @@ export class RecyclingViewComponent implements OnInit {
     );
   }
 
-  setCageNotes(id: string) {
+  setCageNotes(id: string): void {
     this.recyclingService.setNotes(id, this.currentCageNotes).pipe(
       tap(() => {
         this.cageSource$.next();
         this.editCageNotes = false;
       })
-    ).subscribe()
+    ).subscribe();
   }
 
-  cancelEditCageNotes(notes: string) {
+  cancelEditCageNotes(notes: string): void {
     this.currentCageNotes = notes;
     this.editCageNotes = false;
   }
 
-  goBack() {
+  goBack(): void {
     this.navService.back();
   }
 }

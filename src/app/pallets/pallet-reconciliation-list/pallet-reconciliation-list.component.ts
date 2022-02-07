@@ -2,10 +2,12 @@ import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
-import { SharedService } from 'src/app/shared.service';
+import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
+
+import { SharedService } from '../../shared.service';
 import { PalletsReconciliationService } from '../shared/pallets-reconciliation.service';
 import { Pallet } from '../shared/pallet';
+import { Reconciliation } from '../shared/reconciliation';
 
 @Component({
   selector: 'gcp-pallet-reconciliation-list',
@@ -32,7 +34,7 @@ export class PalletReconciliationListComponent implements OnInit {
   ) { }
 
   @HostListener('scroll', ['$event'])
-  onScroll(e: any) {
+  onScroll(e: Event): void {
     const bottomPosition = this.el.nativeElement.offsetHeight + this.el.nativeElement.scrollTop - this.el.nativeElement.scrollHeight;
     if (bottomPosition >= -250) this.getNextPage();
   }
@@ -54,18 +56,18 @@ export class PalletReconciliationListComponent implements OnInit {
     )
   }
 
-  getFirstPage(_: Params) {
+  getFirstPage(_: Params): BehaviorSubject<Reconciliation[]> {
     this.sharedService.getBranch().subscribe();
     return this.palletsReconciliationService.getFirstPage(_);
   }
 
-  getNextPage() {
-    return this.palletsReconciliationService.getNextPage();
+  getNextPage(): void {
+    this.palletsReconciliationService.getNextPage();
   }
 
-  parseParams(params: Params) {
+  parseParams(params: Params): void {
     if (!params) return;
-    const filters: any = {};
+    const filters = {};
     if ('branch' in params) {
       this.branchFilter.patchValue(params['branch']);
       filters['branch'] = params['branch'];
@@ -80,7 +82,7 @@ export class PalletReconciliationListComponent implements OnInit {
     }
   }
 
-  compareQueryStrings(prev: Params, curr: Params) {
+  compareQueryStrings(prev: Params, curr: Params): boolean {
     if (!this._loadList && this.route.children.length === 0) {
       this._loadList = true;
       return false;
@@ -92,15 +94,15 @@ export class PalletReconciliationListComponent implements OnInit {
     return sameBranch && samePallet && this._loadList;
   }
 
-  setBranch(branch: MatSelectChange) {
+  setBranch(branch: MatSelectChange): void {
     this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setPallet(pallet: MatSelectChange) {
+  setPallet(pallet: MatSelectChange): void {
     this.router.navigate([], { queryParams: {pallet: pallet.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  trackByFn(index: number, item: Pallet) {
+  trackByFn(index: number, item: Pallet): string {
     return item.id;
   }
 }

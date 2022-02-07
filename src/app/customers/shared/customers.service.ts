@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Params } from '@angular/router';
 import { BehaviorSubject, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { SharedService } from 'src/app/shared.service';
 import { Customer } from './customer';
@@ -22,15 +23,15 @@ export class CustomersService {
     private shared: SharedService
   ) { }
 
-  private createUrl(filters: any) {
+  private createUrl(filters: Params): string {
     let url = `${this.url}/accounts?$select=name,accountnumber,territoryid`;
     const filterArray = [];
-    if (filters?.name) filterArray.push(`(contains(name,'${this.shared.sanitiseName(filters.name)}') or startswith(accountnumber,'${this.shared.sanitiseName(filters.name)}'))`);
-    if (filters?.territory) {
+    if (filters['name']) filterArray.push(`(contains(name,'${this.shared.sanitiseName(filters['name'])}') or startswith(accountnumber,'${this.shared.sanitiseName(filters['name'])}'))`);
+    if (filters['territory']) {
       if (filters['territory'] in this.shared.territories) {
-        filterArray.push('(' + this.shared.territories[filters.territory].map(_ => `territoryid/name eq '${_}'`).join(' or ') + ')');
+        filterArray.push('(' + this.shared.territories[filters['territory']].map(_ => `territoryid/name eq '${_}'`).join(' or ') + ')');
       } else {
-        filterArray.push(`territoryid/name eq '${filters.territory}'`);
+        filterArray.push(`territoryid/name eq '${filters['territory']}'`);
       }
     }
     filterArray.push('statecode eq 0');
@@ -46,7 +47,7 @@ export class CustomersService {
     return this.http.get(url) as Observable<Customer>;
   }
 
-  getFirstPage(filters: any) {
+  getFirstPage(filters: Params): BehaviorSubject<Customer[]> {
     this.nextPage = '';
     this._loadingCustomers = false;
     const url = this.createUrl(filters);
@@ -54,7 +55,7 @@ export class CustomersService {
     return this.customersSubject$;
   }
 
-  getNextPage() {
+  getNextPage(): void {
     if (!this.nextPage || this._loadingCustomers) return null;
     this.customersSubject$.pipe(
       take(1),
@@ -64,7 +65,7 @@ export class CustomersService {
     ).subscribe(_ => this.customersSubject$.next(_))
   }
 
-  getCustomers(url: string) {
+  getCustomers(url: string): Observable<Customer[]> {
     this._loadingCustomers = true;
     this.loading.next(true);
     return this.http.get(url, {headers: {Prefer: 'odata.maxpagesize=25'}}).pipe(
@@ -77,7 +78,7 @@ export class CustomersService {
     );
   }
 
-  getRegions() {
+  getRegions(): Observable<Object> {
     const url = `${this.url}/territories?$select=name`;
     return this.http.get(url);
   }
@@ -88,7 +89,7 @@ export class CustomersService {
     return this.http.get(url).pipe(map(_ => _['value']));
   }
 
-  addSite(customer: string, site: string) {
+  addSite(customer: string, site: string): Observable<Object> {
     const payload = {fields: {
       Customer: customer,
       Title: site
@@ -96,14 +97,14 @@ export class CustomersService {
     return this.http.post(`${this.sitesUrl}/items`, payload);
   }
 
-  renameSite(id: string, site: string) {
+  renameSite(id: string, site: string): Observable<Object> {
     const payload = {fields: {
       Title: site
     }};
     return this.http.patch(`${this.sitesUrl}/items('${id}')`, payload);
 
   }
-  deleteSite(id: string) {
+  deleteSite(id: string): Observable<Object> {
     return this.http.delete(`${this.sitesUrl}/items('${id}')`);
   }
 }

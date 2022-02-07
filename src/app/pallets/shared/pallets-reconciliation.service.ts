@@ -21,15 +21,15 @@ export class PalletsReconciliationService {
     private http: HttpClient
   ) { }
 
-  private createUrl(filters: any): string {
+  private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
     let url = `${this.reconciliationTrackerUrl}/items?expand=fields`;
     const parsed = filterKeys.map(key => {
       switch (key) {
         case 'branch':
-          return `(fields/Branch eq '${filters.branch}')`;
+          return `(fields/Branch eq '${filters['branch']}')`;
         case 'pallet':
-          return `fields/Pallet eq '${filters.pallet}'`;
+          return `fields/Pallet eq '${filters['pallet']}'`;
         default:
           return '';
       }
@@ -70,7 +70,7 @@ export class PalletsReconciliationService {
     ).subscribe(_ => this._palletsSubject$.next(_));
   }
 
-  addReconciliation(v: any): Observable<any> {
+  addReconciliation(v: any): Observable<Reconciliation> {
     const payload = {fields: {
       Branch: v.branch,
       Pallet: v.pallet,
@@ -89,12 +89,12 @@ export class PalletsReconciliationService {
     );
   }
 
-  getReconciliation(id: string) {
+  getReconciliation(id: string): Observable<Reconciliation> {
     const url = `${this.reconciliationTrackerUrl}/items('${id}')`;
     return this.http.get<Reconciliation>(url);
   }
 
-  private updateList(res: Reconciliation) {
+  private updateList(res: Reconciliation): Observable<Reconciliation> {
     return this._palletsSubject$.pipe(
       take(1),
       map(_ => {

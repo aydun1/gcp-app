@@ -2,7 +2,7 @@ import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { Cage } from '../shared/cage';
 import { RecyclingService } from '../shared/recycling.service';
 
@@ -18,11 +18,10 @@ export class RecyclingListComponent implements OnInit {
   public branchFilter = new FormControl('');
   public statusFilter = new FormControl('');
   public assetTypeFilter = new FormControl('');
-  public customers$: Observable<any[]>;
   public weight: number;
   public count: number;
   public displayedColumns = ['cageNumber', 'assetType', 'status', 'updated', 'weight'];
-  public choices$: Observable<any>;
+  public choices$: BehaviorSubject<any>;
 
   constructor(
     private el: ElementRef,
@@ -32,7 +31,7 @@ export class RecyclingListComponent implements OnInit {
   ) { }
 
   @HostListener('scroll', ['$event'])
-  onScroll(e: any) {
+  onScroll(e: Event): void {
     const bottomPosition = this.el.nativeElement.offsetHeight + this.el.nativeElement.scrollTop - this.el.nativeElement.scrollHeight;
     if (bottomPosition >= -250) this.getNextPage();
   }
@@ -40,8 +39,8 @@ export class RecyclingListComponent implements OnInit {
   ngOnInit(): void {
     this.getOptions();
     this.cages$ = this.route.queryParams.pipe(
-      startWith({}),
-      switchMap(_ => this.router.events.pipe(
+      startWith({} as Params),
+      switchMap((_: Params) => this.router.events.pipe(
         startWith(new NavigationEnd(1, null, null)),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         map(() => _)
@@ -67,17 +66,17 @@ export class RecyclingListComponent implements OnInit {
     this.choices$ = this.recyclingService.getColumns();
   }
 
-  getFirstPage(_: any) {
+  getFirstPage(_: Params): BehaviorSubject<Cage[]> {
     return this.recyclingService.getFirstPage(_);
   }
 
-  getNextPage() {
-    return this.recyclingService.getNextPage();
+  getNextPage(): void {
+    this.recyclingService.getNextPage();
   }
 
-  parseParams(params: Params) {
+  parseParams(params: Params): void {
     if (!params) return;
-    const filters: any = {};
+    const filters = {};
     if ('branch' in params) {
       this.branchFilter.patchValue(params['branch']);
       filters['branch'] = params['branch'];
@@ -104,7 +103,7 @@ export class RecyclingListComponent implements OnInit {
     }
   }
 
-  compareQueryStrings(prev: Params, curr: Params) {
+  compareQueryStrings(prev: Params, curr: Params): boolean {
     if (!this._loadList && this.route.children.length === 0) {
       this._loadList = true;
       return false;
@@ -118,23 +117,23 @@ export class RecyclingListComponent implements OnInit {
     return sameBranch && sameBin && sameAssetType && sameStatus && this._loadList;
   }
 
-  setBranch(branch: MatSelectChange) {
+  setBranch(branch: MatSelectChange): void {
     this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setStatus(status: MatSelectChange) {
+  setStatus(status: MatSelectChange): void {
     this.router.navigate([], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setAssetType(assetType: MatSelectChange) {
+  setAssetType(assetType: MatSelectChange): void {
     this.router.navigate([], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  clearBinFilter() {
+  clearBinFilter(): void {
     this.binFilter.patchValue('');
   }
 
-  trackByFn(index: number, item: Cage) {
+  trackByFn(index: number, item: Cage): string {
     return item.id;
   }
 }

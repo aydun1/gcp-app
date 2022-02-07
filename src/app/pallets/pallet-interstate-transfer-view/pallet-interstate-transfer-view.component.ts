@@ -17,7 +17,6 @@ export class PalletInterstateTransferViewComponent implements OnInit {
 
   private transferSource$: Subject<string>;
   public transfer$: Observable<any>;
-  public files$: Observable<any>;
   public loading: boolean;
   public editQuantity: boolean;
   public loscamQuantity: number;
@@ -54,11 +53,11 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     );
   }
 
-  getTransfer(id: string) {
+  getTransfer(id: string): void {
     this.transferSource$.next(id);
   }
 
-  approve(id: string) {
+  approve(id: string): void {
     this.loading = true;
     this.palletsService.approveInterstatePalletTransfer(id, true).pipe(
       tap(_ => {
@@ -74,7 +73,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     ).subscribe();
   }
 
-  cancel(id: string) {
+  cancel(id: string): void {
     this.loading = true;
     this.palletsService.cancelInterstatePalletTransfer(id).pipe(
       tap(_ => {
@@ -91,7 +90,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     ).subscribe();
   }
 
-  transferp(id: string) {
+  transferp(id: string): void {
     this.loading = true;
     this.palletsService.transferInterstatePalletTransfer(id).pipe(
       tap(_ => {
@@ -107,7 +106,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     ).subscribe();
   }
 
-  setQuantity(id: string) {
+  setQuantity(id: string): void {
     this.loading = true;
     this.palletsService.editInterstatePalletTransferQuantity(id, this.loscamQuantity, this.chepQuantity, this.plainQuantity).pipe(
       tap(() => {
@@ -124,14 +123,14 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     ).subscribe()
   }
 
-  cancelEditQuantity(loscam: number, chep: number, plain: number) {
+  cancelEditQuantity(loscam: number, chep: number, plain: number): void {
     this.loscamQuantity = loscam;
     this.chepQuantity = chep;
     this.plainQuantity = plain;
     this.editQuantity = false
   }
 
-  goBack() {
+  goBack(): void {
     this.navService.back();
   }
 }

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
+import { AbstractControl, FormControl, ValidationErrors } from '@angular/forms';
+import { Params } from '@angular/router';
 import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
@@ -23,36 +24,37 @@ export class RecyclingService {
     private shared: SharedService
   ) { }
 
-  getColumns() {
+  getColumns(): BehaviorSubject<any> {
     this._columns$.pipe(
       take(1),
       map(_ => {
         if (_) return of(_);
         return this.http.get(`${this._cageTrackerUrl}/columns`).pipe(
-          map((_: any) => _.value),
+          map(_ => _['value']),
           map(_ => _.reduce((a, v) => ({ ...a, [v.name]: v}), {})),
           tap(_ => this._columns$.next(_)),
         );
       }),
-      switchMap(_ => _)
+      switchMap(_ => _),
+      tap(_ => console.log(_))
     ).subscribe();
     return this._columns$;
   }
 
-  private createUrl(filters: any): string {
+  private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
     let url = `${this._cageTrackerUrl}/items?expand=fields`;
 
     const parsed = filterKeys.map(key => {
       switch (key) {
         case 'bin':
-          return `fields/CageNumber eq ${filters.bin}`;
+          return `fields/CageNumber eq ${filters['bin']}`;
         case 'branch':
-          return `fields/Branch eq '${filters.branch}'`;
+          return `fields/Branch eq '${filters['branch']}'`;
         case 'status':
-          return `fields/Status eq '${filters.status}'`;
+          return `fields/Status eq '${filters['status']}'`;
         case 'assetType':
-          return `fields/AssetType eq '${filters.assetType}'`;
+          return `fields/AssetType eq '${filters['assetType']}'`;
         default:
           return '';
       }
@@ -99,14 +101,14 @@ export class RecyclingService {
     );
   }
 
-  private updateStatus(id, payload) {
+  private updateStatus(id, payload): Observable<Cage> {
     const url = this._cageTrackerUrl + `/items('${id}')`;
     return this.http.patch<Cage>(url, payload).pipe(
       switchMap(res => this.updateList(res))
     );
   }
 
-  private updateList(res: Cage) {
+  private updateList(res: Cage): Observable<Cage> {
     return this._cagesSubject$.pipe(
       take(1),
       map(_ => {
@@ -119,7 +121,8 @@ export class RecyclingService {
       })
     );
   }
-  getFirstPage(filters: any): BehaviorSubject<Cage[]> {
+
+  getFirstPage(filters: Params): BehaviorSubject<Cage[]> {
     this._nextPage = '';
     this._loadingCages = false;
     const url = this.createUrl(filters);
@@ -143,7 +146,7 @@ export class RecyclingService {
     ).subscribe(_ => this._cagesSubject$.next(_));
   }
 
-  getCageHistory(cageNumber: number, cageType: string) {
+  getCageHistory(cageNumber: number, cageType: string): Observable<Cage[]> {
     let url = this._cageTrackerUrl + `/items?expand=fields(select=id,Customer,NetWeight,Modified,Created,Status)&orderby=fields/Created desc&filter=`;
     url += ` fields/CageNumber eq ${cageNumber}`;
     url += ` and fields/AssetType eq '${cageType}'`;
@@ -161,7 +164,7 @@ export class RecyclingService {
     return this.getCages(url);
   }
 
-  allocateToCustomer(id: string, custnmbr: string, customerName: string, site: string): Observable<any> {
+  allocateToCustomer(id: string, custnmbr: string, customerName: string, site: string): Observable<Cage> {
     const payload = {fields: {Status: 'Allocated to customer', CustomerNumber: custnmbr, Customer: customerName}};
     if (site) payload['fields']['Site'] = site;
     return this.shared.getBranch().pipe(
@@ -169,62 +172,62 @@ export class RecyclingService {
     )
   }
 
-  readyForCustomer(id: string): Observable<any> {
+  readyForCustomer(id: string): Observable<Cage> {
     const payload = {fields: {Status: 'Ready for delivery to customer'}};
     return this.updateStatus(id, payload);
   }
 
-  deliverToCustomer(id: string): Observable<any> {
+  deliverToCustomer(id: string): Observable<Cage> {
     const payload = {fields: {Status: 'Delivered to customer', Date1: new Date()}};
     return this.updateStatus(id, payload);
   }
 
-  collectFromCustomer(id: string): Observable<any> {
+  collectFromCustomer(id: string): Observable<Cage> {
     const payload = {fields: {Status: 'Collected from customer', Date2: new Date()}};
     return this.updateStatus(id, payload);
   }
 
-  deliverToPolymer(id: string): Observable<any> {
+  deliverToPolymer(id: string): Observable<Cage> {
     const payload = {fields: {Status: 'Delivered to Polymer', Date3: new Date()}};
     return this.updateStatus(id, payload);
   }
 
-  deliverToProcessing(id: string): Observable<any> {
+  deliverToProcessing(id: string): Observable<Cage> {
     const payload = {fields: {Status: 'Delivered to local processing', ToLocalProcessing: new Date()}};
     return this.updateStatus(id, payload);
   }
 
-  readyForPolymer(id: string): Observable<any> {
+  readyForPolymer(id: string): Observable<Cage> {
     const payload = {fields: {Status: 'Ready for delivery to Polymer'}};
     return this.updateStatus(id, payload);
   }
 
-  collectFromPolymer(id: string): Observable<any> {
+  collectFromPolymer(id: string): Observable<Cage> {
     const payload = {fields: {Status: 'Collected from Polymer', Date4: new Date()}};
     return this.updateStatus(id, payload);
   }
 
-  collectFromProcessing(id: string): Observable<any> {
+  collectFromProcessing(id: string): Observable<Cage> {
     const payload = {fields: {Status: 'Collected from local processing', FromLocalProcessing: new Date()}};
     return this.updateStatus(id, payload);
   }
   
-  markCageComplete(id: string) {
+  markCageComplete(id: string): Observable<Cage> {
     const payload = {fields: {Status: 'Complete'}};
     return this.updateStatus(id, payload);
   }
 
-  collectAndComplete(id: string) {
+  collectAndComplete(id: string): Observable<Cage> {
     const payload = {fields: {Status: 'Complete', Date4: new Date()}};
     return this.updateStatus(id, payload);
   }
 
-  setCageWeight(id: string, weight: number): Observable<any> {
+  setCageWeight(id: string, weight: number): Observable<Cage> {
     const payload = {fields: {CageWeight: weight}};
     return this.updateStatus(id, payload);
   }
 
-  setGrossWeight(id: string, weight: number): Observable<any> {
+  setGrossWeight(id: string, weight: number): Observable<Cage> {
     const payload = {fields: {GrossWeight: weight}};
     return this.updateStatus(id, payload);
   }
@@ -234,7 +237,7 @@ export class RecyclingService {
     return this.updateStatus(id, payload);
   }
 
-  addNewCage(cageNumber: number, branch: string, assetType: string, cageWeight: number): Observable<any> {
+  addNewCage(cageNumber: number, branch: string, assetType: string, cageWeight: number): Observable<Cage> {
     const url = this._cageTrackerUrl + `/items`;
     const payload = {fields: {Status: 'Available', CageNumber: cageNumber, Branch: branch, AssetType: assetType, CageWeight: cageWeight}};
     return this.http.post<Cage>(url, payload).pipe(
@@ -242,13 +245,13 @@ export class RecyclingService {
     );
   }
 
-  markCageAvailable(id: string, cageNumber: number, branch: string, assetType: string, cageWeight: number): Observable<any> {
+  markCageAvailable(id: string, cageNumber: number, branch: string, assetType: string, cageWeight: number): Observable<[Cage, Cage]> {
     const patchRequest = this.markCageComplete(id);
     const newRequest = this.addNewCage(cageNumber, branch, assetType, cageWeight);
     return forkJoin([patchRequest, newRequest]);
   }
 
-  resetCage(id: string): Observable<any> {
+  resetCage(id: string): Observable<Cage> {
     const payload = {fields: {Status: 'Available', CustomerNumber: null, Customer: null, Date1: null, Date2: null, Date3: null, Date4: null, GrossWeight: null}};
     return this.updateStatus(id, payload);
   }
@@ -264,7 +267,7 @@ export class RecyclingService {
     return this.getCages(url).pipe(map(res => res[0]));
   }
 
-  uniqueCageValidator(assetTypeControl: FormControl) {
+  uniqueCageValidator(assetTypeControl: FormControl): any {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       return this.checkCageNumber(control.value, assetTypeControl.value).pipe(
         map((exists) => (exists ? { cageExists: true } : null)),

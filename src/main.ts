@@ -9,9 +9,9 @@ if (environment.production) {
 }
 
 function bootstrap() {
-     platformBrowserDynamic().bootstrapModule(AppModule)
+  platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));
-   };
+};
 
 
 if (document.readyState === 'complete') {
@@ -19,4 +19,3 @@ if (document.readyState === 'complete') {
 } else {
   document.addEventListener('DOMContentLoaded', bootstrap);
 }
-

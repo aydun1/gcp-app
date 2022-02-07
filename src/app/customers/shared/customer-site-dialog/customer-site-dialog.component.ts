@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 
+import { Site } from '../site';
 import { Customer } from '../customer';
 import { CustomersService } from '../customers.service';
 
@@ -15,7 +16,7 @@ import { CustomersService } from '../customers.service';
 export class CustomerSiteDialogComponent implements OnInit {
   public siteForm: FormGroup;
   public loading: boolean;
-  public sites$: Observable<any>;
+  public sites$: Observable<Site[]>;
   public edit: string;
 
   constructor(
@@ -33,11 +34,11 @@ export class CustomerSiteDialogComponent implements OnInit {
     this.getSites();
   }
 
-  getSites() {
+  getSites(): void {
     this.sites$ = this.customerService.getSites(this.data.customer.accountnumber);
   }
 
-  addSite() {
+  addSite(): void {
     if (this.siteForm.invalid) return;
     this.loading = true;
     const action = this.edit ? this.customerService.renameSite(this.edit, this.siteForm.value['site']) : this.customerService.addSite(this.data.customer.accountnumber, this.siteForm.value['site'] );
@@ -54,7 +55,7 @@ export class CustomerSiteDialogComponent implements OnInit {
     ).subscribe()
   }
 
-  editSite(id: string, name: string) {
+  editSite(id: string, name: string): void {
     this.edit = id;
     this.siteForm.patchValue({site: name});
   }

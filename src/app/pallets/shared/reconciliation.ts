@@ -1,6 +1,6 @@
 export interface Reconciliation {
   id: string,
-  lastModifiedDateTime: any,
+  lastModifiedDateTime: string | Date,
   lastModifiedBy: {
     user: {
       displayName: string,

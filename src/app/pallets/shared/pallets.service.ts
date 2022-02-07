@@ -33,25 +33,25 @@ export class PalletsService {
     private shared: SharedService
   ) { }
 
-  private createUrl(filters: any): string {
+  private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
     let url = `${this._palletTrackerUrl}/items?expand=fields(select=Created,Title,Pallet,In,Out,From,To,Quantity,Reference,Status,Notes,Attachment,Site)`;
 
     const parsed = filterKeys.map(key => {
       switch (key) {
         case 'from':
-          return `fields/From eq '${filters.from}'`;
+          return `fields/From eq '${filters['from']}'`;
         case 'to':
-          return `fields/To eq '${filters.to}'`;
+          return `fields/To eq '${filters['to']}'`;
         case 'branch':
-          return `(fields/From eq '${filters.branch}' or fields/To eq '${filters.branch}')`;
+          return `(fields/From eq '${filters['branch']}' or fields/To eq '${filters['branch']}')`;
         case 'name':
-          const cleanName = this.shared.sanitiseName(filters.name);
+          const cleanName = this.shared.sanitiseName(filters['name']);
           return `(startswith(fields/CustomerNumber, '${cleanName}') or startswith(fields/Title, '${cleanName}'))`;
         case 'status':
-          return `fields/Status eq '${filters.status}'`;
+          return `fields/Status eq '${filters['status']}'`;
         case 'pallet':
-          return `fields/Pallet eq '${filters.pallet}'`;
+          return `fields/Pallet eq '${filters['pallet']}'`;
         case 'type':
             return `fields/Title eq null`;
         default:
@@ -76,7 +76,7 @@ export class PalletsService {
     );
   }
 
-  private updateList(res: Pallet) {
+  private updateList(res: Pallet): Observable<Pallet> {
     return this._palletsSubject$.pipe(
       take(1),
       map(_ => {
@@ -90,17 +90,17 @@ export class PalletsService {
     );
   }
 
-  private dateInt(date: Date) {
+  private dateInt(date: Date): string {
     return `${date.getUTCFullYear()}${('00' + (date.getUTCMonth() + 1)).slice(-2)}`;
   }
 
-  getColumns() {
+  getColumns(): any {
     this._columns$.pipe(
       take(1),
       map(_ => {
         if (_) return of(_);
         return this.http.get(`${this._palletTrackerUrl}/columns`).pipe(
-          map((_: any) => _.value),
+          map(_ => _['value']),
           map(_ => _.reduce((a, v) => ({ ...a, [v.name]: v}), {})),
           tap(_ => this._columns$.next(_))
         );
@@ -146,7 +146,7 @@ export class PalletsService {
     return this.http.post(`${this._palletTrackerUrl}/items`, payload);
   }
 
-  createInterstatePalletTransfer(v: any): Observable<any> {
+  createInterstatePalletTransfer(v: any): Observable<Pallet> {
     const pallets = [v.loscam ? 'Loscam' : '', v.chep ? 'Chep' : '', v.plain ? 'Plain' : ''].filter(_ => _);
     const pallet = pallets.length > 1 ? 'Mixed' : pallets.length === 1 ? pallets[0] : 'None';
     const payload = {fields: {
@@ -165,7 +165,7 @@ export class PalletsService {
     );
   }
 
-  approveInterstatePalletTransfer(id: string, approval: boolean): Observable<any> {
+  approveInterstatePalletTransfer(id: string, approval: boolean): Observable<Pallet> {
     const payload = {fields: {
       Status: approval ? 'Approved' : 'Rejected'
     }};
@@ -174,21 +174,21 @@ export class PalletsService {
     );
   }
 
-  cancelInterstatePalletTransfer(id: string): Observable<any> {
+  cancelInterstatePalletTransfer(id: string): Observable<Pallet> {
     const payload = {fields: {Status: 'Cancelled'}};
     return this.http.patch<Pallet>(`${this._palletTrackerUrl}/items('${id}')`, payload).pipe(
       switchMap(res => this.updateList(res))
     );
   }
 
-  markFileAttached(id: string, status: boolean): Observable<any> {
+  markFileAttached(id: string, status: boolean): Observable<Pallet> {
     const payload = {fields: {Attachment: status}};
     return this.http.patch<Pallet>(`${this._palletTrackerUrl}/items('${id}')`, payload).pipe(
       switchMap(res => this.updateList(res))
     );
   }
 
-  transferInterstatePalletTransfer(id: string): Observable<any> {
+  transferInterstatePalletTransfer(id: string): Observable<Pallet> {
     const payload = {fields: {
       Status: 'Transferred'
     }};
@@ -197,7 +197,7 @@ export class PalletsService {
     );
   }
 
-  editInterstatePalletTransferQuantity(id: string, loscam: number, chep: number, plain: number): Observable<any> {
+  editInterstatePalletTransferQuantity(id: string, loscam: number, chep: number, plain: number): Observable<Pallet> {
     const pallets = [loscam ? 'Loscam' : '', chep ? 'Chep' : '', plain ? 'Plain' : ''].filter(_ => _);
     const pallet = pallets.length > 1 ? 'Mixed' : pallets.length === 1 ? pallets[0] : 'None';
     const payload = {fields: {
@@ -212,7 +212,7 @@ export class PalletsService {
     );
   }
 
-  getPalletTransfer(id: string) {
+  getPalletTransfer(id: string): Observable<Pallet> {
     const url = this._palletTrackerUrl + `/items('${id}')`;
     return this.http.get<Pallet>(url);
   }
@@ -220,10 +220,10 @@ export class PalletsService {
   getCustomerPallets(custnmbr: string, site = ''): Observable<Pallet[]> {
     let url = this._palletTrackerUrl + `/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
     if (site) url += `and fields/Site eq '${this.shared.sanitiseName(site)}'`;
-    return this.http.get(url).pipe(map((_: any) => _.value));
+    return this.http.get(url).pipe(map(_ => _['value']));
   }
 
-  getPalletsOwedToBranch(branch: string, pallet: string, date: Date) {
+  getPalletsOwedToBranch(branch: string, pallet: string, date: Date): Observable<number> {
     const startOfMonth = new Date(Date.UTC(date.getFullYear(), date.getUTCMonth(), 1)).toISOString();
     const dateInt = this.dateInt(date);
     const eod = new Date(date.setHours(23,59,59,999)).toISOString();
@@ -231,8 +231,8 @@ export class PalletsService {
     let url = `${this._endpoint}/${this._palletsOwedUrl}/items?expand=fields(select=Owing)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/DateInt lt '${dateInt}'&top=2000`;
     let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null and fields/Created ge '${startOfMonth}' and fields/Created lt '${eod}'&top=2000`;
 
-    const prevMonths: Observable<PalletTotals[]> = this.http.get(url).pipe(map((_: any) => _.value));
-    const currMonth: Observable<Pallet[]> = this.http.get(url2).pipe(map((_: any) => _.value));
+    const prevMonths: Observable<PalletTotals[]> = this.http.get(url).pipe(map(_ => _['value']));
+    const currMonth: Observable<Pallet[]> = this.http.get(url2).pipe(map(_ => _['value']));
 
     return combineLatest([prevMonths, currMonth]).pipe(
       map(([pastMonths, thisMonth]) => {
@@ -257,8 +257,8 @@ export class PalletsService {
       url2 += filter;
     }
 
-    const currMonth: Observable<Pallet[]> = this.http.get(url2).pipe(map((_: any) => _.value));
-    const prevMonths: Observable<PalletTotals[]> = this.http.get(url).pipe(map((_: any) => _.value));
+    const currMonth: Observable<Pallet[]> = this.http.get(url2).pipe(map(_ => _['value']));
+    const prevMonths: Observable<PalletTotals[]> = this.http.get(url).pipe(map(_ => _['value']));
 
     return combineLatest([prevMonths, currMonth]).pipe(
       map(([pastMonths, thisMonth]) => ['Loscam', 'Chep', 'Plain'].reduce((acc,curr) => {
@@ -275,7 +275,7 @@ export class PalletsService {
     let url = this._palletTrackerUrl + `/items?expand=fields(select=Quantity,${pallet})`;
     url += `&filter=fields/From eq '${branch}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;
     url += ` and fields/Status ne 'Cancelled' and (fields/Status ne 'Transferred' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
-    return this.http.get(url).pipe(map((_: any) => _.value.reduce((acc, val) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
+    return this.http.get(url).pipe(map(_ => _['value'].reduce((acc, val) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
 
   getInTransitOn(branch: string, pallet: string): Observable<Pallet[]> {
@@ -283,7 +283,7 @@ export class PalletsService {
     let url = this._palletTrackerUrl + `/items?expand=fields(select=Quantity,${pallet})`;
     url += `&filter=fields/To eq '${branch}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;
     url += ` and fields/Status ne 'Cancelled' and (fields/Status eq 'Approved' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
-    return this.http.get(url).pipe(map((_: any) => _.value.reduce((acc, val) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
+    return this.http.get(url).pipe(map(_ => _['value'].reduce((acc, val) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
 
   getInterstatePalletTransfer(id: string): Observable<{summary: any}> {
@@ -328,6 +328,7 @@ export class PalletsService {
             return acc;
           }, {versions: _.value.length}
         )
+        console.log(a)
         return {summary: a};
       })
     );

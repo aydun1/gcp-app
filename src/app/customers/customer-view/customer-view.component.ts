@@ -1,7 +1,7 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, map, Observable, Subject, switchMap, tap } from 'rxjs';
+import { map, Observable, Subject, switchMap, tap } from 'rxjs';
 
 import { Customer } from '../shared/customer';
 import { Site } from '../shared/site';
@@ -24,7 +24,7 @@ export class CustomerViewComponent implements OnInit {
   private sitesSubject$ = new Subject<string>();
   private palletsSubject$ = new Subject<string>();
   private cagesSubject$ = new Subject<string>();
-  public customer$: Observable<any>;
+  public customer$: Observable<Customer>;
   public site: string;
   public sites: Array<Site>;
   public palletsOwing: any;
@@ -69,7 +69,7 @@ export class CustomerViewComponent implements OnInit {
     ))
   }
 
-  getCustomer(id: string) {
+  getCustomer(id: string): Observable<Customer> {
     return this.cutomersService.getCustomer(id).pipe(
       tap(_ => {
         this.refreshSites(_.accountnumber);
@@ -79,43 +79,43 @@ export class CustomerViewComponent implements OnInit {
     );
   }
 
-  refreshSites(id: string) {
+  refreshSites(id: string): void {
     this.sitesSubject$.next(id);
   }
 
-  refreshPallets(id: string) {
+  refreshPallets(id: string): void {
     this.palletsSubject$.next(id);
   }
 
-  refreshCages(id: string) {
+  refreshCages(id: string): void {
     this.cagesSubject$.next(id);
   }
 
-  openSiteDialog(customer: Customer) {
+  openSiteDialog(customer: Customer): void {
     const data = {customer};
     const dialogRef = this.dialog.open(CustomerSiteDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().subscribe(() => this.refreshSites(data.customer.accountnumber));
   }
 
-  openPalletDialog(customer: Customer) {
+  openPalletDialog(customer: Customer): void {
     const data = {customer, sites: this.sites, site: this.site};
     const dialogRef = this.dialog.open(PalletDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().subscribe(() => this.refreshPallets(data.customer.accountnumber));
   }
 
-  openRecyclingDialog(customer: Customer) {
+  openRecyclingDialog(customer: Customer): void {
     const data = {customer, sites: this.sites, site: this.site};
     const dialogRef = this.dialog.open(RecyclingDialogComponent, {width: '800px', data});
     dialogRef.afterClosed().subscribe(() => this.refreshCages(data.customer.accountnumber));
   }
 
-  setSite(customer: string, site: string) {
+  setSite(customer: string, site: string): void {
     this.site = site;
     this.refreshPallets(customer);
     this.refreshCages(customer);
   }
 
-  goBack() {
+  goBack(): void {
     this.navService.back();
   }
 }

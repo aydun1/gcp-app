@@ -2,7 +2,7 @@ import { Component, HostBinding, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
 import { RecyclingService } from '../shared/recycling.service';
 import { NavigationService } from '../../navigation.service';
@@ -18,9 +18,9 @@ export class RecyclingNewComponent implements OnInit {
 
   public cageForm: FormGroup;
   public loading: boolean;
-  public choices$: Observable<any>;
+  public choices$: BehaviorSubject<any>;
 
-  public get isCage() {
+  public get isCage(): boolean {
     return this.assetType.value.startsWith('Cage');
   }
 
@@ -54,7 +54,7 @@ export class RecyclingNewComponent implements OnInit {
     this.choices$ = this.recyclingService.getColumns();
   }
 
-  addCage() {
+  addCage(): void {
     if (this.cageForm.invalid) return;
     const d = this.cageForm.value;
     this.loading = true;
@@ -71,7 +71,7 @@ export class RecyclingNewComponent implements OnInit {
     ).subscribe(_ => console.log(_));
   }
 
-  goBack() {
+  goBack(): void {
     this.navService.back();
   }
 }

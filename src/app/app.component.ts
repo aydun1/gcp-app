@@ -74,7 +74,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkForUpdates() {
+  checkForUpdates(): void {
     this.swUpdate.checkForUpdate().then(
       () => console.log('Checking for application updates')
     ).catch(
@@ -82,7 +82,7 @@ export class AppComponent implements OnInit, OnDestroy {
     );
   }
 
-  setLoginDisplay() {
+  setLoginDisplay(): void {
     const accounts = this.authService.instance.getAllAccounts();
     this.accounts = accounts;
     this.loginDisplay = accounts.length > 0;
@@ -90,7 +90,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.loginDisplay) this.getPhoto();
   }
 
-  getPhoto() {
+  getPhoto(): void {
     this.photo$ = this.sharedService.getPhoto();
   }
 
@@ -102,7 +102,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  login() {
+  login(): void {
     if (this.msalGuardConfig.authRequest) {
       this.authService.loginPopup({...this.msalGuardConfig.authRequest} as PopupRequest).subscribe(
         (response: AuthenticationResult) =>
@@ -115,7 +115,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  urlActive(url: string) {
+  urlActive(url: string): boolean {
     return this.router.url.startsWith(url);
   }
 
