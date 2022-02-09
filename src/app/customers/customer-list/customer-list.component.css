@@ -37,7 +37,7 @@
   flex: 1 1 120px;
 }
 
-.mat-column-loscam, .mat-column-chep, .mat-column-plain {
+.mat-column-new_pallets_loscam, .mat-column-new_pallets_chep, .mat-column-new_pallets_plain {
   flex: 0 1 90px;
   justify-content: center;
 }
@@ -49,5 +49,15 @@
 
   .region {
     margin: 0;
+  }
+}
+
+@media print {
+  :host{
+    overflow-y: auto;
+  }
+
+  .options {
+    display: none;
   }
 }

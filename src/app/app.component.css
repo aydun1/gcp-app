@@ -122,6 +122,7 @@
 @media print {
   :host {
     position: relative;
+    top: 0;
   }
 
   .mat-sidenav {
