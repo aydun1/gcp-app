@@ -38,7 +38,8 @@ export class CustomersService {
     filterArray.push('accountnumber ne null');
 
     url += `&$filter=${filterArray.join(' and ')}`;
-    url += `&$orderby=name`;
+    url += `&$orderby=${filters['sort'] ? filters['sort'] : 'name'}`;
+    url += ` ${filters['order'] ? filters['order'] : 'asc'}`;
     return url;
   }
 
