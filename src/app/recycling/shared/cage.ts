@@ -19,6 +19,7 @@ export interface Cage {
     FromLocalProcessing: string | Date,
     CustomerNumber: string,
     Customer: string,
+    Site: string,
     Notes: string,
     id: string,
     Modified: string | Date,

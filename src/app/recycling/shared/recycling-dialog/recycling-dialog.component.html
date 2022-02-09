@@ -51,6 +51,11 @@
             </mat-expansion-panel-header>
             <gcp-action-button [cage]="cage" (updated)="getContainers()" class="actions"></gcp-action-button>
             <mat-list>
+              <mat-list-item *ngIf="cage.fields.Site">
+                <mat-icon mat-list-icon>business</mat-icon>
+                <div mat-line>{{ cage.fields.Site }}</div>
+                <div mat-line>Site</div>            
+              </mat-list-item>
               <div mat-subheader>Weights</div>
               <gcp-cage-weights [cage]="cage" (updated)="getContainers()"></gcp-cage-weights>
             </mat-list>

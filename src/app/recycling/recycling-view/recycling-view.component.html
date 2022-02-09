@@ -30,7 +30,7 @@
         </mat-list-item>
         <mat-list-item *ngIf="cage.fields.CustomerNumber">
           <mat-icon mat-list-icon>business</mat-icon>
-          <div mat-line>{{ cage.fields.Customer }}</div>
+          <div mat-line>{{ cage.fields.Customer }}<span *ngIf="cage.fields.Site">({{ cage.fields.Site }})</span></div>
           <div mat-line>Assigned to</div>
         </mat-list-item>
         <form (ngSubmit)="setCageNotes(cage.id)">
