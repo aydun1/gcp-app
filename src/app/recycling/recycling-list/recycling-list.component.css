@@ -45,6 +45,7 @@
 }
 
 .mat-column-assetType {
+  font-weight: 500;
   flex: 0 1 280px;
 }
 

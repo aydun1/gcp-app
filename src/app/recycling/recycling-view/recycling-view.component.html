@@ -13,7 +13,7 @@
     <div class="header">
       <div *ngIf="isCage">
         <h2>Cage number: {{ cage.fields.CageNumber }}</h2>
-        <p>{{ cage.fields.AssetType }}</p>
+        <h3>{{ cage.fields.AssetTypeClean }}</h3>
       </div>
       <div *ngIf="!isCage">
         <h2>{{ cage.fields.AssetType }}</h2>

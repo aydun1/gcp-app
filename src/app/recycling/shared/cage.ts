@@ -24,6 +24,7 @@ export interface Cage {
     id: string,
     Modified: string | Date,
     Created: string | Date,
-    Edit: string
+    Edit: string,
+    AssetTypeClean?: string;
   }
 }

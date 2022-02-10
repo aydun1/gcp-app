@@ -19,6 +19,11 @@ export class RecyclingService {
   private _dataGroupUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists';
   private _cageTrackerUrl = `${this._dataGroupUrl}/e96c2778-2322-46d6-8de9-3d0c8ca5aefd`;
 
+  private types = {
+    'Cage - Solid (2.5m³)': 'Solid cage',
+    'Cage - Folding (2.5m³)': 'Folding cage'
+  }
+
   constructor(
     private http: HttpClient,
     private shared: SharedService
@@ -69,7 +74,13 @@ export class RecyclingService {
   }
 
   private assignStatus(cage: Cage): Cage {
-    cage['Date'] = cage.fields.Date4 || cage.fields.Date3 || cage.fields.ToLocalProcessing || cage.fields.Date2 || cage.fields.Date1 || cage.fields.Created; 
+    console.log(cage)
+    cage['Date'] = cage.fields.Date4 || cage.fields.Date3 || cage.fields.ToLocalProcessing || cage.fields.Date2 || cage.fields.Date1 || cage.fields.Created;
+    cage['Cage'] = cage.fields.AssetType?.startsWith('Cage');
+    cage['Type'] = cage['Cage'] ? cage.fields.AssetType.split('-', 2)[1].split(' ', 2)[1][0].toLowerCase() : null;
+    cage.fields['AssetTypeClean'] = this.types[cage.fields.AssetType] || cage.fields.AssetType;
+
+
     if (cage.fields.Status === 'Available') {
       cage['statusId'] = 0;
     } else if (cage.fields.Status === 'Complete') {
