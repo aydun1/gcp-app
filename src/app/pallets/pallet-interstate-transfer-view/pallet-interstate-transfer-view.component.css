@@ -9,7 +9,7 @@
 }
 
 input {
-  max-width: 120px;
+  max-width: 100px;
 }
 
 .content {
@@ -65,6 +65,10 @@ input {
 @media (max-width: 600px) {
   .arrow {
     display: none;
+  }
+
+  .pallets {
+    flex-direction: column;
   }
 
   .side-by-side {

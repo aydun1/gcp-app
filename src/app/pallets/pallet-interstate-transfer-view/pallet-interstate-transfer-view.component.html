@@ -11,9 +11,9 @@
   <div class="header">
     <h2>Transfer details</h2>
     <ng-container *ngIf="!transfer.summary.cancelled">
-      <button *ngIf="(transport || sender) && !transfer.summary.approved" mat-raised-button class="action" (click)="cancel(transfer.summary.id)" [disabled]="loading">Cancel transfer</button>
-      <button *ngIf="(transport || receiver) && !transfer.summary.approved" mat-raised-button class="action" color="primary" (click)="approve(transfer.summary.id)" [disabled]="loading">Approve</button>
-      <button *ngIf="(transport || sender) && transfer.summary.approved && !transfer.summary.transferred" mat-raised-button class="action" color="primary" (click)="transferp(transfer.summary.id)" [disabled]="loading">Mark as transferred</button>
+      <button *ngIf="(transport || sender) && !transfer.summary.transferred" mat-raised-button class="action" (click)="cancel(transfer.summary.id)" [disabled]="loading || editQuantity">Cancel transfer</button>
+      <button *ngIf="(transport || receiver) && !transfer.summary.approved" mat-raised-button class="action" color="primary" (click)="approve(transfer.summary.id)" [disabled]="loading || editQuantity">Approve</button>
+      <button *ngIf="(transport || sender) && transfer.summary.approved && !transfer.summary.transferred" mat-raised-button class="action" color="primary" (click)="transferp(transfer.summary.id)" [disabled]="loading || editQuantity">Mark as transferred</button>
     </ng-container>
   </div>
   <form (ngSubmit)="setQuantity(transfer.summary.id)">
@@ -60,7 +60,7 @@
       <div *ngIf="transfer.summary.cancelled">
         <span>Cancelled</span>
       </div>
-      <div *ngIf="(transport || sender) && !transfer.summary.approved && !transfer.summary.cancelled" class="edit">
+      <div *ngIf="(transport || sender) && !transfer.summary.transferred && !transfer.summary.cancelled" class="edit">
         <button mat-icon-button type="button" *ngIf="!editQuantity" (click)="editQuantity = true"><mat-icon mat-list-icon class="last-icon">edit</mat-icon></button>
         <ng-container *ngIf="editQuantity">
           <button mat-icon-button type="button" (click)="cancelEditQuantity(transfer.summary.loscam, transfer.summary.chep, transfer.summary.plain)" [disabled]="loading"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
