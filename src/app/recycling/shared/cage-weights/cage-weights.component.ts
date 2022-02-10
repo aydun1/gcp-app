@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { tap } from 'rxjs';
 import { Cage } from '../cage';
 import { RecyclingService } from '../recycling.service';
@@ -8,9 +8,17 @@ import { RecyclingService } from '../recycling.service';
   templateUrl: './cage-weights.component.html',
   styleUrls: ['./cage-weights.component.css']
 })
-export class CageWeightsComponent implements OnInit {
+export class CageWeightsComponent {
 
-  @Input() cage: Cage;
+  @Input()
+  get cage(): Cage { return this._cage; }
+  set cage(value: Cage) {
+    this.cageWeight = value.fields.CageWeight;
+    this.grossWeight = value.fields.GrossWeight;
+    this._cage = value;
+  }
+  private _cage: Cage;
+
   @Output() updated = new EventEmitter<boolean>();
 
   public editCageWeight: boolean;
@@ -21,11 +29,6 @@ export class CageWeightsComponent implements OnInit {
   constructor(
     private recyclingService: RecyclingService
   ) { }
-
-  ngOnInit(): void {
-    this.cageWeight = this.cage.fields.CageWeight;
-    this.grossWeight = this.cage.fields.GrossWeight;
-  }
 
   setCageWeight(): void {
     this.recyclingService.setCageWeight(this.cage.id, this.cageWeight).pipe(
