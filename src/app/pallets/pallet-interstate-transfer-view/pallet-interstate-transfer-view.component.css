@@ -8,6 +8,10 @@
   flex: 1;
 }
 
+.actions {
+  display: flex;
+}
+
 input {
   max-width: 100px;
 }
