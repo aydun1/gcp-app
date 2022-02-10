@@ -25,6 +25,10 @@
   border-radius: 0;
 }
 
+.mat-list-base .mat-list-item .mat-line {
+  margin-right: 34px;
+}
+
 .doc {
   position: relative;
 }
