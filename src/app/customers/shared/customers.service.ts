@@ -37,6 +37,12 @@ export class CustomersService {
     filterArray.push('statecode eq 0');
     filterArray.push('accountnumber ne null');
 
+    const palletFilter = []
+    if (filters['sort'] === 'new_pallets_loscam') palletFilter.push('new_pallets_loscam gt 0 or new_pallets_loscam lt 0');
+    if (filters['sort'] === 'new_pallets_chep') palletFilter.push('new_pallets_chep gt 0 or new_pallets_chep lt 0');
+    if (filters['sort'] === 'new_pallets_plain') palletFilter.push('new_pallets_plain gt 0 or new_pallets_plain lt 0');
+    if (palletFilter.length > 0) filterArray.push(`(${palletFilter.join(' or ')})`);
+
     url += `&$filter=${filterArray.join(' and ')}`;
     url += `&$orderby=${filters['sort'] ? filters['sort'] : 'name'}`;
     url += ` ${filters['order'] ? filters['order'] : 'asc'}`;
