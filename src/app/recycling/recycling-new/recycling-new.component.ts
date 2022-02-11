@@ -2,7 +2,7 @@ import { Component, ElementRef, HostBinding, OnInit, ViewChild } from '@angular/
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, catchError, Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, of, tap, throwError } from 'rxjs';
 
 import { RecyclingService } from '../shared/recycling.service';
 import { NavigationService } from '../../navigation.service';
@@ -23,6 +23,7 @@ export class RecyclingNewComponent implements OnInit {
     'Cage - Folding (2.5m³)': '190',
     'Cage - Solid (2.5m³)': '170'
   };
+  public multi: number;
   public cageForm: FormGroup;
   public loading: boolean;
   public choices$: BehaviorSubject<any>;
@@ -72,33 +73,28 @@ export class RecyclingNewComponent implements OnInit {
     this.choices$ = this.recyclingService.getColumns();
   }
 
-  addCage(): Observable<Cage> {
-    if (this.cageForm.invalid) return of();
-    const d = this.cageForm.value;
+  addCage(): void {
+    if (this.cageForm.invalid) return;
     this.loading = true;
-    return this.recyclingService.addNewCage(d.cageNumber, d.branch, d.assetType, d.cageWeight).pipe(
+    const d = this.cageForm.value;
+    this.recyclingService.addNewCage(d.cageNumber, d.branch, d.assetType, d.cageWeight).pipe(
+      tap( _ => {
+        this.snackBar.open('Cage added', '', {duration: 3000});
+        this.loading = false;
+        if (this.multi === 1) {
+          this.cageForm.get('cageNumber').patchValue('');
+          this.cageForm.get('cageNumber').setErrors(null);
+          this.cageNumber.nativeElement.focus();
+        } else {
+          this.router.navigate(['recycling/cages', _.id], {replaceUrl: true});
+        }
+      }),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         this.loading = false;
         return throwError(() => new Error(err));
       })
-    );
-  }
-  
-  save() {
-    this.addCage().subscribe( _ => {
-      this.router.navigate(['recycling/cages', _.id], {replaceUrl: true});
-      this.snackBar.open('Cage added', '', {duration: 3000});
-    })
-  }
-
-  saveAndReset() {
-    this.addCage().subscribe( _ => {
-      this.snackBar.open('Cage added', '', {duration: 3000});
-      this.cageForm.get('cageNumber').patchValue('');
-      this.loading = false;
-      this.cageNumber.nativeElement.focus();
-    })
+    ).subscribe();
   }
 
   goBack(): void {

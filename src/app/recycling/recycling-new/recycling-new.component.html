@@ -9,7 +9,7 @@
 
 <div class="outer">
   <h2>Add a new cage</h2>
-  <form (ngSubmit)="save()" [formGroup]="cageForm" class="inner">
+  <form (ngSubmit)="addCage()" [formGroup]="cageForm" class="inner">
     <mat-card>
     <mat-form-field appearance="fill" class="asset-type">
       <mat-label>{{ (choices$ | async)?.AssetType.name }}</mat-label>
@@ -38,9 +38,9 @@
       </mat-select>
     </mat-form-field>
     <div class="buttons">
+      <button mat-raised-button value="one" (click)="multi = 0" color="primary" [disabled]="loading">Save</button>
+      <button mat-button value="many" (click)="multi = 1" [disabled]="loading">Save and add another</button>
       <button mat-button tabindex=-1 type="button" (click)="goBack()" [disabled]="loading">Cancel</button>
-      <button mat-raised-button color="primary"type="button" (click)="saveAndReset()" [disabled]="loading">Save and add another</button>
-      <button mat-raised-button color="primary" [disabled]="loading">Save</button>
     </div>
   </mat-card>
   </form>
