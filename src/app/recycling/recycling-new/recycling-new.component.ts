@@ -2,12 +2,11 @@ import { Component, ElementRef, HostBinding, OnInit, ViewChild } from '@angular/
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, catchError, Observable, of, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
 import { RecyclingService } from '../shared/recycling.service';
 import { NavigationService } from '../../navigation.service';
 import { SharedService } from 'src/app/shared.service';
-import { Cage } from '../shared/cage';
 
 @Component({
   selector: 'gcp-recycling-new',
@@ -74,7 +73,10 @@ export class RecyclingNewComponent implements OnInit {
   }
 
   addCage(): void {
-    if (this.cageForm.invalid) return;
+    if (this.cageForm.invalid) {
+      this.snackBar.open('Unable to add cage. Double check form values.', '', {duration: 3000});
+      return;
+    };
     this.loading = true;
     const d = this.cageForm.value;
     this.recyclingService.addNewCage(d.cageNumber, d.branch, d.assetType, d.cageWeight).pipe(
