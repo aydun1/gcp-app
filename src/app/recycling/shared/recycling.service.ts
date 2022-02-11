@@ -41,7 +41,6 @@ export class RecyclingService {
         );
       }),
       switchMap(_ => _),
-      tap(_ => console.log(_))
     ).subscribe();
     return this._columns$;
   }
@@ -74,7 +73,6 @@ export class RecyclingService {
   }
 
   private assignStatus(cage: Cage): Cage {
-    console.log(cage)
     cage['Date'] = cage.fields.Date4 || cage.fields.Date3 || cage.fields.ToLocalProcessing || cage.fields.Date2 || cage.fields.Date1 || cage.fields.Created;
     cage['Cage'] = cage.fields.AssetType?.startsWith('Cage');
     cage['Type'] = cage['Cage'] ? cage.fields.AssetType.split('-', 2)[1].split(' ', 2)[1][0].toLowerCase() : null;
@@ -281,7 +279,7 @@ export class RecyclingService {
   uniqueCageValidator(assetTypeControl: FormControl): any {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       return this.checkCageNumber(control.value, assetTypeControl.value).pipe(
-        map((exists) => (exists ? { cageExists: true } : null)),
+        map((cage) => (cage ? { cageExists: true, id: cage.id } : null)),
         catchError((err) => null)
       );
     };
