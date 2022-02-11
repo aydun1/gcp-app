@@ -15,7 +15,10 @@ import { NavigationService } from '../../navigation.service';
 export class RecyclingNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
   private assetType = new FormControl('', Validators.required);
-
+  private defaultWeights = {
+    'Cage - Folding (2.5m³)': '190',
+    'Cage - Solid (2.5m³)': '170'
+  };
   public cageForm: FormGroup;
   public loading: boolean;
   public choices$: BehaviorSubject<any>;
@@ -43,10 +46,15 @@ export class RecyclingNewComponent implements OnInit {
     });
 
     this.cageForm.get('assetType').valueChanges.subscribe(val => {
-      const cageNumber = this.cageForm.get('cageNumber');
-      const cageWeight = this.cageForm.get('cageWeight');
-      val.startsWith('Cage') ? cageNumber.enable() : cageNumber.disable();
-      val.startsWith('Cage') ? cageWeight.enable() : cageWeight.disable();
+      // Require cage number and weight if asset is a cage
+      const cageNumberControl = this.cageForm.get('cageNumber');
+      const cageWeightControl = this.cageForm.get('cageWeight');
+      val.startsWith('Cage') ? cageNumberControl.enable() : cageNumberControl.disable();
+      val.startsWith('Cage') ? cageWeightControl.enable() : cageWeightControl.disable();
+
+      // Set default cage weights
+      const cageWeight = this.defaultWeights[val];
+      this.cageForm.get('cageWeight').patchValue(cageWeight)
     });
   }
 
