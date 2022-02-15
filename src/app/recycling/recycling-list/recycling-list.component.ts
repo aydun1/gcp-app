@@ -18,6 +18,7 @@ export class RecyclingListComponent implements OnInit {
   public branchFilter = new FormControl('');
   public statusFilter = new FormControl('');
   public assetTypeFilter = new FormControl('');
+  public loading = this.recyclingService.loading;
   public weight: number;
   public count: number;
   public displayedColumns = ['cageNumber', 'assetType', 'status', 'updated', 'weight'];

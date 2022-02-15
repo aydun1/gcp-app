@@ -89,6 +89,10 @@ a {
   display: none;
 }
 
+.hidden {
+  display: none;
+}
+
 @media (max-width: 800px) {
   .home-cards {
     width: calc(100% - 20px);

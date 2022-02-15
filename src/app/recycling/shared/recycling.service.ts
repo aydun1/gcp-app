@@ -18,11 +18,12 @@ export class RecyclingService {
   private _columns$ = new BehaviorSubject<any>(null);
   private _dataGroupUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists';
   private _cageTrackerUrl = `${this._dataGroupUrl}/e96c2778-2322-46d6-8de9-3d0c8ca5aefd`;
-
   private types = {
     'Cage - Solid (2.5m³)': 'Solid cage',
     'Cage - Folding (2.5m³)': 'Folding cage'
-  }
+  };
+
+  public loading = new BehaviorSubject<boolean>(false);
 
   constructor(
     private http: HttpClient,
@@ -102,9 +103,13 @@ export class RecyclingService {
   }
 
   private getCages(url: string, paginate = false): Observable<Cage[]> {
+    this._loadingCages = true;
+    this.loading.next(true);
     return this.http.get(url).pipe(
       tap(_ => {
         if (paginate) this._nextPage = _['@odata.nextLink'];
+        this._loadingCages = false;
+        this.loading.next(false);
       }),
       map((res: {value: Cage[]}) => res.value.map(cage => this.assignStatus(cage)))
     );
@@ -135,22 +140,16 @@ export class RecyclingService {
     this._nextPage = '';
     this._loadingCages = false;
     const url = this.createUrl(filters);
-    this._loadingCages = true;
-    this.getCages(url, true).subscribe(_ => {
-      this._cagesSubject$.next(_);
-      this._loadingCages = false;
-    });
+    this.getCages(url, true).subscribe(_ => this._cagesSubject$.next(_));
     return this._cagesSubject$;
   }
 
   getNextPage(): void {
     if (!this._nextPage || this._loadingCages) return null;
-    this._loadingCages = true;
     this._cagesSubject$.pipe(
       take(1),
       switchMap(acc => this.getCages(this._nextPage, true).pipe(
         map(curr => [...acc, ...curr]),
-        tap(() => this._loadingCages = false)
       ))
     ).subscribe(_ => this._cagesSubject$.next(_));
   }

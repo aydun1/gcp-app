@@ -18,6 +18,7 @@ export class PalletInterstateTransferListComponent implements OnInit {
   public fromFilter = new FormControl('');
   public toFilter = new FormControl('');
   public statusFilter = new FormControl('');
+  public loading = this.palletsService.loading;
   public total: number;
   public displayedColumns = ['date', 'reference', 'pallet', 'from', 'to', 'quantity', 'status', 'attachment'];
   public statuses = ['Pending', 'Approved', 'Transferred', 'Cancelled'];

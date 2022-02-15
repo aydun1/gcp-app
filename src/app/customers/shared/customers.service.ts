@@ -66,9 +66,9 @@ export class CustomersService {
     if (!this.nextPage || this._loadingCustomers) return null;
     this.customersSubject$.pipe(
       take(1),
-      switchMap(acc => this.getCustomers(this.nextPage).pipe(map(
-        curr => [...acc, ...curr]
-      )))
+      switchMap(acc => this.getCustomers(this.nextPage).pipe(
+        map(curr => [...acc, ...curr])
+      ))
     ).subscribe(_ => this.customersSubject$.next(_))
   }
 
