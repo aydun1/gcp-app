@@ -231,6 +231,42 @@ export class RecyclingService {
     return this.updateStatus(id, payload);
   }
 
+  undo(id: string, status: string) {
+    const fields = {};
+    switch(status)
+    {
+    case 'Collected from local processing':
+      fields['Status'] = 'Delivered to local processing';
+      fields['FromLocalProcessing'] = null;
+    break
+    case 'Collected from Polymer':
+      fields['Status'] = 'Delivered to Polymer';
+      fields['Date4'] = null;
+    break;
+    case 'Delivered to Polymer':
+    case 'Delivered to local processing':
+      fields['Status'] = 'Collected from customer';
+      fields['Date3'] = null;
+      fields['ToLocalProcessing'] = null;
+    break;
+    case 'Collected from customer':
+      fields['Status'] = 'Delivered to customer';
+      fields['Date2'] = null;
+    break;
+    case 'Delivered to customer':
+      fields['Status'] = 'Allocated to customer';
+      fields['Date1'] = null;
+    break;
+    case 'Allocated to customer':
+      fields['Status'] = 'Available';
+      fields['CustomerNumber'] = null;
+      fields['Customer'] = null;
+      fields['Site'] = null
+    break;
+    }
+    return this.updateStatus(id, {fields});
+  }
+
   setCageWeight(id: string, weight: number): Observable<Cage> {
     const payload = {fields: {CageWeight: weight}};
     return this.updateStatus(id, payload);

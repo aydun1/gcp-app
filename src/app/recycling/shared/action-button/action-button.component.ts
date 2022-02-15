@@ -112,6 +112,15 @@ export class ActionButtonComponent implements OnInit {
     });
   }
 
+  undo(id: string, status: string): void {
+    console.log(id, status)
+    this.loading = true;
+    this.recyclingService.undo(id, status).subscribe(_ => {
+      this.loading = false;
+      this.updated.next(true);
+    });
+  }
+
   reset(id: string): void {
     this.loading = true;
     this.recyclingService.resetCage(id).subscribe(_ => {
