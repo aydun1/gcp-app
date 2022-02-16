@@ -125,8 +125,12 @@ export class AutomateService {
 
   doThing() {
     let i = 0;
+    const cust = '07330';
     const pallets: Array<[string, string, number]> = [
-      ["2TJ'SN11", "new_pallets_loscam", 2]]
+      //[cust, "new_pallets_loscam", 58],
+      [cust, "new_pallets_chep", 1],
+      [cust, "new_pallets_plain", 5],
+    ]
     const source = timer(1000, 1000).subscribe(val => {
       console.log(pallets[i]);
       this.updateCrm(pallets[i][0], pallets[i][1], pallets[i][2])
