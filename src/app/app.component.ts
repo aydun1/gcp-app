@@ -35,10 +35,11 @@ export class AppComponent implements OnInit, OnDestroy {
     private router: Router,
     private sharedService: SharedService,
     private observer: BreakpointObserver,
-    private automateService: AutomateService,
+    private automateService: AutomateService
   ) { }
 
   ngOnInit(): void {
+    //this.automateService.doThing();
     this.setLoginDisplay();
     this.observer.observe(['(max-width: 600px)']).subscribe(_ => this.isMobile = _.matches);
     this.authService.instance.enableAccountStorageEvents();
