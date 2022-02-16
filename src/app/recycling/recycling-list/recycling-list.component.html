@@ -37,10 +37,10 @@
   </div>
 
   <div *ngIf="(cages$ | async) as cages" class="inner">
-    <mat-table #table [dataSource]="cages" [trackBy]="trackByFn">
+    <mat-table #table [dataSource]="cages" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
 
-      <ng-container matColumnDef="cageNumber">
-        <mat-header-cell *matHeaderCellDef> Number </mat-header-cell>
+      <ng-container matColumnDef="fields/CageNumber">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Number </mat-header-cell>
         <mat-cell *matCellDef="let cage" [routerLink]="[cage.id]">
           <a [routerLink]="[cage.id]" class="cage-link">{{ cage.fields.CageNumber || '-' }}</a>
         </mat-cell>
@@ -55,8 +55,8 @@
         <mat-footer-cell *matFooterCellDef> {{ count || 0 }} </mat-footer-cell>
       </ng-container>
 
-      <ng-container matColumnDef="updated">
-        <mat-header-cell *matHeaderCellDef> Updated </mat-header-cell>
+      <ng-container matColumnDef="fields/Modified">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Updated </mat-header-cell>
         <mat-cell *matCellDef="let cage">{{ cage.Date | date: 'dd/MM/yyyy' }}</mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>

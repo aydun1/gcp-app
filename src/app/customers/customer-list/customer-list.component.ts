@@ -1,6 +1,7 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
+import { Sort } from '@angular/material/sort';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
@@ -114,7 +115,7 @@ export class CustomerListComponent implements OnInit {
     const sameTerritory = prev['territory'] === curr['territory'];
     const sameSort = prev['sort'] === curr['sort'];
     const sameOrder = prev['order'] === curr['order'];
-    return sameName && sameTerritory && this.loadList && sameSort && sameOrder;
+    return this.loadList && sameName && sameTerritory && sameSort && sameOrder;
   }
 
   setRegion(territory: MatSelectChange): void {
@@ -125,7 +126,8 @@ export class CustomerListComponent implements OnInit {
     this.nameFilter.patchValue('');
   }
 
-  announceSortChange(e) {
+  announceSortChange(e: Sort) {
+    console.log(e)
     const sort = e.direction ? e.active : null;
     const order = e.direction || null;
     this.router.navigate([], { queryParams: {sort, order}, queryParamsHandling: 'merge', replaceUrl: true});

@@ -69,7 +69,9 @@ export class RecyclingService {
     if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Complete'`);
 
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
-    url += `&orderby=fields/CageNumber asc&top=25`;
+    url += `&$orderby=${filters['sort'] ? filters['sort'] : 'fields/CageNumber'}`;
+    url += ` ${filters['order'] ? filters['order'] : 'asc'}`;
+    url += `&top=25`;
     return url;
   }
 
@@ -78,7 +80,6 @@ export class RecyclingService {
     cage['Cage'] = cage.fields.AssetType?.startsWith('Cage');
     cage['Type'] = cage['Cage'] ? cage.fields.AssetType.split('-', 2)[1].split(' ', 2)[1][0].toLowerCase() : null;
     cage.fields['AssetTypeClean'] = this.types[cage.fields.AssetType] || cage.fields.AssetType;
-
 
     if (cage.fields.Status === 'Available') {
       cage['statusId'] = 0;

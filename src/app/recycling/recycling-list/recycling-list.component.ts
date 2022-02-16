@@ -1,6 +1,7 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
+import { Sort } from '@angular/material/sort';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { Cage } from '../shared/cage';
@@ -21,7 +22,9 @@ export class RecyclingListComponent implements OnInit {
   public loading = this.recyclingService.loading;
   public weight: number;
   public count: number;
-  public displayedColumns = ['cageNumber', 'assetType', 'status', 'updated', 'weight'];
+  public displayedColumns = ['fields/CageNumber', 'assetType', 'status', 'fields/Modified', 'weight'];
+  public sortSort: string;
+  public sortOrder: 'asc' | 'desc';
   public choices$: BehaviorSubject<any>;
 
   constructor(
@@ -96,6 +99,10 @@ export class RecyclingListComponent implements OnInit {
     } else {
       this.assetTypeFilter.patchValue('');
     }
+    if ('sort' in params) {
+      this.sortSort = params['sort'];
+      this.sortOrder = params['order'];
+    }
     if ('bin' in params) {
       this.binFilter.patchValue(params['bin']);
       filters['bin'] = params['bin'];
@@ -111,11 +118,16 @@ export class RecyclingListComponent implements OnInit {
     }
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
-    const sameBranch = prev['branch'] === curr['branch'];
-    const sameBin = prev['bin'] === curr['bin'];
-    const sameAssetType = prev['assetType'] === curr['assetType'];
-    const sameStatus = prev['status'] === curr['status'];
-    return sameBranch && sameBin && sameAssetType && sameStatus && this._loadList;
+    const unchanged = [
+      this._loadList,
+      prev['branch'] === curr['branch'],
+      prev['bin'] === curr['bin'],
+      prev['assetType'] === curr['assetType'],
+      prev['status'] === curr['status'],
+      prev['sort'] === curr['sort'],
+      prev['order'] === curr['order']
+    ]
+    return unchanged.every(Boolean);
   }
 
   setBranch(branch: MatSelectChange): void {
@@ -132,6 +144,12 @@ export class RecyclingListComponent implements OnInit {
 
   clearBinFilter(): void {
     this.binFilter.patchValue('');
+  }
+
+  announceSortChange(e: Sort) {
+    const sort = e.direction ? e.active : null;
+    const order = e.direction || null;
+    this.router.navigate([], { queryParams: {sort, order}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   trackByFn(index: number, item: Cage): string {
