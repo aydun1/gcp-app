@@ -10,7 +10,7 @@
 <button mat-icon-button [matMenuTriggerFor]="menu" class="menu" *ngIf="cage.statusId < 7"><mat-icon>more_vert</mat-icon></button>
 <mat-menu #menu="matMenu" xPosition="before">
   <ng-template matMenuContent>
-    <button mat-menu-item [disabled]="1">
+    <button mat-menu-item (click)="undo(cage.id, cage.fields.Status)" [disabled]="cage.statusId === 0">
       <span>Undo</span>
     </button>
     <button mat-menu-item (click)="reset(cage.id)" [disabled]="cage.statusId === 0">

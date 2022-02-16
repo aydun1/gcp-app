@@ -10,40 +10,46 @@
 <div class="content" *ngIf="transfer$ | async as transfer; else loadingPage">
   <div class="header">
     <h2>Transfer details</h2>
-    <ng-container *ngIf="!transfer.summary.cancelled">
-      <button *ngIf="(transport || sender) && !transfer.summary.approved" mat-raised-button class="action" (click)="cancel(transfer.summary.id)" [disabled]="loading">Cancel transfer</button>
-      <button *ngIf="(transport || receiver) && !transfer.summary.approved" mat-raised-button class="action" color="primary" (click)="approve(transfer.summary.id)" [disabled]="loading">Approve</button>
-      <button *ngIf="(transport || sender) && transfer.summary.approved && !transfer.summary.transferred" mat-raised-button class="action" color="primary" (click)="transferp(transfer.summary.id)" [disabled]="loading">Mark as transferred</button>
-    </ng-container>
+    <div *ngIf="!transfer.summary.cancelled" class="actions">
+      <div *ngIf="(transport || sender) && !transfer.summary.transferred && !transfer.summary.cancelled" class="edit">
+        <button mat-raised-button *ngIf="!editQuantity" (click)="editQuantity = true">Edit transfer</button>
+        <ng-container *ngIf="editQuantity">
+          <button mat-icon-button (click)="cancelEditQuantity(transfer.summary.loscam, transfer.summary.chep, transfer.summary.plain)" [disabled]="loading"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
+          <button mat-icon-button (click)="setQuantity(transfer.summary.id)" [disabled]="loading"><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
+        </ng-container>
+      </div>
+      <button *ngIf="(transport || sender) && !transfer.summary.transferred" mat-raised-button class="action" (click)="cancel(transfer.summary.id)" [disabled]="loading || editQuantity">Cancel transfer</button>
+      <button *ngIf="(transport || receiver) && !transfer.summary.approved" mat-raised-button class="action" color="primary" (click)="approve(transfer.summary.id)" [disabled]="loading || editQuantity">Approve</button>
+      <button *ngIf="(transport || sender) && transfer.summary.approved && !transfer.summary.transferred" mat-raised-button class="action" color="primary" (click)="transferp(transfer.summary.id)" [disabled]="loading || editQuantity">Mark as transferred</button>
+    </div>
   </div>
-  <form (ngSubmit)="setQuantity(transfer.summary.id)">
-    <mat-card class="inner">
-      <mat-list>
-        <mat-list-item>
-          <mat-icon mat-list-icon>tag</mat-icon>
-          <div mat-line>{{ transfer.summary.reference }}</div>
-          <div mat-line>Reference number</div>
-        </mat-list-item>
-      </mat-list>
-      <mat-list class="pallets">
-        <mat-list-item>
-          <img src="assets/loscam.png" mat-list-icon>
-          <div *ngIf="editQuantity" mat-line><input [(ngModel)]="loscamQuantity" [ngModelOptions]="{standalone: true}" type="number"></div>
-          <div *ngIf="!editQuantity" mat-line>{{ loscamQuantity || 0 }}</div>
-          <div mat-line>Loscams</div>
-        </mat-list-item>
-        <mat-list-item>
-          <img src="assets/chep.png" mat-list-icon>
-          <div *ngIf="editQuantity" mat-line><input [(ngModel)]="chepQuantity" [ngModelOptions]="{standalone: true}" type="number"></div>
-          <div *ngIf="!editQuantity" mat-line>{{ chepQuantity || 0 }}</div>
-          <div mat-line>Cheps</div>
-        </mat-list-item>
-        <mat-list-item>
-          <img src="assets/pallet.png" mat-list-icon>
-          <div *ngIf="editQuantity" mat-line><input [(ngModel)]="plainQuantity" [ngModelOptions]="{standalone: true}" type="number"></div>
-          <div *ngIf="!editQuantity" mat-line>{{ plainQuantity || 0 }}</div>
-          <div mat-line>Plains</div>
-        </mat-list-item>
+  <mat-card class="inner">
+    <mat-list>
+      <mat-list-item>
+        <mat-icon mat-list-icon>tag</mat-icon>
+        <div mat-line>{{ transfer.summary.reference }}</div>
+        <div mat-line>Reference number</div>
+      </mat-list-item>
+    </mat-list>
+    <mat-list class="pallets">
+      <mat-list-item>
+        <img src="assets/loscam.png" mat-list-icon>
+        <div *ngIf="editQuantity" mat-line><input [(ngModel)]="loscamQuantity" [ngModelOptions]="{standalone: true}" type="number"></div>
+        <div *ngIf="!editQuantity" mat-line>{{ loscamQuantity || 0 }}</div>
+        <div mat-line>Loscams</div>
+      </mat-list-item>
+      <mat-list-item>
+        <img src="assets/chep.png" mat-list-icon>
+        <div *ngIf="editQuantity" mat-line><input [(ngModel)]="chepQuantity" [ngModelOptions]="{standalone: true}" type="number"></div>
+        <div *ngIf="!editQuantity" mat-line>{{ chepQuantity || 0 }}</div>
+        <div mat-line>Cheps</div>
+      </mat-list-item>
+      <mat-list-item>
+        <img src="assets/pallet.png" mat-list-icon>
+        <div *ngIf="editQuantity" mat-line><input [(ngModel)]="plainQuantity" [ngModelOptions]="{standalone: true}" type="number"></div>
+        <div *ngIf="!editQuantity" mat-line>{{ plainQuantity || 0 }}</div>
+        <div mat-line>Plains</div>
+      </mat-list-item>
     </mat-list>
     <div class="status">
       <div class="approved" *ngIf="transfer.summary.approved">
@@ -59,13 +65,6 @@
       </div>
       <div *ngIf="transfer.summary.cancelled">
         <span>Cancelled</span>
-      </div>
-      <div *ngIf="(transport || sender) && !transfer.summary.approved && !transfer.summary.cancelled" class="edit">
-        <button mat-icon-button type="button" *ngIf="!editQuantity" (click)="editQuantity = true"><mat-icon mat-list-icon class="last-icon">edit</mat-icon></button>
-        <ng-container *ngIf="editQuantity">
-          <button mat-icon-button type="button" (click)="cancelEditQuantity(transfer.summary.loscam, transfer.summary.chep, transfer.summary.plain)" [disabled]="loading"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
-          <button mat-icon-button [disabled]="loading"><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
-        </ng-container>
       </div>
     </div>
 
@@ -116,7 +115,6 @@
     <gcp-doc-upload [id]="transfer.summary.id">
     </gcp-doc-upload>
   </mat-card>
-  </form>
 </div>
 
 <ng-template #loadingPage>

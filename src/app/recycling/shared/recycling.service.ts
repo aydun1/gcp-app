@@ -18,6 +18,12 @@ export class RecyclingService {
   private _columns$ = new BehaviorSubject<any>(null);
   private _dataGroupUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists';
   private _cageTrackerUrl = `${this._dataGroupUrl}/e96c2778-2322-46d6-8de9-3d0c8ca5aefd`;
+  private types = {
+    'Cage - Solid (2.5m³)': 'Solid cage',
+    'Cage - Folding (2.5m³)': 'Folding cage'
+  };
+
+  public loading = new BehaviorSubject<boolean>(false);
 
   constructor(
     private http: HttpClient,
@@ -36,7 +42,6 @@ export class RecyclingService {
         );
       }),
       switchMap(_ => _),
-      tap(_ => console.log(_))
     ).subscribe();
     return this._columns$;
   }
@@ -64,12 +69,18 @@ export class RecyclingService {
     if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Complete'`);
 
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
-    url += `&orderby=fields/CageNumber asc&top=25`;
+    url += `&$orderby=${filters['sort'] ? filters['sort'] : 'fields/CageNumber'}`;
+    url += ` ${filters['order'] ? filters['order'] : 'asc'}`;
+    url += `&top=25`;
     return url;
   }
 
   private assignStatus(cage: Cage): Cage {
-    cage['Date'] = cage.fields.Date4 || cage.fields.Date3 || cage.fields.ToLocalProcessing || cage.fields.Date2 || cage.fields.Date1 || cage.fields.Created; 
+    cage['Date'] = cage.fields.Date4 || cage.fields.Date3 || cage.fields.ToLocalProcessing || cage.fields.Date2 || cage.fields.Date1 || cage.fields.Created;
+    cage['Cage'] = cage.fields.AssetType?.startsWith('Cage');
+    cage['Type'] = cage['Cage'] ? cage.fields.AssetType.split('-', 2)[1].split(' ', 2)[1][0].toLowerCase() : null;
+    cage.fields['AssetTypeClean'] = this.types[cage.fields.AssetType] || cage.fields.AssetType;
+
     if (cage.fields.Status === 'Available') {
       cage['statusId'] = 0;
     } else if (cage.fields.Status === 'Complete') {
@@ -93,9 +104,13 @@ export class RecyclingService {
   }
 
   private getCages(url: string, paginate = false): Observable<Cage[]> {
+    this._loadingCages = true;
+    this.loading.next(true);
     return this.http.get(url).pipe(
       tap(_ => {
         if (paginate) this._nextPage = _['@odata.nextLink'];
+        this._loadingCages = false;
+        this.loading.next(false);
       }),
       map((res: {value: Cage[]}) => res.value.map(cage => this.assignStatus(cage)))
     );
@@ -126,22 +141,16 @@ export class RecyclingService {
     this._nextPage = '';
     this._loadingCages = false;
     const url = this.createUrl(filters);
-    this._loadingCages = true;
-    this.getCages(url, true).subscribe(_ => {
-      this._cagesSubject$.next(_);
-      this._loadingCages = false;
-    });
+    this.getCages(url, true).subscribe(_ => this._cagesSubject$.next(_));
     return this._cagesSubject$;
   }
 
   getNextPage(): void {
     if (!this._nextPage || this._loadingCages) return null;
-    this._loadingCages = true;
     this._cagesSubject$.pipe(
       take(1),
       switchMap(acc => this.getCages(this._nextPage, true).pipe(
         map(curr => [...acc, ...curr]),
-        tap(() => this._loadingCages = false)
       ))
     ).subscribe(_ => this._cagesSubject$.next(_));
   }
@@ -222,6 +231,42 @@ export class RecyclingService {
     return this.updateStatus(id, payload);
   }
 
+  undo(id: string, status: string) {
+    const fields = {};
+    switch(status)
+    {
+    case 'Collected from local processing':
+      fields['Status'] = 'Delivered to local processing';
+      fields['FromLocalProcessing'] = null;
+    break
+    case 'Collected from Polymer':
+      fields['Status'] = 'Delivered to Polymer';
+      fields['Date4'] = null;
+    break;
+    case 'Delivered to Polymer':
+    case 'Delivered to local processing':
+      fields['Status'] = 'Collected from customer';
+      fields['Date3'] = null;
+      fields['ToLocalProcessing'] = null;
+    break;
+    case 'Collected from customer':
+      fields['Status'] = 'Delivered to customer';
+      fields['Date2'] = null;
+    break;
+    case 'Delivered to customer':
+      fields['Status'] = 'Allocated to customer';
+      fields['Date1'] = null;
+    break;
+    case 'Allocated to customer':
+      fields['Status'] = 'Available';
+      fields['CustomerNumber'] = null;
+      fields['Customer'] = null;
+      fields['Site'] = null
+    break;
+    }
+    return this.updateStatus(id, {fields});
+  }
+
   setCageWeight(id: string, weight: number): Observable<Cage> {
     const payload = {fields: {CageWeight: weight}};
     return this.updateStatus(id, payload);
@@ -270,7 +315,7 @@ export class RecyclingService {
   uniqueCageValidator(assetTypeControl: FormControl): any {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       return this.checkCageNumber(control.value, assetTypeControl.value).pipe(
-        map((exists) => (exists ? { cageExists: true } : null)),
+        map((cage) => (cage ? { cageExists: true, id: cage.id } : null)),
         catchError((err) => null)
       );
     };

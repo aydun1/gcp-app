@@ -36,15 +36,16 @@
   margin: 10px 10px;
 }
 
-.mat-column-cageNumber {
+.mat-column-fields-CageNumber {
   flex: 0 1 120px;
 }
 
-.mat-column-updated {
+.mat-column-fields-Modified {
   flex: 0 1 160px;
 }
 
 .mat-column-assetType {
+  font-weight: 500;
   flex: 0 1 280px;
 }
 

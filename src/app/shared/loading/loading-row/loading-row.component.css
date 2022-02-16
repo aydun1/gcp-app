@@ -1,11 +1,7 @@
 :host {
-  align-items: center;
-  background: white;
-  border-color: rgba(0,0,0,.12);
-  border-style: solid;
-  border-width: 0;
-  border-bottom-width: 1px;
-  display: flex;
-  height: 48px;
-  justify-content: center;
+  flex: 1;
+}
+
+.mat-spinner {
+  margin: 0 auto;
 }

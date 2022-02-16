@@ -7,7 +7,7 @@
     <mat-accordion>
       <mat-expansion-panel *ngFor="let cage of availableCages$ | async;trackBy: trackByFn">
         <mat-expansion-panel-header>
-          <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> {{ cage.fields.AssetType }}</mat-panel-title>
+          <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> <span class="cage-type">{{ cage.fields.AssetTypeClean }}</span></mat-panel-title>
         </mat-expansion-panel-header>
         <div class="actions">
           <button mat-raised-button color="primary" (click)="assignToCustomer(cage.id)">Assign to {{ data.customer.name || data.customer.accountnumber }}</button>
@@ -46,11 +46,16 @@
         <mat-accordion>
           <mat-expansion-panel *ngFor="let cage of cages;trackBy: trackByFn">
             <mat-expansion-panel-header>
-              <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> {{ cage.fields.AssetType }}</mat-panel-title>
+              <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> <span class="cage-type">{{ cage.fields.AssetTypeClean }}</span></mat-panel-title>
               <mat-panel-description>{{ cage.fields.Status }}</mat-panel-description>
             </mat-expansion-panel-header>
             <gcp-action-button [cage]="cage" (updated)="getContainers()" class="actions"></gcp-action-button>
             <mat-list>
+              <mat-list-item *ngIf="cage.fields.Site">
+                <mat-icon mat-list-icon>business</mat-icon>
+                <div mat-line>{{ cage.fields.Site }}</div>
+                <div mat-line>Site</div>            
+              </mat-list-item>
               <div mat-subheader>Weights</div>
               <gcp-cage-weights [cage]="cage" (updated)="getContainers()"></gcp-cage-weights>
             </mat-list>

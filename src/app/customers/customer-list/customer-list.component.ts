@@ -1,6 +1,7 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
+import { Sort } from '@angular/material/sort';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
@@ -26,7 +27,9 @@ export class CustomerListComponent implements OnInit {
   public territories$: Observable<Territory[]>;
   public get territories(): Array<string> {return this.sharedService.territoryNames};
   public loading = this.customersService.loading;
-  public displayedColumns = ['name', 'accountnumber', 'loscam', 'chep', 'plain'];
+  public displayedColumns = ['name', 'accountnumber', 'new_pallets_loscam', 'new_pallets_chep', 'new_pallets_plain'];
+  public sortSort: string;
+  public sortOrder: 'asc' | 'desc';
 
   constructor(
     private el: ElementRef,
@@ -89,7 +92,10 @@ export class CustomerListComponent implements OnInit {
     } else {
       this.territoryFilter.patchValue('');
     }
-
+    if ('sort' in params) {
+      this.sortSort = params['sort'];
+      this.sortOrder = params['order'];
+    }
     if ('name' in params) {
       this.nameFilter.patchValue(params['name']);
       filters['name'] = params['name'];
@@ -107,7 +113,9 @@ export class CustomerListComponent implements OnInit {
     if (this.route.firstChild != null) return true;
     const sameName = prev['name'] === curr['name'];
     const sameTerritory = prev['territory'] === curr['territory'];
-    return sameName && sameTerritory && this.loadList;
+    const sameSort = prev['sort'] === curr['sort'];
+    const sameOrder = prev['order'] === curr['order'];
+    return this.loadList && sameName && sameTerritory && sameSort && sameOrder;
   }
 
   setRegion(territory: MatSelectChange): void {
@@ -116,6 +124,13 @@ export class CustomerListComponent implements OnInit {
 
   clearNameFilter(): void {
     this.nameFilter.patchValue('');
+  }
+
+  announceSortChange(e: Sort) {
+    console.log(e)
+    const sort = e.direction ? e.active : null;
+    const order = e.direction || null;
+    this.router.navigate([], { queryParams: {sort, order}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   trackByFn(index: number, item: Customer): string {

@@ -12,8 +12,7 @@
   <div class="inner">
     <div class="header">
       <div *ngIf="isCage">
-        <h2>Cage number: {{ cage.fields.CageNumber }}</h2>
-        <p>{{ cage.fields.AssetType }}</p>
+        <h2>{{ cage.fields.AssetTypeClean }} {{ cage.fields.CageNumber }}</h2>
       </div>
       <div *ngIf="!isCage">
         <h2>{{ cage.fields.AssetType }}</h2>
@@ -30,7 +29,7 @@
         </mat-list-item>
         <mat-list-item *ngIf="cage.fields.CustomerNumber">
           <mat-icon mat-list-icon>business</mat-icon>
-          <div mat-line>{{ cage.fields.Customer }}</div>
+          <div mat-line>{{ cage.fields.Customer }}<span *ngIf="cage.fields.Site">({{ cage.fields.Site }})</span></div>
           <div mat-line>Assigned to</div>
         </mat-list-item>
         <form (ngSubmit)="setCageNotes(cage.id)">
@@ -100,15 +99,16 @@
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
 
+      <ng-container matColumnDef="loading">
+        <mat-footer-cell *matFooterCellDef>
+          <gcp-loading-row></gcp-loading-row>
+        </mat-footer-cell>
+      </ng-container>
+
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;let cage" [class.active]="cage.fields.id === cageId"></mat-row>
+      <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loadingHistory | async) ? false : true"></mat-footer-row>
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
-    <div *ngIf="loadingHistory | async" class="note">
-      Loading history...
-    </div>
-    <div *ngIf="noHistory" class="note">
-      No cage history
-    </div>
   </div>
 </div>

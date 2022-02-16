@@ -158,7 +158,8 @@ export class PalletsService {
       Chep: +v.chep,
       Plain: +v.plain,
       Reference: v.reference,
-      Status: 'Pending'
+      Status: 'Pending',
+      Notify: true
     }};
     return this.http.post<Pallet>(`${this._palletTrackerUrl}/items`, payload).pipe(
       switchMap(_ => this.updateList(_))
@@ -167,7 +168,8 @@ export class PalletsService {
 
   approveInterstatePalletTransfer(id: string, approval: boolean): Observable<Pallet> {
     const payload = {fields: {
-      Status: approval ? 'Approved' : 'Rejected'
+      Status: approval ? 'Approved' : 'Rejected',
+      Notify: true
     }};
     return this.http.patch<Pallet>(`${this._palletTrackerUrl}/items('${id}')`, payload).pipe(
       switchMap(res => this.updateList(res))
@@ -175,14 +177,20 @@ export class PalletsService {
   }
 
   cancelInterstatePalletTransfer(id: string): Observable<Pallet> {
-    const payload = {fields: {Status: 'Cancelled'}};
+    const payload = {fields: {
+      Status: 'Cancelled',
+      Notify: true
+    }};
     return this.http.patch<Pallet>(`${this._palletTrackerUrl}/items('${id}')`, payload).pipe(
       switchMap(res => this.updateList(res))
     );
   }
 
   markFileAttached(id: string, status: boolean): Observable<Pallet> {
-    const payload = {fields: {Attachment: status}};
+    const payload = {fields: {
+      Attachment: status,
+      Notify: false
+    }};
     return this.http.patch<Pallet>(`${this._palletTrackerUrl}/items('${id}')`, payload).pipe(
       switchMap(res => this.updateList(res))
     );
@@ -190,7 +198,8 @@ export class PalletsService {
 
   transferInterstatePalletTransfer(id: string): Observable<Pallet> {
     const payload = {fields: {
-      Status: 'Transferred'
+      Status: 'Transferred',
+      Notify: true
     }};
     return this.http.patch<Pallet>(`${this._palletTrackerUrl}/items('${id}')`, payload).pipe(
       switchMap(res => this.updateList(res))
@@ -205,7 +214,9 @@ export class PalletsService {
       Quantity: +loscam + +plain + +chep,
       Loscam: +loscam,
       Chep: +chep,
-      Plain: +plain
+      Plain: +plain,
+      Notify: true,
+      Status: 'Edited'
     }};
     return this.http.patch<Pallet>(`${this._palletTrackerUrl}/items('${id}')`, payload).pipe(
       switchMap(res => this.updateList(res))
@@ -318,7 +329,18 @@ export class PalletsService {
               }
             }
 
+            if (curr.fields.Status === 'Edited') {
+              delete acc['approved'];
+              delete acc['approver'];
+              acc['quantity'] = curr.fields.Quantity;
+              acc['loscam'] = curr.fields.Loscam;
+              acc['chep'] = curr.fields.Chep;
+              acc['plain'] = curr.fields.Plain;
+            }
+
             if (curr.fields.Status === 'Cancelled') {
+              delete acc['approved'];
+              delete acc['approver'];
               acc['cancelled'] = curr.lastModifiedDateTime;
               acc['canceller'] = curr.lastModifiedBy.user;
             } else {
