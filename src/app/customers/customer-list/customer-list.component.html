@@ -26,22 +26,27 @@
         <mat-cell *matCellDef="let customer" [routerLink]="[customer.accountid]">
           <a [routerLink]="[customer.accountid]" class="customer-link">{{customer.name}}</a>
         </mat-cell>
+        <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
       </ng-container>
       <ng-container matColumnDef="new_pallets_loscam">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Loscams </mat-header-cell>
         <mat-cell *matCellDef="let customer"> {{customer.new_pallets_loscam || 0}} </mat-cell>
+        <mat-footer-cell *matFooterCellDef>{{ loscams }}</mat-footer-cell>
       </ng-container>
       <ng-container matColumnDef="new_pallets_chep">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Cheps </mat-header-cell>
         <mat-cell *matCellDef="let customer"> {{customer.new_pallets_chep || 0}} </mat-cell>
+        <mat-footer-cell *matFooterCellDef>{{ cheps }}</mat-footer-cell>
       </ng-container>
       <ng-container matColumnDef="new_pallets_plain">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Plains </mat-header-cell>
         <mat-cell *matCellDef="let customer"> {{customer.new_pallets_plain || 0}} </mat-cell>
+        <mat-footer-cell *matFooterCellDef>{{ plains }}</mat-footer-cell>
       </ng-container>
       <ng-container matColumnDef="accountnumber">
         <mat-header-cell *matHeaderCellDef> Account number </mat-header-cell>
         <mat-cell *matCellDef="let customer"> {{customer.accountnumber}} </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
       <ng-container matColumnDef="loading">
         <mat-footer-cell *matFooterCellDef>
@@ -51,6 +56,7 @@
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
       <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) ? false : true"></mat-footer-row>
+      <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
   </div>
 </div>
