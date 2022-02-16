@@ -30,6 +30,9 @@ export class CustomerListComponent implements OnInit {
   public displayedColumns = ['name', 'accountnumber', 'new_pallets_loscam', 'new_pallets_chep', 'new_pallets_plain'];
   public sortSort: string;
   public sortOrder: 'asc' | 'desc';
+  public loscams: number;
+  public cheps: number;
+  public plains: number;
 
   constructor(
     private el: ElementRef,
@@ -56,9 +59,20 @@ export class CustomerListComponent implements OnInit {
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       switchMap(_ => state$.pipe(map(state => !_['territory'] ? {..._, territory: state} : _))),
-      tap(_ => this.parseParams(_)),
-      switchMap(_ => this.loadList ? this.getFirstPage(_) : [])
-    );
+      tap(_ => {
+        this.parseParams(_);
+        this.loscams = 0;
+        this.cheps = 0;
+        this.plains = 0;
+      }),
+      switchMap(_ => this.loadList ? this.getFirstPage(_) : []),
+      tap(customers => {
+        this.loscams = customers.map(_ => _.new_pallets_loscam).filter(_ => _).reduce((acc, val) => acc + val, 0);
+        this.cheps = customers.map(_ => _.new_pallets_chep).filter(_ => _).reduce((acc, val) => acc + val, 0);
+        this.plains = customers.map(_ => _.new_pallets_plain).filter(_ => _).reduce((acc, val) => acc + val, 0);
+      }),
+
+    )
 
     this.nameFilter.valueChanges.pipe(
       debounceTime(200),
