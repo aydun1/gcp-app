@@ -174,10 +174,10 @@ export class RecyclingService {
   }
 
   allocateToCustomer(id: string, custnmbr: string, customerName: string, site: string): Observable<Cage> {
-    const payload = {fields: {Status: 'Allocated to customer', CustomerNumber: custnmbr, Customer: customerName}};
-    if (site) payload['fields']['Site'] = site;
+    const fields = {Status: 'Allocated to customer', CustomerNumber: custnmbr, Customer: customerName};
+    if (site) fields['Site'] = site;
     return this.shared.getBranch().pipe(
-      switchMap(_ => this.updateStatus(id, {...payload, Branch: _}))
+      switchMap(_ => this.updateStatus(id, {fields: {...fields, Branch: _}}))
     )
   }
 
