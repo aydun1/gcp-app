@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { Sort } from '@angular/material/sort';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 import { Cage } from '../shared/cage';
 import { RecyclingService } from '../shared/recycling.service';
 
@@ -50,13 +50,16 @@ export class RecyclingListComponent implements OnInit {
         map(() => _)
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
-      tap(_ => this.parseParams(_)),
-      tap(() => this.weight = 0),
-      tap(() => this.count = 0),
+      tap((_: Params) => {
+        this.parseParams(_);
+        this.weight = 0;
+        this.count = 0;
+      }),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
-      tap(cages => this.weight = cages.map(_ => _.fields.Weight).filter(_ => _).reduce((acc, val) => acc + val, 0)),
-      tap(cages => this.count = cages.map(() => 1).reduce((acc, val) => acc + val, 0))
-
+      tap((cages: Array<Cage>) => {
+        this.weight = cages.map(_ => _.fields.NetWeight).filter(_ => _).reduce((acc, val) => acc + +val, 0);
+        this.count = cages.map(() => 1).reduce((acc, val) => acc + val, 0);
+      })
     )
 
     this.binFilter.valueChanges.pipe(

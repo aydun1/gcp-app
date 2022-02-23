@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl, Title } from '@angular/platform-browser';
 import { MsalService } from '@azure/msal-angular';
 import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
 
@@ -18,11 +18,13 @@ export class SharedService {
   public branches = Object.keys(this.territories);
   public territoryNames = this.branches.concat(['INT', 'NATIONAL']);
   private _state$ = new BehaviorSubject<string>('');
+  private appTitle = this.titleService.getTitle();
 
   constructor(
     private http: HttpClient,
     private dom: DomSanitizer,
     private authService: MsalService,
+    private titleService: Title
   ) { }
 
   getPhoto(): Observable<SafeUrl> {
@@ -50,5 +52,10 @@ export class SharedService {
 
   sanitiseName(name: string): string {
     return encodeURIComponent(name.replace('\'', '\'\''));
+  }
+
+  setTitle(pageTitle: string): void {
+    const title =  pageTitle ? `${pageTitle} - ${this.appTitle}` : this.appTitle;
+    this.titleService.setTitle(title);
   }
 }

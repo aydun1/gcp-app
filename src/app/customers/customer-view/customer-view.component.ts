@@ -12,6 +12,7 @@ import { RecyclingService } from '../../recycling/shared/recycling.service';
 import { PalletsService } from '../../pallets/shared/pallets.service';
 import { CustomerSiteDialogComponent } from '../shared/customer-site-dialog/customer-site-dialog.component';
 import { NavigationService } from '../../navigation.service';
+import { SharedService } from 'src/app/shared.service';
 
 @Component({
   selector: 'gcp-customer-view',
@@ -37,6 +38,7 @@ export class CustomerViewComponent implements OnInit {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private navService: NavigationService,
+    private sharedService: SharedService,
     private cutomersService: CustomersService,
     private recyclingService: RecyclingService,
     private palletsService: PalletsService
@@ -65,8 +67,9 @@ export class CustomerViewComponent implements OnInit {
 
 
     this.customer$ = this.route.paramMap.pipe(
-      switchMap(params => this.getCustomer(params.get('id'))
-    ))
+      switchMap(params => this.getCustomer(params.get('id'))),
+      tap(_ => this.sharedService.setTitle(_.name))
+    );
   }
 
   getCustomer(id: string): Observable<Customer> {
