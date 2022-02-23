@@ -95,14 +95,14 @@ export class CustomerViewComponent implements OnInit {
   }
 
   openSiteDialog(customer: Customer): void {
-    const data = {customer};
-    const dialogRef = this.dialog.open(CustomerSiteDialogComponent, {width: '600px', data});
+    const data = {customer, sites: this.sites};
+    const dialogRef = this.dialog.open(CustomerSiteDialogComponent, {width: '600px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe(() => this.refreshSites(data.customer.accountnumber));
   }
 
   openPalletDialog(customer: Customer): void {
     const data = {customer, sites: this.sites, site: this.site};
-    const dialogRef = this.dialog.open(PalletDialogComponent, {width: '600px', data});
+    const dialogRef = this.dialog.open(PalletDialogComponent, {width: '600px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe(() => this.refreshPallets(data.customer.accountnumber));
   }
 

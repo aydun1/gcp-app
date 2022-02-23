@@ -4,10 +4,16 @@
   top: 0;
 }
 
-.icon {
-  order: 10;
+.mat-form-field {
+  margin-top: 20px;
+  width: 100%;
 }
 
-.mat-form-field {
-  width: 100%;
+.active {
+  background-color: #f3f2f1;
+  border-left: 2px solid red;
+}
+
+.delete {
+  margin: 0 12px;
 }

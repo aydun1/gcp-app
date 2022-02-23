@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Params } from '@angular/router';
 import { BehaviorSubject, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { PalletsService } from 'src/app/pallets/shared/pallets.service';
@@ -98,26 +99,40 @@ export class CustomersService {
     return this.http.get(url).pipe(map(_ => _['value']));
   }
 
-  addSite(customer: string, site: string): Observable<Object> {
-    const payload = {fields: {
-      Customer: customer,
-      Title: site
-    }};
-    return this.http.post(`${this.sitesUrl}/items`, payload);
-  }
-
   renameSite(customer: Customer, siteId: string, newName: string, oldName: string): Observable<Object> {
     const payload = {fields: {
       Title: newName
     }};
-    return this.http.patch(`${this.sitesUrl}/items('${siteId}')`, payload).pipe(
-      switchMap(() => this.shared.getBranch()),
+    const action = this.http.patch(`${this.sitesUrl}/items('${siteId}')`, payload);
+    return this.sitePalletTransfer(action, customer, oldName, newName);
+  }
+
+  addSite(customer: Customer, newName: string): Observable<Object> {
+    const payload = {fields: {
+      Customer: customer.accountnumber,
+      Title: newName
+    }};
+    const action = this.http.post(`${this.sitesUrl}/items`, payload);
+    return this.sitePalletTransfer(action, customer, '', newName);
+  }
+
+  deleteSite(customer: Customer, siteId: string, oldName: string): Observable<Object> {
+    const action = this.http.delete(`${this.sitesUrl}/items('${siteId}')`);
+    return this.sitePalletTransfer(action, customer, oldName, '');
+  }
+
+  uniqueSiteValidator(sites: Array<Site>): ValidatorFn {
+    const siteNames = sites.map(_ => _.fields.Title);
+    return (control: AbstractControl): ValidationErrors | null => {
+      const exists = siteNames.includes(control.value);
+      return exists ? {forbiddenName: {value: control.value}} : null;
+    };
+  }
+
+  private sitePalletTransfer(action: Observable<Object>, customer: Customer, oldName: string, newName: string): Observable<Object> {
+    return action.pipe(
       switchMap(() => this.palletsService.getPalletsOwedByCustomer(customer.accountnumber, oldName)),
       switchMap(pallets => this.palletsService.siteTransfer(this.shared.branch, customer.name, customer.accountnumber, oldName, newName, pallets))
     );
-  }
-
-  deleteSite(siteId: string): Observable<Object> {
-    return this.http.delete(`${this.sitesUrl}/items('${siteId}')`);
   }
 }

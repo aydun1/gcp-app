@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AbstractControl, FormControl, ValidationErrors } from '@angular/forms';
+import { AbstractControl, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Params } from '@angular/router';
 import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
@@ -312,7 +312,7 @@ export class RecyclingService {
     return this.getCages(url).pipe(map(res => res[0]));
   }
 
-  uniqueCageValidator(assetTypeControl: FormControl): any {
+  uniqueCageValidator(assetTypeControl: FormControl): ValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       return this.checkCageNumber(control.value, assetTypeControl.value).pipe(
         map((cage) => (cage ? { cageExists: true, id: cage.id } : null)),

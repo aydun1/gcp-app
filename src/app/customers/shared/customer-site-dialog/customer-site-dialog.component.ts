@@ -16,7 +16,6 @@ import { CustomersService } from '../customers.service';
 export class CustomerSiteDialogComponent implements OnInit {
   public siteForm: FormGroup;
   public loading: boolean;
-  public sites$: Observable<Site[]>;
   public siteId: string;
   public oldName: string;
 
@@ -25,47 +24,52 @@ export class CustomerSiteDialogComponent implements OnInit {
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
     private customerService: CustomersService,
-    @Inject(MAT_DIALOG_DATA) public data: {customer: Customer}
+    @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>}
   ) { }
 
   ngOnInit(): void {
     this.siteForm = this.fb.group({
-      site: ['', Validators.required]
+      site: ['', [Validators.required, this.customerService.uniqueSiteValidator(this.data.sites)]]
     });
-    this.getSites();
   }
 
-  getSites(): void {
-    this.sites$ = this.customerService.getSites(this.data.customer.accountnumber);
+  openEditor(siteId: string, name: string): void {
+    this.siteId = siteId;
+    this.oldName = name;
+    this.siteForm.patchValue({site: name});
   }
 
   addSite(): void {
     if (this.siteForm.invalid) return;
+    const action = this.customerService.addSite(this.data.customer, this.siteForm.value['site']);
+    this.finaliseAction(action, 'added new').subscribe();
+  }
+
+  renameSite() {
+    if (this.siteForm.invalid) return;
+    const newName = this.siteForm.value['site'];
+    const action = this.customerService.renameSite(this.data.customer, this.siteId, newName, this.oldName);
+    this.finaliseAction(action, 'renamed').subscribe();
+  }
+
+  deleteSite() {
+    const action = this.customerService.deleteSite(this.data.customer, this.siteId, this.oldName);
+    this.finaliseAction(action, 'removed').subscribe();
+  }
+
+  private finaliseAction(action: Observable<Object>, word: string) {
     this.loading = true;
-    const action = this.siteId ? this.renameSite(this.siteId) : this.customerService.addSite(this.data.customer.accountnumber, this.siteForm.value['site'] );
-    action.pipe(
+    return action.pipe(
       tap(_ => {
         this.dialogRef.close();
-        this.snackBar.open(`Successfully ${this.siteId ? 'renamed' : 'added new'} site`, '', {duration: 3000});
+        this.snackBar.open(`Successfully ${word} site`, '', {duration: 3000});
       }),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         this.loading = false;
         return throwError(() => new Error(err));
       })
-    ).subscribe()
-  }
-
-  openEditor(id: string, name: string): void {
-    this.siteId = id;
-    this.oldName = name;
-    this.siteForm.patchValue({site: name});
-  }
-
-  renameSite(siteId: string) {
-    const customer = this.data.customer;
-    const newName = this.siteForm.value['site'];
-    return this.customerService.renameSite(customer, siteId, newName, this.oldName);
+    )
   }
 
   closeDialog(): void {
