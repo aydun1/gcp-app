@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
 import { BehaviorSubject, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { PalletsService } from 'src/app/pallets/shared/pallets.service';
 import { SharedService } from 'src/app/shared.service';
 import { Customer } from './customer';
 import { Site } from './site';
@@ -20,7 +21,8 @@ export class CustomersService {
 
   constructor(
     private http: HttpClient,
-    private shared: SharedService
+    private shared: SharedService,
+    private palletsService: PalletsService
   ) { }
 
   private createUrl(filters: Params): string {
@@ -104,14 +106,18 @@ export class CustomersService {
     return this.http.post(`${this.sitesUrl}/items`, payload);
   }
 
-  renameSite(id: string, site: string): Observable<Object> {
+  renameSite(customer: Customer, siteId: string, newName: string, oldName: string): Observable<Object> {
     const payload = {fields: {
-      Title: site
+      Title: newName
     }};
-    return this.http.patch(`${this.sitesUrl}/items('${id}')`, payload);
-
+    return this.http.patch(`${this.sitesUrl}/items('${siteId}')`, payload).pipe(
+      switchMap(() => this.shared.getBranch()),
+      switchMap(() => this.palletsService.getPalletsOwedByCustomer(customer.accountnumber, oldName)),
+      switchMap(pallets => this.palletsService.siteTransfer(this.shared.branch, customer.name, customer.accountnumber, oldName, newName, pallets))
+    );
   }
-  deleteSite(id: string): Observable<Object> {
-    return this.http.delete(`${this.sitesUrl}/items('${id}')`);
+
+  deleteSite(siteId: string): Observable<Object> {
+    return this.http.delete(`${this.sitesUrl}/items('${siteId}')`);
   }
 }

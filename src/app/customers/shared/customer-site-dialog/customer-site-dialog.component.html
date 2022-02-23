@@ -3,7 +3,7 @@
   <mat-dialog-content>
     <p>Only use this when you wish to keep track of pallets for customers with more than one physical location, but only one debtor ID.</p>
     <mat-list>
-      <mat-list-item *ngFor="let site of sites$ | async" (click)="editSite(site.id, site.fields.Title)">
+      <mat-list-item *ngFor="let site of sites$ | async" (click)="openEditor(site.id, site.fields.Title)">
         <div mat-line>{{ site.fields.Title }}</div>
         <button type="button" mat-icon-button class="icon"><mat-icon>edit</mat-icon></button>
       </mat-list-item>
@@ -15,7 +15,7 @@
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close tabindex=-1>Cancel</button>
-    <button mat-raised-button color="primary" [disabled]="loading">{{ edit ? 'Rename site' : 'Add site'}}</button>
+    <button mat-raised-button color="primary" [disabled]="loading">{{ siteId ? 'Rename site' : 'Add site'}}</button>
   </mat-dialog-actions>
 </form>
 

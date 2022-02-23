@@ -146,6 +146,49 @@ export class PalletsService {
     return this.http.post(`${this._palletTrackerUrl}/items`, payload);
   }
 
+  siteTransfer(branch: string, custName: string, custNmbr: string, oldSite: string, newSite: string, pallets: PalletQuantities) {
+    const url = `sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists/38f14082-02e5-4978-bf92-f42be2220166/items`;
+    const headers = {'Content-Type': 'application/json'};
+    const transfers = Object.entries(pallets).filter(_ => _[1]);
+    const requests = [];
+    let i = 1;
+  
+    transfers.forEach(_ => {
+      const quantity = _[1];
+      const pallet = _[0];
+      const transferFrom = {fields: {
+        Title: custName,
+        Branch: branch,
+        CustomerNumber: custNmbr,
+        From: quantity > 0 ? custNmbr : branch,
+        To: quantity < 0 ? custNmbr : branch,
+        In: quantity > 0 ? quantity : 0,
+        Out: quantity < 0 ? Math.abs(quantity) : 0,
+        Pallet: pallet,
+        Quantity: Math.abs(quantity),
+        Notes: 'Site transfer'
+      }};
+      if (oldSite) transferFrom['fields']['Site'] = oldSite;
+      requests.push({id: i += 1, method: 'POST', url, headers, body: transferFrom});
+
+      const transferTo = {fields: {
+        Title: custName,
+        Branch: branch,
+        CustomerNumber: custNmbr,
+        From: quantity < 0 ? custNmbr : branch,
+        To: quantity > 0 ? custNmbr : branch,
+        In: quantity < 0 ? Math.abs(quantity) : 0,
+        Out: quantity > 0 ? quantity : 0,
+        Pallet: pallet,
+        Quantity: Math.abs(quantity),
+        Notes: 'Site transfer'
+      }};
+      if (newSite) transferTo['fields']['Site'] = newSite;
+      requests.push({id: i += 1, method: 'POST', url, headers, body: transferTo});
+    })
+    return requests.length ? this.http.post(`https://graph.microsoft.com/v1.0/$batch`, {requests}) : of(1);
+  }
+
   createInterstatePalletTransfer(v: any): Observable<Pallet> {
     const pallets = [v.loscam ? 'Loscam' : '', v.chep ? 'Chep' : '', v.plain ? 'Plain' : ''].filter(_ => _);
     const pallet = pallets.length > 1 ? 'Mixed' : pallets.length === 1 ? pallets[0] : 'None';

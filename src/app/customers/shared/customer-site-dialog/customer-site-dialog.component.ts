@@ -17,7 +17,8 @@ export class CustomerSiteDialogComponent implements OnInit {
   public siteForm: FormGroup;
   public loading: boolean;
   public sites$: Observable<Site[]>;
-  public edit: string;
+  public siteId: string;
+  public oldName: string;
 
   constructor(
     private dialogRef: MatDialogRef<CustomerSiteDialogComponent>,
@@ -41,11 +42,11 @@ export class CustomerSiteDialogComponent implements OnInit {
   addSite(): void {
     if (this.siteForm.invalid) return;
     this.loading = true;
-    const action = this.edit ? this.customerService.renameSite(this.edit, this.siteForm.value['site']) : this.customerService.addSite(this.data.customer.accountnumber, this.siteForm.value['site'] );
+    const action = this.siteId ? this.renameSite(this.siteId) : this.customerService.addSite(this.data.customer.accountnumber, this.siteForm.value['site'] );
     action.pipe(
       tap(_ => {
         this.dialogRef.close();
-        this.snackBar.open(`Successfully ${this.edit ? 'renamed' : 'added new'} site`, '', {duration: 3000});
+        this.snackBar.open(`Successfully ${this.siteId ? 'renamed' : 'added new'} site`, '', {duration: 3000});
       }),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
@@ -55,9 +56,16 @@ export class CustomerSiteDialogComponent implements OnInit {
     ).subscribe()
   }
 
-  editSite(id: string, name: string): void {
-    this.edit = id;
+  openEditor(id: string, name: string): void {
+    this.siteId = id;
+    this.oldName = name;
     this.siteForm.patchValue({site: name});
+  }
+
+  renameSite(siteId: string) {
+    const customer = this.data.customer;
+    const newName = this.siteForm.value['site'];
+    return this.customerService.renameSite(customer, siteId, newName, this.oldName);
   }
 
   closeDialog(): void {

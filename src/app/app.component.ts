@@ -41,7 +41,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.setLoginDisplay();
     this.observer.observe(['(max-width: 600px)']).subscribe(_ => this.isMobile = _.matches);
     this.authService.instance.enableAccountStorageEvents();
-  
+    this.sharedService.getBranch().subscribe();
     this.msalBroadcastService.msalSubject$.pipe(
       filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED)
     ).subscribe((result: EventMessage) => {

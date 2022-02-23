@@ -16,6 +16,7 @@ export class SharedService {
     'WA': ['WA']
   };
   public branches = Object.keys(this.territories);
+  public branch: string;
   public territoryNames = this.branches.concat(['INT', 'NATIONAL']);
   private _state$ = new BehaviorSubject<string>('');
   private appTitle = this.titleService.getTitle();
@@ -40,7 +41,10 @@ export class SharedService {
     return this._state$.pipe(
       switchMap(cur => cur ? of(cur) : this.http.get(url).pipe(
         map(_ => _['value'] ? _['value'] : 'NA'),
-        tap(_ => this._state$.next(_))
+        tap(_ => {
+          this.branch = _;
+          this._state$.next(_);
+        })
       ))
     )
   }
