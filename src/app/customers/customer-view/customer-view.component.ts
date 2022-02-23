@@ -108,7 +108,7 @@ export class CustomerViewComponent implements OnInit {
 
   openRecyclingDialog(customer: Customer): void {
     const data = {customer, sites: this.sites, site: this.site};
-    const dialogRef = this.dialog.open(RecyclingDialogComponent, {width: '800px', data});
+    const dialogRef = this.dialog.open(RecyclingDialogComponent, {width: '800px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe(() => this.refreshCages(data.customer.accountnumber));
   }
 
