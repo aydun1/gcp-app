@@ -42,8 +42,8 @@ export class RecyclingDialogComponent implements OnInit {
     this.loadingCages$.next(true);
     this.recyclingService.getCagesWithCustomer(this.data.customer.accountnumber, this.data.site).subscribe(
       _ => {
-        this.noActiveCages = _.filter(c => c['fields']['Status'] !== 'Complete').length === 0;
-        this.noCageHistory = _.filter(c => c['fields']['Status'] === 'Complete').length === 0;
+        this.noActiveCages = _.filter(c => c['fields']['Status'] !== 'Delivered to customer').length === 0;
+        this.noCageHistory = _.filter(c => c['fields']['Status'] === 'Delivered to customer').length === 0;
         this.cages$.next(_);
         this.loadingCages$.next(false);
       }

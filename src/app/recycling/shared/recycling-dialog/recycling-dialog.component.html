@@ -20,7 +20,7 @@
 <ng-container *ngIf="!assigning">
   <h2 mat-dialog-title>Manage cages for {{ data.customer.name }} ({{ data.customer.accountnumber }}) <span *ngIf="data.site">({{ data.site }})</span></h2>
   <mat-dialog-content>
-    <ng-container *ngIf="(cages$ | async | groupBy:'Complete') as groups">
+    <ng-container *ngIf="(cages$ | async | groupBy:'Delivered to customer') as groups">
       <div *ngFor="let cages of groups;let indexOfelement=index;trackBy: trackByIndex" class="section">
         <ng-container *ngIf="indexOfelement === 0" >
           <div class="buttons">
