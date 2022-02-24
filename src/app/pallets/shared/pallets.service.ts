@@ -297,7 +297,7 @@ export class PalletsService {
     )
   }
 
-  getPalletsOwedByCustomer(custnmbr: string, site = ''): Observable<PalletQuantities> {
+  getPalletsOwedByCustomer(custnmbr: string, site = null): Observable<PalletQuantities> {
     const date = new Date();
     const startOfMonth = new Date(Date.UTC(date.getFullYear(), date.getUTCMonth(), 1)).toISOString();
     const dateInt = this.dateInt(date);
@@ -305,8 +305,8 @@ export class PalletsService {
     let url = `${this._endpoint}/${this._palletsOwedUrl}/items?expand=fields(select=Title,Pallet,Owing)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt lt '${dateInt}'`;
     let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}' and fields/Created ge '${startOfMonth}'`;
 
-    if (site) {
-      const filter = `and fields/Site eq '${this.shared.sanitiseName(site)}'`;
+    if (site !== null) {
+      const filter = 'and fields/Site eq ' + (site ? `'${this.shared.sanitiseName(site)}'` : 'null');
       url += filter;
       url2 += filter;
     }

@@ -1,7 +1,7 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
-import { map, Observable, Subject, switchMap, tap } from 'rxjs';
+import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
+import { combineLatest, distinctUntilChanged, filter, map, Observable, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { Customer } from '../shared/customer';
 import { Site } from '../shared/site';
@@ -25,6 +25,7 @@ export class CustomerViewComponent implements OnInit {
   private sitesSubject$ = new Subject<string>();
   private palletsSubject$ = new Subject<string>();
   private cagesSubject$ = new Subject<string>();
+  private customer: Customer;
   public customer$: Observable<Customer>;
   public site: string;
   public sites: Array<Site>;
@@ -36,6 +37,7 @@ export class CustomerViewComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private dialog: MatDialog,
     private navService: NavigationService,
     private sharedService: SharedService,
@@ -45,6 +47,22 @@ export class CustomerViewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.customer$ =  combineLatest([this.route.paramMap, this.route.queryParams]).pipe(
+      switchMap(_ => this.router.events.pipe(
+        startWith(new NavigationEnd(1, null, null)),
+        filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+        map(() => _)
+      )),
+      distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
+      tap(_ => {
+        this.parseParams(_);
+        this.refreshPallets();
+        this.refreshCages();
+      }),
+      distinctUntilChanged((prev, curr) => prev[0].get('id') === curr[0].get('id')),
+      switchMap(([paramMap, params]) => this.getCustomer(paramMap.get('id')))
+    );
+  
     this.sitesSubject$.pipe(
       switchMap(id => this.cutomersService.getSites(id)),
       tap(sites => this.sites = sites)
@@ -52,7 +70,7 @@ export class CustomerViewComponent implements OnInit {
 
     this.palletsSubject$.pipe(
       tap(() => this.palletsOwing = null),
-      switchMap(id => this.palletsService.getPalletsOwedByCustomer(id, this.site))
+      switchMap(id => this.palletsService.getPalletsOwedByCustomer(id, this.site)),
     ).subscribe(pallets => this.palletsOwing = pallets);
 
     this.cagesSubject$.pipe(
@@ -64,58 +82,72 @@ export class CustomerViewComponent implements OnInit {
         return {count: activeCages, weight: totalWeight};
       })
     ).subscribe(cages => this.cages = cages);
+  }
 
+  parseParams(params: Params): void {
+    if (!params) return;
+    this.site = params[1]['site'];
+  }
 
-    this.customer$ = this.route.paramMap.pipe(
-      switchMap(params => this.getCustomer(params.get('id'))),
-      tap(_ => this.sharedService.setTitle(_.name))
-    );
+  compareQueryStrings(prev: Params, curr: Params): boolean {
+    if (!prev || !curr) return true;
+    const sameSite = prev[1]['site'] === curr[1]['site'];
+    return sameSite;
   }
 
   getCustomer(id: string): Observable<Customer> {
     return this.cutomersService.getCustomer(id).pipe(
       tap(_ => {
-        this.refreshSites(_.accountnumber);
-        this.refreshPallets(_.accountnumber);
-        this.refreshCages(_.accountnumber);
+        this.customer = _;
+        this.setTitle();
+        this.refreshSites();
+        this.refreshPallets();
+        this.refreshCages();
       })
     );
   }
 
-  refreshSites(id: string): void {
-    this.sitesSubject$.next(id);
+  refreshSites(): void {
+    if (!this.customer) return;
+    this.sitesSubject$.next(this.customer.accountnumber);
   }
 
-  refreshPallets(id: string): void {
-    this.palletsSubject$.next(id);
+  refreshPallets(): void {
+    if (!this.customer) return;
+    this.palletsSubject$.next(this.customer.accountnumber);
   }
 
-  refreshCages(id: string): void {
-    this.cagesSubject$.next(id);
+  refreshCages(): void {
+    if (!this.customer) return;
+    this.cagesSubject$.next(this.customer.accountnumber);
   }
 
   openSiteDialog(customer: Customer): void {
     const data = {customer, sites: this.sites};
     const dialogRef = this.dialog.open(CustomerSiteDialogComponent, {width: '600px', data, autoFocus: false});
-    dialogRef.afterClosed().subscribe(() => this.refreshSites(data.customer.accountnumber));
+    dialogRef.afterClosed().subscribe(() => this.refreshSites());
   }
 
   openPalletDialog(customer: Customer): void {
     const data = {customer, sites: this.sites, site: this.site};
     const dialogRef = this.dialog.open(PalletDialogComponent, {width: '600px', data, autoFocus: false});
-    dialogRef.afterClosed().subscribe(() => this.refreshPallets(data.customer.accountnumber));
+    dialogRef.afterClosed().subscribe(() => this.refreshPallets());
   }
 
   openRecyclingDialog(customer: Customer): void {
     const data = {customer, sites: this.sites, site: this.site};
     const dialogRef = this.dialog.open(RecyclingDialogComponent, {width: '800px', data, autoFocus: false});
-    dialogRef.afterClosed().subscribe(() => this.refreshCages(data.customer.accountnumber));
+    dialogRef.afterClosed().subscribe(() => this.refreshCages());
   }
 
-  setSite(customer: string, site: string): void {
-    this.site = site;
-    this.refreshPallets(customer);
-    this.refreshCages(customer);
+  setSite(customer: Customer, site: string): void {
+    this.router.navigate([], { queryParams: {site: site}, queryParamsHandling: 'merge', replaceUrl: true}).then(
+      () => this.sharedService.setTitle(`${customer.name} ${site ? '(' + this.site + ')' : '' }`)
+    );
+  }
+
+  setTitle() {
+    this.sharedService.setTitle(`${this.customer.name} ${this.site ? '(' + this.site + ')' : '' }`)
   }
 
   goBack(): void {
