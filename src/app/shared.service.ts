@@ -55,7 +55,7 @@ export class SharedService {
   }
 
   sanitiseName(name: string): string {
-    return encodeURIComponent(name.replace('\'', '\'\''));
+    return encodeURIComponent(name.trim().replace('\'', '\'\''));
   }
 
   setTitle(pageTitle: string): void {
