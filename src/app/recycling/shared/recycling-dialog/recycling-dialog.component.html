@@ -5,6 +5,9 @@
   </div>
   <mat-dialog-content>
     <mat-accordion>
+      <p *ngIf="loadingAvailableCages$ | async" class="note">
+        Loading...
+      </p>
       <mat-expansion-panel *ngFor="let cage of availableCages$ | async;trackBy: trackByFn">
         <mat-expansion-panel-header>
           <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> <span class="cage-type">{{ cage.fields.AssetTypeClean }}</span></mat-panel-title>
@@ -25,12 +28,12 @@
         <ng-container *ngIf="indexOfelement === 0" >
           <div class="buttons">
             <h3 class="section-title">Active cages</h3>
-            <button mat-raised-button color="primary" (click)="assigning=true">Assign a cage</button>
+            <button mat-raised-button color="primary" (click)="openAssigningPage()">Assign a cage</button>
           </div>
           <p *ngIf="loadingCages$ | async" class="note">
             Loading...
           </p>
-          <p *ngIf="noActiveCages" class="note">
+          <p *ngIf="noActiveCages$ | async" class="note">
             No active cages
           </p>
         </ng-container>
@@ -39,7 +42,7 @@
           <p *ngIf="loadingCages$ | async" class="note">
             Loading...
           </p>
-          <p *ngIf="noCageHistory" class="note">
+          <p *ngIf="noCageHistory$ | async" class="note">
             No cage history
           </p>
         </ng-container>

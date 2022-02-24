@@ -129,12 +129,14 @@ export class CustomerViewComponent implements OnInit {
   }
 
   openPalletDialog(customer: Customer): void {
+    if (!this.sites) return;
     const data = {customer, sites: this.sites, site: this.site};
     const dialogRef = this.dialog.open(PalletDialogComponent, {width: '600px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe(() => this.refreshPallets());
   }
 
   openRecyclingDialog(customer: Customer): void {
+    if (!this.sites) return;
     const data = {customer, sites: this.sites, site: this.site};
     const dialogRef = this.dialog.open(RecyclingDialogComponent, {width: '800px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe(() => this.refreshCages());

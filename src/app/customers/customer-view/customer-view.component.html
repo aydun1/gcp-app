@@ -9,11 +9,11 @@
 
 <div *ngIf="customer$ | async as customer; else loadingPage" class="content">
   <div class="top-buttons">
-    <div>
+    <div class="details">
       <h2 class="name">{{ customer.name || 'Unnamed customer' }}</h2>
       <p class="number">{{ customer.accountnumber }}</p>
     </div>
-    <button mat-stroked-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{customer: customer}">
+    <button mat-stroked-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{customer: customer}" [disabled]="!sites">
       {{ site || 'All sites'}}
     </button>
   </div>
