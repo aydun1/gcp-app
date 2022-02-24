@@ -27,7 +27,7 @@ export class CustomersService {
   ) { }
 
   private createUrl(filters: Params): string {
-    let url = `${this.url}/accounts?$select=name,accountnumber,territoryid,new_pallets_loscam,new_pallets_chep,new_pallets_plain`;
+    let url = `${this.url}/accounts?$select=name,accountnumber,new_pallets_loscam,new_pallets_chep,new_pallets_plain`;
     const filterArray = [];
     if (filters['name']) filterArray.push(`(contains(name,'${this.shared.sanitiseName(filters['name'])}') or startswith(accountnumber,'${this.shared.sanitiseName(filters['name'])}'))`);
     if (filters['territory']) {
@@ -53,7 +53,7 @@ export class CustomersService {
   }
 
   getCustomer(id: string): Observable<Customer> {
-    const url = `${this.url}/accounts(${id})`;
+    const url = `${this.url}/accounts(${id})?$select=name,accountnumber`;
     return this.http.get(url) as Observable<Customer>;
   }
 
