@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 
 import { Site } from '../site';
@@ -23,6 +24,7 @@ export class CustomerSiteDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<CustomerSiteDialogComponent>,
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
+    private router: Router,
     private customerService: CustomersService,
     @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>}
   ) { }
@@ -41,20 +43,21 @@ export class CustomerSiteDialogComponent implements OnInit {
 
   addSite(): void {
     if (this.siteForm.invalid) return;
-    const action = this.customerService.addSite(this.data.customer, this.siteForm.value['site']);
-    this.finaliseAction(action, 'added new').subscribe();
+    const newName = this.siteForm.value['site'];
+    const action = this.customerService.addSite(this.data.customer, newName);
+    this.finaliseAction(action, 'added new').subscribe(() => this.navigate(newName));
   }
 
   renameSite() {
     if (this.siteForm.invalid) return;
     const newName = this.siteForm.value['site'];
     const action = this.customerService.renameSite(this.data.customer, this.siteId, newName, this.oldName);
-    this.finaliseAction(action, 'renamed').subscribe();
+    this.finaliseAction(action, 'renamed').subscribe(() => this.navigate(newName));
   }
 
   deleteSite() {
     const action = this.customerService.deleteSite(this.data.customer, this.siteId, this.oldName);
-    this.finaliseAction(action, 'removed').subscribe();
+    this.finaliseAction(action, 'removed').subscribe(() => this.navigate(null));
   }
 
   private finaliseAction(action: Observable<Object>, word: string) {
@@ -70,6 +73,10 @@ export class CustomerSiteDialogComponent implements OnInit {
         return throwError(() => new Error(err));
       })
     )
+  }
+
+  navigate(site: string) {
+    this.router.navigate([], { queryParams: {site}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   closeDialog(): void {
