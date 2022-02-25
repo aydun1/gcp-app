@@ -49,6 +49,7 @@ export class PalletsService {
           const cleanName = this.shared.sanitiseName(filters['name']);
           return `(startswith(fields/CustomerNumber, '${cleanName}') or startswith(fields/Title, '${cleanName}'))`;
         case 'status':
+          if (filters['status'] === 'Pending') return `(fields/Status eq 'Pending' or fields/Status eq 'Edited')`
           return `fields/Status eq '${filters['status']}'`;
         case 'pallet':
           return `fields/Pallet eq '${filters['pallet']}'`;
