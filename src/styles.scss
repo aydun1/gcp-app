@@ -93,6 +93,11 @@ a {
   display: none;
 }
 
+.mat-header-row {
+  position: sticky;
+  top: 0;
+}
+
 @media (max-width: 800px) {
   .home-cards {
     width: calc(100% - 20px);
