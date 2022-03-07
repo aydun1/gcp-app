@@ -59,6 +59,7 @@ export class PalletsService {
           return '';
       }
     }).filter(_ => _);
+    if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Cancelled'`);
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
     url += `&orderby=fields/Created desc&top=25`;
     return url;
