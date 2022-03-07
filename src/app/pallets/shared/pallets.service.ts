@@ -250,7 +250,7 @@ export class PalletsService {
     );
   }
 
-  editInterstatePalletTransferQuantity(id: string, loscam: number, chep: number, plain: number): Observable<Pallet> {
+  editInterstatePalletTransferQuantity(id: string, reference: string, loscam: number, chep: number, plain: number): Observable<Pallet> {
     const pallets = [loscam ? 'Loscam' : '', chep ? 'Chep' : '', plain ? 'Plain' : ''].filter(_ => _);
     const pallet = pallets.length > 1 ? 'Mixed' : pallets.length === 1 ? pallets[0] : 'None';
     const payload = {fields: {
@@ -259,8 +259,19 @@ export class PalletsService {
       Loscam: +loscam,
       Chep: +chep,
       Plain: +plain,
+      Reference: reference,
       Notify: true,
       Status: 'Edited'
+    }};
+    return this.http.patch<Pallet>(`${this._palletTrackerUrl}/items('${id}')`, payload).pipe(
+      switchMap(res => this.updateList(res))
+    );
+  }
+
+  editInterstatePalletTransferReference(id: string, reference: string): Observable<Pallet> {
+    const payload = {fields: {
+      Reference: reference,
+      Notify: false,
     }};
     return this.http.patch<Pallet>(`${this._palletTrackerUrl}/items('${id}')`, payload).pipe(
       switchMap(res => this.updateList(res))
@@ -348,12 +359,12 @@ export class PalletsService {
         const a = _.value.reverse().reduce(
           (acc, curr) => {
             acc['id'] = curr.fields.id;
+            acc['reference'] = curr.fields.Reference;
             if (curr.id === '1.0') {
               acc['initiator'] = curr.lastModifiedBy.user;
               acc['from'] = curr.fields.From;
               acc['to'] = curr.fields.To;
               acc['innitiated'] = curr.lastModifiedDateTime;
-              acc['reference'] = curr.fields.Reference;
             }
             if (!acc['approved']) {
               if (curr.fields.Status === 'Approved') {
@@ -394,7 +405,6 @@ export class PalletsService {
             return acc;
           }, {versions: _.value.length}
         )
-        console.log(a)
         return {summary: a};
       })
     );
