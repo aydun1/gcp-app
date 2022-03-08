@@ -13,6 +13,10 @@
         <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event)">
           <mat-option>All</mat-option>
           <mat-option *ngFor="let s of (choices$ | async)?.Status?.choice.choices" value="{{ s }}">{{ s }}</mat-option>
+          <mat-optgroup label="Cage history">
+            <mat-option value="Local processing">Local processing</mat-option>
+            <mat-option value="Polymer">Polymer</mat-option>
+          </mat-optgroup>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="asset-type">
@@ -64,9 +68,9 @@
       <ng-container matColumnDef="weight">
         <mat-header-cell *matHeaderCellDef> Net weight </mat-header-cell>
         <mat-cell *matCellDef="let cage">
-          {{ cage.fields.NetWeight || 0 }} kg
+          {{ cage.fields.NetWeight || 0 | number }} kg
         </mat-cell>
-        <mat-footer-cell *matFooterCellDef> {{ weight || 0 }} kg </mat-footer-cell>
+        <mat-footer-cell *matFooterCellDef> {{ weight || 0 | number }} kg </mat-footer-cell>
       </ng-container>
 
       <ng-container matColumnDef="loading">

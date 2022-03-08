@@ -57,6 +57,8 @@ export class RecyclingService {
         case 'branch':
           return `fields/Branch eq '${filters['branch']}'`;
         case 'status':
+          if (filters['status'] === 'Polymer') return `fields/Date3 ne null`;
+          if (filters['status'] === 'Local processing') return `fields/ToLocalProcessing ne null`;
           return `fields/Status eq '${filters['status']}'`;
         case 'assetType':
           return `fields/AssetType eq '${filters['assetType']}'`;
