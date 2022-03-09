@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Params } from '@angular/router';
-import { BehaviorSubject, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { PalletsService } from 'src/app/pallets/shared/pallets.service';
 import { SharedService } from 'src/app/shared.service';
 import { Customer } from './customer';
@@ -79,12 +79,21 @@ export class CustomersService {
     this._loadingCustomers = true;
     this.loading.next(true);
     return this.http.get(url, {headers: {Prefer: 'odata.maxpagesize=25'}}).pipe(
+      map((_: {value: Customer[]}) => _.value as Customer[]),
+      catchError(error => {
+        if (error.status === 403) alert('No access. Contact Aidan to have your account enabled to use this page.');
+        if (error.error instanceof ErrorEvent) {
+            console.log(`Error: ${error.error.message}`);
+        } else {
+          console.log(`Error: ${error.message}`);
+        }
+        return of([] as Customer[]);
+      }),
       tap(_ => {
         this.nextPage = _['@odata.nextLink'];
         this._loadingCustomers = false;
         this.loading.next(false);
       }),
-      map((_: {value: Customer[]}) => _.value as Customer[])
     );
   }
 
