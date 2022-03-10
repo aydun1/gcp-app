@@ -1,4 +1,4 @@
-<button mat-stroked-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{cage: cage}">
+<button mat-stroked-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{cage: cage}" [disabled]="cage.statusId === 7">
   {{ cage.fields.Branch}}
 </button>
 
