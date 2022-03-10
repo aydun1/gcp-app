@@ -79,6 +79,11 @@ export class CustomersService {
     this._loadingCustomers = true;
     this.loading.next(true);
     return this.http.get(url, {headers: {Prefer: 'odata.maxpagesize=25'}}).pipe(
+      tap(_ => {
+        this.nextPage = _['@odata.nextLink'];
+        this._loadingCustomers = false;
+        this.loading.next(false);
+      }),
       map((_: {value: Customer[]}) => _.value as Customer[]),
       catchError(error => {
         if (error.status === 403) alert('No access. Contact Aidan to have your account enabled to use this page.');
@@ -88,12 +93,7 @@ export class CustomersService {
           console.log(`Error: ${error.message}`);
         }
         return of([] as Customer[]);
-      }),
-      tap(_ => {
-        this.nextPage = _['@odata.nextLink'];
-        this._loadingCustomers = false;
-        this.loading.next(false);
-      }),
+      })
     );
   }
 
