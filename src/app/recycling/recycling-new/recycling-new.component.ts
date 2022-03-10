@@ -6,7 +6,7 @@ import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
 import { RecyclingService } from '../shared/recycling.service';
 import { NavigationService } from '../../navigation.service';
-import { SharedService } from 'src/app/shared.service';
+import { SharedService } from '../../shared.service';
 
 @Component({
   selector: 'gcp-recycling-new',

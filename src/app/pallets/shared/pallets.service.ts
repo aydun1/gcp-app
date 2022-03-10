@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
 import { BehaviorSubject, combineLatest, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
-import { SharedService } from 'src/app/shared.service';
+import { SharedService } from '../../shared.service';
 import { Pallet } from './pallet';
 import { PalletTotals } from './pallet-totals';
 

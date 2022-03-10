@@ -12,7 +12,7 @@ import { RecyclingService } from '../../recycling/shared/recycling.service';
 import { PalletsService } from '../../pallets/shared/pallets.service';
 import { CustomerSiteDialogComponent } from '../shared/customer-site-dialog/customer-site-dialog.component';
 import { NavigationService } from '../../navigation.service';
-import { SharedService } from 'src/app/shared.service';
+import { SharedService } from '../../shared.service';
 
 @Component({
   selector: 'gcp-customer-view',

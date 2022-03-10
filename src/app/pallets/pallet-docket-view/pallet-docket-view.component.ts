@@ -1,6 +1,7 @@
 import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { map, switchMap, tap } from 'rxjs';
+
 import { Pallet } from '../shared/pallet';
 import { PalletsService } from '../shared/pallets.service';
 

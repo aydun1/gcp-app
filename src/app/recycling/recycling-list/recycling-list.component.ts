@@ -3,7 +3,8 @@ import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { Sort } from '@angular/material/sort';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
+
 import { Cage } from '../shared/cage';
 import { RecyclingService } from '../shared/recycling.service';
 
@@ -149,7 +150,7 @@ export class RecyclingListComponent implements OnInit {
     this.binFilter.patchValue('');
   }
 
-  announceSortChange(e: Sort) {
+  announceSortChange(e: Sort): void {
     const sort = e.direction ? e.active : null;
     const order = e.direction || null;
     this.router.navigate([], { queryParams: {sort, order}, queryParamsHandling: 'merge', replaceUrl: true});

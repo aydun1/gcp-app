@@ -48,19 +48,19 @@ export class CustomerSiteDialogComponent implements OnInit {
     this.finaliseAction(action, 'added new').subscribe(() => this.navigate(newName));
   }
 
-  renameSite() {
+  renameSite(): void {
     if (this.siteForm.invalid) return;
     const newName = this.siteForm.value['site'];
     const action = this.customerService.renameSite(this.data.customer, this.siteId, newName, this.oldName);
     this.finaliseAction(action, 'renamed').subscribe(() => this.navigate(newName));
   }
 
-  deleteSite() {
+  deleteSite(): void {
     const action = this.customerService.deleteSite(this.data.customer, this.siteId, this.oldName);
     this.finaliseAction(action, 'removed').subscribe(() => this.navigate(null));
   }
 
-  private finaliseAction(action: Observable<Object>, word: string) {
+  private finaliseAction(action: Observable<Object>, word: string): Observable<object> {
     this.loading = true;
     return action.pipe(
       tap(_ => {
@@ -75,7 +75,7 @@ export class CustomerSiteDialogComponent implements OnInit {
     )
   }
 
-  navigate(site: string) {
+  navigate(site: string): void {
     this.router.navigate([], { queryParams: {site}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 

@@ -3,8 +3,9 @@ import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Params } from '@angular/router';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap } from 'rxjs';
-import { PalletsService } from 'src/app/pallets/shared/pallets.service';
-import { SharedService } from 'src/app/shared.service';
+
+import { PalletsService } from '../../pallets/shared/pallets.service';
+import { SharedService } from '../../shared.service';
 import { Customer } from './customer';
 import { Site } from './site';
 

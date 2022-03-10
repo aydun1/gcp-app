@@ -3,7 +3,8 @@ import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
-import { SharedService } from 'src/app/shared.service';
+
+import { SharedService } from '../../shared.service';
 import { PalletsService } from '../shared/pallets.service';
 import { Pallet } from '../shared/pallet';
 

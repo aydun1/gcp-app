@@ -233,7 +233,7 @@ export class RecyclingService {
     return this.updateStatus(id, payload);
   }
 
-  undo(id: string, status: string) {
+  undo(id: string, status: string): Observable<Cage> {
     const fields = {};
     switch(status)
     {
