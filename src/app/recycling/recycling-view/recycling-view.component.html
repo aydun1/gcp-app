@@ -11,12 +11,13 @@
 <div *ngIf="cage$ | async as cage" class="content">
   <div class="inner">
     <div class="header">
-      <div *ngIf="isCage">
+      <div *ngIf="isCage" class="title">
         <h2>{{ cage.fields.AssetTypeClean }} {{ cage.fields.CageNumber }}</h2>
       </div>
-      <div *ngIf="!isCage">
+      <div *ngIf="!isCage" class="title">
         <h2>{{ cage.fields.AssetType }}</h2>
       </div>
+      <gcp-branch-button [cage]="cage" (updated)="getCage()"></gcp-branch-button>
       <gcp-action-button [cage]="cage" (updated)="getCage()"></gcp-action-button>
     </div>
     <mat-card>
