@@ -8,6 +8,8 @@ import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Obser
 import { Cage } from '../shared/cage';
 import { RecyclingService } from '../shared/recycling.service';
 
+interface choice {choice: {choices: Array<any>}, name: string};
+
 @Component({
   selector: 'gcp-recycling-list',
   templateUrl: './recycling-list.component.html',
@@ -26,7 +28,7 @@ export class RecyclingListComponent implements OnInit {
   public displayedColumns = ['fields/CageNumber', 'assetType', 'status', 'fields/Modified', 'weight'];
   public sortSort: string;
   public sortOrder: 'asc' | 'desc';
-  public choices$: BehaviorSubject<any>;
+  public choices: {Status: choice, AssetType: choice, Branch: choice};
 
   constructor(
     private el: ElementRef,
@@ -71,7 +73,13 @@ export class RecyclingListComponent implements OnInit {
   }
 
   getOptions(): void {
-    this.choices$ = this.recyclingService.getColumns();
+    this.recyclingService.getColumns().pipe(
+      tap(_ => {
+        if (!_) return;
+        _['Status']['choice']['choices'] = _['Status']['choice']['choices'].filter(c => c !== 'Complete');
+        this.choices = _;
+      })
+    ).subscribe();
   }
 
   getFirstPage(_: Params): BehaviorSubject<Cage[]> {
