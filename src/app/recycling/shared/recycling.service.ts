@@ -5,6 +5,7 @@ import { Params } from '@angular/router';
 import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
+import { Site } from '../../customers/shared/site';
 import { Cage } from './cage';
 
 
@@ -175,9 +176,9 @@ export class RecyclingService {
     return this.getCages(url);
   }
 
-  allocateToCustomer(id: string, custnmbr: string, customerName: string, site: string): Observable<Cage> {
+  allocateToCustomer(id: string, custnmbr: string, customerName: string, site: Site): Observable<Cage> {
     const fields = {Status: 'Allocated to customer', CustomerNumber: custnmbr, Customer: customerName};
-    if (site) fields['Site'] = site;
+    if (site) fields['Site'] = site.fields.Title;
     return this.shared.getBranch().pipe(
       switchMap(_ => this.updateStatus(id, {fields: {...fields, Branch: _}}))
     )

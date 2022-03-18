@@ -14,10 +14,12 @@ import { Site } from '../../../customers/shared/site';
   styleUrls: ['./recycling-dialog.component.css']
 })
 export class RecyclingDialogComponent implements OnInit {
-  public noActiveCages$ = new BehaviorSubject<boolean>(false);
+  public noAllocatedCages$ = new BehaviorSubject<boolean>(false);
+  public noDeliveredCages$ = new BehaviorSubject<boolean>(false);
   public noCageHistory$ = new BehaviorSubject<boolean>(false);
   public cages$ = new BehaviorSubject<Cage[]>([]);
   public weightForm: FormGroup;
+  public allocatorForm: FormGroup;
   public assigning: boolean;
   public availableCages$: Observable<Cage[]>;
   public loadingCages$ = new BehaviorSubject<boolean>(true);
@@ -31,6 +33,10 @@ export class RecyclingDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    const selectedSite = this.data.sites.find(_ => _.fields.Title === this.data.site);
+    this.allocatorForm = this.fb.group({
+      site: [selectedSite, this.data.sites.length ? Validators.required : '']
+    });
     this.weightForm = this.fb.group({
       weight: ['', Validators.required]
     });
@@ -44,8 +50,9 @@ export class RecyclingDialogComponent implements OnInit {
     this.loadingCages$.next(true);
     this.recyclingService.getCagesWithCustomer(this.data.customer.accountnumber, this.data.site).subscribe(
       _ => {
-        this.noActiveCages$.next(_.filter(c => c['fields']['Status'] !== 'Delivered to customer').length === 0);
-        this.noCageHistory$.next(_.filter(c => c['fields']['Status'] === 'Delivered to customer').length === 0);
+        this.noAllocatedCages$.next(_.filter(c => c['fields']['Status'] === 'Allocated to customer').length === 0);
+        this.noDeliveredCages$.next(_.filter(c => c['fields']['Status'] === 'Delivered to customer').length === 0);
+        this.noCageHistory$.next(_.filter(c => c['fields']['Status'] !== 'Allocated to customer' && c['fields']['Status'] !== 'Delivered to customer').length === 0);
         this.cages$.next(_);
         this.loadingCages$.next(false);
       }
@@ -53,12 +60,15 @@ export class RecyclingDialogComponent implements OnInit {
   }
 
   assignToCustomer(id: string): void {
-    this.recyclingService.allocateToCustomer(id, this.data.customer.accountnumber, this.data.customer.name, this.data.site).subscribe(() => this.closeAssigningPage());
+    if (this.allocatorForm.invalid) return;
+    const site = this.allocatorForm.value.site;
+    this.recyclingService.allocateToCustomer(id, this.data.customer.accountnumber, this.data.customer.name, site).subscribe(() => this.closeAssigningPage());
   }
 
   openAssigningPage(): void {
     this.assigning = true;
-    this.noActiveCages$.next(false);
+    this.noAllocatedCages$.next(false);
+    this.noDeliveredCages$.next(false);
     this.noCageHistory$.next(false);
   }
 
