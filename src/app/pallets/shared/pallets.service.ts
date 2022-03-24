@@ -47,9 +47,6 @@ export class PalletsService {
           return `fields/To eq '${filters['to']}'`;
         case 'branch':
           return `fields/Branch eq '${filters['branch']}'`;
-        case 'name':
-          const cleanName = this.shared.sanitiseName(filters['name']);
-          return `(startswith(fields/CustomerNumber, '${cleanName}') or startswith(fields/Title, '${cleanName}'))`;
         case 'status':
           if (filters['status'] === 'Pending') return `(fields/Status eq 'Pending' or fields/Status eq 'Edited')`
           return `fields/Status eq '${filters['status']}'`;
@@ -61,6 +58,10 @@ export class PalletsService {
           return '';
       }
     }).filter(_ => _);
+    if (filterKeys.includes('name')) {
+      const cleanName = this.shared.sanitiseName(filters['name']);
+      parsed.push(`(startswith(fields/CustomerNumber, '${cleanName}') or startswith(fields/Title, '${cleanName}'))`);
+    }
     if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Cancelled'`);
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
     url += `&orderby=fields/Created desc&top=25`;
