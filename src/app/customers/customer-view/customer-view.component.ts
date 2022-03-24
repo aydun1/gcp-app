@@ -29,7 +29,7 @@ export class CustomerViewComponent implements OnInit {
   public customer$: Observable<Customer>;
   public site: string;
   public sites: Array<Site>;
-  public palletsOwing: any;
+  public palletsOwing: {Loscam: number, Chep: number, Plain: number};
   public loscams: number;
   public cheps: number;
   public plains: number;

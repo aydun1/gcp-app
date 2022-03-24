@@ -27,6 +27,11 @@
   margin-right: 10px;
 }
 
+.dots {
+  height: 14px;
+  margin-top: 5px;
+}
+
 dt {
   font-weight: bold;
 }
