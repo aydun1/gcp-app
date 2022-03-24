@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
-import { BehaviorSubject, combineLatest, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { Pallet } from './pallet';
@@ -30,6 +31,7 @@ export class PalletsService {
 
   constructor(
     private http: HttpClient,
+    private snackBar: MatSnackBar,
     private shared: SharedService
   ) { }
 
@@ -74,7 +76,13 @@ export class PalletsService {
         this.loading.next(false);
         this._loadingPallets = false;
       }),
-      map((res: {value: Pallet[]}) => res.value)
+      map((res: {value: Pallet[]}) => res.value),
+      catchError(err => {
+        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
+        this.loading.next(false);
+        this._loadingPallets = false;
+        return of([]);
+      })
     );
   }
 
