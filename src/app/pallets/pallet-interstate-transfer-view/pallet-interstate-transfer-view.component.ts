@@ -1,5 +1,6 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, catchError, combineLatest, map, Observable, Subject, switchMap, tap, throwError } from 'rxjs';
 
@@ -51,7 +52,8 @@ export class PalletInterstateTransferViewComponent implements OnInit {
         this.receiver = transfer.summary.to === state;
         this.transport = (this.sender || this.receiver) && (transfer.summary.from === 'Transport' || transfer.summary.to === 'Transport');
       }),
-      map(_ => _[0])
+      map(_ => _[0]),
+      catchError((err: HttpErrorResponse) => this.handleError(err, true))
     );
   }
 
@@ -67,11 +69,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
         this.snackBar.open('Approved interstate transfer', '', {duration: 3000});
         this.loading = false;
       }),
-      catchError(err => {
-        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
-        this.loading = false;
-        return throwError(() => new Error(err));
-      })
+      catchError((err: HttpErrorResponse) => this.handleError(err))
     ).subscribe();
   }
 
@@ -84,11 +82,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
         this.loading = false;
         this.goBack();
       }),
-      catchError(err => {
-        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
-        this.loading = false;
-        return throwError(() => new Error(err));
-      })
+      catchError((err: HttpErrorResponse) => this.handleError(err))
     ).subscribe();
   }
 
@@ -100,11 +94,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
         this.snackBar.open('Marked as transferred', '', {duration: 3000});
         this.loading = false;
       }),
-      catchError(err => {
-        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
-        this.loading = false;
-        return throwError(() => new Error(err));
-      })
+      catchError((err: HttpErrorResponse) => this.handleError(err))
     ).subscribe();
   }
 
@@ -128,11 +118,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
         this.editQuantity = false;
         this.loading = false;
       }),
-      catchError(err => {
-        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
-        this.loading = false;
-        return throwError(() => new Error(err));
-      })
+      catchError((err: HttpErrorResponse) => this.handleError(err))
     ).subscribe()
   }
 
@@ -146,5 +132,13 @@ export class PalletInterstateTransferViewComponent implements OnInit {
 
   goBack(): void {
     this.navService.back();
+  }
+
+  handleError(err: HttpErrorResponse, redirect = false): Observable<never> {
+    const message = err.error?.error?.message || 'Unknown error';
+    this.snackBar.open(message, '', {duration: 3000});
+    this.loading = false;
+    if (redirect) this.navService.back();
+    return throwError(() => new Error(message));
   }
 }
