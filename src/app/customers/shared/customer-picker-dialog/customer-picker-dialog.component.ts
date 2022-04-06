@@ -1,13 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 import { CustomersService } from '../customers.service';
 import { Customer } from '../customer';
 import { Site } from '../site';
-import { RecyclingService } from '../../../recycling/shared/recycling.service';
 import { SharedService } from '../../../shared.service';
 
 @Component({
@@ -25,12 +23,9 @@ export class CustomerPickerDialogComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<CustomerPickerDialogComponent>,
     private fb: FormBuilder,
-    private snackBar: MatSnackBar,
     private customersService: CustomersService,
-    private recyclingService: RecyclingService,
     private shared: SharedService,
     @Inject(MAT_DIALOG_DATA) private data: {id: string}
-
   ) { }
 
   ngOnInit(): void {
@@ -48,21 +43,11 @@ export class CustomerPickerDialogComponent implements OnInit {
     );
   }
 
-  assignToCustomer(): void {
+  pickCustomer(): void {
     if (this.customerForm.invalid) return;
-    this.loading = true;
     const customer = this.customerForm.get('customer').value as Customer;
     const site = this.customerForm.get('site').value as Site;
-    this.recyclingService.allocateToCustomer(this.data.id, customer.accountnumber, customer.name, site).pipe(
-      tap(_ => {
-        this.dialogRef.close();
-      }),
-      catchError(err => {
-        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
-        this.loading = false;
-        return throwError(() => new Error(err));
-      })
-    ).subscribe();
+    this.dialogRef.close([this.data?.id, customer, site]);
   }
 
   setBranch(branch: string): void {

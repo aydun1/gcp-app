@@ -1,0 +1,46 @@
+<div class="outer">
+  <h2>Deliveries</h2>
+  <div class="options inner">
+    <div class="buttons"></div>
+    <button mat-raised-button color="primary" (click)="openCustomerPicker()" [disabled]="loading" class="action">Add delivery</button>
+  </div>
+
+  <div *ngIf="deliveries$ | async" class="inner">
+    <mat-table #table [dataSource]="deliveries$" [trackBy]="trackByFn" cdkDropList (cdkDropListDropped)="updateSequence($event)">
+
+      <ng-container matColumnDef="sequence">
+        <mat-header-cell *matHeaderCellDef> # </mat-header-cell>
+        <mat-cell *matCellDef="let delivery">
+          {{ delivery.fields.Sequence }}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="customer">
+        <mat-header-cell *matHeaderCellDef> Customer </mat-header-cell>
+        <mat-cell *matCellDef="let delivery" [routerLink]="['/customers', delivery.fields.CustomerId]">
+          <a [routerLink]="['/customers', delivery.fields.CustomerId]" class="customer-link">{{ delivery.fields.Customer }}</a>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="site">
+        <mat-header-cell *matHeaderCellDef> Site </mat-header-cell>
+        <mat-cell *matCellDef="let delivery">{{ delivery.fields.Site }}</mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="loading">
+        <mat-footer-cell *matFooterCellDef>
+          <gcp-loading-row></gcp-loading-row>
+        </mat-footer-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag></mat-row>
+      <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loadingList$ | async) ? false : true"></mat-footer-row>
+    </mat-table>
+  </div>
+</div>
+
+<router-outlet></router-outlet>
