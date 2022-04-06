@@ -1,8 +1,8 @@
-import { HttpErrorResponse } from '@angular/common/http';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { catchError, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, startWith, switchMap, take, tap } from 'rxjs';
 import { Customer } from 'src/app/customers/shared/customer';
 import { CustomerPickerDialogComponent } from 'src/app/customers/shared/customer-picker-dialog/customer-picker-dialog.component';
 import { Site } from 'src/app/customers/shared/site';
@@ -16,11 +16,14 @@ import { DeliveryService } from '../shared/delivery.service';
   styleUrls: ['./run-list.component.css']
 })
 export class RunListComponent implements OnInit {
+  private _deliveriesSubject = new BehaviorSubject<Delivery[]>([]);
   private _loadList: boolean;
   public deliveries$: Observable<Delivery[]>;
+  public deliveries: Delivery[];
   public loadingList$ = this.deliveryService.loading;
   public loading: false;
-  public displayedColumns = ['customer', 'site'];
+  public displayedColumns = ['sequence', 'customer', 'site'];
+  public listSize: number;
 
   constructor(
     private route: ActivatedRoute,
@@ -45,7 +48,10 @@ export class RunListComponent implements OnInit {
       tap(_ => {
         this.parseParams(_);
       }),
-      switchMap(_ => this._loadList ? this.getFirstPage(_) : [])
+      switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
+      tap(_ => this._deliveriesSubject.next(_)),
+      tap(_ => this.listSize = _.length),
+      switchMap(_ => this._deliveriesSubject)
     )
 
   }
@@ -85,13 +91,25 @@ export class RunListComponent implements OnInit {
     });
   }
 
-
-
-
-  addDelivery(customer: Customer, site: Site) {
-    return this.deliveryService.createDelivery('runname', customer, site);
+  updateSequence(event: CdkDragDrop<Delivery[]>) {
+    this._deliveriesSubject.pipe(
+      take(1),
+      tap(_ => moveItemInArray(_, event.previousIndex, event.currentIndex)),
+      tap(_ => this._deliveriesSubject.next(_)),
+      switchMap(_ => {
+        const changedFrom = Math.min(event.previousIndex, event.currentIndex);
+        const changedItems = _.map((object, i) => {return {id: object.id, index: i + 1}}).slice(changedFrom);
+        return this.deliveryService.updateSequence(changedItems).pipe(
+          tap(a => this._deliveriesSubject.next(a)),
+          tap(a => this.listSize = a.length)
+        );
+      })
+    ).subscribe()
   }
 
+  addDelivery(customer: Customer, site: Site) {
+    return this.deliveryService.createDelivery('runname', customer, site, this.listSize + 1);
+  }
 
   trackByFn(index: number, item: Delivery): string {
     return item.id;

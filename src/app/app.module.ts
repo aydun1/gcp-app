@@ -18,8 +18,6 @@ import { FailedComponent } from './failed/failed.component';
 import { SharedModule } from './shared/shared.module';
 import { LogoutComponent } from './logout/logout.component';
 import { environment } from '../environments/environment';
-import { RunsComponent } from './runs/runs.component';
-import { RunListComponent } from './runs/run-list/run-list.component';
 
 function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
@@ -63,9 +61,7 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     AppComponent,
     HomeComponent,
     FailedComponent,
-    LogoutComponent,
-    RunsComponent,
-    RunListComponent
+    LogoutComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'serverApp' }),

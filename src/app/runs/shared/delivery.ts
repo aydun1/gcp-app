@@ -14,6 +14,8 @@ export interface Delivery {
     Branch: string,
     Customer: string,
     CustomerNumber: string,
-    Site: string
+    CustomerId: string,
+    Site: string,
+    Sequence: number
   }
 }
