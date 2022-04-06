@@ -1,12 +1,13 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Params } from '@angular/router';
-import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { Site } from '../../customers/shared/site';
 import { Cage } from './cage';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Injectable({
@@ -28,6 +29,7 @@ export class RecyclingService {
 
   constructor(
     private http: HttpClient,
+    private snackBar: MatSnackBar,
     private shared: SharedService
   ) { }
 
@@ -180,7 +182,8 @@ export class RecyclingService {
     const fields = {Status: 'Allocated to customer', CustomerNumber: custnmbr, Customer: customerName};
     if (site) fields['Site'] = site.fields.Title;
     return this.shared.getBranch().pipe(
-      switchMap(_ => this.updateStatus(id, {fields: {...fields, Branch: _}}))
+      switchMap(_ => this.updateStatus(id, {fields: {...fields, Branch: _}})),
+      catchError((err: HttpErrorResponse) => this.handleError(err))
     )
   }
 
@@ -327,5 +330,11 @@ export class RecyclingService {
         catchError((err) => null)
       );
     };
+  }
+
+  handleError(err: HttpErrorResponse): Observable<never> {
+    const message = err.error?.error?.message || 'Unknown error';
+    this.snackBar.open(message, '', {duration: 3000});
+    return throwError(() => new Error(message));
   }
 }
