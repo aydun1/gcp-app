@@ -3,9 +3,12 @@
 }
 
 .header {
-  align-items: baseline;
+  align-items: center;
   display: flex;
-  justify-content: space-between;
+}
+
+.title {
+  flex: 1;
 }
 
 .content {

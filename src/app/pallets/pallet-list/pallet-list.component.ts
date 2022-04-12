@@ -76,8 +76,8 @@ export class PalletListComponent implements OnInit {
         _.map(pallet =>  {
           const isSource = pallet.fields.From === this.branchFilter.value;
           pallet.fields['To'] = isSource ? pallet.fields.To : pallet.fields.From;
-          pallet.fields['In'] = isSource ? null : +pallet.fields.Quantity;
-          pallet.fields['Out'] = isSource ? +pallet.fields.Quantity : null;
+          pallet.fields['In'] = pallet.fields.CustomerNumber ? +pallet.fields.In || null : isSource ? null : +pallet.fields.Quantity;
+          pallet.fields['Out'] = pallet.fields.CustomerNumber ? +pallet.fields.Out || null : isSource ? +pallet.fields.Quantity : null;
           return pallet;
         })
       )

@@ -45,7 +45,6 @@
 }
 
 .mat-column-assetType {
-  font-weight: 500;
   flex: 0 1 280px;
 }
 
@@ -55,6 +54,10 @@
 
 .mat-column-weight {
   flex: 0 1 120px;
+}
+
+mat-cell.mat-column-assetType {
+  font-weight: 500;
 }
 
 @media print {

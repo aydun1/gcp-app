@@ -1,11 +1,13 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AbstractControl, FormControl, ValidationErrors } from '@angular/forms';
+import { AbstractControl, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Params } from '@angular/router';
-import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
+import { Site } from '../../customers/shared/site';
 import { Cage } from './cage';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Injectable({
@@ -27,6 +29,7 @@ export class RecyclingService {
 
   constructor(
     private http: HttpClient,
+    private snackBar: MatSnackBar,
     private shared: SharedService
   ) { }
 
@@ -57,6 +60,8 @@ export class RecyclingService {
         case 'branch':
           return `fields/Branch eq '${filters['branch']}'`;
         case 'status':
+          if (filters['status'] === 'Polymer') return `fields/Date3 ne null`;
+          if (filters['status'] === 'Local processing') return `fields/ToLocalProcessing ne null`;
           return `fields/Status eq '${filters['status']}'`;
         case 'assetType':
           return `fields/AssetType eq '${filters['assetType']}'`;
@@ -173,11 +178,12 @@ export class RecyclingService {
     return this.getCages(url);
   }
 
-  allocateToCustomer(id: string, custnmbr: string, customerName: string, site: string): Observable<Cage> {
-    const payload = {fields: {Status: 'Allocated to customer', CustomerNumber: custnmbr, Customer: customerName}};
-    if (site) payload['fields']['Site'] = site;
+  allocateToCustomer(id: string, custnmbr: string, customerName: string, site: Site): Observable<Cage> {
+    const fields = {Status: 'Allocated to customer', CustomerNumber: custnmbr, Customer: customerName};
+    if (site) fields['Site'] = site.fields.Title;
     return this.shared.getBranch().pipe(
-      switchMap(_ => this.updateStatus(id, {...payload, Branch: _}))
+      switchMap(_ => this.updateStatus(id, {fields: {...fields, Branch: _}})),
+      catchError((err: HttpErrorResponse) => this.handleError(err))
     )
   }
 
@@ -231,7 +237,7 @@ export class RecyclingService {
     return this.updateStatus(id, payload);
   }
 
-  undo(id: string, status: string) {
+  undo(id: string, status: string): Observable<Cage> {
     const fields = {};
     switch(status)
     {
@@ -282,6 +288,11 @@ export class RecyclingService {
     return this.updateStatus(id, payload);
   }
 
+  setBranch(id: string, branch: string): Observable<Cage> {
+    const payload = {fields: {Branch: branch}};
+    return this.updateStatus(id, payload);
+  }
+
   addNewCage(cageNumber: number, branch: string, assetType: string, cageWeight: number): Observable<Cage> {
     const url = this._cageTrackerUrl + `/items`;
     const payload = {fields: {Status: 'Available', CageNumber: cageNumber, Branch: branch, AssetType: assetType, CageWeight: cageWeight}};
@@ -312,12 +323,18 @@ export class RecyclingService {
     return this.getCages(url).pipe(map(res => res[0]));
   }
 
-  uniqueCageValidator(assetTypeControl: FormControl): any {
+  uniqueCageValidator(assetTypeControl: FormControl): ValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       return this.checkCageNumber(control.value, assetTypeControl.value).pipe(
         map((cage) => (cage ? { cageExists: true, id: cage.id } : null)),
         catchError((err) => null)
       );
     };
+  }
+
+  handleError(err: HttpErrorResponse): Observable<never> {
+    const message = err.error?.error?.message || 'Unknown error';
+    this.snackBar.open(message, '', {duration: 3000});
+    return throwError(() => new Error(message));
   }
 }

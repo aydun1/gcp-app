@@ -13,10 +13,12 @@ const routes: Routes = [
     canActivate: [MsalGuard],
     children: [{
       path: '',
+      data: {title: 'Customers'},
       component: CustomerListComponent,
       children: [
         {
           path: ':id',
+          data: {title: 'Customers'},
           component: CustomerViewComponent
         }
     ]

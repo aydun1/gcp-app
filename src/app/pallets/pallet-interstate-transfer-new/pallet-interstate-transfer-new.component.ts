@@ -1,12 +1,12 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { NavigationService } from '../../navigation.service';
 import { PalletsService } from '../shared/pallets.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer-new',

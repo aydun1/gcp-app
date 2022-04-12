@@ -4,8 +4,11 @@ import { MatSelectChange } from '@angular/material/select';
 import { Sort } from '@angular/material/sort';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
+
 import { Cage } from '../shared/cage';
 import { RecyclingService } from '../shared/recycling.service';
+
+interface choice {choice: {choices: Array<any>}, name: string};
 
 @Component({
   selector: 'gcp-recycling-list',
@@ -25,7 +28,7 @@ export class RecyclingListComponent implements OnInit {
   public displayedColumns = ['fields/CageNumber', 'assetType', 'status', 'fields/Modified', 'weight'];
   public sortSort: string;
   public sortOrder: 'asc' | 'desc';
-  public choices$: BehaviorSubject<any>;
+  public choices: {Status: choice, AssetType: choice, Branch: choice};
 
   constructor(
     private el: ElementRef,
@@ -50,13 +53,16 @@ export class RecyclingListComponent implements OnInit {
         map(() => _)
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
-      tap(_ => this.parseParams(_)),
-      tap(() => this.weight = 0),
-      tap(() => this.count = 0),
+      tap((_: Params) => {
+        this.parseParams(_);
+        this.weight = 0;
+        this.count = 0;
+      }),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
-      tap(cages => this.weight = cages.map(_ => _.fields.Weight).filter(_ => _).reduce((acc, val) => acc + val, 0)),
-      tap(cages => this.count = cages.map(() => 1).reduce((acc, val) => acc + val, 0))
-
+      tap((cages: Array<Cage>) => {
+        this.weight = cages.map(_ => _.fields.NetWeight).filter(_ => _).reduce((acc, val) => acc + +val, 0);
+        this.count = cages.map(() => 1).reduce((acc, val) => acc + val, 0);
+      })
     )
 
     this.binFilter.valueChanges.pipe(
@@ -67,7 +73,13 @@ export class RecyclingListComponent implements OnInit {
   }
 
   getOptions(): void {
-    this.choices$ = this.recyclingService.getColumns();
+    this.recyclingService.getColumns().pipe(
+      tap(_ => {
+        if (!_) return;
+        _['Status']['choice']['choices'] = _['Status']['choice']['choices'].filter(c => c !== 'Complete');
+        this.choices = _;
+      })
+    ).subscribe();
   }
 
   getFirstPage(_: Params): BehaviorSubject<Cage[]> {
@@ -146,7 +158,7 @@ export class RecyclingListComponent implements OnInit {
     this.binFilter.patchValue('');
   }
 
-  announceSortChange(e: Sort) {
+  announceSortChange(e: Sort): void {
     const sort = e.direction ? e.active : null;
     const order = e.direction || null;
     this.router.navigate([], { queryParams: {sort, order}, queryParamsHandling: 'merge', replaceUrl: true});

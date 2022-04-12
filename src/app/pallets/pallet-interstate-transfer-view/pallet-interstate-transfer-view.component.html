@@ -14,8 +14,8 @@
       <div *ngIf="(transport || sender) && !transfer.summary.transferred && !transfer.summary.cancelled" class="edit">
         <button mat-raised-button *ngIf="!editQuantity" (click)="editQuantity = true">Edit transfer</button>
         <ng-container *ngIf="editQuantity">
-          <button mat-icon-button (click)="cancelEditQuantity(transfer.summary.loscam, transfer.summary.chep, transfer.summary.plain)" [disabled]="loading"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
-          <button mat-icon-button (click)="setQuantity(transfer.summary.id)" [disabled]="loading"><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
+          <button mat-icon-button (click)="cancelEditQuantity(transfer.summary.reference, transfer.summary.loscam, transfer.summary.chep, transfer.summary.plain)" [disabled]="loading"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
+          <button mat-icon-button (click)="setQuantity(transfer.summary.id, transfer.summary.reference, transfer.summary.loscam, transfer.summary.chep, transfer.summary.plain)" [disabled]="loading"><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
         </ng-container>
       </div>
       <button *ngIf="(transport || sender) && !transfer.summary.transferred" mat-raised-button class="action" (click)="cancel(transfer.summary.id)" [disabled]="loading || editQuantity">Cancel transfer</button>
@@ -27,7 +27,8 @@
     <mat-list>
       <mat-list-item>
         <mat-icon mat-list-icon>tag</mat-icon>
-        <div mat-line>{{ transfer.summary.reference }}</div>
+        <div *ngIf="editQuantity" mat-line><input [(ngModel)]="transferReference" [ngModelOptions]="{standalone: true}" type="text"></div>
+        <div *ngIf="!editQuantity" mat-line>{{ transfer.summary.reference }}</div>
         <div mat-line>Reference number</div>
       </mat-list-item>
     </mat-list>

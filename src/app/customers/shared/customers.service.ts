@@ -1,8 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Params } from '@angular/router';
-import { BehaviorSubject, map, Observable, of, switchMap, take, tap } from 'rxjs';
-import { SharedService } from 'src/app/shared.service';
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap } from 'rxjs';
+
+import { PalletsService } from '../../pallets/shared/pallets.service';
+import { SharedService } from '../../shared.service';
 import { Customer } from './customer';
 import { Site } from './site';
 
@@ -20,11 +23,12 @@ export class CustomersService {
 
   constructor(
     private http: HttpClient,
-    private shared: SharedService
+    private shared: SharedService,
+    private palletsService: PalletsService
   ) { }
 
   private createUrl(filters: Params): string {
-    let url = `${this.url}/accounts?$select=name,accountnumber,territoryid,new_pallets_loscam,new_pallets_chep,new_pallets_plain`;
+    let url = `${this.url}/accounts?$select=name,accountnumber,new_pallets_loscam,new_pallets_chep,new_pallets_plain`;
     const filterArray = [];
     if (filters['name']) filterArray.push(`(contains(name,'${this.shared.sanitiseName(filters['name'])}') or startswith(accountnumber,'${this.shared.sanitiseName(filters['name'])}'))`);
     if (filters['territory']) {
@@ -50,7 +54,7 @@ export class CustomersService {
   }
 
   getCustomer(id: string): Observable<Customer> {
-    const url = `${this.url}/accounts(${id})`;
+    const url = `${this.url}/accounts(${id})?$select=name,accountnumber`;
     return this.http.get(url) as Observable<Customer>;
   }
 
@@ -81,7 +85,16 @@ export class CustomersService {
         this._loadingCustomers = false;
         this.loading.next(false);
       }),
-      map((_: {value: Customer[]}) => _.value as Customer[])
+      map((_: {value: Customer[]}) => _.value as Customer[]),
+      catchError(error => {
+        if (error.status === 403) alert('No access. Contact Aidan to have your account enabled to use this page.');
+        if (error.error instanceof ErrorEvent) {
+            console.log(`Error: ${error.error.message}`);
+        } else {
+          console.log(`Error: ${error.message}`);
+        }
+        return of([] as Customer[]);
+      })
     );
   }
 
@@ -96,22 +109,40 @@ export class CustomersService {
     return this.http.get(url).pipe(map(_ => _['value']));
   }
 
-  addSite(customer: string, site: string): Observable<Object> {
+  renameSite(customer: Customer, siteId: string, newName: string, oldName: string): Observable<Object> {
     const payload = {fields: {
-      Customer: customer,
-      Title: site
+      Title: newName
     }};
-    return this.http.post(`${this.sitesUrl}/items`, payload);
+    const action = this.http.patch(`${this.sitesUrl}/items('${siteId}')`, payload);
+    return this.sitePalletTransfer(action, customer, oldName, newName);
   }
 
-  renameSite(id: string, site: string): Observable<Object> {
+  addSite(customer: Customer, newName: string): Observable<Object> {
     const payload = {fields: {
-      Title: site
+      Customer: customer.accountnumber,
+      Title: newName
     }};
-    return this.http.patch(`${this.sitesUrl}/items('${id}')`, payload);
-
+    const action = this.http.post(`${this.sitesUrl}/items`, payload);
+    return this.sitePalletTransfer(action, customer, '', newName);
   }
-  deleteSite(id: string): Observable<Object> {
-    return this.http.delete(`${this.sitesUrl}/items('${id}')`);
+
+  deleteSite(customer: Customer, siteId: string, oldName: string): Observable<Object> {
+    const action = this.http.delete(`${this.sitesUrl}/items('${siteId}')`);
+    return this.sitePalletTransfer(action, customer, oldName, '');
+  }
+
+  uniqueSiteValidator(sites: Array<Site>): ValidatorFn {
+    const siteNames = sites.map(_ => _.fields.Title);
+    return (control: AbstractControl): ValidationErrors | null => {
+      const exists = siteNames.includes(control.value);
+      return exists ? {forbiddenName: {value: control.value}} : null;
+    };
+  }
+
+  private sitePalletTransfer(action: Observable<Object>, customer: Customer, oldName: string, newName: string): Observable<Object> {
+    return action.pipe(
+      switchMap(() => this.palletsService.getPalletsOwedByCustomer(customer.accountnumber, oldName)),
+      switchMap(pallets => this.palletsService.siteTransfer(this.shared.branch, customer.name, customer.accountnumber, oldName, newName, pallets))
+    );
   }
 }

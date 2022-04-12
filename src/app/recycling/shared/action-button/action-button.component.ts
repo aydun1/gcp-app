@@ -1,7 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { HttpErrorResponse } from '@angular/common/http';
+import { catchError, EMPTY, Observable, switchMap, tap, throwError } from 'rxjs';
 
 import { RecyclingService } from '../recycling.service';
 import { Cage } from '../cage';
@@ -19,11 +22,13 @@ export class ActionButtonComponent implements OnInit {
 
   public loading: boolean;
   public weightForm: FormGroup;
+  public dialogRef: MatDialogRef<CustomerPickerDialogComponent, any>;
 
   constructor(
     private fb: FormBuilder,
     private dialog: MatDialog,
     private router: Router,
+    private snackBar: MatSnackBar,
     private recyclingService: RecyclingService
   ) { }
 
@@ -94,9 +99,11 @@ export class ActionButtonComponent implements OnInit {
 
   openCustomerPicker(id: string): void {
     this.loading = true;
-    const data = {id};
+    const data = {id, action: this.recyclingService.allocateToCustomer};
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px', data});
-    dialogRef.afterClosed().subscribe(() => {
+    dialogRef.afterClosed().pipe(
+      switchMap(([id, customer, site]) => this.recyclingService.allocateToCustomer(id, customer.accountnumber, customer.name, site)),
+    ).subscribe(() => {
       this.loading = false;
       this.updated.next(true);
     });

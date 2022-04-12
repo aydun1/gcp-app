@@ -45,7 +45,6 @@ export class PalletDialogComponent implements OnInit {
 
   addPallets(): void {
     if (this.palletForm.invalid) return;
-    console.log(this.data);
     this.loading = true;
     if (!this._state) {
       this.snackBar.open('Could not detect branch. Reload and try again.', '', {duration: 3000});

@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
-import { BehaviorSubject, combineLatest, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
-import { SharedService } from 'src/app/shared.service';
+import { SharedService } from '../../shared.service';
 import { Pallet } from './pallet';
 import { PalletTotals } from './pallet-totals';
 
@@ -30,12 +31,13 @@ export class PalletsService {
 
   constructor(
     private http: HttpClient,
+    private snackBar: MatSnackBar,
     private shared: SharedService
   ) { }
 
   private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
-    let url = `${this._palletTrackerUrl}/items?expand=fields(select=Created,Title,Pallet,In,Out,From,To,Quantity,Reference,Status,Notes,Attachment,Site)`;
+    let url = `${this._palletTrackerUrl}/items?expand=fields(select=Created,Title,Pallet,In,Out,From,To,Quantity,Reference,Status,Notes,Attachment,Site,CustomerNumber)`;
 
     const parsed = filterKeys.map(key => {
       switch (key) {
@@ -44,11 +46,9 @@ export class PalletsService {
         case 'to':
           return `fields/To eq '${filters['to']}'`;
         case 'branch':
-          return `(fields/From eq '${filters['branch']}' or fields/To eq '${filters['branch']}')`;
-        case 'name':
-          const cleanName = this.shared.sanitiseName(filters['name']);
-          return `(startswith(fields/CustomerNumber, '${cleanName}') or startswith(fields/Title, '${cleanName}'))`;
+          return `fields/Branch eq '${filters['branch']}'`;
         case 'status':
+          if (filters['status'] === 'Pending') return `(fields/Status eq 'Pending' or fields/Status eq 'Edited')`
           return `fields/Status eq '${filters['status']}'`;
         case 'pallet':
           return `fields/Pallet eq '${filters['pallet']}'`;
@@ -58,6 +58,11 @@ export class PalletsService {
           return '';
       }
     }).filter(_ => _);
+    if (filterKeys.includes('name')) {
+      const cleanName = this.shared.sanitiseName(filters['name']);
+      parsed.push(`(startswith(fields/CustomerNumber, '${cleanName}') or startswith(fields/Title, '${cleanName}'))`);
+    }
+    if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Cancelled'`);
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
     url += `&orderby=fields/Created desc&top=25`;
     return url;
@@ -72,7 +77,13 @@ export class PalletsService {
         this.loading.next(false);
         this._loadingPallets = false;
       }),
-      map((res: {value: Pallet[]}) => res.value)
+      map((res: {value: Pallet[]}) => res.value),
+      catchError(err => {
+        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
+        this.loading.next(false);
+        this._loadingPallets = false;
+        return of([]);
+      })
     );
   }
 
@@ -146,6 +157,49 @@ export class PalletsService {
     return this.http.post(`${this._palletTrackerUrl}/items`, payload);
   }
 
+  siteTransfer(branch: string, custName: string, custNmbr: string, oldSite: string, newSite: string, pallets: PalletQuantities) {
+    const url = `sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists/38f14082-02e5-4978-bf92-f42be2220166/items`;
+    const headers = {'Content-Type': 'application/json'};
+    const transfers = Object.entries(pallets).filter(_ => _[1]);
+    const requests = [];
+    let i = 1;
+  
+    transfers.forEach(_ => {
+      const quantity = _[1];
+      const pallet = _[0];
+      const transferFrom = {fields: {
+        Title: custName,
+        Branch: branch,
+        CustomerNumber: custNmbr,
+        From: quantity > 0 ? custNmbr : branch,
+        To: quantity < 0 ? custNmbr : branch,
+        In: quantity > 0 ? quantity : 0,
+        Out: quantity < 0 ? Math.abs(quantity) : 0,
+        Pallet: pallet,
+        Quantity: Math.abs(quantity),
+        Notes: 'Site transfer'
+      }};
+      if (oldSite) transferFrom['fields']['Site'] = oldSite;
+      requests.push({id: i += 1, method: 'POST', url, headers, body: transferFrom});
+
+      const transferTo = {fields: {
+        Title: custName,
+        Branch: branch,
+        CustomerNumber: custNmbr,
+        From: quantity < 0 ? custNmbr : branch,
+        To: quantity > 0 ? custNmbr : branch,
+        In: quantity < 0 ? Math.abs(quantity) : 0,
+        Out: quantity > 0 ? quantity : 0,
+        Pallet: pallet,
+        Quantity: Math.abs(quantity),
+        Notes: 'Site transfer'
+      }};
+      if (newSite) transferTo['fields']['Site'] = newSite;
+      requests.push({id: i += 1, method: 'POST', url, headers, body: transferTo});
+    })
+    return requests.length ? this.http.post(`https://graph.microsoft.com/v1.0/$batch`, {requests}) : of(1);
+  }
+
   createInterstatePalletTransfer(v: any): Observable<Pallet> {
     const pallets = [v.loscam ? 'Loscam' : '', v.chep ? 'Chep' : '', v.plain ? 'Plain' : ''].filter(_ => _);
     const pallet = pallets.length > 1 ? 'Mixed' : pallets.length === 1 ? pallets[0] : 'None';
@@ -206,7 +260,7 @@ export class PalletsService {
     );
   }
 
-  editInterstatePalletTransferQuantity(id: string, loscam: number, chep: number, plain: number): Observable<Pallet> {
+  editInterstatePalletTransferQuantity(id: string, reference: string, loscam: number, chep: number, plain: number): Observable<Pallet> {
     const pallets = [loscam ? 'Loscam' : '', chep ? 'Chep' : '', plain ? 'Plain' : ''].filter(_ => _);
     const pallet = pallets.length > 1 ? 'Mixed' : pallets.length === 1 ? pallets[0] : 'None';
     const payload = {fields: {
@@ -215,8 +269,19 @@ export class PalletsService {
       Loscam: +loscam,
       Chep: +chep,
       Plain: +plain,
+      Reference: reference,
       Notify: true,
       Status: 'Edited'
+    }};
+    return this.http.patch<Pallet>(`${this._palletTrackerUrl}/items('${id}')`, payload).pipe(
+      switchMap(res => this.updateList(res))
+    );
+  }
+
+  editInterstatePalletTransferReference(id: string, reference: string): Observable<Pallet> {
+    const payload = {fields: {
+      Reference: reference,
+      Notify: false,
     }};
     return this.http.patch<Pallet>(`${this._palletTrackerUrl}/items('${id}')`, payload).pipe(
       switchMap(res => this.updateList(res))
@@ -254,7 +319,7 @@ export class PalletsService {
     )
   }
 
-  getPalletsOwedByCustomer(custnmbr: string, site = ''): Observable<PalletQuantities> {
+  getPalletsOwedByCustomer(custnmbr: string, site = null): Observable<PalletQuantities> {
     const date = new Date();
     const startOfMonth = new Date(Date.UTC(date.getFullYear(), date.getUTCMonth(), 1)).toISOString();
     const dateInt = this.dateInt(date);
@@ -262,8 +327,8 @@ export class PalletsService {
     let url = `${this._endpoint}/${this._palletsOwedUrl}/items?expand=fields(select=Title,Pallet,Owing)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt lt '${dateInt}'`;
     let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}' and fields/Created ge '${startOfMonth}'`;
 
-    if (site) {
-      const filter = `and fields/Site eq '${this.shared.sanitiseName(site)}'`;
+    if (site !== null) {
+      const filter = 'and fields/Site eq ' + (site ? `'${this.shared.sanitiseName(site)}'` : 'null');
       url += filter;
       url2 += filter;
     }
@@ -304,12 +369,12 @@ export class PalletsService {
         const a = _.value.reverse().reduce(
           (acc, curr) => {
             acc['id'] = curr.fields.id;
+            acc['reference'] = curr.fields.Reference;
             if (curr.id === '1.0') {
               acc['initiator'] = curr.lastModifiedBy.user;
               acc['from'] = curr.fields.From;
               acc['to'] = curr.fields.To;
               acc['innitiated'] = curr.lastModifiedDateTime;
-              acc['reference'] = curr.fields.Reference;
             }
             if (!acc['approved']) {
               if (curr.fields.Status === 'Approved') {
@@ -350,7 +415,6 @@ export class PalletsService {
             return acc;
           }, {versions: _.value.length}
         )
-        console.log(a)
         return {summary: a};
       })
     );

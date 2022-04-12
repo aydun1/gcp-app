@@ -2,11 +2,11 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { Location } from '@angular/common';
-import { Router } from '@angular/router';
-import { SwUpdate } from '@angular/service-worker';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { SwUpdate, VersionEvent } from '@angular/service-worker';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { AuthenticationResult, InteractionStatus, PopupRequest, EventMessage, EventType, AccountInfo } from '@azure/msal-browser';
-import { filter, interval, Observable, Subject, takeUntil, withLatestFrom } from 'rxjs';
+import { filter, interval, map, Observable, Subject, takeUntil, withLatestFrom } from 'rxjs';
 
 import { SharedService } from './shared.service';
 import { AutomateService } from './shared/automate.service';
@@ -19,15 +19,16 @@ import { AutomateService } from './shared/automate.service';
 export class AppComponent implements OnInit, OnDestroy {
   private readonly _destroying$ = new Subject<void>();
   private checkInterval = 1000 * 60 * 60 * 6;  // 6 hours
-  public title = 'Pallet Management System';
   public loginDisplay: boolean;
   public accounts: AccountInfo[];
   public photo$: Observable<SafeUrl>;
   public mobileQuery: MediaQueryList;
   public isMobile: boolean;
+  public appTitle: string;
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
+    private activatedRoute: ActivatedRoute,
     private swUpdate: SwUpdate,
     private authService: MsalService,
     private location: Location,
@@ -43,7 +44,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.setLoginDisplay();
     this.observer.observe(['(max-width: 600px)']).subscribe(_ => this.isMobile = _.matches);
     this.authService.instance.enableAccountStorageEvents();
-
+    this.sharedService.getBranch().subscribe();
     this.msalBroadcastService.msalSubject$.pipe(
       filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED)
     ).subscribe((result: EventMessage) => {
@@ -65,16 +66,20 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.swUpdate.isEnabled) {
       withLatestFrom()
       this.swUpdate.versionUpdates.pipe(
-        filter(evt => evt.type === 'VERSION_READY')
-      ).subscribe(() => {
-        location.reload();
-        //this.swUpdate.activateUpdate().then(_ => console.log(_));
-        //const snackBarRef = this.snackBar.open('Application updated. Refresh page to apply changes.', 'Refresh');
-        //snackBarRef.onAction().subscribe(() => location.reload());
-      });
+        filter((evt: VersionEvent) => evt.type === 'VERSION_READY')
+      ).subscribe(() => location.reload());
       this.checkForUpdates();
       interval(this.checkInterval).subscribe(() => this.checkForUpdates());
     }
+
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      map(_ => {
+        let child = this.activatedRoute.firstChild;
+        while (child.firstChild) child = child.firstChild;
+        return child.snapshot.data['title'];
+      })
+    ).subscribe((ttl: string) => this.sharedService.setTitle(ttl));
   }
 
   checkForUpdates(): void {

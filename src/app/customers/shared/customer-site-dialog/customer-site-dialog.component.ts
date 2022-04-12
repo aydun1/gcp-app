@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 
 import { Site } from '../site';
@@ -16,48 +17,66 @@ import { CustomersService } from '../customers.service';
 export class CustomerSiteDialogComponent implements OnInit {
   public siteForm: FormGroup;
   public loading: boolean;
-  public sites$: Observable<Site[]>;
-  public edit: string;
+  public siteId: string;
+  public oldName: string;
 
   constructor(
     private dialogRef: MatDialogRef<CustomerSiteDialogComponent>,
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
+    private router: Router,
     private customerService: CustomersService,
-    @Inject(MAT_DIALOG_DATA) public data: {customer: Customer}
+    @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>}
   ) { }
 
   ngOnInit(): void {
     this.siteForm = this.fb.group({
-      site: ['', Validators.required]
+      site: ['', [Validators.required, this.customerService.uniqueSiteValidator(this.data.sites)]]
     });
-    this.getSites();
   }
 
-  getSites(): void {
-    this.sites$ = this.customerService.getSites(this.data.customer.accountnumber);
+  openEditor(siteId: string, name: string): void {
+    this.siteId = siteId;
+    this.oldName = name;
+    this.siteForm.patchValue({site: name});
   }
 
   addSite(): void {
     if (this.siteForm.invalid) return;
+    const newName = this.siteForm.value['site'];
+    const action = this.customerService.addSite(this.data.customer, newName);
+    this.finaliseAction(action, 'added new').subscribe(() => this.navigate(newName));
+  }
+
+  renameSite(): void {
+    if (this.siteForm.invalid) return;
+    const newName = this.siteForm.value['site'];
+    const action = this.customerService.renameSite(this.data.customer, this.siteId, newName, this.oldName);
+    this.finaliseAction(action, 'renamed').subscribe(() => this.navigate(newName));
+  }
+
+  deleteSite(): void {
+    const action = this.customerService.deleteSite(this.data.customer, this.siteId, this.oldName);
+    this.finaliseAction(action, 'removed').subscribe(() => this.navigate(null));
+  }
+
+  private finaliseAction(action: Observable<Object>, word: string): Observable<object> {
     this.loading = true;
-    const action = this.edit ? this.customerService.renameSite(this.edit, this.siteForm.value['site']) : this.customerService.addSite(this.data.customer.accountnumber, this.siteForm.value['site'] );
-    action.pipe(
+    return action.pipe(
       tap(_ => {
         this.dialogRef.close();
-        this.snackBar.open(`Successfully ${this.edit ? 'renamed' : 'added new'} site`, '', {duration: 3000});
+        this.snackBar.open(`Successfully ${word} site`, '', {duration: 3000});
       }),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         this.loading = false;
         return throwError(() => new Error(err));
       })
-    ).subscribe()
+    )
   }
 
-  editSite(id: string, name: string): void {
-    this.edit = id;
-    this.siteForm.patchValue({site: name});
+  navigate(site: string): void {
+    this.router.navigate([], { queryParams: {site}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   closeDialog(): void {

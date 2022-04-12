@@ -27,10 +27,12 @@ import { PipeModule } from './pipes/pipe.module';
 import { ControlsModule } from './controls/controls.module';
 import { DocsModule } from './docs/docs.module';
 import { LoadingModule } from './loading/loading.module';
+import { LoadingDotsComponent } from './loading-dots/loading-dots.component';
 
 @NgModule({
   declarations: [
-    BigButtonComponent
+    BigButtonComponent,
+    LoadingDotsComponent
   ],
   imports: [
     CommonModule,
@@ -60,6 +62,7 @@ import { LoadingModule } from './loading/loading.module';
     FormsModule,
     ReactiveFormsModule,
     BigButtonComponent,
+    LoadingDotsComponent,
     LoadingModule,
     PipeModule,
     ControlsModule,
