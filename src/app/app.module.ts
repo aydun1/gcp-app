@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
+import { DateAdapter, MatNativeDateModule, MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -18,6 +18,31 @@ import { FailedComponent } from './failed/failed.component';
 import { SharedModule } from './shared/shared.module';
 import { LogoutComponent } from './logout/logout.component';
 import { environment } from '../environments/environment';
+import { Platform } from '@angular/cdk/platform';
+
+class CustomDateAdapter extends NativeDateAdapter {
+  override parse(value: any): Date | null {
+      const currentDate = new Date();
+      let year: number = currentDate.getFullYear();
+      let month: number = currentDate.getMonth();
+      let day: number = currentDate.getDate();
+
+      if ((typeof value === 'string') && 
+           ((value.indexOf('/') > -1) || (value.indexOf('.') > -1)  || (value.indexOf('-') > -1))) {
+
+          const str = value.split(/[\./-]/);
+
+          day = !!str[0] ? +str[0] : day;
+          month = !!str[1] ? +str[1] - 1 : month;
+          year = !!str[2] ?
+                // If year is less than 3 digit long, we add 2000.
+               +str[2].length <= 3 ? +str[2] + 2000 : +str[2] : year ;
+
+          return new Date(year, month, day);
+      }
+      return null;
+  }
+}
 
 function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
@@ -73,6 +98,7 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     MatIconModule,
     MatButtonModule,
     SharedModule,
+    MatNativeDateModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       registrationStrategy: 'registerImmediately'
@@ -80,6 +106,7 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
   ],
   providers: [
     {provide: MAT_DATE_LOCALE, useValue: 'en-AU'},
+    {provide: DateAdapter, useClass: CustomDateAdapter, deps: [MAT_DATE_LOCALE, Platform]},
     {
       provide: HTTP_INTERCEPTORS,
       useClass: MsalInterceptor,
@@ -99,8 +126,7 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     },
     MsalService,
     MsalGuard,
-    MsalBroadcastService,
-    NativeDateAdapter
+    MsalBroadcastService
   ],
   bootstrap: [AppComponent]
 })

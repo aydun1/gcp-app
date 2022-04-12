@@ -151,6 +151,7 @@ export class PalletsService {
       Out: v.outQty,
       Pallet: v.palletType,
       Quantity: Math.abs(v.inQty - v.outQty),
+      Date: v.date,
       Notes: v.notes
     }};
     if (v.site) payload['fields']['Site'] = v.site.fields.Title;

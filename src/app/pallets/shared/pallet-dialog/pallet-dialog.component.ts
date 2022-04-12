@@ -39,6 +39,7 @@ export class PalletDialogComponent implements OnInit {
       inQty: ['', Validators.required],
       outQty: ['', Validators.required],
       site: [selectedSite, this.data.sites.length ? Validators.required : ''],
+      date: [new Date(), Validators.required],
       notes: ['']
     });
   }

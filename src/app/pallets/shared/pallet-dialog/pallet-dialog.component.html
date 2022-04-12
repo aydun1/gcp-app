@@ -6,6 +6,12 @@
       <mat-button-toggle value="Chep" class="chep"><img src="assets/chep.png" alt="Chep pallet"></mat-button-toggle>
       <mat-button-toggle value="Plain"><img src="assets/pallet.png" alt="Plain pallet"></mat-button-toggle>
     </mat-button-toggle-group>
+    <mat-form-field appearance="outline">
+      <mat-label>Date</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="date" placeholder="Pallet delivery/collection date">
+      <mat-datepicker-toggle matSuffix [for]="picker" tabindex="-1"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
     <mat-form-field appearance="outline" *ngIf="data.sites.length">
       <mat-label>Site</mat-label>
       <mat-select formControlName="site">
