@@ -39,6 +39,38 @@ export class AutomateService {
     )
   }
 
+  setToZero(pallet: Pallet): Observable<any>  {
+      const url = `${this.palletsUrl}/items('${pallet.id}')`;
+
+      const payload = {fields: {
+        In: 0,
+        Out: 0,
+        Quantity: 0
+      }};
+  
+      console.log(url, payload)
+      return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${pallet.id}')`, payload)
+  }
+
+  resetPallets(): Observable<number> {
+    const date = '2022-03-28T03:58:43Z';//new Date('2021/12/08').toISOString();
+    const state = 'VIC'
+    const top = 2000;
+
+    let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created,Pallet,In,Out,Quantity)&filter=fields/Branch eq '${state}' and fields/CustomerNumber ne null and fields/Created ge '${date}'&top=${top}`;
+    const a$: Observable<Pallet[]> = this.http.get(url).pipe(
+      map((res: {value: Pallet[]}) => res.value),
+      tap(_ => console.log(_.length))
+    );
+
+    const b$ = timer(1000, 2000);
+    return combineLatest([a$, b$]).pipe(
+      switchMap(([a, b]) => this.setToZero(a[this.i])),
+      tap(() => this.i += 1),
+      map(_ => this.i)
+    )
+  }
+
   getAll(): Observable<any> {
     const nextMonth = this.month < 12 ? this.month + 1 : 1;
     const nextYear = this.month < 12 ? this.year : this.year + 1;
@@ -101,12 +133,6 @@ export class AutomateService {
     );
   }
 
-
-
-
-
-
-
   updateCrm(accountNumber: string, palletType: string, palletCount: number) {
     const url = 'https://gardencityplastics.crm6.dynamics.com/api/data/v9.2/accounts';
     const cleanNumber = accountNumber.replace('&', '%26').replace("'", "''")
@@ -122,7 +148,6 @@ export class AutomateService {
     ).subscribe();
   }
 
-
   doThing() {
     let i = 0;
     const cust = '07330';
@@ -137,8 +162,6 @@ export class AutomateService {
       i += 1;
     });
   }
-
-
 
   removeId(id: string): Observable<any> {
     const payload = {fields: {ImportID: null,}};
