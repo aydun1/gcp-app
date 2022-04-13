@@ -154,7 +154,7 @@ export class PalletsService {
       Date: v.date,
       Notes: v.notes
     }};
-    if (v.site) payload['fields']['Site'] = v.site.fields.Title;
+    if (v.site) payload['fields']['Site'] = v.site;
     return this.http.post(`${this._palletTrackerUrl}/items`, payload);
   }
 

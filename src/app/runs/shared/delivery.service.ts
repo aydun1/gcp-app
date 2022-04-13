@@ -142,6 +142,7 @@ export class DeliveryService {
       CustomerId: customer.accountid,
       Sequence: sequence
     };
+    if (site) fields['Site'] = site.fields.Title;
     return this.shared.getBranch().pipe(
       switchMap(_ => this.http.post<Delivery>(`${this._deliveryListUrl}/items`, {fields: {...fields, Branch: _}}).pipe(
         switchMap(_ => this.updateList(_))

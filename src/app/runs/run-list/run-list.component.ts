@@ -6,6 +6,8 @@ import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, startWi
 import { Customer } from 'src/app/customers/shared/customer';
 import { CustomerPickerDialogComponent } from 'src/app/customers/shared/customer-picker-dialog/customer-picker-dialog.component';
 import { Site } from 'src/app/customers/shared/site';
+import { PalletDialogComponent } from 'src/app/pallets/shared/pallet-dialog/pallet-dialog.component';
+import { RecyclingDialogComponent } from 'src/app/recycling/shared/recycling-dialog/recycling-dialog.component';
 import { SharedService } from 'src/app/shared.service';
 import { Delivery } from '../shared/delivery';
 import { DeliveryService } from '../shared/delivery.service';
@@ -22,7 +24,7 @@ export class RunListComponent implements OnInit {
   public deliveries: Delivery[];
   public loadingList$ = this.deliveryService.loading;
   public loading: false;
-  public displayedColumns = ['sequence', 'customer', 'site'];
+  public displayedColumns = ['sequence', 'customer', 'site', 'actions'];
   public listSize: number;
 
   constructor(
@@ -113,6 +115,18 @@ export class RunListComponent implements OnInit {
 
   trackByFn(index: number, item: Delivery): string {
     return item.id;
+  }
+
+  openPalletDialog(name: string, accountnumber: string, site: string): void {
+    const customer = {name, accountnumber};
+    const data = {customer, site};
+    this.dialog.open(PalletDialogComponent, {width: '600px', data, autoFocus: false});
+  }
+
+  openRecyclingDialog(name: string, accountnumber: string, site: string): void {
+    const customer = {name, accountnumber};
+    const data = {customer, site};
+    this.dialog.open(RecyclingDialogComponent, {width: '800px', data, autoFocus: false});
   }
 
 }
