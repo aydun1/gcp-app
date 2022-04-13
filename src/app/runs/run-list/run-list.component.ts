@@ -2,7 +2,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, startWith, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, take, tap } from 'rxjs';
 import { Customer } from 'src/app/customers/shared/customer';
 import { CustomerPickerDialogComponent } from 'src/app/customers/shared/customer-picker-dialog/customer-picker-dialog.component';
 import { Site } from 'src/app/customers/shared/site';
@@ -87,7 +87,7 @@ export class RunListComponent implements OnInit {
   openCustomerPicker(): void {
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px'});
     dialogRef.afterClosed().pipe(
-      switchMap(([id, customer, site]) => this.addDelivery(customer, site)),
+      switchMap(_ => _ ? this.addDelivery(_.customer, _.site) : of()),
     ).subscribe(() => {
       this.loading = false;
     });

@@ -24,6 +24,7 @@ export class RecyclingDialogComponent implements OnInit {
   public availableCages$: Observable<Cage[]>;
   public loadingCages$ = new BehaviorSubject<boolean>(true);
   public loadingAvailableCages$ = new BehaviorSubject<boolean>(true);
+  public siteNames: Array<string>;
 
   constructor(
       public dialogRef: MatDialogRef<RecyclingDialogComponent>,
@@ -33,9 +34,10 @@ export class RecyclingDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const selectedSite = this.data.sites.find(_ => _.fields.Title === this.data.site);
+    const requireSite = this.data.site || this.data.sites?.length;
+    this.siteNames = this.data.sites ? this.data.sites.map(_ => _.fields.Title) : [this.data.site].filter(_ => _);
     this.allocatorForm = this.fb.group({
-      site: [selectedSite, this.data.sites.length ? Validators.required : '']
+      site: [this.data.site, requireSite ? Validators.required : '']
     });
     this.weightForm = this.fb.group({
       weight: ['', Validators.required]

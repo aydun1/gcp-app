@@ -30,10 +30,7 @@ export class PalletDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.sharedService.getBranch().subscribe(state => {
-      this._state = state;
-    });
-
+    this.sharedService.getBranch().subscribe(state => this._state = state);
     const requireSite = this.data.site || this.data.sites?.length;
     this.siteNames = this.data.sites ? this.data.sites.map(_ => _.fields.Title) : [this.data.site].filter(_ => _);
     this.palletForm = this.fb.group({
