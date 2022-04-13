@@ -13,12 +13,6 @@ h2 {
   margin-left: 10px;
 }
 
-.mat-form-field {
-  font-size: 14px;
-  margin-right: 10px;
-  width: 145px;
-}
-
 .mat-footer-row {
   font-weight: bold;
 }
@@ -30,10 +24,6 @@ h2 {
 
 .buttons {
   flex: 1;
-}
-
-.add-cage {
-  margin-left: auto;
 }
 
 .inner {
@@ -95,7 +85,15 @@ h2 {
 }
 
 .mat-column-actions {
-  flex: 0 1 75px;
+  flex: 0 1 177px;
+}
+
+.action-buttons>button:first-child {
+  margin-right: 10px;
+}
+
+.action-buttons {
+  display: flex;
 }
 
 @media print {
