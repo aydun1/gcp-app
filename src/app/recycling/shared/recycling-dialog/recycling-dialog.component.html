@@ -5,13 +5,24 @@
   </div>
   <mat-dialog-content>
     <mat-accordion>
+      <p *ngIf="loadingAvailableCages$ | async" class="note">
+        Loading...
+      </p>
       <mat-expansion-panel *ngFor="let cage of availableCages$ | async;trackBy: trackByFn">
         <mat-expansion-panel-header>
-          <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> {{ cage.fields.AssetType }}</mat-panel-title>
+          <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> <span class="cage-type">{{ cage.fields.AssetTypeClean }}</span></mat-panel-title>
         </mat-expansion-panel-header>
-        <div class="actions">
-          <button mat-raised-button color="primary" (click)="assignToCustomer(cage.id)">Assign to {{ data.customer.name || data.customer.accountnumber }}</button>
-        </div>
+          <form [formGroup]="allocatorForm">
+            <mat-form-field appearance="outline" *ngIf="siteNames.length">
+              <mat-label>Site</mat-label>
+              <mat-select formControlName="site">
+                <mat-option *ngFor="let site of siteNames" [value]="site">{{ site }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="actions">
+              <button mat-raised-button color="primary" (click)="assignToCustomer(cage.id)">Assign to {{ data.customer.name || data.customer.accountnumber }}</button>
+            </div>
+          </form>
       </mat-expansion-panel>
     </mat-accordion>
   </mat-dialog-content>
@@ -20,31 +31,56 @@
 <ng-container *ngIf="!assigning">
   <h2 mat-dialog-title>Manage cages for {{ data.customer.name }} ({{ data.customer.accountnumber }}) <span *ngIf="data.site">({{ data.site }})</span></h2>
   <mat-dialog-content>
-    <ng-container *ngIf="(cages$ | async | groupBy:'Complete') as groups">
+
+
+
+    <ng-container *ngIf="(cages$ | async | groupBy:['Allocated to customer', 'Delivered to customer']) as groups">
       <div *ngFor="let cages of groups;let indexOfelement=index;trackBy: trackByIndex" class="section">
         <ng-container *ngIf="indexOfelement === 0" >
           <div class="buttons">
-            <h3 class="section-title">Active cages</h3>
-            <button mat-raised-button color="primary" (click)="assigning=true">Assign a cage</button>
+            <h3 class="section-title">Allocated cages</h3>
+            <button mat-raised-button color="primary" (click)="openAssigningPage()">Assign a cage</button>
           </div>
-          <p *ngIf="noActiveCages" class="note">
-            No active cages
+          <p *ngIf="noAllocatedCages$ | async" class="note">
+            No allocated cages
+          </p>
+          <p *ngIf="loadingCages$ | async" class="note load">
+            Loading...
           </p>
         </ng-container>
         <ng-container *ngIf="indexOfelement === 1" >
+          <div class="buttons">
+            <h3 class="section-title">Delivered cages</h3>
+          </div>
+          <p *ngIf="noDeliveredCages$ | async" class="note">
+            No delivered cages
+          </p>
+          <p *ngIf="loadingCages$ | async" class="note">
+            Loading...
+          </p>
+        </ng-container>
+        <ng-container *ngIf="indexOfelement === 2" >
           <h3 class="section-title">History</h3>
-          <p *ngIf="noCageHistory" class="note">
+          <p *ngIf="noCageHistory$ | async" class="note">
             No cage history
+          </p>
+          <p *ngIf="loadingCages$ | async" class="note">
+            Loading...
           </p>
         </ng-container>
         <mat-accordion>
           <mat-expansion-panel *ngFor="let cage of cages;trackBy: trackByFn">
             <mat-expansion-panel-header>
-              <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> {{ cage.fields.AssetType }}</mat-panel-title>
+              <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> <span class="cage-type">{{ cage.fields.AssetTypeClean }}</span></mat-panel-title>
               <mat-panel-description>{{ cage.fields.Status }}</mat-panel-description>
             </mat-expansion-panel-header>
             <gcp-action-button [cage]="cage" (updated)="getContainers()" class="actions"></gcp-action-button>
             <mat-list>
+              <mat-list-item *ngIf="cage.fields.Site">
+                <mat-icon mat-list-icon>business</mat-icon>
+                <div mat-line>{{ cage.fields.Site }}</div>
+                <div mat-line>Site</div>            
+              </mat-list-item>
               <div mat-subheader>Weights</div>
               <gcp-cage-weights [cage]="cage" (updated)="getContainers()"></gcp-cage-weights>
             </mat-list>

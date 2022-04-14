@@ -91,8 +91,15 @@
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
 
+      <ng-container matColumnDef="loading">
+        <mat-footer-cell *matFooterCellDef>
+          <gcp-loading-row></gcp-loading-row>
+        </mat-footer-cell>
+      </ng-container>
+
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) ? false : true"></mat-footer-row>
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
   </div>

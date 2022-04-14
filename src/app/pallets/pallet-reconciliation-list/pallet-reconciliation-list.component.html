@@ -17,12 +17,11 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <a mat-raised-button [routerLink]="['.', 'new']" color="primary" class="add-cage">New stocktake</a>
+    <a mat-raised-button [routerLink]="['.', 'new']" color="primary">New stocktake</a>
   </div>
 
   <div *ngIf="(pallets$ | async) as pallets" class="inner">
     <mat-table #table [dataSource]="pallets" [trackBy]="trackByFn">
-
       <ng-container matColumnDef="date">
         <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
         <mat-cell *matCellDef="let pallet">
@@ -34,9 +33,8 @@
       <ng-container matColumnDef="reference">
         <mat-header-cell *matHeaderCellDef> Ref </mat-header-cell>
         <mat-cell *matCellDef="let pallet" [routerLink]="[pallet.id]">
-          <a [routerLink]="[pallet.id]" class="customer-link">#{{ pallet.id }}</a>
+          <a [routerLink]="[pallet.id]" class="stocktake-link">#{{ pallet.id }}</a>
         </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
 
       <ng-container matColumnDef="pallet">
@@ -44,7 +42,6 @@
         <mat-cell *matCellDef="let pallet">
           {{ pallet.fields.Pallet }}
         </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
 
       <ng-container matColumnDef="branch">
@@ -52,23 +49,26 @@
         <mat-cell *matCellDef="let pallet">
           {{ pallet.fields.Branch }}
         </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
 
       <ng-container matColumnDef="surplus">
         <mat-header-cell *matHeaderCellDef> Surplus </mat-header-cell>
-        <mat-cell *matCellDef="let pallet">{{ pallet.fields.Surplus }}</mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        <mat-cell *matCellDef="let pallet" class="green">{{ pallet.fields.Surplus }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="loading">
+        <mat-footer-cell *matFooterCellDef>
+          <gcp-loading-row></gcp-loading-row>
+        </mat-footer-cell>
       </ng-container>
 
       <ng-container matColumnDef="deficit">
         <mat-header-cell *matHeaderCellDef> Deficit </mat-header-cell>
-        <mat-cell *matCellDef="let pallet">{{ pallet.fields.Deficit }}</mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        <mat-cell *matCellDef="let pallet" class="red">{{ pallet.fields.Deficit }}</mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+      <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) ? false : true"></mat-footer-row>
     </mat-table>
   </div>
 </div>

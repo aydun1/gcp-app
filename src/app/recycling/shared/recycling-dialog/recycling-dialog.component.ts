@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 import { RecyclingService } from '../../shared/recycling.service';
 import { Cage } from '../../shared/cage';
@@ -14,13 +14,17 @@ import { Site } from '../../../customers/shared/site';
   styleUrls: ['./recycling-dialog.component.css']
 })
 export class RecyclingDialogComponent implements OnInit {
-  public loading: boolean;
-  public noActiveCages: boolean;
-  public noCageHistory: boolean;
+  public noAllocatedCages$ = new BehaviorSubject<boolean>(false);
+  public noDeliveredCages$ = new BehaviorSubject<boolean>(false);
+  public noCageHistory$ = new BehaviorSubject<boolean>(false);
   public cages$ = new BehaviorSubject<Cage[]>([]);
   public weightForm: FormGroup;
+  public allocatorForm: FormGroup;
   public assigning: boolean;
   public availableCages$: Observable<Cage[]>;
+  public loadingCages$ = new BehaviorSubject<boolean>(true);
+  public loadingAvailableCages$ = new BehaviorSubject<boolean>(true);
+  public siteNames: Array<string>;
 
   constructor(
       public dialogRef: MatDialogRef<RecyclingDialogComponent>,
@@ -30,41 +34,61 @@ export class RecyclingDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    const requireSite = this.data.site || this.data.sites?.length;
+    this.siteNames = this.data.sites ? this.data.sites.map(_ => _.fields.Title) : [this.data.site].filter(_ => _);
+    this.allocatorForm = this.fb.group({
+      site: [this.data.site, requireSite ? Validators.required : '']
+    });
     this.weightForm = this.fb.group({
       weight: ['', Validators.required]
     });
     this.getContainers();
-    this.availableCages$ = this.recyclingService.getAvailableCages();
+    this.availableCages$ = this.recyclingService.getAvailableCages().pipe(
+      tap(_ => this.loadingAvailableCages$.next(false))
+    );
   }
 
-  getContainers() {
-    return this.recyclingService.getCagesWithCustomer(this.data.customer.accountnumber, this.data.site).subscribe(
+  getContainers(): void {
+    this.loadingCages$.next(true);
+    this.recyclingService.getCagesWithCustomer(this.data.customer.accountnumber, this.data.site).subscribe(
       _ => {
-        this.noActiveCages = _.filter(c => c['fields']['Status'] !== 'Complete').length === 0;
-        this.noCageHistory = _.filter(c => c['fields']['Status'] === 'Complete').length === 0;
+        this.noAllocatedCages$.next(_.filter(c => c['fields']['Status'] === 'Allocated to customer').length === 0);
+        this.noDeliveredCages$.next(_.filter(c => c['fields']['Status'] === 'Delivered to customer').length === 0);
+        this.noCageHistory$.next(_.filter(c => c['fields']['Status'] !== 'Allocated to customer' && c['fields']['Status'] !== 'Delivered to customer').length === 0);
         this.cages$.next(_);
+        this.loadingCages$.next(false);
       }
     );
   }
 
-  assignToCustomer(id: string) {
-    this.recyclingService.allocateToCustomer(id, this.data.customer.accountnumber, this.data.customer.name, this.data.site).subscribe(() => this.closeAssigningPage());
+  assignToCustomer(id: string): void {
+    if (this.allocatorForm.invalid) return;
+    const site = this.allocatorForm.value.site;
+    this.recyclingService.allocateToCustomer(id, this.data.customer.accountnumber, this.data.customer.name, site).subscribe(() => this.closeAssigningPage());
   }
 
-  closeAssigningPage() {
+  openAssigningPage(): void {
+    this.assigning = true;
+    this.noAllocatedCages$.next(false);
+    this.noDeliveredCages$.next(false);
+    this.noCageHistory$.next(false);
+  }
+
+  closeAssigningPage(): void {
     this.assigning = false;
+    this.loadingAvailableCages$.next(true);
     this.getContainers();
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close();
   }
 
-  trackByIndex(index: number, item: Cage) {
+  trackByIndex(index: number, item: Cage): number {
     return index;
   }
 
-  trackByFn(index: number, item: Cage) {
+  trackByFn(index: number, item: Cage): string {
     return item.id;
   }
 }

@@ -8,8 +8,16 @@
   flex: 1;
 }
 
+.actions {
+  display: flex;
+}
+
+.action {
+  margin-left: 10px;
+}
+
 input {
-  max-width: 120px;
+  max-width: 100px;
 }
 
 .content {
@@ -58,13 +66,13 @@ input {
   margin: 0 40px;
 }
 
-.action {
-  margin-left: 10px;
-}
-
 @media (max-width: 600px) {
   .arrow {
     display: none;
+  }
+
+  .pallets {
+    flex-direction: column;
   }
 
   .side-by-side {

@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
-import { SharedService } from 'src/app/shared.service';
+import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
+import { SharedService } from '../../shared.service';
 import { Receipt } from '../shared/receipt';
 import { RecyclingReceiptsService } from '../shared/recycling-receipts.service';
 
@@ -44,17 +44,17 @@ export class RecyclingReceiptListComponent implements OnInit {
     )
   }
 
-  getFirstPage(_: any) {
+  getFirstPage(_: Params): BehaviorSubject<Receipt[]> {
     return this.receiptsService.getFirstPage(_);
   }
 
-  getNextPage() {
-    return this.receiptsService.getNextPage();
+  getNextPage(): void {
+    this.receiptsService.getNextPage();
   }
 
-  parseParams(params: Params) {
+  parseParams(params: Params): void {
     if (!params) return;
-    const filters: any = {};
+    const filters = {};
     if ('branch' in params) {
       this.branchFilter.patchValue(params['branch']);
       filters['branch'] = params['branch'];
@@ -63,7 +63,7 @@ export class RecyclingReceiptListComponent implements OnInit {
     }
   }
 
-  compareQueryStrings(prev: Params, curr: Params) {
+  compareQueryStrings(prev: Params, curr: Params): boolean {
     if (!this._loadList && this.route.children.length === 0) {
       this._loadList = true;
       return false;
@@ -74,11 +74,11 @@ export class RecyclingReceiptListComponent implements OnInit {
     return sameBranch && this._loadList;
   }
 
-  setBranch(branch: MatSelectChange) {
+  setBranch(branch: MatSelectChange): void {
     this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  trackByFn(index: number, item: Receipt) {
+  trackByFn(index: number, item: Receipt): string {
     return item.id;
   }
 }

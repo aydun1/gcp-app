@@ -4,7 +4,7 @@
     {{ branch || 'All branches'}}
   </button>
 </div>
-<form [formGroup]="customerForm" (ngSubmit)="assignToCustomer()">
+<form [formGroup]="customerForm" (ngSubmit)="pickCustomer()">
   <mat-form-field color="primary" appearance="outline">
     <mat-label>Customer</mat-label>
     <gcp-customer-control placeholder="Type to search..." formControlName="customer" [territory]="branch"></gcp-customer-control>
@@ -29,7 +29,6 @@
 </form>
 
 <button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>
-
 
 <mat-menu #menu="matMenu" xPosition="before" >
   <ng-template matMenuContent>

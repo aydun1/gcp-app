@@ -1,6 +1,6 @@
 export interface PalletTotals {
   id: string,
-  lastModifiedDateTime: any,
+  lastModifiedDateTime: string | Date,
   lastModifiedBy: {
     user: {
       displayName: string,

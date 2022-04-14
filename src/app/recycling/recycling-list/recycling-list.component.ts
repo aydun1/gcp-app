@@ -1,10 +1,14 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
+import { Sort } from '@angular/material/sort';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
+
 import { Cage } from '../shared/cage';
 import { RecyclingService } from '../shared/recycling.service';
+
+interface choice {choice: {choices: Array<any>}, name: string};
 
 @Component({
   selector: 'gcp-recycling-list',
@@ -18,10 +22,13 @@ export class RecyclingListComponent implements OnInit {
   public branchFilter = new FormControl('');
   public statusFilter = new FormControl('');
   public assetTypeFilter = new FormControl('');
-  public customers$: Observable<any[]>;
+  public loading = this.recyclingService.loading;
   public weight: number;
-  public displayedColumns = ['cageNumber', 'assetType', 'status', 'updated', 'weight'];
-  public choices$: Observable<any>;
+  public count: number;
+  public displayedColumns = ['fields/CageNumber', 'assetType', 'status', 'fields/Modified', 'weight'];
+  public sortSort: string;
+  public sortOrder: 'asc' | 'desc';
+  public choices: {Status: choice, AssetType: choice, Branch: choice};
 
   constructor(
     private el: ElementRef,
@@ -31,7 +38,7 @@ export class RecyclingListComponent implements OnInit {
   ) { }
 
   @HostListener('scroll', ['$event'])
-  onScroll(e: any) {
+  onScroll(e: Event): void {
     const bottomPosition = this.el.nativeElement.offsetHeight + this.el.nativeElement.scrollTop - this.el.nativeElement.scrollHeight;
     if (bottomPosition >= -250) this.getNextPage();
   }
@@ -39,17 +46,23 @@ export class RecyclingListComponent implements OnInit {
   ngOnInit(): void {
     this.getOptions();
     this.cages$ = this.route.queryParams.pipe(
-      startWith({}),
-      switchMap(_ => this.router.events.pipe(
+      startWith({} as Params),
+      switchMap((_: Params) => this.router.events.pipe(
         startWith(new NavigationEnd(1, null, null)),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         map(() => _)
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
-      tap(_ => this.parseParams(_)),
-      tap(() => this.weight = 0),
+      tap((_: Params) => {
+        this.parseParams(_);
+        this.weight = 0;
+        this.count = 0;
+      }),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
-      tap(cages => this.weight = cages.map(_ => _.fields.Weight).filter(_ => _).reduce((acc, val) => acc + val, 0))
+      tap((cages: Array<Cage>) => {
+        this.weight = cages.map(_ => _.fields.NetWeight).filter(_ => _).reduce((acc, val) => acc + +val, 0);
+        this.count = cages.map(() => 1).reduce((acc, val) => acc + val, 0);
+      })
     )
 
     this.binFilter.valueChanges.pipe(
@@ -60,20 +73,26 @@ export class RecyclingListComponent implements OnInit {
   }
 
   getOptions(): void {
-    this.choices$ = this.recyclingService.getColumns();
+    this.recyclingService.getColumns().pipe(
+      tap(_ => {
+        if (!_) return;
+        _['Status']['choice']['choices'] = _['Status']['choice']['choices'].filter(c => c !== 'Complete');
+        this.choices = _;
+      })
+    ).subscribe();
   }
 
-  getFirstPage(_: any) {
+  getFirstPage(_: Params): BehaviorSubject<Cage[]> {
     return this.recyclingService.getFirstPage(_);
   }
 
-  getNextPage() {
-    return this.recyclingService.getNextPage();
+  getNextPage(): void {
+    this.recyclingService.getNextPage();
   }
 
-  parseParams(params: Params) {
+  parseParams(params: Params): void {
     if (!params) return;
-    const filters: any = {};
+    const filters = {};
     if ('branch' in params) {
       this.branchFilter.patchValue(params['branch']);
       filters['branch'] = params['branch'];
@@ -92,6 +111,10 @@ export class RecyclingListComponent implements OnInit {
     } else {
       this.assetTypeFilter.patchValue('');
     }
+    if ('sort' in params) {
+      this.sortSort = params['sort'];
+      this.sortOrder = params['order'];
+    }
     if ('bin' in params) {
       this.binFilter.patchValue(params['bin']);
       filters['bin'] = params['bin'];
@@ -100,37 +123,48 @@ export class RecyclingListComponent implements OnInit {
     }
   }
 
-  compareQueryStrings(prev: Params, curr: Params) {
+  compareQueryStrings(prev: Params, curr: Params): boolean {
     if (!this._loadList && this.route.children.length === 0) {
       this._loadList = true;
       return false;
     }
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
-    const sameBranch = prev['branch'] === curr['branch'];
-    const sameBin = prev['bin'] === curr['bin'];
-    const sameAssetType = prev['assetType'] === curr['assetType'];
-    const sameStatus = prev['status'] === curr['status'];
-    return sameBranch && sameBin && sameAssetType && sameStatus && this._loadList;
+    const unchanged = [
+      this._loadList,
+      prev['branch'] === curr['branch'],
+      prev['bin'] === curr['bin'],
+      prev['assetType'] === curr['assetType'],
+      prev['status'] === curr['status'],
+      prev['sort'] === curr['sort'],
+      prev['order'] === curr['order']
+    ]
+    return unchanged.every(Boolean);
   }
 
-  setBranch(branch: MatSelectChange) {
+  setBranch(branch: MatSelectChange): void {
     this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setStatus(status: MatSelectChange) {
+  setStatus(status: MatSelectChange): void {
     this.router.navigate([], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setAssetType(assetType: MatSelectChange) {
+  setAssetType(assetType: MatSelectChange): void {
     this.router.navigate([], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  clearBinFilter() {
+  clearBinFilter(): void {
     this.binFilter.patchValue('');
   }
 
-  trackByFn(index: number, item: Cage) {
+  announceSortChange(e: Sort): void {
+    const sort = e.direction ? e.active : null;
+    const order = e.direction || null;
+    this.router.navigate([], { queryParams: {sort, order}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  trackByFn(index: number, item: Cage): string {
     return item.id;
   }
 }

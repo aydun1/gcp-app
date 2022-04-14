@@ -1,12 +1,12 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { NavigationService } from '../../navigation.service';
 import { PalletsService } from '../shared/pallets.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer-new',
@@ -20,15 +20,15 @@ export class PalletInterstateTransferNewComponent implements OnInit {
   public states = this.sharedService.branches;
   public state: string;
   public loading: boolean;
-  get targetStates() {
+  get targetStates(): Array<string> {
     const from = this.palletTransferForm.get('from').value;
     const states = this.states.filter(_ => _ !== from);
     return from === 'Transport' ? [this.state] : states;
   }
-  get ownState() {
+  get ownState(): Array<string> {
     return this.states.filter(_ => this.state ? _ === this.state : _);
   }
-  get fromTrans() {
+  get fromTrans(): boolean {
     return this.palletTransferForm.get('from').value === 'Transport';
   }
 
@@ -89,7 +89,7 @@ export class PalletInterstateTransferNewComponent implements OnInit {
     ).subscribe(_ => console.log(_));
   }
 
-  goBack() {
+  goBack(): void {
     this.navService.back();
   }
 }

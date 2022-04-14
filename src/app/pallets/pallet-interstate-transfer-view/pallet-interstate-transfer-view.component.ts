@@ -1,5 +1,6 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, catchError, combineLatest, map, Observable, Subject, switchMap, tap, throwError } from 'rxjs';
 
@@ -17,15 +18,16 @@ export class PalletInterstateTransferViewComponent implements OnInit {
 
   private transferSource$: Subject<string>;
   public transfer$: Observable<any>;
-  public files$: Observable<any>;
   public loading: boolean;
   public editQuantity: boolean;
+  public transferReference: string;
   public loscamQuantity: number;
   public chepQuantity: number;
   public plainQuantity: number;
   public sender: boolean;
   public receiver: boolean;
   public transport: boolean;
+  public loadingPage = new BehaviorSubject<boolean>(true);
 
   constructor(
     private route: ActivatedRoute,
@@ -41,6 +43,8 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     this.transfer$ = this.transferSource$.pipe(
       switchMap(_ => combineLatest([this.palletsService.getInterstatePalletTransfer(_), this.sharedService.getBranch()])),
       tap(([transfer, state]) => {
+        this.loadingPage.next(false);
+        this.transferReference = transfer.summary.reference;
         this.loscamQuantity = transfer.summary.loscam;
         this.chepQuantity = transfer.summary.chep;
         this.plainQuantity = transfer.summary.plain;
@@ -48,15 +52,16 @@ export class PalletInterstateTransferViewComponent implements OnInit {
         this.receiver = transfer.summary.to === state;
         this.transport = (this.sender || this.receiver) && (transfer.summary.from === 'Transport' || transfer.summary.to === 'Transport');
       }),
-      map(_ => _[0])
+      map(_ => _[0]),
+      catchError((err: HttpErrorResponse) => this.handleError(err, true))
     );
   }
 
-  getTransfer(id: string) {
+  getTransfer(id: string): void {
     this.transferSource$.next(id);
   }
 
-  approve(id: string) {
+  approve(id: string): void {
     this.loading = true;
     this.palletsService.approveInterstatePalletTransfer(id, true).pipe(
       tap(_ => {
@@ -64,15 +69,11 @@ export class PalletInterstateTransferViewComponent implements OnInit {
         this.snackBar.open('Approved interstate transfer', '', {duration: 3000});
         this.loading = false;
       }),
-      catchError(err => {
-        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
-        this.loading = false;
-        return throwError(() => new Error(err));
-      })
+      catchError((err: HttpErrorResponse) => this.handleError(err))
     ).subscribe();
   }
 
-  cancel(id: string) {
+  cancel(id: string): void {
     this.loading = true;
     this.palletsService.cancelInterstatePalletTransfer(id).pipe(
       tap(_ => {
@@ -81,15 +82,11 @@ export class PalletInterstateTransferViewComponent implements OnInit {
         this.loading = false;
         this.goBack();
       }),
-      catchError(err => {
-        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
-        this.loading = false;
-        return throwError(() => new Error(err));
-      })
+      catchError((err: HttpErrorResponse) => this.handleError(err))
     ).subscribe();
   }
 
-  transferp(id: string) {
+  transferp(id: string): void {
     this.loading = true;
     this.palletsService.transferInterstatePalletTransfer(id).pipe(
       tap(_ => {
@@ -97,39 +94,51 @@ export class PalletInterstateTransferViewComponent implements OnInit {
         this.snackBar.open('Marked as transferred', '', {duration: 3000});
         this.loading = false;
       }),
-      catchError(err => {
-        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
-        this.loading = false;
-        return throwError(() => new Error(err));
-      })
+      catchError((err: HttpErrorResponse) => this.handleError(err))
     ).subscribe();
   }
 
-  setQuantity(id: string) {
+  setQuantity(id: string, referenceOld: string, loscamOld: number, chepOld: number, plainOld: number): void {
     this.loading = true;
-    this.palletsService.editInterstatePalletTransferQuantity(id, this.loscamQuantity, this.chepQuantity, this.plainQuantity).pipe(
+    const sameCounts = loscamOld === this.loscamQuantity && chepOld === this.chepQuantity && plainOld === this.plainQuantity;
+    const sameRef = referenceOld === this.transferReference;
+    if (sameCounts && sameRef) {
+      this.snackBar.open('Nothing changed', '', {duration: 3000});
+      this.editQuantity = false;
+      this.loading = false;
+      return;
+    }
+    const action = sameCounts ? this.palletsService.editInterstatePalletTransferReference(id, this.transferReference) :
+    this.palletsService.editInterstatePalletTransferQuantity(id, this.transferReference, this.loscamQuantity, this.chepQuantity, this.plainQuantity);
+
+    action.pipe(
       tap(() => {
         this.getTransfer(id);
-        this.snackBar.open('Updated quantity', '', {duration: 3000});
+        this.snackBar.open('Updated transfer', '', {duration: 3000});
         this.editQuantity = false;
         this.loading = false;
       }),
-      catchError(err => {
-        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
-        this.loading = false;
-        return throwError(() => new Error(err));
-      })
+      catchError((err: HttpErrorResponse) => this.handleError(err))
     ).subscribe()
   }
 
-  cancelEditQuantity(loscam: number, chep: number, plain: number) {
+  cancelEditQuantity(reference: string, loscam: number, chep: number, plain: number): void {
+    this.transferReference = reference;
     this.loscamQuantity = loscam;
     this.chepQuantity = chep;
     this.plainQuantity = plain;
     this.editQuantity = false
   }
 
-  goBack() {
+  goBack(): void {
     this.navService.back();
+  }
+
+  handleError(err: HttpErrorResponse, redirect = false): Observable<never> {
+    const message = err.error?.error?.message || 'Unknown error';
+    this.snackBar.open(message, '', {duration: 3000});
+    this.loading = false;
+    if (redirect) this.navService.back();
+    return throwError(() => new Error(message));
   }
 }

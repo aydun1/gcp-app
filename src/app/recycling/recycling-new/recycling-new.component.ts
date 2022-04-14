@@ -1,11 +1,12 @@
-import { Component, HostBinding, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, ElementRef, HostBinding, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
 import { RecyclingService } from '../shared/recycling.service';
 import { NavigationService } from '../../navigation.service';
+import { SharedService } from '../../shared.service';
 
 @Component({
   selector: 'gcp-recycling-new',
@@ -14,19 +15,27 @@ import { NavigationService } from '../../navigation.service';
 })
 export class RecyclingNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
-
+  @ViewChild('cageNumberInput') cageNumber: ElementRef;
+  private state: string;
+  private assetType = new FormControl('', Validators.required);
+  private defaultWeights = {
+    'Cage - Folding (2.5m³)': '190',
+    'Cage - Solid (2.5m³)': '170'
+  };
+  public multi: number;
   public cageForm: FormGroup;
   public loading: boolean;
-  public choices$: Observable<any>;
+  public choices$: BehaviorSubject<any>;
 
-  public get isCage() {
-    return this.cageForm ? this.cageForm.get('assetType').value.startsWith('Cage') : false;
+  public get isCage(): boolean {
+    return this.assetType.value.startsWith('Cage');
   }
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private snackBar: MatSnackBar,
+    private shared: SharedService,
     private navService: NavigationService,
     private recyclingService: RecyclingService
   ) { }
@@ -34,18 +43,28 @@ export class RecyclingNewComponent implements OnInit {
   ngOnInit(): void {
     this.getOptions();
 
-    this.cageForm = this.fb.group({
-      assetType: ['', Validators.required],
-      cageNumber: [{value:'', disabled: true}, Validators.required, this.recyclingService.uniqueCageValidator()],
-      cageWeight: [{value:'', disabled: true}, Validators.required],
-      branch: ['', Validators.required]
+    this.shared.getBranch().subscribe(state => {
+      this.state = state;
+      if (this.cageForm) this.cageForm.patchValue({branch: state});
     });
 
+    this.cageForm = this.fb.group({
+      assetType: this.assetType,
+      cageNumber: [{value:'', disabled: true}, Validators.required, this.recyclingService.uniqueCageValidator(this.assetType)],
+      cageWeight: [{value:'', disabled: true}, Validators.required],
+      branch: [{value: this.state, disabled: false}, Validators.required]
+    });
+ 
     this.cageForm.get('assetType').valueChanges.subscribe(val => {
-      const cageNumber = this.cageForm.get('cageNumber');
-      const cageWeight = this.cageForm.get('cageWeight');
-      val.startsWith('Cage') ? cageNumber.enable() : cageNumber.disable();
-      val.startsWith('Cage') ? cageWeight.enable() : cageWeight.disable();
+      // Require cage number and weight if asset is a cage
+      const cageNumberControl = this.cageForm.get('cageNumber');
+      const cageWeightControl = this.cageForm.get('cageWeight');
+      val.startsWith('Cage') ? cageNumberControl.enable() : cageNumberControl.disable();
+      val.startsWith('Cage') ? cageWeightControl.enable() : cageWeightControl.disable();
+
+      // Set default cage weights
+      const cageWeight = this.defaultWeights[val];
+      this.cageForm.get('cageWeight').patchValue(cageWeight)
     });
   }
 
@@ -53,24 +72,34 @@ export class RecyclingNewComponent implements OnInit {
     this.choices$ = this.recyclingService.getColumns();
   }
 
-  addCage() {
-    if (this.cageForm.invalid) return;
-    const d = this.cageForm.value;
+  addCage(): void {
+    if (this.cageForm.invalid) {
+      this.snackBar.open('Unable to add cage. Double check form values.', '', {duration: 3000});
+      return;
+    };
     this.loading = true;
+    const d = this.cageForm.value;
     this.recyclingService.addNewCage(d.cageNumber, d.branch, d.assetType, d.cageWeight).pipe(
-      tap(_ => {
-        this.router.navigate(['recycling/cages', _.id], {replaceUrl: true});
+      tap( _ => {
         this.snackBar.open('Cage added', '', {duration: 3000});
+        this.loading = false;
+        if (this.multi === 1) {
+          this.cageForm.get('cageNumber').patchValue('');
+          this.cageForm.get('cageNumber').setErrors(null);
+          this.cageNumber.nativeElement.focus();
+        } else {
+          this.router.navigate(['recycling/cages', _.id], {replaceUrl: true});
+        }
       }),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         this.loading = false;
         return throwError(() => new Error(err));
       })
-    ).subscribe(_ => console.log(_));
+    ).subscribe();
   }
 
-  goBack() {
+  goBack(): void {
     this.navService.back();
   }
 }

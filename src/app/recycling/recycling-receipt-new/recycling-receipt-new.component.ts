@@ -38,7 +38,7 @@ export class RecyclingReceiptNewComponent implements OnInit {
 
     this.newReceiptForm = this.fb.group({
       date: [{value: date, disabled: false}, Validators.required],
-      branch: [{value: this.state, disabled: true}, [Validators.required]],
+      branch: [{value: this.state, disabled: false}, [Validators.required]],
       weight: ['', [Validators.required, Validators.min(0)]],
       reference: ['', [Validators.required]]
     });
@@ -62,7 +62,7 @@ export class RecyclingReceiptNewComponent implements OnInit {
     ).subscribe(_ => console.log(_));
   }
 
-  goBack() {
+  goBack(): void {
     this.navService.back();
   }
 

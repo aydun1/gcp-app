@@ -18,6 +18,7 @@ export class PalletDialogComponent implements OnInit {
   private _state: string;
   public palletForm: FormGroup;
   public loading: boolean;
+  public siteNames: Array<string>;
 
   constructor(
       public dialogRef: MatDialogRef<PalletDialogComponent>,
@@ -29,23 +30,21 @@ export class PalletDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.sharedService.getBranch().subscribe(state => {
-      this._state = state;
-    });
-
-    const selectedSite = this.data.sites.find(_ => _.fields.Title === this.data.site);
+    this.sharedService.getBranch().subscribe(state => this._state = state);
+    const requireSite = this.data.site || this.data.sites?.length;
+    this.siteNames = this.data.sites ? this.data.sites.map(_ => _.fields.Title) : [this.data.site].filter(_ => _);
     this.palletForm = this.fb.group({
       palletType: ['', Validators.required],
       inQty: ['', Validators.required],
       outQty: ['', Validators.required],
-      site: [selectedSite, this.data.sites.length ? Validators.required : ''],
+      site: [this.data.site, requireSite ? Validators.required : ''],
+      date: [new Date(), Validators.required],
       notes: ['']
     });
   }
 
   addPallets(): void {
     if (this.palletForm.invalid) return;
-    console.log(this.data);
     this.loading = true;
     if (!this._state) {
       this.snackBar.open('Could not detect branch. Reload and try again.', '', {duration: 3000});

@@ -19,10 +19,6 @@ h2 {
   width: 145px;
 }
 
-.mat-footer-row {
-  font-weight: bold;
-}
-
 .options {
   align-items: baseline;
   display: flex;
@@ -32,16 +28,16 @@ h2 {
   flex: 1;
 }
 
-.add-cage {
-  margin-left: auto;
-}
-
 .inner {
   margin: 10px 10px;
 }
 
-.cage-link {
-  text-decoration: none;
+.green {
+  color: #0f8900;
+}
+
+.red {
+  color: #ff3939;
 }
 
 @media print {

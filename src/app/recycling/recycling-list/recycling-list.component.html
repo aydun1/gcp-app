@@ -2,24 +2,29 @@
   <div class="options inner">
     <div class="buttons">
       <mat-form-field appearance="outline" class="branch">
-        <mat-label>{{ (choices$ | async)?.Branch?.name }}</mat-label>
+        <mat-label>{{ choices?.Branch.name }}</mat-label>
         <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
           <mat-option>All</mat-option>
-          <mat-option *ngFor="let s of (choices$ | async)?.Branch?.choice.choices" value="{{ s }}">{{ s }}</mat-option>
+          <mat-option *ngFor="let s of choices?.Branch.choice.choices" value="{{ s }}">{{ s }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="status">
-        <mat-label>{{ (choices$ | async)?.Status?.name }}</mat-label>
+        <mat-label>{{ choices?.Status.name }}</mat-label>
         <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event)">
           <mat-option>All</mat-option>
-          <mat-option *ngFor="let s of (choices$ | async)?.Status?.choice.choices" value="{{ s }}">{{ s }}</mat-option>
+          <mat-option *ngFor="let s of choices?.Status.choice.choices" value="{{ s }}">{{ s }}</mat-option>
+          <mat-optgroup label="Cage history">
+            <mat-option value="Complete">All complete cages</mat-option>
+            <mat-option value="Local processing">Local processing</mat-option>
+            <mat-option value="Polymer">Polymer</mat-option>
+          </mat-optgroup>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="asset-type">
-        <mat-label>{{ (choices$ | async)?.AssetType?.name }}</mat-label>
+        <mat-label>{{ choices?.AssetType.name }}</mat-label>
         <mat-select [formControl]="assetTypeFilter" (selectionChange)="setAssetType($event)">
           <mat-option>All</mat-option>
-          <mat-option *ngFor="let s of (choices$ | async)?.AssetType?.choice.choices" value="{{ s }}">{{ s }}</mat-option>
+          <mat-option *ngFor="let s of choices?.AssetType.choice.choices" value="{{ s }}">{{ s }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="bin-filter">
@@ -37,10 +42,10 @@
   </div>
 
   <div *ngIf="(cages$ | async) as cages" class="inner">
-    <mat-table #table [dataSource]="cages" [trackBy]="trackByFn">
+    <mat-table #table [dataSource]="cages" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
 
-      <ng-container matColumnDef="cageNumber">
-        <mat-header-cell *matHeaderCellDef> Number </mat-header-cell>
+      <ng-container matColumnDef="fields/CageNumber">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Number </mat-header-cell>
         <mat-cell *matCellDef="let cage" [routerLink]="[cage.id]">
           <a [routerLink]="[cage.id]" class="cage-link">{{ cage.fields.CageNumber || '-' }}</a>
         </mat-cell>
@@ -50,13 +55,13 @@
       <ng-container matColumnDef="assetType">
         <mat-header-cell *matHeaderCellDef> Asset type </mat-header-cell>
         <mat-cell *matCellDef="let cage">
-          {{ cage.fields.AssetType }}
+          {{ cage.fields.AssetTypeClean }}
         </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        <mat-footer-cell *matFooterCellDef> {{ count || 0 }} </mat-footer-cell>
       </ng-container>
 
-      <ng-container matColumnDef="updated">
-        <mat-header-cell *matHeaderCellDef> Updated </mat-header-cell>
+      <ng-container matColumnDef="fields/Modified">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Updated </mat-header-cell>
         <mat-cell *matCellDef="let cage">{{ cage.Date | date: 'dd/MM/yyyy' }}</mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
@@ -64,9 +69,15 @@
       <ng-container matColumnDef="weight">
         <mat-header-cell *matHeaderCellDef> Net weight </mat-header-cell>
         <mat-cell *matCellDef="let cage">
-          {{ cage.fields.NetWeight || 0 }} kg
+          {{ cage.fields.NetWeight || 0 | number }} kg
         </mat-cell>
-        <mat-footer-cell *matFooterCellDef> {{ weight || 0 }} kg </mat-footer-cell>
+        <mat-footer-cell *matFooterCellDef> {{ weight || 0 | number }} kg </mat-footer-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="loading">
+        <mat-footer-cell *matFooterCellDef>
+          <gcp-loading-row></gcp-loading-row>
+        </mat-footer-cell>
       </ng-container>
 
       <ng-container matColumnDef="status">
@@ -74,8 +85,10 @@
         <mat-cell *matCellDef="let cage">{{ cage.fields.Status }}</mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
+
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) ? false : true"></mat-footer-row>
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
   </div>

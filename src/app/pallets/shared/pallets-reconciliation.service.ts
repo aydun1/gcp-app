@@ -12,26 +12,24 @@ export class PalletsReconciliationService {
   private endpoint = 'https://graph.microsoft.com/v1.0';
   private dataGroupUrl = 'sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists/920f186f-60f2-4c7e-ba8e-855ff2d9c8aa';
   private reconciliationTrackerUrl = `${this.endpoint}/${this.dataGroupUrl}`;
-
-
   private _loadingPallets: boolean;
   private _nextPage: string;
   private _palletsSubject$ = new BehaviorSubject<Reconciliation[]>([]);
+  public loading = new BehaviorSubject<boolean>(false);
 
   constructor(
     private http: HttpClient
   ) { }
 
-  private createUrl(filters: any): string {
+  private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
     let url = `${this.reconciliationTrackerUrl}/items?expand=fields`;
-    console.log(filters)
     const parsed = filterKeys.map(key => {
       switch (key) {
         case 'branch':
-          return `(fields/Branch eq '${filters.branch}')`;
+          return `(fields/Branch eq '${filters['branch']}')`;
         case 'pallet':
-          return `fields/Pallet eq '${filters.pallet}'`;
+          return `fields/Pallet eq '${filters['pallet']}'`;
         default:
           return '';
       }
@@ -42,8 +40,14 @@ export class PalletsReconciliationService {
   }
 
   private getReconciliations(url: string, paginate = false): Observable<Reconciliation[]> {
+    this.loading.next(true);
+    this._loadingPallets = true;
     return this.http.get(url).pipe(
-      tap(_ => this._nextPage = paginate ? _['@odata.nextLink'] : this._nextPage),
+      tap(_ => {
+        this._nextPage = paginate ? _['@odata.nextLink'] : this._nextPage;
+        this.loading.next(false);
+        this._loadingPallets = false;
+      }),
       map((res: {value: Reconciliation[]}) => res.value)
     );
   }
@@ -58,17 +62,15 @@ export class PalletsReconciliationService {
 
   getNextPage(): void {
     if (!this._nextPage || this._loadingPallets) return null;
-    this._loadingPallets = true;
     this._palletsSubject$.pipe(
       take(1),
       switchMap(acc => this.getReconciliations(this._nextPage, true).pipe(
         map(curr => [...acc, ...curr]),
-        tap(() => this._loadingPallets = false)
       ))
     ).subscribe(_ => this._palletsSubject$.next(_));
   }
 
-  addReconciliation(v: any): Observable<any> {
+  addReconciliation(v: any): Observable<Reconciliation> {
     const payload = {fields: {
       Branch: v.branch,
       Pallet: v.pallet,
@@ -87,12 +89,12 @@ export class PalletsReconciliationService {
     );
   }
 
-  getReconciliation(id: string) {
+  getReconciliation(id: string): Observable<Reconciliation> {
     const url = `${this.reconciliationTrackerUrl}/items('${id}')`;
     return this.http.get<Reconciliation>(url);
   }
 
-  private updateList(res: Reconciliation) {
+  private updateList(res: Reconciliation): Observable<Reconciliation> {
     return this._palletsSubject$.pipe(
       take(1),
       map(_ => {

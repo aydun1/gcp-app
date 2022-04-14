@@ -9,6 +9,10 @@
   margin: 20px 10px 10px 10px;
 }
 
+.details {
+  flex: 1;
+}
+
 .content {
   display: block;
   margin: 0 auto;
@@ -21,6 +25,11 @@
 
 .region {
   margin-right: 10px;
+}
+
+.dots {
+  height: 14px;
+  margin-top: 5px;
 }
 
 dt {

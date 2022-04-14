@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { BehaviorSubject, combineLatest, map, Observable, switchMap, take, tap } from 'rxjs';
 
 import { Doc } from '../../doc';
@@ -37,7 +37,7 @@ export class DocUploadComponent implements OnInit {
     );
   }
 
-  fileChangeEvent(id: string, e: any) {
+  fileChangeEvent(id: string, e: any): void {
     const files = e.target.files;
     const keys = Array.from(Array(files.length).keys());
     for (let key in keys) {
@@ -110,7 +110,7 @@ export class DocUploadComponent implements OnInit {
     return this.docsService.icon(mime);
   }
 
-  trackByFn(index: number, doc: Doc) {
+  trackByFn(index: number, doc: Doc): string {
     return doc.name;
   }
 

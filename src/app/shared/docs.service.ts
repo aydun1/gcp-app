@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, expand, from, map, Observable, of, switchMap, take } from 'rxjs';
+
 import { Doc } from './doc';
 
 @Injectable({ providedIn: 'root' })
@@ -28,7 +29,7 @@ export class DocsService {
     );
   }
 
-  createUploadSession(id: string, file: File) {
+  createUploadSession(id: string, file: File): Observable<any> {
     const url = `${this.endpoint}/drive/root:/transfers/${id}/${file.name}:/createUploadSession`;
     const payload = {
       'item': {
@@ -42,7 +43,7 @@ export class DocsService {
     );
   }
 
-  readFragment(file: File, start: number, res: any) {
+  readFragment(file: File, start: number, res: Object): Observable<any> {
     return from(file.slice(start, start + this.chunkLength).arrayBuffer()).pipe(
       switchMap(chunk => {
         const crHeader = `bytes ${start}-${start + chunk.byteLength - 1}/${file.size}`;
@@ -57,7 +58,7 @@ export class DocsService {
     )
   }
 
-  deleteFile(folder: string, fileName: string) {
+  deleteFile(folder: string, fileName: string): Observable<Object> {
     const url = `${this.endpoint}/drive/root:/transfers/${folder}/${fileName}:`;
     return this.http.delete(url);
   }

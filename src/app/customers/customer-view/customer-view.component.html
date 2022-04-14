@@ -7,13 +7,13 @@
   </ng-container>
 </mat-toolbar>
 
-<div *ngIf="customer$ | async as customer" class="content">
+<div *ngIf="customer$ | async as customer; else loadingPage" class="content">
   <div class="top-buttons">
-    <div>
+    <div class="details">
       <h2 class="name">{{ customer.name || 'Unnamed customer' }}</h2>
       <p class="number">{{ customer.accountnumber }}</p>
     </div>
-    <button mat-stroked-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{customer: customer}">
+    <button mat-stroked-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{customer: customer}" [disabled]="!sites">
       {{ site || 'All sites'}}
     </button>
   </div>
@@ -25,11 +25,11 @@
         </h3>
         <dl>
           <dt>Loscams</dt>
-          <dd>{{palletsOwing ? palletsOwing.Loscam : '...'}}</dd>
+          <dd *ngIf="palletsOwing; else loadingDots">{{ palletsOwing.Loscam }}</dd>
           <dt>Cheps</dt>
-          <dd>{{palletsOwing ? palletsOwing.Chep : '...'}}</dd>
+          <dd *ngIf="palletsOwing; else loadingDots">{{ palletsOwing.Chep }}</dd>
           <dt>Plains</dt>
-          <dd>{{palletsOwing ? palletsOwing.Plain : '...'}}</dd>
+          <dd *ngIf="palletsOwing; else loadingDots">{{ palletsOwing.Plain }}</dd>
         </dl>
       </div>
       <div class="status-card">
@@ -38,11 +38,11 @@
         </h3>
         <dl>
           <dt>Active</dt>
-          <dd>{{ cages ? cages.count : '...' }}</dd>
+          <dd *ngIf="cages; else loadingDots">{{ cages.count }}</dd>
         </dl>
         <dl>
           <dt>All time weight</dt>
-          <dd>{{ cages ? cages.weight +' kg'  : '...' }}</dd>
+          <dd *ngIf="cages; else loadingDots">{{ cages.weight }} kg</dd>
         </dl>
       </div>
     </div>
@@ -55,10 +55,10 @@
 
 <mat-menu #menu="matMenu" xPosition="before" >
   <ng-template matMenuContent let-customer="customer">
-    <button mat-menu-item (click)="setSite(customer.accountnumber, null)">
+    <button mat-menu-item (click)="setSite(customer, null)">
       <span>All sites</span>
     </button>
-    <button mat-menu-item *ngFor="let site of sites" (click)="setSite(customer.accountnumber, site.fields.Title)">
+    <button mat-menu-item *ngFor="let site of sites" (click)="setSite(customer, site.fields.Title)">
       <span>{{ site.fields.Title }}</span>
     </button>
     <button mat-menu-item (click)="openSiteDialog(customer)">
@@ -67,3 +67,13 @@
     </button>
   </ng-template>
 </mat-menu>
+
+<ng-template #loadingPage>
+  <gcp-loading-page></gcp-loading-page>
+</ng-template>
+
+<ng-template #loadingDots>
+  <dd class="dots">
+    <gcp-loading-dots></gcp-loading-dots>
+  </dd>
+</ng-template>

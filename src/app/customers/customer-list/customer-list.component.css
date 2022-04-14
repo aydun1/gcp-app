@@ -13,6 +13,10 @@
   font-size: 14px;
 }
 
+.mat-footer-row {
+  font-weight: bold;
+}
+
 .options {
   display: flex;
 }
@@ -29,6 +33,19 @@
   margin-right: 10px;
 }
 
+.mat-column-name {
+  flex: 1 1 200px;
+}
+
+.mat-column-accountnumber {
+  flex: 1 1 120px;
+}
+
+.mat-column-new_pallets_loscam, .mat-column-new_pallets_chep, .mat-column-new_pallets_plain {
+  flex: 0 1 90px;
+  justify-content: center;
+}
+
 @media (max-width: 800px) {
   .options {
     flex-direction: column;
@@ -36,5 +53,15 @@
 
   .region {
     margin: 0;
+  }
+}
+
+@media print {
+  :host{
+    overflow-y: auto;
+  }
+
+  .options {
+    display: none;
   }
 }
