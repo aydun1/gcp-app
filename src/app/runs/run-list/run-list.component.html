@@ -10,7 +10,7 @@
 
       <ng-container matColumnDef="sequence">
         <mat-header-cell *matHeaderCellDef> # </mat-header-cell>
-        <mat-cell (mousedown)="dragDisabled = false" *matCellDef="let delivery">
+        <mat-cell (touchstart)="dragDisabled = false" (mousedown)="dragDisabled = false" *matCellDef="let delivery">
           {{ delivery.fields.Sequence }}
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
