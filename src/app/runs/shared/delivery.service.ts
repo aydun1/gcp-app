@@ -1,11 +1,12 @@
+import { moveItemInArray } from '@angular/cdk/drag-drop';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
-import { BehaviorSubject, catchError, combineLatest, map, Observable, of, switchMap, take, tap } from 'rxjs';
-import { Customer } from 'src/app/customers/shared/customer';
-import { Site } from 'src/app/customers/shared/site';
 
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { Customer } from '../../customers/shared/customer';
+import { Site } from '../../customers/shared/site';
 import { SharedService } from '../../shared.service';
 import { Delivery } from './delivery';
 
@@ -13,10 +14,11 @@ import { Delivery } from './delivery';
   providedIn: 'root'
 })
 export class DeliveryService {
-  private _endpoint = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4';
-  private _deliveriesUrl = 'lists/b8088299-ac55-4e30-9977-4b0b20947b84';
+  private _endpoint = 'https://graph.microsoft.com/v1.0';
+  private _siteUrl = 'sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4';
+  private _listUrl = 'lists/b8088299-ac55-4e30-9977-4b0b20947b84';
   private _columns$ = new BehaviorSubject<any>(null);
-  private _deliveryListUrl = `${this._endpoint}/${this._deliveriesUrl}`;
+  private _deliveryListUrl = `${this._endpoint}/${this._siteUrl}/${this._listUrl}`;
   private _loadingDeliveries: boolean;
   private _nextPage: string;
   private _deliveriesSubject$ = new BehaviorSubject<Delivery[]>([]);
@@ -100,6 +102,25 @@ export class DeliveryService {
     );
   }
 
+  private removeItemFromList(id: string): Observable<string> {
+    return this._deliveriesSubject$.pipe(
+      take(1),
+      map(_ => {
+        const deliveries = _.map(delivery => delivery).filter(delivery => delivery.id !== id);
+        this._deliveriesSubject$.next(deliveries);
+        return id;
+      })
+    )
+  }
+
+  private updateIndexesFrom(index: number) {
+    return this._deliveriesSubject$.pipe(
+      take(1),
+      map(_ => _.map((object, i) => {return {id: object.id, index: i + 1}}).slice(index)),
+      switchMap(_ => this.updateSequence(_))
+    )
+  }
+
   getColumns(): any {
     this._columns$.pipe(
       take(1),
@@ -142,6 +163,7 @@ export class DeliveryService {
       CustomerId: customer.accountid,
       Sequence: sequence
     };
+    if (site) fields['Site'] = site.fields.Title;
     return this.shared.getBranch().pipe(
       switchMap(_ => this.http.post<Delivery>(`${this._deliveryListUrl}/items`, {fields: {...fields, Branch: _}}).pipe(
         switchMap(_ => this.updateList(_))
@@ -149,18 +171,40 @@ export class DeliveryService {
     )
   }
 
-  updateSequence(items: Array<{id: string, index: number}>) {
+  deleteDelivery(id: string): Observable<Delivery[]> {
+    return this.http.delete<Delivery>(`${this._deliveryListUrl}/items('${id}')`).pipe(
+      switchMap(_ => this.removeItemFromList(id)),
+      switchMap(_ => this.updateIndexesFrom(0))
+    );
+  }
+
+  moveItem(previousIndex: number, currentIndex: number) {
+    return this._deliveriesSubject$.pipe(
+      take(1),
+      tap(_ => moveItemInArray(_, previousIndex, currentIndex)),
+      tap(_ => this._deliveriesSubject$.next(_)),
+      switchMap(_ => {
+        const changedFrom = Math.min(previousIndex, currentIndex);
+        const changedItems = _.map((object, i) => {return {id: object.id, index: i + 1}}).slice(changedFrom);
+        return this.updateSequence(changedItems).pipe(
+          tap(a => this._deliveriesSubject$.next(a)),
+        );
+      })
+    )
+  }
+
+  private updateSequence(items: Array<{id: string, index: number}>): Observable<Delivery[]> {
     const headers = {'Content-Type': 'application/json'};
     const requests = [];
     let i = 1;
     items.forEach(_ => {
-      let url = `sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists/b8088299-ac55-4e30-9977-4b0b20947b84/items/${_['id']}`
+      let url = `${this._siteUrl}/${this._listUrl}/items/${_['id']}`
       const transferFrom = {fields: {
         Sequence: _['index'],
       }};
       requests.push({id: i += 1, method: 'PATCH', url, headers, body: transferFrom});
     })
-    return requests.length ? this.http.post(`https://graph.microsoft.com/v1.0/$batch`, {requests}).pipe(
+    return requests.length ? this.http.post(`${this._endpoint}/$batch`, {requests}).pipe(
       map((_: {responses: Array<Delivery>}) => _.responses.map(r => r['body'])),
       switchMap(_ => this.updateListMulti(_)),
       tap(_ => console.log(_))

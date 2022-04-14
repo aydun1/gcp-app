@@ -27,7 +27,6 @@ import { SignaturePadModule } from '../shared/signature/signature-pad.module';
     RecyclingNewComponent,
     ActionButtonComponent,
     BranchButtonComponent,
-
     CageDetailsComponent,
     CageWeightsComponent,
     RecyclingReceiptListComponent,

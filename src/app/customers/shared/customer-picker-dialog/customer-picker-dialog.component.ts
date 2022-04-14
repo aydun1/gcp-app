@@ -1,6 +1,6 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Observable, tap } from 'rxjs';
 
 import { CustomersService } from '../customers.service';
@@ -25,7 +25,6 @@ export class CustomerPickerDialogComponent implements OnInit {
     private fb: FormBuilder,
     private customersService: CustomersService,
     private shared: SharedService,
-    @Inject(MAT_DIALOG_DATA) private data: {id: string}
   ) { }
 
   ngOnInit(): void {
@@ -47,7 +46,7 @@ export class CustomerPickerDialogComponent implements OnInit {
     if (this.customerForm.invalid) return;
     const customer = this.customerForm.get('customer').value as Customer;
     const site = this.customerForm.get('site').value as Site;
-    this.dialogRef.close([this.data?.id, customer, site]);
+    this.dialogRef.close({customer, site});
   }
 
   setBranch(branch: string): void {

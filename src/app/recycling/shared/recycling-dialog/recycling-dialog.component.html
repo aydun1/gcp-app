@@ -13,10 +13,10 @@
           <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> <span class="cage-type">{{ cage.fields.AssetTypeClean }}</span></mat-panel-title>
         </mat-expansion-panel-header>
           <form [formGroup]="allocatorForm">
-            <mat-form-field appearance="outline" *ngIf="data.sites.length">
+            <mat-form-field appearance="outline" *ngIf="siteNames.length">
               <mat-label>Site</mat-label>
               <mat-select formControlName="site">
-                <mat-option *ngFor="let site of data.sites" [value]="site">{{ site.fields.Title }}</mat-option>
+                <mat-option *ngFor="let site of siteNames" [value]="site">{{ site }}</mat-option>
               </mat-select>
             </mat-form-field>
             <div class="actions">
@@ -41,31 +41,31 @@
             <h3 class="section-title">Allocated cages</h3>
             <button mat-raised-button color="primary" (click)="openAssigningPage()">Assign a cage</button>
           </div>
-          <p *ngIf="loadingCages$ | async" class="note">
-            Loading...
-          </p>
           <p *ngIf="noAllocatedCages$ | async" class="note">
             No allocated cages
+          </p>
+          <p *ngIf="loadingCages$ | async" class="note load">
+            Loading...
           </p>
         </ng-container>
         <ng-container *ngIf="indexOfelement === 1" >
           <div class="buttons">
             <h3 class="section-title">Delivered cages</h3>
           </div>
-          <p *ngIf="loadingCages$ | async" class="note">
-            Loading...
-          </p>
           <p *ngIf="noDeliveredCages$ | async" class="note">
             No delivered cages
+          </p>
+          <p *ngIf="loadingCages$ | async" class="note">
+            Loading...
           </p>
         </ng-container>
         <ng-container *ngIf="indexOfelement === 2" >
           <h3 class="section-title">History</h3>
-          <p *ngIf="loadingCages$ | async" class="note">
-            Loading...
-          </p>
           <p *ngIf="noCageHistory$ | async" class="note">
             No cage history
+          </p>
+          <p *ngIf="loadingCages$ | async" class="note">
+            Loading...
           </p>
         </ng-container>
         <mat-accordion>
