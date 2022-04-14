@@ -1,8 +1,8 @@
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 import { Customer } from 'src/app/customers/shared/customer';
 import { CustomerPickerDialogComponent } from 'src/app/customers/shared/customer-picker-dialog/customer-picker-dialog.component';
 import { Site } from 'src/app/customers/shared/site';
@@ -26,6 +26,7 @@ export class RunListComponent implements OnInit {
   public loading: false;
   public displayedColumns = ['sequence', 'customer', 'site', 'actions'];
   public listSize: number;
+  public dragDisabled = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -93,24 +94,19 @@ export class RunListComponent implements OnInit {
     });
   }
 
-  updateSequence(event: CdkDragDrop<Delivery[]>) {
-    this._deliveriesSubject.pipe(
-      take(1),
-      tap(_ => moveItemInArray(_, event.previousIndex, event.currentIndex)),
-      tap(_ => this._deliveriesSubject.next(_)),
-      switchMap(_ => {
-        const changedFrom = Math.min(event.previousIndex, event.currentIndex);
-        const changedItems = _.map((object, i) => {return {id: object.id, index: i + 1}}).slice(changedFrom);
-        return this.deliveryService.updateSequence(changedItems).pipe(
-          tap(a => this._deliveriesSubject.next(a)),
-          tap(a => this.listSize = a.length)
-        );
-      })
+  moveItem(event: CdkDragDrop<Delivery[]>) {
+    this.dragDisabled = true;
+    return this.deliveryService.moveItem(event.previousIndex, event.currentIndex).pipe(
+      tap(a => this.listSize = a.length)
     ).subscribe()
   }
 
   addDelivery(customer: Customer, site: Site) {
     return this.deliveryService.createDelivery('runname', customer, site, this.listSize + 1);
+  }
+
+  deleteDelivery(id: string) {
+    return this.deliveryService.deleteDelivery(id).subscribe();
   }
 
   trackByFn(index: number, item: Delivery): string {

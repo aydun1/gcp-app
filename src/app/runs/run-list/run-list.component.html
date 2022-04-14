@@ -6,11 +6,11 @@
   </div>
 
   <div *ngIf="deliveries$ | async" class="inner">
-    <mat-table #table [dataSource]="deliveries$" [trackBy]="trackByFn" cdkDropList (cdkDropListDropped)="updateSequence($event)">
+    <mat-table #table [dataSource]="deliveries$" [trackBy]="trackByFn" cdkDropList [cdkDropListDisabled]="dragDisabled" (cdkDropListDropped)="moveItem($event)">
 
       <ng-container matColumnDef="sequence">
         <mat-header-cell *matHeaderCellDef> # </mat-header-cell>
-        <mat-cell *matCellDef="let delivery">
+        <mat-cell (mousedown)="dragDisabled = false" *matCellDef="let delivery">
           {{ delivery.fields.Sequence }}
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
@@ -36,6 +36,7 @@
           <div class="action-buttons">
             <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.Site)">Pallets</button>
             <button mat-raised-button color="primary" (click)="openRecyclingDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.Site)">Recycling</button>
+            <button mat-icon-button [matMenuTriggerData]="{delivery}" [matMenuTriggerFor]="menu" class="menu"><mat-icon>more_vert</mat-icon></button>
           </div>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
@@ -53,5 +54,13 @@
     </mat-table>
   </div>
 </div>
+
+<mat-menu #menu="matMenu" xPosition="before">
+  <ng-template matMenuContent let-delivery="delivery">
+    <button mat-menu-item (click)="deleteDelivery(delivery.id)">
+      <span>Delete</span>
+    </button>
+  </ng-template>
+</mat-menu>
 
 <router-outlet></router-outlet>
