@@ -19,8 +19,8 @@
 
         <ng-container matColumnDef="customer">
           <mat-header-cell *matHeaderCellDef> Customer </mat-header-cell>
-          <mat-cell *matCellDef="let delivery" [routerLink]="['/customers', delivery.fields.CustomerId]">
-            <a [routerLink]="['/customers', delivery.fields.CustomerId]" class="customer-link">{{ delivery.fields.Customer }}</a>
+          <mat-cell *matCellDef="let delivery" [routerLink]="['/customers', delivery.fields.CustomerId]" [queryParams]="{site:delivery.fields.Site}">
+            <a [routerLink]="['/customers', delivery.fields.CustomerId]" [queryParams]="{site:delivery.fields.Site}" class="customer-link">{{ delivery.fields.Customer }}</a>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef></mat-footer-cell>
         </ng-container>
