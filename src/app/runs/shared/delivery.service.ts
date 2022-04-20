@@ -164,7 +164,7 @@ export class DeliveryService {
       Sequence: sequence
     };
     if (site) fields['Site'] = site.fields.Title;
-    if (site && site.fields.Address) fields['Address'] = site.fields.Address;
+    fields['Address'] = site && site.fields.Address ? site.fields.Address : customer.address1_composite;
 
     return this.shared.getBranch().pipe(
       switchMap(_ => this.http.post<Delivery>(`${this._deliveryListUrl}/items`, {fields: {...fields, Branch: _}}).pipe(
