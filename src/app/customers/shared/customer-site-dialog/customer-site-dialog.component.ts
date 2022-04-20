@@ -31,27 +31,33 @@ export class CustomerSiteDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.siteForm = this.fb.group({
-      site: ['', [Validators.required, this.customerService.uniqueSiteValidator(this.data.sites)]]
+      site: ['', [Validators.required, this.customerService.uniqueSiteValidator(this.data.sites)]],
+      address: ['']
     });
   }
 
-  openEditor(siteId: string, name: string): void {
+  openEditor(siteId: string, name: string, address: string): void {
     this.siteId = siteId;
     this.oldName = name;
-    this.siteForm.patchValue({site: name});
+    this.siteForm = this.fb.group({
+      site: [name, [Validators.required, this.customerService.uniqueSiteValidator(this.data.sites.filter(_ => _.fields.Title !== this.oldName))]],
+      address: [address]
+    });
   }
 
   addSite(): void {
     if (this.siteForm.invalid) return;
     const newName = this.siteForm.value['site'];
-    const action = this.customerService.addSite(this.data.customer, newName);
+    const newAddress = this.siteForm.value['address'];
+    const action = this.customerService.addSite(this.data.customer, newName, newAddress);
     this.finaliseAction(action, 'added new').subscribe(() => this.navigate(newName));
   }
 
   renameSite(): void {
     if (this.siteForm.invalid) return;
     const newName = this.siteForm.value['site'];
-    const action = this.customerService.renameSite(this.data.customer, this.siteId, newName, this.oldName);
+    const newAddress = this.siteForm.value['address'];
+    const action = this.customerService.renameSite(this.data.customer, this.siteId, newName, this.oldName, newAddress);
     this.finaliseAction(action, 'renamed').subscribe(() => this.navigate(newName));
   }
 

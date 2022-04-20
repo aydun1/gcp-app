@@ -105,22 +105,24 @@ export class CustomersService {
 
   getSites(customer: string): Observable<Site[]> {
     if (!customer) return of([]);
-    const url = `${this.sitesUrl}/items?expand=fields(select=Title, Customer)&filter=fields/Customer eq '${this.shared.sanitiseName(customer)}'`;
+    const url = `${this.sitesUrl}/items?expand=fields(select=Title,Address,Customer)&filter=fields/Customer eq '${this.shared.sanitiseName(customer)}'`;
     return this.http.get(url).pipe(map(_ => _['value']));
   }
 
-  renameSite(customer: Customer, siteId: string, newName: string, oldName: string): Observable<Object> {
+  renameSite(customer: Customer, siteId: string, newName: string, oldName: string, newAddress: string): Observable<Object> {
     const payload = {fields: {
-      Title: newName
+      Title: newName,
+      Address: newAddress
     }};
     const action = this.http.patch(`${this.sitesUrl}/items('${siteId}')`, payload);
     return this.sitePalletTransfer(action, customer, oldName, newName);
   }
 
-  addSite(customer: Customer, newName: string): Observable<Object> {
+  addSite(customer: Customer, newName: string, newAddress: string): Observable<Object> {
     const payload = {fields: {
       Customer: customer.accountnumber,
-      Title: newName
+      Title: newName,
+      Address: newAddress
     }};
     const action = this.http.post(`${this.sitesUrl}/items`, payload);
     return this.sitePalletTransfer(action, customer, '', newName);
