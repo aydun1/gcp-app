@@ -68,6 +68,10 @@ h2 {
   padding-top: 10px;
 }
 
+.mat-column-site {
+  white-space: pre-wrap;
+}
+
 .mat-column-sequence {
   flex: 0 1 20px;
   padding-right: 30px;

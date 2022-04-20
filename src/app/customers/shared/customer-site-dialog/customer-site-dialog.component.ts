@@ -58,7 +58,7 @@ export class CustomerSiteDialogComponent implements OnInit {
     const newName = this.siteForm.value['site'];
     const newAddress = this.siteForm.value['address'];
     const action = this.customerService.renameSite(this.data.customer, this.siteId, newName, this.oldName, newAddress);
-    this.finaliseAction(action, 'renamed').subscribe(() => this.navigate(newName));
+    this.finaliseAction(action, 'edited').subscribe(() => this.navigate(newName));
   }
 
   deleteSite(): void {

@@ -3,7 +3,7 @@
   <mat-dialog-content class="mat-typography">
     <p>Use this when you wish to keep track of pallets for customers with more than one physical location, but only one debtor ID. The address is optional.</p>
     <ng-container *ngIf="data.sites as sites">
-      <h3>Edit a site</h3>
+      <h3>Sites</h3>
       <mat-list>
         <mat-list-item *ngFor="let site of sites" (click)="openEditor(site.id, site.fields.Title, site.fields.Address)" [class.active] = "site.id === siteId">
           <div mat-line>{{ site.fields.Title }}</div>
@@ -13,7 +13,8 @@
       </mat-list>
     </ng-container>
 
-    <h3>Add a site</h3>
+    <h3 *ngIf="!siteId">Add a site</h3>
+    <h3 *ngIf="siteId">Edit site</h3>
     <mat-form-field appearance="outline" class="name">
       <mat-label>Site name (i.e. suburb)</mat-label>
       <input matInput type="text" formControlName="site" autocomplete="off" placeholder="Site name (i.e. suburb)">

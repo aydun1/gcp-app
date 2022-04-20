@@ -33,7 +33,7 @@ export class DeliveryService {
 
   private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
-    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,CustomerNumber,CustomerId,Customer)`;
+    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,Address,CustomerNumber,CustomerId,Customer)`;
 
     const parsed = filterKeys.map(key => {
       switch (key) {
@@ -164,6 +164,8 @@ export class DeliveryService {
       Sequence: sequence
     };
     if (site) fields['Site'] = site.fields.Title;
+    if (site && site.fields.Address) fields['Address'] = site.fields.Address;
+
     return this.shared.getBranch().pipe(
       switchMap(_ => this.http.post<Delivery>(`${this._deliveryListUrl}/items`, {fields: {...fields, Branch: _}}).pipe(
         switchMap(_ => this.updateList(_))

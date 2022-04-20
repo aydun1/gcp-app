@@ -27,8 +27,8 @@
         </ng-container>
 
         <ng-container matColumnDef="site">
-          <mat-header-cell *matHeaderCellDef> Site </mat-header-cell>
-          <mat-cell *matCellDef="let delivery">{{ delivery.fields.Site }}</mat-cell>
+          <mat-header-cell *matHeaderCellDef> Address </mat-header-cell>
+          <mat-cell *matCellDef="let delivery">{{ delivery.fields.Address || delivery.fields.Site }}</mat-cell>
           <mat-footer-cell *matFooterCellDef></mat-footer-cell>
         </ng-container>
 
