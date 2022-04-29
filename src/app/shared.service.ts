@@ -4,6 +4,8 @@ import { DomSanitizer, SafeUrl, Title } from '@angular/platform-browser';
 import { MsalService } from '@azure/msal-angular';
 import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
 
+import { environment } from '../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -29,7 +31,7 @@ export class SharedService {
   ) { }
 
   getPhoto(): Observable<SafeUrl> {
-    const url = 'https://graph.microsoft.com/v1.0/me/photo/$value';
+    const url = `${environment.endpoint}/me/photo/$value`;
     return this.http.get(url, { responseType: 'blob' }).pipe(
       map(_ => URL.createObjectURL(_)),
       map(_ => this.dom.bypassSecurityTrustUrl(_))
@@ -37,7 +39,7 @@ export class SharedService {
   }
 
   getBranch(): Observable<string> {
-    const url = 'https://graph.microsoft.com/v1.0/me/state';
+    const url = `${environment.endpoint}/me/state`;
     return this._state$.pipe(
       switchMap(cur => cur ? of(cur) : this.http.get(url).pipe(
         map(_ => _['value'] ? _['value'] : 'NA'),

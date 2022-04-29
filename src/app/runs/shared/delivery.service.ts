@@ -3,22 +3,21 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
-
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap } from 'rxjs';
+
+import { environment } from '../../../environments/environment';
+import { SharedService } from '../../shared.service';
 import { Customer } from '../../customers/shared/customer';
 import { Site } from '../../customers/shared/site';
-import { SharedService } from '../../shared.service';
 import { Delivery } from './delivery';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DeliveryService {
-  private _endpoint = 'https://graph.microsoft.com/v1.0';
-  private _siteUrl = 'sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4';
   private _listUrl = 'lists/b8088299-ac55-4e30-9977-4b0b20947b84';
   private _columns$ = new BehaviorSubject<any>(null);
-  private _deliveryListUrl = `${this._endpoint}/${this._siteUrl}/${this._listUrl}`;
+  private _deliveryListUrl = `${environment.endpoint}/${environment.siteUrl}/${this._listUrl}`;
   private _loadingDeliveries: boolean;
   private _nextPage: string;
   private _deliveriesSubject$ = new BehaviorSubject<Delivery[]>([]);
@@ -200,13 +199,13 @@ export class DeliveryService {
     const requests = [];
     let i = 1;
     items.forEach(_ => {
-      let url = `${this._siteUrl}/${this._listUrl}/items/${_['id']}`
+      let url = `${environment.siteUrl}/${this._listUrl}/items/${_['id']}`
       const transferFrom = {fields: {
         Sequence: _['index'],
       }};
       requests.push({id: i += 1, method: 'PATCH', url, headers, body: transferFrom});
     })
-    return requests.length ? this.http.post(`${this._endpoint}/$batch`, {requests}).pipe(
+    return requests.length ? this.http.post(`${environment.endpoint}/$batch`, {requests}).pipe(
       map((_: {responses: Array<Delivery>}) => _.responses.map(r => r['body'])),
       switchMap(_ => this.updateListMulti(_)),
       tap(_ => console.log(_))

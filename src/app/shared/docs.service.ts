@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core'
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, expand, from, map, Observable, of, switchMap, take } from 'rxjs';
 
+import { environment } from '../../environments/environment';
 import { Doc } from './doc';
 
 @Injectable({ providedIn: 'root' })
 export class DocsService {
-  private endpoint = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4';
+  private endpoint = `${environment.endpoint}/${environment.siteUrl}`;
   private chunkLength = 320 * 1024;
 
   constructor(
