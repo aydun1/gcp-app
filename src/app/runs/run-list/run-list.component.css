@@ -26,12 +26,6 @@ h2 {
   margin: 10px 10px;
 }
 
-.mat-table {
-  border: solid 1px #ccc;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
 .mat-row {
   background: white;
   padding: 10px 0;
