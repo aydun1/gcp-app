@@ -1,1 +1,47 @@
-<p>loading-schedule-list works!</p>
+<div cdkScrollable class="scroller">
+  <div class="outer">
+    <h2>Loading schedule</h2>
+    <div class="options inner">
+      <div class="buttons"></div>
+      <button mat-raised-button color="primary" [disabled]="loading" class="action">Add delivery</button>
+    </div>
+
+    <div *ngIf="loadingSchedule$ | async" class="inner">
+      <mat-table #table [dataSource]="loadingSchedule$" [trackBy]="trackByFn">
+
+        <ng-container matColumnDef="customer">
+          <mat-header-cell *matHeaderCellDef> Customer </mat-header-cell>
+          <mat-cell *matCellDef="let delivery" [routerLink]="['/customers', delivery.fields.CustomerId]" [queryParams]="{site:delivery.fields.Site}">
+            <a [routerLink]="['/customers', delivery.fields.CustomerId]" [queryParams]="{site:delivery.fields.Site}" class="customer-link">{{ delivery.fields.Customer }}</a>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="site">
+          <mat-header-cell *matHeaderCellDef> Address </mat-header-cell>
+          <mat-cell *matCellDef="let delivery">{{ delivery.fields.Address || delivery.fields.Site }}</mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="loading">
+          <mat-footer-cell *matFooterCellDef>
+            <gcp-loading-row></gcp-loading-row>
+          </mat-footer-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag></mat-row>
+        <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loadingList$ | async) ? false : true"></mat-footer-row>
+      </mat-table>
+    </div>
+  </div>
+</div>
+<mat-menu #menu="matMenu" xPosition="before">
+  <ng-template matMenuContent let-delivery="delivery">
+    <button mat-menu-item (click)="deleteEntry(delivery.id)">
+      <span>Delete</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<router-outlet></router-outlet>

@@ -24,7 +24,7 @@ export class LoadingScheduleService {
 
   private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
-    let url = `${this._url}/items?expand=fields`;
+    let url = `${this._url}/items?expand=fields(select=TransportCompany,Spaces,ArrivalDate,LoadDate)`;
 
     const parsed = filterKeys.map(key => {
       switch (key) {
