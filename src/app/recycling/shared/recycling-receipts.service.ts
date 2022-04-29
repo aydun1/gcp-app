@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
 import { BehaviorSubject, map, Observable, switchMap, take, tap } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
 import { Receipt } from './receipt';
 
 
@@ -13,8 +14,8 @@ export class RecyclingReceiptsService {
   private _loadingReceipts: boolean;
   private _nextPage: string;
   private _receiptsSubject$ = new BehaviorSubject<Receipt[]>([]);
-  private _dataGroupUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists';
-  private _receiptTrackerUrl = `${this._dataGroupUrl}/4a8dce10-aec9-4203-bd1e-5eb6bd761d4a`;
+  private _listUrl = 'lists/4a8dce10-aec9-4203-bd1e-5eb6bd761d4a';
+  private _receiptTrackerUrl = `${environment.endpoint}/${environment.siteUrl}/${this._listUrl}`;
 
   constructor(
     private http: HttpClient

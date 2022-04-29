@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
 import { BehaviorSubject, catchError, combineLatest, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
 import { Pallet } from './pallet';
 import { PalletTotals } from './pallet-totals';
@@ -18,11 +19,10 @@ interface PalletQuantities {
   providedIn: 'root'
 })
 export class PalletsService {
-  private _endpoint = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4';
-  private _palletsUrl = 'lists/38f14082-02e5-4978-bf92-f42be2220166';
-  private _palletsOwedUrl = 'lists/8ed9913e-a20e-41f1-9a2e-0142c09f2344';
+  private _palletListUrl = 'lists/38f14082-02e5-4978-bf92-f42be2220166';
+  private _palletsOwedListUrl = 'lists/8ed9913e-a20e-41f1-9a2e-0142c09f2344';
   private _columns$ = new BehaviorSubject<any>(null);
-  private _palletTrackerUrl = `${this._endpoint}/${this._palletsUrl}`;
+  private _palletTrackerUrl = `${environment.endpoint}/${environment.siteUrl}/${this._palletListUrl}`;
   private _loadingPallets: boolean;
   private _nextPage: string;
   private _palletsSubject$ = new BehaviorSubject<Pallet[]>([]);
@@ -159,7 +159,7 @@ export class PalletsService {
   }
 
   siteTransfer(branch: string, custName: string, custNmbr: string, oldSite: string, newSite: string, pallets: PalletQuantities) {
-    const url = `sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists/38f14082-02e5-4978-bf92-f42be2220166/items`;
+    const url = `${environment.siteUrl}/${this._palletListUrl}/items`;
     const headers = {'Content-Type': 'application/json'};
     const transfers = Object.entries(pallets).filter(_ => _[1]);
     const requests = [];
@@ -198,7 +198,7 @@ export class PalletsService {
       if (newSite) transferTo['fields']['Site'] = newSite;
       requests.push({id: i += 1, method: 'POST', url, headers, body: transferTo});
     })
-    return requests.length ? this.http.post(`https://graph.microsoft.com/v1.0/$batch`, {requests}) : of(1);
+    return requests.length ? this.http.post(`${environment.endpoint}/$batch`, {requests}) : of(1);
   }
 
   createInterstatePalletTransfer(v: any): Observable<Pallet> {
@@ -305,7 +305,7 @@ export class PalletsService {
     const dateInt = this.dateInt(date);
     const eod = new Date(date.setHours(23,59,59,999)).toISOString();
 
-    let url = `${this._endpoint}/${this._palletsOwedUrl}/items?expand=fields(select=Owing)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/DateInt lt '${dateInt}'&top=2000`;
+    let url = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}/items?expand=fields(select=Owing)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/DateInt lt '${dateInt}'&top=2000`;
     let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null and fields/Created ge '${startOfMonth}' and fields/Created lt '${eod}'&top=2000`;
 
     const prevMonths: Observable<PalletTotals[]> = this.http.get(url).pipe(map(_ => _['value']));
@@ -325,7 +325,7 @@ export class PalletsService {
     const startOfMonth = new Date(Date.UTC(date.getFullYear(), date.getUTCMonth(), 1)).toISOString();
     const dateInt = this.dateInt(date);
 
-    let url = `${this._endpoint}/${this._palletsOwedUrl}/items?expand=fields(select=Title,Pallet,Owing)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt lt '${dateInt}'`;
+    let url = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}/items?expand=fields(select=Title,Pallet,Owing)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt lt '${dateInt}'`;
     let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}' and fields/Created ge '${startOfMonth}'`;
 
     if (site !== null) {

@@ -1,13 +1,13 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
 import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
-import { Site } from '../../customers/shared/site';
 import { Cage } from './cage';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Injectable({
@@ -18,8 +18,8 @@ export class RecyclingService {
   private _nextPage: string;
   private _cagesSubject$ = new BehaviorSubject<Cage[]>([]);
   private _columns$ = new BehaviorSubject<any>(null);
-  private _dataGroupUrl = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists';
-  private _cageTrackerUrl = `${this._dataGroupUrl}/e96c2778-2322-46d6-8de9-3d0c8ca5aefd`;
+  private _listUrl = 'lists/e96c2778-2322-46d6-8de9-3d0c8ca5aefd';
+  private _cageTrackerUrl = `${environment.endpoint}/${environment.siteUrl}/${this._listUrl}`;
   private types = {
     'Cage - Solid (2.5m³)': 'Solid cage',
     'Cage - Folding (2.5m³)': 'Folding cage'
