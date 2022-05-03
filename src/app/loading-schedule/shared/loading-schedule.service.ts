@@ -10,7 +10,7 @@ import { LoadingSchedule } from './loading-schedule';
   providedIn: 'root'
 })
 export class LoadingScheduleService {
-  private _listUrl = 'lists/1e955039-1d2e-41f8-98a2-688319720410';
+  private _listUrl = 'lists/522873e2-892c-4e3f-8764-88975d7bd8d0';
   private _url = `${environment.endpoint}/${environment.siteUrl}/${this._listUrl}`;
   private _nextPage: string;
   private _loadingScheduleSubject$ = new BehaviorSubject<LoadingSchedule[]>([]);
@@ -28,27 +28,18 @@ export class LoadingScheduleService {
 
     const parsed = filterKeys.map(key => {
       switch (key) {
-        case 'bin':
-          return `fields/CageNumber eq ${filters['bin']}`;
         case 'branch':
           return `fields/Branch eq '${filters['branch']}'`;
         case 'status':
-          if (filters['status'] === 'Polymer') return `fields/Date3 ne null`;
-          if (filters['status'] === 'Local processing') return `fields/ToLocalProcessing ne null`;
           return `fields/Status eq '${filters['status']}'`;
-        case 'assetType':
-          return `fields/AssetType eq '${filters['assetType']}'`;
         default:
           return '';
       }
     }).filter(_ => _);
 
-    if (!filterKeys.includes('assetType')) parsed.push(`fields/CageNumber gt 0`);
     if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Complete'`);
 
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
-    url += `&$orderby=${filters['sort'] ? filters['sort'] : 'fields/CageNumber'}`;
-    url += ` ${filters['order'] ? filters['order'] : 'asc'}`;
     url += `&top=25`;
     return url;
   }
