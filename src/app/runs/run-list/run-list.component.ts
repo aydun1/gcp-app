@@ -3,12 +3,13 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
-import { Customer } from 'src/app/customers/shared/customer';
-import { CustomerPickerDialogComponent } from 'src/app/customers/shared/customer-picker-dialog/customer-picker-dialog.component';
-import { Site } from 'src/app/customers/shared/site';
-import { PalletDialogComponent } from 'src/app/pallets/shared/pallet-dialog/pallet-dialog.component';
-import { RecyclingDialogComponent } from 'src/app/recycling/shared/recycling-dialog/recycling-dialog.component';
-import { SharedService } from 'src/app/shared.service';
+
+import { Customer } from '../../customers/shared/customer';
+import { CustomerPickerDialogComponent } from '../../customers/shared/customer-picker-dialog/customer-picker-dialog.component';
+import { Site } from '../../customers/shared/site';
+import { PalletDialogComponent } from '../../pallets/shared/pallet-dialog/pallet-dialog.component';
+import { RecyclingDialogComponent } from '../../recycling/shared/recycling-dialog/recycling-dialog.component';
+import { SharedService } from '../../shared.service';
 import { Delivery } from '../shared/delivery';
 import { DeliveryService } from '../shared/delivery.service';
 
@@ -20,12 +21,12 @@ import { DeliveryService } from '../shared/delivery.service';
 export class RunListComponent implements OnInit {
   private _deliveriesSubject = new BehaviorSubject<Delivery[]>([]);
   private _loadList: boolean;
+  private listSize: number;
+
   public deliveries$: Observable<Delivery[]>;
-  public deliveries: Delivery[];
   public loadingList$ = this.deliveryService.loading;
   public loading: false;
   public displayedColumns = ['sequence', 'customer', 'site', 'actions'];
-  public listSize: number;
   public dragDisabled = true;
 
   constructor(
@@ -60,14 +61,7 @@ export class RunListComponent implements OnInit {
   }
 
   getFirstPage(params: Params): Observable<Delivery[]> {
-    return this.deliveryService.getFirstPage(params).pipe(
-      map(_=>
-        _.map(pallet =>  {
-          pallet.fields['To'] = '';
-          return pallet;
-        })
-      )
-    );
+    return this.deliveryService.getFirstPage(params);
   }
 
   parseParams(params: Params): void {

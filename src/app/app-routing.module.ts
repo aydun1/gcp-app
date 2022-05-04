@@ -22,7 +22,9 @@ const routes: Routes = [
   { path: 'customers', canActivate: [MsalGuard], loadChildren: () => import('./customers/customers.module').then(m => m.CustomersModule) },
   { path: 'recycling', canActivate: [MsalGuard], loadChildren: () => import('./recycling/recycling.module').then(m => m.RecyclingModule) },
   { path: 'pallets', canActivate: [MsalGuard], loadChildren: () => import('./pallets/pallets.module').then(m => m.PalletsModule) },
-  { path: 'runs', canActivate: [MsalGuard], loadChildren: () => import('./runs/runs.module').then(m => m.RunsModule) }
+  { path: 'runs', canActivate: [MsalGuard], loadChildren: () => import('./runs/runs.module').then(m => m.RunsModule) },
+  { path: 'loading-schedule', canActivate: [MsalGuard], loadChildren: () => import('./loading-schedule/loading-schedule.module').then(m => m.LoadingScheduleModule) }
+
 ];
 
 @NgModule({

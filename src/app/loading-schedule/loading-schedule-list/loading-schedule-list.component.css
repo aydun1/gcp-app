@@ -1,0 +1,27 @@
+.scroller {
+  display: block;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.outer {
+  margin: 0 auto;
+  max-width: 1024px;
+}
+
+.inner {
+  margin: 10px 10px;
+}
+
+h2 {
+  margin-left: 10px;
+}
+
+.options {
+  align-items: baseline;
+  display: flex;
+}
+
+.buttons {
+  flex: 1;
+}

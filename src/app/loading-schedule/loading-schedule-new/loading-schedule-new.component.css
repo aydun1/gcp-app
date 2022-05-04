@@ -1,0 +1,27 @@
+.outer {
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+h2 {
+  margin-left: 10px;
+}
+
+.mat-card {
+  margin: 10px;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.spacer {
+  margin-bottom: 20px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin: 30px 10px;
+}

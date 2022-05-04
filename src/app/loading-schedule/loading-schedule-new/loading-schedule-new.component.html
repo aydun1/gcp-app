@@ -1,0 +1,63 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="goBack()" class="mobile-button">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <ng-container>
+    <div class="title">New schedule entry</div>
+  </ng-container>
+</mat-toolbar>
+
+<div class="outer">
+  <h2>Add a new loading schedule entry</h2>
+  <form (ngSubmit)="onSubmit()" [formGroup]="loadingScheduleForm">
+    <mat-card>
+      <mat-form-field appearance="fill">
+        <mat-label>Loading date</mat-label>
+        <input matInput [matDatepicker]="picker1" formControlName="LoadingDate">
+        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker  #picker1></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Arrival date</mat-label>
+        <input matInput [matDatepicker]="picker2" formControlName="arrivalDate">
+        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker  #picker2></mat-datepicker>
+      </mat-form-field>
+      <div class="spacer">
+        <mat-divider></mat-divider>
+      </div>
+      <mat-form-field appearance="fill">
+        <mat-label>Transport company</mat-label>
+        <mat-select matInput type="text" formControlName="transportCompany">
+          <mat-option *ngFor="let s of choices?.TransportCompany.choice.choices" [value]="s">{{ s }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Driver</mat-label>
+        <mat-select matInput type="text" formControlName="driver">
+          <mat-option *ngFor="let s of choices?.Driver?.choice.choices" [value]="s">{{ s }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="spacer">
+        <mat-divider></mat-divider>
+      </div>
+      <mat-form-field appearance="fill">
+        <mat-label>Destination</mat-label>
+        <mat-select matInput type="text" formControlName="destination">
+          <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Spaces</mat-label>
+        <input matInput type="number" formControlName="spaces" autocomplete="off">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Notes</mat-label>
+        <textarea matInput type="text" formControlName="notes" autocomplete="off"></textarea>
+      </mat-form-field>
+    </mat-card>
+    <div class="buttons">
+      <button mat-raised-button color="primary" [disabled]="loading">Confirm</button>
+    </div>
+  </form>
+</div>

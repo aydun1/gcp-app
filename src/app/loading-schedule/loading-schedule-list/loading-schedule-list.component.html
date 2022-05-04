@@ -1,0 +1,74 @@
+<div cdkScrollable class="scroller">
+  <div class="outer">
+    <h2>Loading schedule</h2>
+    <div class="options inner">
+      <div class="buttons"></div>
+      <a mat-raised-button color="primary" [disabled]="loading" [routerLink]="['new']" class="action">Add entry</a>
+    </div>
+
+    <div *ngIf="loadingSchedule$ | async as loadingSchedule" class="inner">
+
+      <div *ngFor="let s of loadingSchedule | groupBy:['Scheduled']">
+        {{s}}
+      </div>
+
+      <mat-table #table [dataSource]="loadingSchedule" [trackBy]="trackByFn">
+
+        <ng-container matColumnDef="loadingDate">
+          <mat-header-cell *matHeaderCellDef> Loading date </mat-header-cell>
+          <mat-cell *matCellDef="let delivery">{{ delivery.fields.LoadingDate | date }}</mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="arrivalDate">
+          <mat-header-cell *matHeaderCellDef> Arrival date </mat-header-cell>
+          <mat-cell *matCellDef="let delivery">{{ delivery.fields.ArrivalDate | date }}</mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="transportCompany">
+          <mat-header-cell *matHeaderCellDef> Transport Company </mat-header-cell>
+          <mat-cell *matCellDef="let delivery">{{ delivery.fields.TransportCompany }}</mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="driver">
+          <mat-header-cell *matHeaderCellDef> Driver </mat-header-cell>
+          <mat-cell *matCellDef="let delivery">{{ delivery.fields.Driver }}</mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="spaces">
+          <mat-header-cell *matHeaderCellDef> Spaces </mat-header-cell>
+          <mat-cell *matCellDef="let delivery">{{ delivery.fields.Spaces }}</mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="notes">
+          <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
+          <mat-cell *matCellDef="let delivery">{{ delivery.fields.Notes }}</mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="loading">
+          <mat-footer-cell *matFooterCellDef>
+            <gcp-loading-row></gcp-loading-row>
+          </mat-footer-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag></mat-row>
+        <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loadingList$ | async) ? false : true"></mat-footer-row>
+      </mat-table>
+    </div>
+  </div>
+</div>
+<mat-menu #menu="matMenu" xPosition="before">
+  <ng-template matMenuContent let-delivery="delivery">
+    <button mat-menu-item (click)="deleteEntry(delivery.id)">
+      <span>Delete</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<router-outlet></router-outlet>
