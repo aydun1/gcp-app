@@ -5,17 +5,18 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class GroupByPipe implements PipeTransform {
   transform(input: any, prop: Array<string>): Array<any> {
-
+    console.log(prop);
     if (!Array.isArray(input)) return input;
+
     const a = input.reduce((result, item) => ({
-        ...result,
-        [item['fields']['Status'] === prop[0] ? prop[0] : item['fields']['Status'] === prop[1] ? prop[1] : 'Other']: [
-          ...(result[item['fields']['Status'] === prop[0] ? prop[0] : item['fields']['Status'] === prop[1] ? prop[1] : 'Other'] || []),
-          item,
-        ],
-      }),
-      {},
-    );
+      ...result,
+      [prop.find(_ => _ === item['fields']['Status']) || 'Other']: [
+        ...(result[prop.find(_ => _ === item['fields']['Status']) || 'Other'] || []),
+        item,
+      ]
+    }),
+    {},
+  );
     return [a[prop[0]], a[prop[1]], a['Other']];
   }
 }

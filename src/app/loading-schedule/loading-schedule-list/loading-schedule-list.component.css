@@ -16,3 +16,12 @@
 h2 {
   margin-left: 10px;
 }
+
+.options {
+  align-items: baseline;
+  display: flex;
+}
+
+.buttons {
+  flex: 1;
+}

@@ -6,13 +6,15 @@ import { LoadingScheduleComponent } from './loading-schedule.component';
 import { LoadingScheduleRoutingModule } from './loading-schedule-routing.module';
 import { LoadingScheduleService } from './shared/loading-schedule.service';
 import { LoadingScheduleListComponent } from './loading-schedule-list/loading-schedule-list.component';
+import { LoadingScheduleNewComponent } from './loading-schedule-new/loading-schedule-new.component';
 
 
 
 @NgModule({
   declarations: [
     LoadingScheduleComponent,
-    LoadingScheduleListComponent
+    LoadingScheduleListComponent,
+    LoadingScheduleNewComponent
   ],
   imports: [
     CommonModule,

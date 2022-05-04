@@ -104,7 +104,7 @@ export class PalletsService {
     return `${date.getUTCFullYear()}${('00' + (date.getUTCMonth() + 1)).slice(-2)}`;
   }
 
-  getColumns(): any {
+  getColumns(): BehaviorSubject<any> {
     this._columns$.pipe(
       take(1),
       map(_ => {
