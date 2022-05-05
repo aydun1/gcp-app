@@ -2,7 +2,12 @@
   <div class="outer">
     <h2>Loading schedule</h2>
     <div class="options inner">
-      <div class="buttons"></div>
+      <div class="buttons">
+        <mat-button-toggle-group>
+          <mat-button-toggle value="bold">Active</mat-button-toggle>
+          <mat-button-toggle value="italic">Delivered</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
       <a mat-raised-button color="primary" [disabled]="loading" [routerLink]="['new']" class="action">Add entry</a>
     </div>
 
@@ -14,18 +19,32 @@
   
             <ng-container matColumnDef="loadingDate">
               <mat-header-cell *matHeaderCellDef> Loading date </mat-header-cell>
-              <mat-cell *matCellDef="let delivery">{{ delivery.fields.LoadingDate | date }}</mat-cell>
+              <mat-cell *matCellDef="let delivery">
+                <div>
+                  {{ delivery.fields.LoadingDate | date: 'EEEE' }}
+                </div>
+                <div>
+                  {{ delivery.fields.LoadingDate | date: 'd MMM yyyy' }}
+                </div>
+              </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
     
             <ng-container matColumnDef="arrivalDate">
               <mat-header-cell *matHeaderCellDef> Arrival date </mat-header-cell>
-              <mat-cell *matCellDef="let delivery">{{ delivery.fields.ArrivalDate | date }}</mat-cell>
+              <mat-cell *matCellDef="let delivery">
+                <div>
+                  {{ delivery.fields.ArrivalDate | date: 'EEEE' }}
+                </div>
+                <div>
+                  {{ delivery.fields.ArrivalDate | date }}
+                </div>
+              </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
     
             <ng-container matColumnDef="transportCompany">
-              <mat-header-cell *matHeaderCellDef> Transport Company </mat-header-cell>
+              <mat-header-cell *matHeaderCellDef> Transport company / driver </mat-header-cell>
               <mat-cell *matCellDef="let delivery"><div>{{ delivery.fields.TransportCompany }}</div><div>{{ delivery.fields.Driver }}</div></mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
