@@ -7,6 +7,10 @@ h2 {
   margin-left: 10px;
 }
 
+textarea {
+  height: 50px;
+}
+
 .mat-card {
   margin: 10px;
 }

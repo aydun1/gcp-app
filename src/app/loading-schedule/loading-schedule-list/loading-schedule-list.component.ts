@@ -19,6 +19,7 @@ export class LoadingScheduleListComponent implements OnInit {
   public loading: false;
   public displayedColumns = ['loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'status', 'notes', 'edit'];
   public listSize: number;
+  public groups = ['Scheduled', 'Pan list sent', 'Delivered'];
 
   constructor(
     private route: ActivatedRoute,

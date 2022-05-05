@@ -36,6 +36,7 @@ export class LoadingScheduleNewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.loading = true;
     this.loadingScheduleForm = this.fb.group({
       status: ['', [Validators.required]],
       loadingDate: ['', [Validators.required]],
@@ -49,7 +50,8 @@ export class LoadingScheduleNewComponent implements OnInit {
 
     this.id = this.route.snapshot.paramMap.get('id');
     this.transportCompanies$ = this.loadingScheduleService.getTransportCompanies().pipe(
-      switchMap(_ => this.patchForm(_))
+      switchMap(_ => this.patchForm(_)),
+      tap(() => this.loading = false)
     );
 
     this.getOptions();
@@ -63,7 +65,7 @@ export class LoadingScheduleNewComponent implements OnInit {
   }
 
   patchForm(transportCompanies: Array<TransportCompany>): Observable<TransportCompany[]> {
-    if (!this.id) return of();
+    if (!this.id) return of([]);
     return this.loadingScheduleService.getLoadingScheduleEntry(this.id).pipe(
       tap(_ => {
         const data = {};
@@ -75,7 +77,6 @@ export class LoadingScheduleNewComponent implements OnInit {
         data['driver'] = _.fields['Driver'];
         data['spaces'] = _.fields['Spaces'];
         data['notes'] = _.fields['Notes'];
-        console.log(data)
         this.loadingScheduleForm.patchValue(data);
       }),
       map(() => transportCompanies)
@@ -89,14 +90,14 @@ export class LoadingScheduleNewComponent implements OnInit {
     this.loadingScheduleService.createLoadingScheduleEntry(payload, this.id).pipe(
       tap(_ => {
         this.goBack();
-        this.snackBar.open('Added loading schedule entry', '', {duration: 3000});
+        this.snackBar.open(`${this.id ? 'Updated' : 'Added'} loading schedule entry`, '', {duration: 3000});
       }),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         this.loading = false;
         return throwError(() => new Error(err));
       })
-    ).subscribe(_ => console.log(_));
+    ).subscribe();
 
   }
 

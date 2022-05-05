@@ -46,7 +46,7 @@ h2 {
 }
 
 .mat-column-notes {
-  flex: 1;
+  flex: 1 1 100px;
 }
 
 .mat-column-edit {

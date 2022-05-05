@@ -7,62 +7,67 @@
     </div>
 
     <div *ngIf="loadingSchedule$ | async as loadingSchedule" class="inner">
-      <mat-table #table [dataSource]="loadingSchedule" [trackBy]="trackByFn">
-
-        <ng-container matColumnDef="loadingDate">
-          <mat-header-cell *matHeaderCellDef> Loading date </mat-header-cell>
-          <mat-cell *matCellDef="let delivery">{{ delivery.fields.LoadingDate | date }}</mat-cell>
-          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="arrivalDate">
-          <mat-header-cell *matHeaderCellDef> Arrival date </mat-header-cell>
-          <mat-cell *matCellDef="let delivery">{{ delivery.fields.ArrivalDate | date }}</mat-cell>
-          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="transportCompany">
-          <mat-header-cell *matHeaderCellDef> Transport Company </mat-header-cell>
-          <mat-cell *matCellDef="let delivery"><div>{{ delivery.fields.TransportCompany }}</div><div>{{ delivery.fields.Driver }}</div></mat-cell>
-          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="spaces">
-          <mat-header-cell *matHeaderCellDef> Spaces </mat-header-cell>
-          <mat-cell *matCellDef="let delivery">{{ delivery.fields.Spaces }}</mat-cell>
-          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="status">
-          <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
-          <mat-cell *matCellDef="let delivery">{{ delivery.fields.Status }}</mat-cell>
-          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="notes">
-          <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
-          <mat-cell *matCellDef="let delivery">{{ delivery.fields.Notes }}</mat-cell>
-          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="edit">
-          <mat-header-cell *matHeaderCellDef></mat-header-cell>
-          <mat-cell *matCellDef="let delivery">
-            <a mat-icon-button [routerLink]="[delivery.id]"><mat-icon>arrow_forward</mat-icon></a>
-          </mat-cell>
-          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="loading">
-          <mat-footer-cell *matFooterCellDef>
-            <gcp-loading-row></gcp-loading-row>
-          </mat-footer-cell>
-        </ng-container>
-
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag></mat-row>
-        <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loadingList$ | async) ? false : true"></mat-footer-row>
-      </mat-table>
+      <div *ngFor="let s of loadingSchedule | groupBy:groups; let i = index">
+        <div *ngIf="s">
+          <h3>{{ groups[i] }}</h3>
+          <mat-table #table [dataSource]="s" [trackBy]="trackByFn">
+  
+            <ng-container matColumnDef="loadingDate">
+              <mat-header-cell *matHeaderCellDef> Loading date </mat-header-cell>
+              <mat-cell *matCellDef="let delivery">{{ delivery.fields.LoadingDate | date }}</mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="arrivalDate">
+              <mat-header-cell *matHeaderCellDef> Arrival date </mat-header-cell>
+              <mat-cell *matCellDef="let delivery">{{ delivery.fields.ArrivalDate | date }}</mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="transportCompany">
+              <mat-header-cell *matHeaderCellDef> Transport Company </mat-header-cell>
+              <mat-cell *matCellDef="let delivery"><div>{{ delivery.fields.TransportCompany }}</div><div>{{ delivery.fields.Driver }}</div></mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="spaces">
+              <mat-header-cell *matHeaderCellDef> Spaces </mat-header-cell>
+              <mat-cell *matCellDef="let delivery">{{ delivery.fields.Spaces }}</mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="status">
+              <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+              <mat-cell *matCellDef="let delivery">{{ delivery.fields.Status }}</mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="notes">
+              <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
+              <mat-cell *matCellDef="let delivery">{{ delivery.fields.Notes }}</mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="edit">
+              <mat-header-cell *matHeaderCellDef></mat-header-cell>
+              <mat-cell *matCellDef="let delivery">
+                <a mat-icon-button [routerLink]="[delivery.id]"><mat-icon>arrow_forward</mat-icon></a>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="loading">
+              <mat-footer-cell *matFooterCellDef>
+                <gcp-loading-row></gcp-loading-row>
+              </mat-footer-cell>
+            </ng-container>
+    
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag></mat-row>
+            <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loadingList$ | async) ? false : true"></mat-footer-row>
+          </mat-table>
+        </div>
+      </div>     
     </div>
   </div>
 </div>
