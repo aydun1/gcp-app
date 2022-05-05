@@ -3,26 +3,41 @@
     <mat-icon>arrow_back</mat-icon>
   </button>
   <ng-container>
-    <div class="title">New schedule entry</div>
+    <div class="title">{{id ? 'Edit' : 'New'}} schedule entry</div>
   </ng-container>
 </mat-toolbar>
 
 <div class="outer">
-  <h2>Add a new loading schedule entry</h2>
+  <h2>{{ id ? 'Edit' : 'Add a new' }} loading schedule entry</h2>
   <form (ngSubmit)="onSubmit()" [formGroup]="loadingScheduleForm">
     <mat-card>
+      <mat-form-field appearance="fill">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status">
+          <mat-option *ngFor="let status of choices?.Status.choice.choices" [value]="status">
+          {{ status }}
+        </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="spacer">
+        <mat-divider></mat-divider>
+      </div>
+
       <mat-form-field appearance="fill">
         <mat-label>Loading date</mat-label>
         <input matInput [matDatepicker]="picker1" formControlName="loadingDate" title="Loading date">
         <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
         <mat-datepicker  #picker1></mat-datepicker>
       </mat-form-field>
+
       <mat-form-field appearance="fill">
         <mat-label>Arrival date</mat-label>
         <input matInput [matDatepicker]="picker2" formControlName="arrivalDate" title="Arrival date">
         <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
         <mat-datepicker  #picker2></mat-datepicker>
       </mat-form-field>
+
       <div class="spacer">
         <mat-divider></mat-divider>
       </div>
@@ -67,7 +82,7 @@
       </mat-form-field>
     </mat-card>
     <div class="buttons">
-      <button mat-raised-button color="primary" [disabled]="loading">Confirm</button>
+      <button mat-raised-button type="submit" color="primary" [disabled]="loading">Confirm</button>
     </div>
   </form>
 </div>

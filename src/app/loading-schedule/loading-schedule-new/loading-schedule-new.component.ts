@@ -5,7 +5,6 @@ import { ActivatedRoute } from '@angular/router';
 import { catchError, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { NavigationService } from 'src/app/navigation.service';
 import { SharedService } from 'src/app/shared.service';
-import { LoadingSchedule } from '../shared/loading-schedule';
 import { LoadingScheduleService } from '../shared/loading-schedule.service';
 import { TransportCompany } from '../shared/transport-company';
 
@@ -24,7 +23,7 @@ export class LoadingScheduleNewComponent implements OnInit {
   public states = this.sharedService.branches;
   public state: string;
   public loading: boolean;
-  public choices: {TransportCompany: choice, Driver: choice, AssetType: choice, Branch: choice};
+  public choices: {TransportCompany: choice, Driver: choice, AssetType: choice, Branch: choice, Status: choice};
   public id: string;
 
   constructor(
@@ -38,6 +37,7 @@ export class LoadingScheduleNewComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadingScheduleForm = this.fb.group({
+      status: ['', [Validators.required]],
       loadingDate: ['', [Validators.required]],
       arrivalDate: ['', [Validators.required]],
       destination: [{value: this.state, disabled: true}, [Validators.required]],
@@ -67,6 +67,7 @@ export class LoadingScheduleNewComponent implements OnInit {
     return this.loadingScheduleService.getLoadingScheduleEntry(this.id).pipe(
       tap(_ => {
         const data = {};
+        data['status'] = _.fields['Status'];
         data['arrivalDate'] = _.fields['ArrivalDate'];
         data['loadingDate'] = _.fields['LoadingDate'];
         data['destination'] = _.fields['Destination'];
@@ -101,10 +102,7 @@ export class LoadingScheduleNewComponent implements OnInit {
 
   getOptions(): void {
     this.loadingScheduleService.getColumns().pipe(
-      tap(_ => {
-        if (!_) return;
-        this.choices = _;
-      })
+      tap(_ => this.choices = _)
     ).subscribe();
   }
 
