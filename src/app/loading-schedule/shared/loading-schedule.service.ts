@@ -5,13 +5,16 @@ import { BehaviorSubject, map, Observable, of, switchMap, take, tap } from 'rxjs
 
 import { environment } from '../../../environments/environment';
 import { LoadingSchedule } from './loading-schedule';
+import { TransportCompany } from './transport-company';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoadingScheduleService {
   private _listUrl = 'lists/522873e2-892c-4e3f-8764-88975d7bd8d0';
-  private _url = `${environment.endpoint}/${environment.siteUrl}/${this._listUrl}`;
+  private _transportCompaniesListUrl = 'lists/5bed333e-0bc3-41ae-bda4-b851678347d1';
+  private _loadingScheduleUrl = `${environment.endpoint}/${environment.siteUrl}/${this._listUrl}`;
+  private _transportCompaniesUrl = `${environment.endpoint}/${environment.siteUrl}/${this._transportCompaniesListUrl}`;
   private _nextPage: string;
   private _loadingScheduleSubject$ = new BehaviorSubject<LoadingSchedule[]>([]);
   private _loadingLoadingSchedule: boolean;
@@ -25,8 +28,8 @@ export class LoadingScheduleService {
 
   private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
-    let url = `${this._url}/items?expand=fields(select=TransportCompany,Driver,Spaces,ArrivalDate,LoadingDate,Destination,Notes)`;
-
+    const params = '?expand=fields(select=TransportCompany,Driver,Spaces,ArrivalDate,LoadingDate,Destination,Status,Notes)&orderby=fields/ArrivalDate asc';
+    let url = `${this._loadingScheduleUrl}/items${params}`;
     const parsed = filterKeys.map(key => {
       switch (key) {
         case 'branch':
@@ -92,7 +95,7 @@ export class LoadingScheduleService {
       take(1),
       map(_ => {
         if (_) return of(_);
-        return this.http.get(`${this._url}/columns`).pipe(
+        return this.http.get(`${this._loadingScheduleUrl}/columns`).pipe(
           map(_ => _['value']),
           map(_ => _.reduce((a, v) => ({ ...a, [v.name]: v}), {})),
           tap(_ => this._columns$.next(_))
@@ -103,20 +106,65 @@ export class LoadingScheduleService {
     return this._columns$;
   }
 
+  getTransportCompanies() {
+    const url = `${this._transportCompaniesUrl}/items?expand=fields(select=Title,Drivers,Droivers)`;
+    return this.http.get(url).pipe(
+      map((res: {value: TransportCompany[]}) => res.value),
+      tap(_ => console.log(_)),
+      tap(_ => _.forEach(_ => _['fields']['DriversArray'] = _['fields']['Drivers']?.split(/[\r\n]+/)))
+    );
+  }
+
+  addTransportCompany(id: string, drivers: string) {
+    const payload = {fields: {
+      'Drivers': drivers
+    }};
+    return this.http.post<TransportCompany>(`${this._transportCompaniesUrl}/items('${id}')`, payload);
+  }
+
+  updateTransportCompanyDrivers(id: string, drivers: string) {
+    const payload = {fields: {
+      'Drivers': drivers
+    }};
+    return this.http.patch<TransportCompany>(`${this._transportCompaniesUrl}/items('${id}')`, payload);
+  }
+
   createLoadingScheduleEntry(v: any): Observable<LoadingSchedule> {
+    const drivers = v.transportCompany.fields?.Drivers || [];
+    const isNewDriver = !drivers.includes(v.driver) && v.driver !== '';
+    const isNewTransportCompany = v.transportCompany.fields ? false : true;
+    const transportCompany = isNewTransportCompany ? v.transportCompany : v.transportCompany.fields.Title;
+
     const fields = {
       LoadingDate: v.LoadingDate,
       ArrivalDate: v.arrivalDate,
       Spaces: v.spaces || null,
-      TransportCompany: v.transportCompany,
+      TransportCompany: transportCompany,
       Driver: v.driver,
       Destination: v.destination,
       Status: v.status,
       Notes: v.notes
     };
-    console.log({fields});
-    return this.http.post<LoadingSchedule>(`${this._url}/items`, {fields}).pipe(
-      switchMap(_ => this.updateList(_))
-    );
+    let a = of({} as TransportCompany);
+    if (isNewTransportCompany) {
+      const fields = {
+        Title: transportCompany,
+        Drivers: v.driver,
+        Branch: v.destination
+      };
+      a = this.http.post<TransportCompany>(`${this._transportCompaniesUrl}/items`, {fields});
+    } else if (isNewDriver) {
+      const fields = {
+        Drivers: `${drivers}\n${v.driver}`
+      };
+      a = this.http.patch<TransportCompany>(`${this._transportCompaniesUrl}/items('${v.transportCompany.id}')`, {fields});
+    }
+    return a.pipe(
+      switchMap(() => 
+        this.http.post<LoadingSchedule>(`${this._loadingScheduleUrl}/items`, {fields}).pipe(
+          switchMap(_ => this.updateList(_)),
+        )
+      )
+    )
   }
 }

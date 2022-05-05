@@ -7,6 +7,7 @@ import { LoadingScheduleRoutingModule } from './loading-schedule-routing.module'
 import { LoadingScheduleService } from './shared/loading-schedule.service';
 import { LoadingScheduleListComponent } from './loading-schedule-list/loading-schedule-list.component';
 import { LoadingScheduleNewComponent } from './loading-schedule-new/loading-schedule-new.component';
+import { LoadingScheduleViewComponent } from './loading-schedule-view/loading-schedule-view.component';
 
 
 
@@ -14,7 +15,8 @@ import { LoadingScheduleNewComponent } from './loading-schedule-new/loading-sche
   declarations: [
     LoadingScheduleComponent,
     LoadingScheduleListComponent,
-    LoadingScheduleNewComponent
+    LoadingScheduleNewComponent,
+    LoadingScheduleViewComponent
   ],
   imports: [
     CommonModule,

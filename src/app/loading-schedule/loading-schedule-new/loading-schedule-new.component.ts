@@ -1,7 +1,8 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { catchError, tap, throwError } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { catchError, Observable, tap, throwError } from 'rxjs';
 import { NavigationService } from 'src/app/navigation.service';
 import { SharedService } from 'src/app/shared.service';
 import { LoadingScheduleService } from '../shared/loading-schedule.service';
@@ -16,17 +17,17 @@ interface choice {choice: {choices: Array<any>}, name: string};
 export class LoadingScheduleNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
 
+  public transportCompanies$: Observable<any>;
   public loadingScheduleForm: FormGroup;
-  public adjBalance = 0;
-  public stocktakeResult = 0;
-  public pallets = ['Loscam', 'Chep', 'Plain'];
   public states = this.sharedService.branches;
   public state: string;
   public loading: boolean;
   public choices: {TransportCompany: choice, Driver: choice, AssetType: choice, Branch: choice};
+  public id: string;
 
   constructor(
     private fb: FormBuilder,
+    private route: ActivatedRoute,
     private snackBar: MatSnackBar,
     private sharedService: SharedService,
     private navService: NavigationService,
@@ -34,10 +35,15 @@ export class LoadingScheduleNewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.id = this.route.snapshot.paramMap.get('id');
+
     this.sharedService.getBranch().subscribe(state => {
       this.state = state;
       if (this.loadingScheduleForm) this.loadingScheduleForm.patchValue({destination: state});
     });
+
+    this.transportCompanies$ = this.loadingScheduleService.getTransportCompanies();
+
     const name = this.sharedService.getName();
     this.loadingScheduleForm = this.fb.group({
       LoadingDate: ['', [Validators.required]],
@@ -77,6 +83,10 @@ export class LoadingScheduleNewComponent implements OnInit {
         this.choices = _;
       })
     ).subscribe();
+  }
+
+  displayFn(option) {
+    return option.fields?.Title;
   }
 
   goBack(): void {

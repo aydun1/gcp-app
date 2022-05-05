@@ -25,3 +25,30 @@ h2 {
 .buttons {
   flex: 1;
 }
+
+.mat-column-loadingDate, .mat-column-arrivalDate {
+  flex: 0 1 120px;
+}
+
+.mat-column-spaces {
+  flex: 0 1 100px;
+}
+
+.mat-column-transportCompany {
+  align-items: flex-start;
+  flex: 0 1 220px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mat-column-status {
+  flex: 0 1 120px;
+}
+
+.mat-column-notes {
+  flex: 1;
+}
+
+.mat-column-edit {
+  flex: 0 1 40px;
+}

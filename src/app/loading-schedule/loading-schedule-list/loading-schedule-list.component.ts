@@ -17,7 +17,7 @@ export class LoadingScheduleListComponent implements OnInit {
   public deliveries: LoadingSchedule[];
   public loadingList$ = this.loadingScheduleService.loading;
   public loading: false;
-  public displayedColumns = ['loadingDate', 'arrivalDate', 'transportCompany', 'driver', 'spaces', 'notes'];
+  public displayedColumns = ['loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'status', 'notes', 'edit'];
   public listSize: number;
 
   constructor(

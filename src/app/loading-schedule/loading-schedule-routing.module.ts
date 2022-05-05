@@ -21,6 +21,11 @@ const routes: Routes = [
         data: {title: 'New entry'},
         component: LoadingScheduleNewComponent
       },
+      {
+        path: ':id',
+        data: {title: 'New entry'},
+        component: LoadingScheduleNewComponent
+      },
     ],
     canActivate: [MsalGuard]
   }

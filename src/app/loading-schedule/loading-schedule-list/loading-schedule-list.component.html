@@ -7,11 +7,6 @@
     </div>
 
     <div *ngIf="loadingSchedule$ | async as loadingSchedule" class="inner">
-
-      <div *ngFor="let s of loadingSchedule | groupBy:['Scheduled']">
-        {{s}}
-      </div>
-
       <mat-table #table [dataSource]="loadingSchedule" [trackBy]="trackByFn">
 
         <ng-container matColumnDef="loadingDate">
@@ -28,13 +23,7 @@
 
         <ng-container matColumnDef="transportCompany">
           <mat-header-cell *matHeaderCellDef> Transport Company </mat-header-cell>
-          <mat-cell *matCellDef="let delivery">{{ delivery.fields.TransportCompany }}</mat-cell>
-          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="driver">
-          <mat-header-cell *matHeaderCellDef> Driver </mat-header-cell>
-          <mat-cell *matCellDef="let delivery">{{ delivery.fields.Driver }}</mat-cell>
+          <mat-cell *matCellDef="let delivery"><div>{{ delivery.fields.TransportCompany }}</div><div>{{ delivery.fields.Driver }}</div></mat-cell>
           <mat-footer-cell *matFooterCellDef></mat-footer-cell>
         </ng-container>
 
@@ -44,9 +33,23 @@
           <mat-footer-cell *matFooterCellDef></mat-footer-cell>
         </ng-container>
 
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+          <mat-cell *matCellDef="let delivery">{{ delivery.fields.Status }}</mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
         <ng-container matColumnDef="notes">
           <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
           <mat-cell *matCellDef="let delivery">{{ delivery.fields.Notes }}</mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="edit">
+          <mat-header-cell *matHeaderCellDef></mat-header-cell>
+          <mat-cell *matCellDef="let delivery">
+            <a mat-icon-button [routerLink]="[delivery.id]"><mat-icon>arrow_forward</mat-icon></a>
+          </mat-cell>
           <mat-footer-cell *matFooterCellDef></mat-footer-cell>
         </ng-container>
 

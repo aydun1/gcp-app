@@ -27,6 +27,7 @@ import { ControlsModule } from './controls/controls.module';
 import { DocsModule } from './docs/docs.module';
 import { LoadingModule } from './loading/loading.module';
 import { LoadingDotsComponent } from './loading-dots/loading-dots.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { LoadingDotsComponent } from './loading-dots/loading-dots.component';
     RouterModule
   ],
   exports: [
+    MatAutocompleteModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatCardModule,
