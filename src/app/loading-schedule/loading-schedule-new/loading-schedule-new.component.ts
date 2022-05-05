@@ -2,10 +2,12 @@ import { Component, HostBinding, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { NavigationService } from 'src/app/navigation.service';
 import { SharedService } from 'src/app/shared.service';
+import { LoadingSchedule } from '../shared/loading-schedule';
 import { LoadingScheduleService } from '../shared/loading-schedule.service';
+import { TransportCompany } from '../shared/transport-company';
 
 interface choice {choice: {choices: Array<any>}, name: string};
 
@@ -35,34 +37,55 @@ export class LoadingScheduleNewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.loadingScheduleForm = this.fb.group({
+      loadingDate: ['', [Validators.required]],
+      arrivalDate: ['', [Validators.required]],
+      destination: [{value: this.state, disabled: true}, [Validators.required]],
+      transportCompany: [''],
+      driver: [''],
+      spaces: ['', [Validators.min(0)]],
+      notes: [''],
+    });
+
     this.id = this.route.snapshot.paramMap.get('id');
+    this.transportCompanies$ = this.loadingScheduleService.getTransportCompanies().pipe(
+      switchMap(_ => this.patchForm(_))
+    );
+
+    this.getOptions();
 
     this.sharedService.getBranch().subscribe(state => {
       this.state = state;
       if (this.loadingScheduleForm) this.loadingScheduleForm.patchValue({destination: state});
     });
 
-    this.transportCompanies$ = this.loadingScheduleService.getTransportCompanies();
 
-    const name = this.sharedService.getName();
-    this.loadingScheduleForm = this.fb.group({
-      LoadingDate: ['', [Validators.required]],
-      arrivalDate: ['', [Validators.required]],
-      destination: [{value: this.state, disabled: true}, [Validators.required]],
-      name: [{value: name, disabled: true}, [Validators.required]],
-      transportCompany: [''],
-      driver: [''],
-      spaces: ['', [Validators.min(0)]],
-      notes: [''],
-    });
-    this.getOptions()
+  }
+
+  patchForm(transportCompanies: Array<TransportCompany>): Observable<TransportCompany[]> {
+    if (!this.id) return of();
+    return this.loadingScheduleService.getLoadingScheduleEntry(this.id).pipe(
+      tap(_ => {
+        const data = {};
+        data['arrivalDate'] = _.fields['ArrivalDate'];
+        data['loadingDate'] = _.fields['LoadingDate'];
+        data['destination'] = _.fields['Destination'];
+        data['transportCompany'] = transportCompanies.find(t => t.fields.Title === _.fields['TransportCompany']) || '';
+        data['driver'] = _.fields['Driver'];
+        data['spaces'] = _.fields['Spaces'];
+        data['notes'] = _.fields['Notes'];
+        console.log(data)
+        this.loadingScheduleForm.patchValue(data);
+      }),
+      map(() => transportCompanies)
+    );
   }
 
   onSubmit(): void {
     if (this.loadingScheduleForm.invalid) return;
     this.loading = true;
     const payload = {...this.loadingScheduleForm.getRawValue()};
-    this.loadingScheduleService.createLoadingScheduleEntry(payload).pipe(
+    this.loadingScheduleService.createLoadingScheduleEntry(payload, this.id).pipe(
       tap(_ => {
         this.goBack();
         this.snackBar.open('Added loading schedule entry', '', {duration: 3000});
@@ -86,7 +109,7 @@ export class LoadingScheduleNewComponent implements OnInit {
   }
 
   displayFn(option) {
-    return option.fields?.Title;
+    return option.fields?.Title || option;
   }
 
   goBack(): void {

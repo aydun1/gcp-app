@@ -6,15 +6,12 @@ import { NavigationService } from 'src/app/navigation.service';
   templateUrl: './loading-schedule-view.component.html',
   styleUrls: ['./loading-schedule-view.component.css']
 })
-export class LoadingScheduleViewComponent implements OnInit {
+export class LoadingScheduleViewComponent {
   @HostBinding('class') class = 'app-component';
 
   constructor(
     private navService: NavigationService,
   ) { }
-
-  ngOnInit(): void {
-  }
 
   goBack(): void {
     this.navService.back();

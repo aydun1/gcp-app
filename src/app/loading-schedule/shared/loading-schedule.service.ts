@@ -106,6 +106,12 @@ export class LoadingScheduleService {
     return this._columns$;
   }
 
+  getLoadingScheduleEntry(id: string): Observable<LoadingSchedule> {
+    const url = `${this._loadingScheduleUrl}/items('${id}')`;
+    return this.http.get<LoadingSchedule>(url).pipe(
+    );
+  }
+
   getTransportCompanies() {
     const url = `${this._transportCompaniesUrl}/items?expand=fields(select=Title,Drivers,Droivers)`;
     return this.http.get(url).pipe(
@@ -129,14 +135,14 @@ export class LoadingScheduleService {
     return this.http.patch<TransportCompany>(`${this._transportCompaniesUrl}/items('${id}')`, payload);
   }
 
-  createLoadingScheduleEntry(v: any): Observable<LoadingSchedule> {
+  createLoadingScheduleEntry(v: any,id: string): Observable<LoadingSchedule> {
     const drivers = v.transportCompany.fields?.Drivers || [];
     const isNewDriver = !drivers.includes(v.driver) && v.driver !== '';
     const isNewTransportCompany = v.transportCompany.fields ? false : true;
     const transportCompany = isNewTransportCompany ? v.transportCompany : v.transportCompany.fields.Title;
 
     const fields = {
-      LoadingDate: v.LoadingDate,
+      LoadingDate: v.loadingDate,
       ArrivalDate: v.arrivalDate,
       Spaces: v.spaces || null,
       TransportCompany: transportCompany,
@@ -159,9 +165,15 @@ export class LoadingScheduleService {
       };
       a = this.http.patch<TransportCompany>(`${this._transportCompaniesUrl}/items('${v.transportCompany.id}')`, {fields});
     }
+
+    const b = id ?
+      this.http.patch<LoadingSchedule>(`${this._loadingScheduleUrl}/items('${id}')`, {fields}):
+      this.http.post<LoadingSchedule>(`${this._loadingScheduleUrl}/items`, {fields});
+
+
     return a.pipe(
       switchMap(() => 
-        this.http.post<LoadingSchedule>(`${this._loadingScheduleUrl}/items`, {fields}).pipe(
+        b.pipe(
           switchMap(_ => this.updateList(_)),
         )
       )
