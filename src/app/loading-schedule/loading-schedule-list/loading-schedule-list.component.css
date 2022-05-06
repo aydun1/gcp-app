@@ -13,6 +13,13 @@
   margin: 10px 10px;
 }
 
+.coloured {
+  border-radius: 10px;
+  color: white;
+  padding: 5px 10px;
+  min-width: 80px;
+}
+
 h2 {
   margin-left: 10px;
 }

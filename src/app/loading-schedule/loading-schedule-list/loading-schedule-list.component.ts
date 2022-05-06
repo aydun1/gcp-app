@@ -16,14 +16,17 @@ export class LoadingScheduleListComponent implements OnInit {
   private _loadingScheduleSubject$ = new BehaviorSubject<LoadingSchedule[]>([]);
   private _loadList: boolean;
   public branchFilter = new FormControl('');
+  public statusFilter = new FormControl('');
+  public viewFilter = new FormControl('');
   public loadingSchedule$: Observable<LoadingSchedule[]>;
   public deliveries: LoadingSchedule[];
   public loadingList$ = this.loadingScheduleService.loading;
   public loading: false;
   public displayedColumns = ['loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'status', 'notes', 'edit'];
   public listSize: number;
-  public groups = ['Pan list sent', 'Scheduled', 'Delivered'];
-  public totals: any;
+  public groups = [];
+  public grouped: boolean;
+  public totals: object;
   public states = this.shared.branches;
 
   constructor(
@@ -47,11 +50,15 @@ export class LoadingScheduleListComponent implements OnInit {
       switchMap(_ => state$.pipe(map(state => !_['branch'] ? {..._, branch: state} : _))),
       tap(_ => {
         this.parseParams(_);
+        this.groups = _['view'] === 'grouped' ? ['Pan list sent', 'Scheduled', 'Delivered'] : [];
+        this.displayedColumns = _['view'] === 'grouped' ? ['loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'notes', 'edit'] : ['loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'status', 'notes', 'edit'];
+
       }),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
       tap(_ => this._loadingScheduleSubject$.next(_)),
       tap(_ => {
-        this.totals = this.groups.reduce((acc, curr) => (acc[curr] = _.filter(res => res.fields?.Status === curr).reduce((a, b) =>  a + b.fields?.Spaces, 0), acc), {});
+        this.totals = this.groups.reduce((acc, curr) => (acc[curr] = _.filter(res => res.fields?.Status === curr).reduce((a, b) =>  a + (b.fields?.Spaces || 0), 0), acc), {});
+        this.totals['total'] = _.reduce((a, b) =>  a + (b.fields?.Spaces || 0), 0);
       }),
       switchMap(_ => this._loadingScheduleSubject$),
     )
@@ -70,6 +77,18 @@ export class LoadingScheduleListComponent implements OnInit {
     } else {
       this.branchFilter.patchValue('');
     }
+    if ('status' in params) {
+      this.statusFilter.patchValue(params['status']);
+      filters['status'] = params['status'];
+    } else {
+      this.statusFilter.patchValue('');
+    }
+    if ('view' in params) {
+      this.viewFilter.patchValue(params['view']);
+      filters['view'] = params['view'];
+    } else {
+      this.viewFilter.patchValue('');
+    }
   }
 
   compareQueryStrings(prev: Params, curr: Params): boolean {
@@ -80,11 +99,25 @@ export class LoadingScheduleListComponent implements OnInit {
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
     const sameBranch = prev['branch'] === curr['branch'];
-    return sameBranch && this._loadList;
+    const sameStatus = prev['status'] === curr['status'];
+    const sameView = prev['view'] === curr['view'];
+    return sameBranch && sameStatus && sameView && this._loadList;
   }
 
   setBranch(branch: MatSelectChange): void {
     this.router.navigate(['loading-schedule'], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  setStatus(status: MatSelectChange): void {
+    this.router.navigate(['loading-schedule'], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  setView(view: MatSelectChange): void {
+    this.router.navigate(['loading-schedule'], { queryParams: {view: view.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  markDelivered(id: string) {
+    this.loadingScheduleService.markDelivered(id).subscribe();
   }
 
   deleteEntry(id: string) {

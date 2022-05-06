@@ -9,6 +9,20 @@
             <mat-option *ngFor="let s of states" value="{{ s }}">{{ s }}</mat-option>
           </mat-select>
         </mat-form-field>
+        <mat-form-field appearance="outline" class="branch">
+          <mat-label>Status</mat-label>
+          <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event)">
+            <mat-option value="active">Active</mat-option>
+            <mat-option value="delivered">Delivered</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="branch">
+          <mat-label>View</mat-label>
+          <mat-select [formControl]="viewFilter" (selectionChange)="setView($event)">
+            <mat-option value="ungrouped">Ungrouped</mat-option>
+            <mat-option value="grouped">Grouped</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
       <a mat-raised-button color="primary" [disabled]="loading" [routerLink]="['new']" class="action">Add entry</a>
     </div>
@@ -53,19 +67,28 @@
     
             <ng-container matColumnDef="transportCompany">
               <mat-header-cell *matHeaderCellDef> Transport company / driver </mat-header-cell>
-              <mat-cell *matCellDef="let delivery"><div>{{ delivery.fields.TransportCompany }}</div><div>{{ delivery.fields.Driver }}</div></mat-cell>
+              <mat-cell *matCellDef="let delivery">
+                <div class="coloured" [style.background]="delivery.fields.TransportCompany | stringColour">
+                  <div>{{ delivery.fields.TransportCompany }}</div>
+                  <div>{{ delivery.fields.Driver }}</div>
+                </div>
+              </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
     
             <ng-container matColumnDef="spaces">
               <mat-header-cell *matHeaderCellDef> Spaces </mat-header-cell>
               <mat-cell *matCellDef="let delivery">{{ delivery.fields.Spaces }}</mat-cell>
-              <mat-footer-cell *matFooterCellDef>{{ totals[groups[i]] }}</mat-footer-cell>
+              <mat-footer-cell *matFooterCellDef>{{ groups[i] ? totals[groups[i]] : totals['total'] }}</mat-footer-cell>
             </ng-container>
     
             <ng-container matColumnDef="status">
               <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
-              <mat-cell *matCellDef="let delivery">{{ delivery.fields.Status }}</mat-cell>
+              <mat-cell *matCellDef="let delivery">
+                <div class="coloured" [style.background]="delivery.fields.Status | stringColour">
+                  {{ delivery.fields.Status }}
+                </div>
+              </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
     
@@ -78,7 +101,7 @@
             <ng-container matColumnDef="edit">
               <mat-header-cell *matHeaderCellDef></mat-header-cell>
               <mat-cell *matCellDef="let delivery">
-                <a mat-icon-button [routerLink]="[delivery.id]"><mat-icon>arrow_forward</mat-icon></a>
+                <a mat-icon-button [matMenuTriggerData]="{delivery}" [matMenuTriggerFor]="menu" class="menu"><mat-icon>more_vert</mat-icon></a>
               </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
@@ -101,9 +124,12 @@
 </div>
 <mat-menu #menu="matMenu" xPosition="before">
   <ng-template matMenuContent let-delivery="delivery">
-    <button mat-menu-item (click)="deleteEntry(delivery.id)">
-      <span>Delete</span>
+    <button mat-menu-item (click)="markDelivered(delivery.id)">
+      <span>Mark as delivered</span>
     </button>
+    <a mat-menu-item [routerLink]="[delivery.id]">
+      <span>Edit</span>
+    </a>
   </ng-template>
 </mat-menu>
 

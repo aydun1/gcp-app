@@ -35,11 +35,12 @@ export class LoadingScheduleService {
         case 'branch':
           return `(fields/To eq '${filters['branch']}' or fields/From eq '${filters['branch']}')`;
         case 'status':
-          return `fields/Status eq '${filters['status']}'`;
+          return `fields/Status ${filters['status'] === 'delivered' ? 'eq' : 'ne'} 'Delivered'`;
         default:
           return '';
       }
     }).filter(_ => _);
+    if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Delivered'`);
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
     url += `&top=25`;
     return url;
@@ -123,9 +124,18 @@ export class LoadingScheduleService {
 
   addTransportCompany(id: string, drivers: string) {
     const payload = {fields: {
-      'Drivers': drivers
+      Drivers: drivers
     }};
     return this.http.post<TransportCompany>(`${this._transportCompaniesUrl}/items('${id}')`, payload);
+  }
+
+  markDelivered(id: string) {
+    const payload = {fields: {
+      Status: 'Delivered'
+    }};
+    return this.http.patch<LoadingSchedule>(`${this._loadingScheduleUrl}/items('${id}')`, payload).pipe(
+      switchMap(_ => this.updateList(_)),
+    );
   }
 
   updateTransportCompanyDrivers(id: string, drivers: string) {
