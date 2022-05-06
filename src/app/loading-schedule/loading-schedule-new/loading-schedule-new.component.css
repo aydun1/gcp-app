@@ -16,8 +16,23 @@ textarea {
 }
 
 .mat-form-field {
-  font-size: 14px;
   width: 100%;
+}
+
+.field-container {
+  display: flex;
+  margin: 0 -8px;
+}
+
+.field-container > .mat-form-field {
+  flex: 1;
+  min-width: 120px;
+  margin: 0 8px;
+}
+
+.field-container > .arrow {
+  margin: 0 12px;
+  padding-top: 18px;
 }
 
 .spacer {

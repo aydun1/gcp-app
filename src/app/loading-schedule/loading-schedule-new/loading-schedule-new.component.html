@@ -23,20 +23,36 @@
       <div class="spacer">
         <mat-divider></mat-divider>
       </div>
-
-      <mat-form-field appearance="fill">
-        <mat-label>Loading date</mat-label>
-        <input matInput [matDatepicker]="picker1" formControlName="loadingDate" title="Loading date">
-        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-        <mat-datepicker  #picker1></mat-datepicker>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill">
-        <mat-label>Arrival date</mat-label>
-        <input matInput [matDatepicker]="picker2" formControlName="arrivalDate" title="Arrival date">
-        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-        <mat-datepicker  #picker2></mat-datepicker>
-      </mat-form-field>
+      <div class="field-container">
+        <mat-form-field appearance="fill">
+          <mat-label>From</mat-label>
+          <mat-select matInput type="text" formControlName="from">
+            <mat-option *ngFor="let s of fromStates" [value]="s">{{ s }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-icon class="arrow">arrow_forward</mat-icon>
+        <mat-form-field appearance="fill">
+          <mat-label>To</mat-label>
+          <mat-select matInput type="text" formControlName="to">
+            <mat-option *ngFor="let s of targetStates" [value]="s">{{ s }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="field-container">
+        <mat-form-field appearance="fill">
+          <mat-label>Loading date</mat-label>
+          <input matInput [matDatepicker]="picker1" formControlName="loadingDate" title="Loading date">
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker  #picker1></mat-datepicker>
+        </mat-form-field>
+        <mat-icon class="arrow">arrow_forward</mat-icon>
+        <mat-form-field appearance="fill">
+          <mat-label>Arrival date</mat-label>
+          <input matInput [matDatepicker]="picker2" formControlName="arrivalDate" title="Arrival date" [min]="loadingScheduleForm.value['loadingDate']">
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker  #picker2></mat-datepicker>
+        </mat-form-field>
+      </div>
 
       <div class="spacer">
         <mat-divider></mat-divider>
@@ -54,8 +70,8 @@
 
       <mat-form-field appearance="fill">
         <mat-label>Driver</mat-label>
-        <input type="text" title="Driver" matInput formControlName="driver" [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete">
+        <input type="text" title="Driver" matInput formControlName="driver" [matAutocomplete]="auto2">
+        <mat-autocomplete #auto2="matAutocomplete">
           <mat-option *ngFor="let option of loadingScheduleForm.value['transportCompany'].fields?.DriversArray" [value]="option">
             {{option}}
           </mat-option>
@@ -65,13 +81,6 @@
       <div class="spacer">
         <mat-divider></mat-divider>
       </div>
-
-      <mat-form-field appearance="fill">
-        <mat-label>Destination</mat-label>
-        <mat-select matInput type="text" formControlName="destination">
-          <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
-        </mat-select>
-      </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>Spaces</mat-label>
         <input matInput type="number" formControlName="spaces" autocomplete="off" title="Spaces">

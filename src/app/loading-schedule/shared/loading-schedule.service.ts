@@ -147,7 +147,8 @@ export class LoadingScheduleService {
       Spaces: v.spaces || null,
       TransportCompany: transportCompany,
       Driver: v.driver,
-      Destination: v.destination,
+      From: v.from,
+      To: v.to,
       Status: v.status,
       Notes: v.notes
     };

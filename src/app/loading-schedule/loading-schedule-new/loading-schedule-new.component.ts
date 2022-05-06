@@ -26,6 +26,18 @@ export class LoadingScheduleNewComponent implements OnInit {
   public choices: {TransportCompany: choice, Driver: choice, AssetType: choice, Branch: choice, Status: choice};
   public id: string;
 
+  get targetStates(): Array<string> {
+    const from = this.loadingScheduleForm.get('from').value;
+    const states = this.states.filter(_ => _ !== from);
+    return states;
+  }
+
+  get fromStates(): Array<string> {
+    const to = this.loadingScheduleForm.get('to').value;
+    const states = this.states.filter(_ => _ !== to);
+    return states;
+  }
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -41,7 +53,8 @@ export class LoadingScheduleNewComponent implements OnInit {
       status: ['', [Validators.required]],
       loadingDate: ['', [Validators.required]],
       arrivalDate: ['', [Validators.required]],
-      destination: [{value: this.state, disabled: true}, [Validators.required]],
+      from: [{value: 'VIC'}, [Validators.required]],
+      to: [{value: this.state}, [Validators.required]],
       transportCompany: [''],
       driver: [''],
       spaces: ['', [Validators.min(0)]],
@@ -58,14 +71,16 @@ export class LoadingScheduleNewComponent implements OnInit {
 
     this.sharedService.getBranch().subscribe(state => {
       this.state = state;
-      if (this.loadingScheduleForm) this.loadingScheduleForm.patchValue({destination: state});
+      if (this.loadingScheduleForm) this.patchForm(null);
     });
-
-
   }
 
   patchForm(transportCompanies: Array<TransportCompany>): Observable<TransportCompany[]> {
-    if (!this.id) return of([]);
+    if (!this.id) {
+      const data = {status: 'Scheduled', from: 'VIC', to: this.state};
+      this.loadingScheduleForm.patchValue(data);
+      return of(transportCompanies);
+    }
     return this.loadingScheduleService.getLoadingScheduleEntry(this.id).pipe(
       tap(_ => {
         const data = {};
@@ -77,6 +92,8 @@ export class LoadingScheduleNewComponent implements OnInit {
         data['driver'] = _.fields['Driver'];
         data['spaces'] = _.fields['Spaces'];
         data['notes'] = _.fields['Notes'];
+        data['from'] = _.fields['From'];
+        data['to'] = _.fields['To'];
         this.loadingScheduleForm.patchValue(data);
       }),
       map(() => transportCompanies)
