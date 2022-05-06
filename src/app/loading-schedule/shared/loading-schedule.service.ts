@@ -28,12 +28,12 @@ export class LoadingScheduleService {
 
   private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
-    const params = '?expand=fields(select=TransportCompany,Driver,Spaces,ArrivalDate,LoadingDate,Destination,Status,Notes)&orderby=fields/ArrivalDate asc';
+    const params = '?expand=fields(select=TransportCompany,Driver,Spaces,ArrivalDate,LoadingDate,From,To,Status,Notes)&orderby=fields/ArrivalDate asc';
     let url = `${this._loadingScheduleUrl}/items${params}`;
     const parsed = filterKeys.map(key => {
       switch (key) {
         case 'branch':
-          return `fields/Destination eq '${filters['branch']}'`;
+          return `(fields/To eq '${filters['branch']}' or fields/From eq '${filters['branch']}')`;
         case 'status':
           return `fields/Status eq '${filters['status']}'`;
         default:

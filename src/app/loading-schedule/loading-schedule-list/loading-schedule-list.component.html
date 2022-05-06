@@ -3,10 +3,12 @@
     <h2>Loading schedule</h2>
     <div class="options inner">
       <div class="buttons">
-        <mat-button-toggle-group>
-          <mat-button-toggle value="bold">Active</mat-button-toggle>
-          <mat-button-toggle value="italic">Delivered</mat-button-toggle>
-        </mat-button-toggle-group>
+        <mat-form-field appearance="outline" class="branch">
+          <mat-label>Branch</mat-label>
+          <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
+            <mat-option *ngFor="let s of states" value="{{ s }}">{{ s }}</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
       <a mat-raised-button color="primary" [disabled]="loading" [routerLink]="['new']" class="action">Add entry</a>
     </div>
@@ -18,7 +20,7 @@
           <mat-table #table [dataSource]="s" [trackBy]="trackByFn">
   
             <ng-container matColumnDef="loadingDate">
-              <mat-header-cell *matHeaderCellDef> Loading date </mat-header-cell>
+              <mat-header-cell *matHeaderCellDef> Loading </mat-header-cell>
               <mat-cell *matCellDef="let delivery">
                 <div>
                   {{ delivery.fields.LoadingDate | date: 'EEEE' }}
@@ -26,18 +28,24 @@
                 <div>
                   {{ delivery.fields.LoadingDate | date: 'd MMM yyyy' }}
                 </div>
+                <div>
+                  {{ delivery.fields.From }}
+                </div>
               </mat-cell>
-              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+              <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
             </ng-container>
     
             <ng-container matColumnDef="arrivalDate">
-              <mat-header-cell *matHeaderCellDef> Arrival date </mat-header-cell>
+              <mat-header-cell *matHeaderCellDef> Arriving </mat-header-cell>
               <mat-cell *matCellDef="let delivery">
                 <div>
                   {{ delivery.fields.ArrivalDate | date: 'EEEE' }}
                 </div>
                 <div>
-                  {{ delivery.fields.ArrivalDate | date }}
+                  {{ delivery.fields.ArrivalDate | date: 'd MMM yyyy' }}
+                </div>
+                <div>
+                  {{ delivery.fields.To }}
                 </div>
               </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
@@ -52,7 +60,7 @@
             <ng-container matColumnDef="spaces">
               <mat-header-cell *matHeaderCellDef> Spaces </mat-header-cell>
               <mat-cell *matCellDef="let delivery">{{ delivery.fields.Spaces }}</mat-cell>
-              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+              <mat-footer-cell *matFooterCellDef>{{ totals[groups[i]] }}</mat-footer-cell>
             </ng-container>
     
             <ng-container matColumnDef="status">
@@ -84,6 +92,7 @@
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag></mat-row>
             <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loadingList$ | async) ? false : true"></mat-footer-row>
+            <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
           </mat-table>
         </div>
       </div>     

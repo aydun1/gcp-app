@@ -17,6 +17,20 @@ h2 {
   margin-left: 10px;
 }
 
+.mat-row {
+  min-height: 72px;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  margin-right: 10px;
+  width: 145px;
+}
+
+.mat-footer-row {
+  font-weight: bold;
+}
+
 .options {
   align-items: baseline;
   display: flex;
