@@ -34,19 +34,19 @@
     </mat-list>
     <mat-list class="pallets">
       <mat-list-item>
-        <img src="assets/loscam.png" mat-list-icon>
+        <img src="assets/loscam.png" mat-list-icon alt="Loscam pallet">
         <div *ngIf="editQuantity" mat-line><input [(ngModel)]="loscamQuantity" [ngModelOptions]="{standalone: true}" type="number"></div>
         <div *ngIf="!editQuantity" mat-line>{{ loscamQuantity || 0 }}</div>
         <div mat-line>Loscams</div>
       </mat-list-item>
       <mat-list-item>
-        <img src="assets/chep.png" mat-list-icon>
+        <img src="assets/chep.png" mat-list-icon alt="Chep pallet">
         <div *ngIf="editQuantity" mat-line><input [(ngModel)]="chepQuantity" [ngModelOptions]="{standalone: true}" type="number"></div>
         <div *ngIf="!editQuantity" mat-line>{{ chepQuantity || 0 }}</div>
         <div mat-line>Cheps</div>
       </mat-list-item>
       <mat-list-item>
-        <img src="assets/pallet.png" mat-list-icon>
+        <img src="assets/pallet.png" mat-list-icon alt="Plain pallet">
         <div *ngIf="editQuantity" mat-line><input [(ngModel)]="plainQuantity" [ngModelOptions]="{standalone: true}" type="number"></div>
         <div *ngIf="!editQuantity" mat-line>{{ plainQuantity || 0 }}</div>
         <div mat-line>Plains</div>
@@ -113,7 +113,7 @@
     <mat-card-header>
       <mat-card-title>Attachments</mat-card-title>
     </mat-card-header>
-    <gcp-doc-upload [id]="transfer.summary.id">
+    <gcp-doc-upload [id]="transfer.summary.id" folder="transfers">
     </gcp-doc-upload>
   </mat-card>
 </div>

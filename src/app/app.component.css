@@ -49,11 +49,6 @@
   width: 100%;
 }
 
-::ng-deep .mat-menu-content{
-  padding-bottom: 0!important;
-  padding-top: 0!important;
-}
-
 .menu-upper {
   display: flex;
   align-items: baseline;

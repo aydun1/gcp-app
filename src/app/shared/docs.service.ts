@@ -14,8 +14,8 @@ export class DocsService {
     private http: HttpClient
   ) { }
 
-  listFiles(id: string): Observable<Doc[]> {
-    const url = `${this.endpoint}/drive/root:/transfers/${id}:/children?$orderby=name`
+  listFiles(id: string, folder: string): Observable<Doc[]> {
+    const url = `${this.endpoint}/drive/root:/${folder}/${id}:/children?$orderby=name`
     return this.http.get(url).pipe(
       map(_ => _['value']),
       catchError((error: HttpErrorResponse) => {
@@ -30,8 +30,8 @@ export class DocsService {
     );
   }
 
-  createUploadSession(id: string, file: File): Observable<any> {
-    const url = `${this.endpoint}/drive/root:/transfers/${id}/${file.name}:/createUploadSession`;
+  createUploadSession(id: string, folder: string, file: File): Observable<any> {
+    const url = `${this.endpoint}/drive/root:/${folder}/${id}/${file.name}:/createUploadSession`;
     const payload = {
       'item': {
         '@microsoft.graph.conflictBehavior': 'rename',
@@ -59,8 +59,8 @@ export class DocsService {
     )
   }
 
-  deleteFile(folder: string, fileName: string): Observable<Object> {
-    const url = `${this.endpoint}/drive/root:/transfers/${folder}/${fileName}:`;
+  deleteFile(id: string, folder: string, fileName: string): Observable<Object> {
+    const url = `${this.endpoint}/drive/root:/${folder}/${id}/${fileName}:`;
     return this.http.delete(url);
   }
 

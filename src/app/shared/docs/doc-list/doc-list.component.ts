@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Doc } from '../../doc';
 import { DocsService } from '../../docs.service';
 
@@ -10,6 +10,8 @@ import { DocsService } from '../../docs.service';
 })
 export class DocListComponent implements OnInit {
   @Input() id: string;
+  @Input() folder: string;
+
   public docs$: Observable<Doc[]>;
   
   constructor(
@@ -17,8 +19,7 @@ export class DocListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.docs$ = this.docsService.listFiles(this.id);
-
+    this.docs$ = this.docsService.listFiles(this.id, this.folder);
   }
 
   icon(mime: string): string {

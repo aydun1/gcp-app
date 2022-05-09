@@ -66,6 +66,10 @@ input {
   margin: 0 40px;
 }
 
+.mat-list-icon {
+  object-fit: cover;
+}
+
 @media (max-width: 600px) {
   .arrow {
     display: none;

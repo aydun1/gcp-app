@@ -47,6 +47,10 @@ h2 {
   flex: 1;
 }
 
+.mat-column-reference {
+  flex: 0 1 80px;
+}
+
 .mat-column-loadingDate, .mat-column-arrivalDate {
   align-items: flex-start;
   flex: 0 1 120px;

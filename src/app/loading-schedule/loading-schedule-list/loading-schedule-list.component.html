@@ -32,7 +32,15 @@
         <div *ngIf="s">
           <h3>{{ groups[i] }}</h3>
           <mat-table #table [dataSource]="s" [trackBy]="trackByFn">
-  
+
+            <ng-container matColumnDef="reference">
+              <mat-header-cell *matHeaderCellDef> Ref </mat-header-cell>
+              <mat-cell *matCellDef="let delivery" [routerLink]="[delivery.id]">
+                <a [routerLink]="[delivery.id]" class="stocktake-link">#{{ delivery.id }}</a>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+
             <ng-container matColumnDef="loadingDate">
               <mat-header-cell *matHeaderCellDef> Loading </mat-header-cell>
               <mat-cell *matCellDef="let delivery">
@@ -48,7 +56,7 @@
               </mat-cell>
               <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
             </ng-container>
-    
+
             <ng-container matColumnDef="arrivalDate">
               <mat-header-cell *matHeaderCellDef> Arriving </mat-header-cell>
               <mat-cell *matCellDef="let delivery">
@@ -64,7 +72,7 @@
               </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
-    
+
             <ng-container matColumnDef="transportCompany">
               <mat-header-cell *matHeaderCellDef> Transport company / driver </mat-header-cell>
               <mat-cell *matCellDef="let delivery">
@@ -75,13 +83,13 @@
               </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
-    
+
             <ng-container matColumnDef="spaces">
               <mat-header-cell *matHeaderCellDef> Spaces </mat-header-cell>
               <mat-cell *matCellDef="let delivery">{{ delivery.fields.Spaces }}</mat-cell>
               <mat-footer-cell *matFooterCellDef>{{ groups[i] ? totals[groups[i]] : totals['total'] }}</mat-footer-cell>
             </ng-container>
-    
+
             <ng-container matColumnDef="status">
               <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
               <mat-cell *matCellDef="let delivery">
@@ -91,13 +99,13 @@
               </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
-    
+
             <ng-container matColumnDef="notes">
               <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
               <mat-cell *matCellDef="let delivery">{{ delivery.fields.Notes }}</mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
-    
+
             <ng-container matColumnDef="edit">
               <mat-header-cell *matHeaderCellDef></mat-header-cell>
               <mat-cell *matCellDef="let delivery">
@@ -105,13 +113,13 @@
               </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
-    
+
             <ng-container matColumnDef="loading">
               <mat-footer-cell *matFooterCellDef>
                 <gcp-loading-row></gcp-loading-row>
               </mat-footer-cell>
             </ng-container>
-    
+
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag></mat-row>
             <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loadingList$ | async) ? false : true"></mat-footer-row>
@@ -124,12 +132,9 @@
 </div>
 <mat-menu #menu="matMenu" xPosition="before">
   <ng-template matMenuContent let-delivery="delivery">
-    <button mat-menu-item (click)="markDelivered(delivery.id)">
-      <span>Mark as delivered</span>
+    <button *ngIf="delivery.fields.Status !== 'Delivered'"mat-menu-item (click)="markDelivered(delivery.id)">
+      <mat-icon>check</mat-icon>Mark as delivered
     </button>
-    <a mat-menu-item [routerLink]="[delivery.id]">
-      <span>Edit</span>
-    </a>
   </ng-template>
 </mat-menu>
 

@@ -5,6 +5,7 @@ import { MsalGuard } from '@azure/msal-angular';
 import { LoadingScheduleComponent } from './loading-schedule.component';
 import { LoadingScheduleListComponent } from './loading-schedule-list/loading-schedule-list.component';
 import { LoadingScheduleNewComponent } from './loading-schedule-new/loading-schedule-new.component';
+import { LoadingScheduleViewComponent } from './loading-schedule-view/loading-schedule-view.component';
 
 const routes: Routes = [
   {
@@ -23,8 +24,8 @@ const routes: Routes = [
       },
       {
         path: ':id',
-        data: {title: 'New entry'},
-        component: LoadingScheduleNewComponent
+        data: {title: 'View entry'},
+        component: LoadingScheduleViewComponent
       },
     ],
     canActivate: [MsalGuard]

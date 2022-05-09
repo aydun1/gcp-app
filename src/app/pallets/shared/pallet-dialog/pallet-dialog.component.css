@@ -6,16 +6,9 @@
   margin-bottom: 29.5px;
 }
 
-::ng-deep .mat-button-toggle-button {
-  height: 100%;
-}
-
 .mat-button-toggle {
+  display: flex;
   flex: 1;
-}
-
-::ng-deep .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
-  padding: 0 0!important;
 }
 
 img {

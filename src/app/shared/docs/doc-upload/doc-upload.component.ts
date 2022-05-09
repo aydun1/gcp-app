@@ -12,6 +12,7 @@ import { PalletsService } from '../../../pallets/shared/pallets.service';
 })
 export class DocUploadComponent implements OnInit {
   @Input() id: string;
+  @Input() folder: string;
 
   private _docCount: number;
   private _uploads$ = new BehaviorSubject<Doc[]>([]);
@@ -26,29 +27,29 @@ export class DocUploadComponent implements OnInit {
   ngOnInit(): void {
     this._docStarter$.next(this.id);
     this.docs$ = this._docStarter$.pipe(
-      switchMap(_ => combineLatest([this._uploads$, this.docsService.listFiles(_).pipe(tap(() => this._uploads$.next([])))])),
+      switchMap(_ => combineLatest([this._uploads$, this.docsService.listFiles(_, this.folder).pipe(tap(() => this._uploads$.next([])))])),
       map(_ => [..._[0], ..._[1]]),
       tap(_ => {
         const complete = _.filter(d => d.id).length || 0;
         const attachStatusChanged = this._docCount !== undefined && this._docCount !== complete && (this._docCount === 0 || complete === 0);
-        if (attachStatusChanged) this.palletsService.markFileAttached(this.id, complete > 0).subscribe();
+        if (attachStatusChanged && this.folder === 'transfers') this.palletsService.markFileAttached(this.id, complete > 0).subscribe();
         this._docCount = complete;
       })
     );
   }
 
-  fileChangeEvent(id: string, e: any): void {
+  fileChangeEvent(e: any): void {
     const files = e.target.files;
     const keys = Array.from(Array(files.length).keys());
     for (let key in keys) {
       const file = files[key];
-      this.uploadFile(id, file);
+      this.uploadFile(file);
     }
   }
 
-  uploadFile(id: string, file: File): void {
+  uploadFile(file: File): void {
     const date = new Date();
-    this.docsService.createUploadSession(id, file).pipe(
+    this.docsService.createUploadSession(this.id, this.folder, file).pipe(
       switchMap(upload => this._uploads$.pipe(
         take(1),
         map(pending => {
@@ -75,13 +76,13 @@ export class DocUploadComponent implements OnInit {
       let item = items[key];
       if (item.kind === 'file') {
         const file = item.getAsFile();
-        this.uploadFile(this.id, file);
+        this.uploadFile(file);
       }
     }
   }
 
-  deleteFile(id: string): void {
-    this.docsService.deleteFile(this.id, id).subscribe(
+  deleteFile(fileName: string): void {
+    this.docsService.deleteFile(this.id, this.folder, fileName).subscribe(
       _ => this._docStarter$.next(this.id)
     );
   }
