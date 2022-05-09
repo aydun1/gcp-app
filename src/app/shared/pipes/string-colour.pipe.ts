@@ -7,7 +7,7 @@ export class StringColourPipe implements PipeTransform {
 
   private mixedWeight = 0.75;
   private textWeight = 0.25;
-  private seed = 16777215;
+  private seed = 16777219;
   private factor = 49979693;
     
   private colors = {
