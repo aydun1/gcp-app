@@ -162,19 +162,22 @@ export class LoadingScheduleService {
       Status: v.status,
       Notes: v.notes
     };
-    let a = of({} as TransportCompany);
-    if (isNewTransportCompany) {
+
+    let a: Observable<TransportCompany>;
+    if (transportCompany && isNewTransportCompany) {
       const fields = {
         Title: transportCompany,
         Drivers: v.driver,
         Branch: v.destination
       };
       a = this.http.post<TransportCompany>(`${this._transportCompaniesUrl}/items`, {fields});
-    } else if (isNewDriver) {
+    } else if (transportCompany && isNewDriver) {
       const fields = {
         Drivers: `${drivers}\n${v.driver}`
       };
       a = this.http.patch<TransportCompany>(`${this._transportCompaniesUrl}/items('${v.transportCompany.id}')`, {fields});
+    } else {
+      a = of({} as TransportCompany);
     }
 
     const b = id ?

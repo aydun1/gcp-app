@@ -44,7 +44,7 @@ export class StringColourPipe implements PipeTransform {
   }
 
   transform(input: any): string {
-    if (!input) return '#ffffff';
+    if (!input) return '#000000';
     let color = this.getColor(input);
     if (color) return color;
     let b = 1;
