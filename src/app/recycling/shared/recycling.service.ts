@@ -4,6 +4,7 @@ import { AbstractControl, FormControl, ValidationErrors, ValidatorFn } from '@an
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
 import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
+import { Site } from 'src/app/customers/shared/site';
 
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
@@ -178,9 +179,9 @@ export class RecyclingService {
     return this.getCages(url);
   }
 
-  allocateToCustomer(id: string, custnmbr: string, customerName: string, site: string): Observable<Cage> {
+  allocateToCustomer(id: string, custnmbr: string, customerName: string, site: Site | string): Observable<Cage> {
     const fields = {Status: 'Allocated to customer', CustomerNumber: custnmbr, Customer: customerName};
-    if (site) fields['Site'] = site;
+    if (site) fields['Site'] = typeof site === 'string' ? site : site.fields?.Title;
     return this.shared.getBranch().pipe(
       switchMap(_ => this.updateStatus(id, {fields: {...fields, Branch: _}})),
       catchError((err: HttpErrorResponse) => this.handleError(err))

@@ -17,7 +17,7 @@
     <mat-form-field *ngIf="sites.length > 0" color="primary" appearance="outline">
       <mat-label>Site</mat-label>
       <mat-select formControlName="site">
-        <mat-option *ngFor="let s of sites" [value]="s">{{ s }}</mat-option>
+        <mat-option *ngFor="let s of sites" [value]="s">{{ s.fields.Title }}</mat-option>
       </mat-select>
     </mat-form-field>
   </ng-container>

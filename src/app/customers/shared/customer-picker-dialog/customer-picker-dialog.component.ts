@@ -16,7 +16,7 @@ import { SharedService } from '../../../shared.service';
 export class CustomerPickerDialogComponent implements OnInit {
   public loading: boolean;
   public customerForm: FormGroup;
-  public sites$: Observable<string[]>;
+  public sites$: Observable<Site[]>;
   public branch: string;
   public get branches(): Array<string> {return this.shared.branches};
 
@@ -38,7 +38,6 @@ export class CustomerPickerDialogComponent implements OnInit {
 
   getSites(customer: Customer): void {
     this.sites$ = this.customersService.getSites(customer.accountnumber).pipe(
-      map(_ => _.map(site => site.fields.Title)),
       tap(_ => this.customerForm.patchValue({site: _.length > 0 ? _[0] : ''}))
     );
   }
