@@ -66,8 +66,10 @@ a {
 }
 
 .home-cards {
-  width: 400px;
-  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  grid-gap: 1rem;
+  margin: 20px;
 }
 
 .app-component {
@@ -110,8 +112,7 @@ a {
 
 @media (max-width: 800px) {
   .home-cards {
-    width: calc(100% - 20px);
-    margin: 0 10px;
+    margin: 10px;
   }
 }
 

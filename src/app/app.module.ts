@@ -93,10 +93,10 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
+    MatButtonModule,
+    MatIconModule,
     MatMenuModule,
     MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
     SharedModule,
     MatNativeDateModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
