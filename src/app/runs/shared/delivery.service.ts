@@ -32,7 +32,7 @@ export class DeliveryService {
 
   private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
-    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,Address,CustomerNumber,CustomerId,Customer)`;
+    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,Address,CustomerNumber,CustomerId,Customer,Status)`;
 
     const parsed = filterKeys.map(key => {
       switch (key) {
@@ -172,6 +172,14 @@ export class DeliveryService {
     )
   }
 
+  changeStatus(id: string, currentStatus: string): Observable<Delivery[]> {
+    const status = currentStatus === 'Complete' ? 'Active' : 'Complete';
+    const fields = {Status: status};
+    return this.http.patch<Delivery>(`${this._deliveryListUrl}/items('${id}')`, {fields}).pipe(
+      switchMap(_ => this.updateIndexesFrom(0))
+    );
+  }
+
   deleteDelivery(id: string): Observable<Delivery[]> {
     return this.http.delete<Delivery>(`${this._deliveryListUrl}/items('${id}')`).pipe(
       switchMap(_ => this.removeItemFromList(id)),
@@ -207,9 +215,7 @@ export class DeliveryService {
     })
     return requests.length ? this.http.post(`${environment.endpoint}/$batch`, {requests}).pipe(
       map((_: {responses: Array<Delivery>}) => _.responses.map(r => r['body'])),
-      switchMap(_ => this.updateListMulti(_)),
-      tap(_ => console.log(_))
-
+      switchMap(_ => this.updateListMulti(_))
     ) : of([] as Delivery[]);
   }
 }

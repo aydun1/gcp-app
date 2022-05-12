@@ -19,7 +19,6 @@ import { DeliveryService } from '../shared/delivery.service';
   styleUrls: ['./run-list.component.css']
 })
 export class RunListComponent implements OnInit {
-  private _deliveriesSubject = new BehaviorSubject<Delivery[]>([]);
   private _loadList: boolean;
   private listSize: number;
 
@@ -49,13 +48,10 @@ export class RunListComponent implements OnInit {
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       switchMap(_ => state$.pipe(map(state => !_['branch'] ? {..._, branch: state} : _))),
-      tap(_ => {
-        this.parseParams(_);
-      }),
+      tap(_ => this.parseParams(_)),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
-      tap(_ => this._deliveriesSubject.next(_)),
+
       tap(_ => this.listSize = _.length),
-      switchMap(_ => this._deliveriesSubject)
     )
 
   }
@@ -97,6 +93,10 @@ export class RunListComponent implements OnInit {
 
   addDelivery(customer: Customer, site: Site) {
     return this.deliveryService.createDelivery('runname', customer, site, this.listSize + 1);
+  }
+
+  markComplete(id: string, currentStatus: string) {
+    return this.deliveryService.changeStatus(id, currentStatus).subscribe();
   }
 
   deleteDelivery(id: string) {

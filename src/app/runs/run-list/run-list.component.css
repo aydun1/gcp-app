@@ -32,6 +32,10 @@ h2 {
   position: relative;
 }
 
+.mat-checkbox {
+  margin: 0 10px;
+}
+
 .cdk-drag-preview {
   box-sizing: border-box;
   border-radius: 4px;
@@ -65,7 +69,9 @@ h2 {
 .mat-column-site {
   white-space: pre-wrap;
 }
-
+::ng-deep  .mat-checkbox-checked .mat-checkbox-background {
+  background-color: #ff4081;
+}
 .mat-column-sequence {
   flex: 0 1 20px;
   padding-right: 30px;
@@ -76,15 +82,16 @@ h2 {
   flex: 0 1 228px;
 }
 
-.action-buttons>button {
+.action-buttons > button {
   margin-right: 10px;
 }
 
-.action-buttons>button:last-child {
+.action-buttons > button:last-child {
   margin-right: 0;
 }
 
 .action-buttons {
+  align-items: center;
   display: flex;
 }
 

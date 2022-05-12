@@ -16,6 +16,7 @@ export interface Delivery {
     CustomerNumber: string,
     CustomerId: string,
     Site: string,
-    Sequence: number
+    Sequence: number,
+    Status: string
   }
 }
