@@ -19,6 +19,7 @@ import { SharedModule } from './shared/shared.module';
 import { LogoutComponent } from './logout/logout.component';
 import { environment } from '../environments/environment';
 import { Platform } from '@angular/cdk/platform';
+import { AuthGuard } from './auth-guard';
 
 class CustomDateAdapter extends NativeDateAdapter {
   override parse(value: any): Date | null {
@@ -126,7 +127,8 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     },
     MsalService,
     MsalGuard,
-    MsalBroadcastService
+    MsalBroadcastService,
+    AuthGuard
   ],
   bootstrap: [AppComponent]
 })
