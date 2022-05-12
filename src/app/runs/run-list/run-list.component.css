@@ -90,15 +90,15 @@ h2 {
   flex: 0 1 40px;
 }
 
-.action-buttons > button {
+.mat-column-actions > button {
   margin-right: 10px;
 }
 
-.action-buttons > button:last-child {
+.mat-column-actions > button:last-child {
   margin-right: 0;
 }
 
-.action-buttons {
+.mat-column-actions {
   align-items: center;
   display: flex;
 }
@@ -117,5 +117,29 @@ h2 {
 
   .options {
     display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .mat-column-actions {
+    flex: 0 1 110px;
+    overflow: visible;
+  }
+  
+  .mat-column-actions.mat-cell {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .mat-column-actions > button {
+    margin: 0 10px 5px 0;
+  }
+  
+  .mat-column-actions > button:last-child {
+    margin-right: 10px;
+  }
+
+  .mat-column-actions > button:last-child {
+    margin-bottom: 0;
   }
 }
