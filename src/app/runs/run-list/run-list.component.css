@@ -33,7 +33,7 @@ h2 {
 }
 
 .mat-checkbox {
-  margin: 0 10px;
+  margin-left: 1px;
 }
 
 .cdk-drag-preview {
@@ -79,7 +79,15 @@ h2 {
 }
 
 .mat-column-actions {
-  flex: 0 1 228px;
+  flex: 0 1 200px;
+}
+
+.mat-column-status {
+  flex: 0 1 30px;
+}
+
+.mat-column-menu {
+  flex: 0 1 40px;
 }
 
 .action-buttons > button {

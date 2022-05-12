@@ -37,7 +37,25 @@
             <div class="action-buttons">
               <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.Site)">Pallets</button>
               <button mat-raised-button color="primary" (click)="openRecyclingDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.Site)">Recycling</button>
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef></mat-header-cell>
+          <mat-cell *matCellDef="let delivery">
+            <div class="action-buttons">
               <mat-checkbox color="primary" [checked]="delivery.fields.Status === 'Complete'" (click)="markComplete(delivery.id, delivery.fields.Status)"></mat-checkbox>
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="menu">
+          <mat-header-cell *matHeaderCellDef></mat-header-cell>
+          <mat-cell *matCellDef="let delivery">
+            <div class="action-buttons">
               <button mat-icon-button [matMenuTriggerData]="{delivery}" [matMenuTriggerFor]="menu" class="menu"><mat-icon>more_vert</mat-icon></button>
             </div>
           </mat-cell>

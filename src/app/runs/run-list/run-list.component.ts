@@ -25,7 +25,7 @@ export class RunListComponent implements OnInit {
   public deliveries$: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
   public loading: false;
-  public displayedColumns = ['sequence', 'customer', 'site', 'actions'];
+  public displayedColumns = ['sequence', 'customer', 'site', 'actions', 'status', 'menu'];
   public dragDisabled = true;
 
   constructor(
