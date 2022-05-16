@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { DomSanitizer, SafeUrl, Title } from '@angular/platform-browser';
 import { MsalService } from '@azure/msal-angular';
+import { AccountInfo } from '@azure/msal-browser';
 import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
 
 import { environment } from '../environments/environment';
@@ -54,6 +55,11 @@ export class SharedService {
   getName(): string {
     const activeAccount = this.authService.instance.getActiveAccount();
     return activeAccount.name;
+  }
+
+  getAccount(): AccountInfo {
+    const activeAccount = this.authService.instance.getActiveAccount();
+    return activeAccount;
   }
 
   sanitiseName(name: string): string {

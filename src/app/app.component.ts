@@ -5,8 +5,8 @@ import { Location } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { SwUpdate, VersionEvent } from '@angular/service-worker';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
-import { AuthenticationResult, InteractionStatus, PopupRequest, EventMessage, EventType, AccountInfo } from '@azure/msal-browser';
-import { filter, interval, map, Observable, Subject, takeUntil, withLatestFrom } from 'rxjs';
+import { InteractionStatus, EventMessage, EventType, AccountInfo, RedirectRequest } from '@azure/msal-browser';
+import { filter, interval, map, Observable, Subject, takeUntil, tap, withLatestFrom } from 'rxjs';
 
 import { SharedService } from './shared.service';
 
@@ -38,27 +38,37 @@ export class AppComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    
+    this.authService.instance.handleRedirectPromise().then(authResult=>{
+      const account = this.authService.instance.getActiveAccount();
+      if (!account) this.checkAndSetActiveAccount();
+    }).catch(err=>{
+      console.log(err);
+    });
+
     this.setLoginDisplay();
     this.observer.observe(['(max-width: 600px)']).subscribe(_ => this.isMobile = _.matches);
     this.authService.instance.enableAccountStorageEvents();
     this.sharedService.getBranch().subscribe();
     this.msalBroadcastService.msalSubject$.pipe(
-      filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED)
-    ).subscribe((result: EventMessage) => {
-      if (this.authService.instance.getAllAccounts().length === 0) {
-        this.router.navigate(['/']);
-      } else {
-        this.setLoginDisplay();
-      }
-    });
+      filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED),
+      tap(() => {
+        if (this.authService.instance.getAllAccounts().length === 0) {
+          this.router.navigate(['/']);
+        } else {
+          this.setLoginDisplay();
+        }
+      })
+    ).subscribe();
 
     this.msalBroadcastService.inProgress$.pipe(
       filter((status: InteractionStatus) => status === InteractionStatus.None),
-      takeUntil(this._destroying$)
-    ).subscribe(() => {
-      this.setLoginDisplay();
-      this.checkAndSetActiveAccount();
-    });
+      takeUntil(this._destroying$),
+      tap(() => {
+        this.setLoginDisplay();
+        this.checkAndSetActiveAccount();
+      })
+    ).subscribe();
 
     if (this.swUpdate.isEnabled) {
       withLatestFrom()
@@ -75,8 +85,9 @@ export class AppComponent implements OnInit, OnDestroy {
         let child = this.activatedRoute.firstChild;
         while (child.firstChild) child = child.firstChild;
         return child.snapshot.data['title'];
-      })
-    ).subscribe((ttl: string) => this.sharedService.setTitle(ttl));
+      }),
+      tap((ttl: string) => this.sharedService.setTitle(ttl))
+    ).subscribe();
   }
 
   checkForUpdates(): void {
@@ -108,15 +119,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   login(): void {
-    if (this.msalGuardConfig.authRequest) {
-      this.authService.loginPopup({...this.msalGuardConfig.authRequest} as PopupRequest).subscribe(
-        (response: AuthenticationResult) =>
-          this.authService.instance.setActiveAccount(response.account)
-      );
+    if (this.msalGuardConfig.authRequest){
+      this.authService.ssoSilent({...this.msalGuardConfig.authRequest} as RedirectRequest);
     } else {
-      this.authService.loginPopup().subscribe((response: AuthenticationResult) =>
-        this.authService.instance.setActiveAccount(response.account)
-      );
+      this.authService.loginRedirect();
     }
   }
 
@@ -126,5 +132,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._destroying$.next(undefined);
+    this._destroying$.complete();
   }
 }
