@@ -14,7 +14,6 @@ import { BrowserCacheLocation, InteractionType, IPublicClientApplication, Public
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
-import { FailedComponent } from './failed/failed.component';
 import { SharedModule } from './shared/shared.module';
 import { LogoutComponent } from './logout/logout.component';
 import { environment } from '../environments/environment';
@@ -89,7 +88,6 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
   declarations: [
     AppComponent,
     HomeComponent,
-    FailedComponent,
     LogoutComponent
   ],
   imports: [
