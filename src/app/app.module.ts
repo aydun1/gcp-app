@@ -53,11 +53,7 @@ function MSALInstanceFactory(): IPublicClientApplication {
       postLogoutRedirectUri: environment.redirectUri
     },
     cache: {
-      cacheLocation: BrowserCacheLocation.LocalStorage,
-      storeAuthStateInCookie: false,
-    },
-    system: {
-      allowRedirectInIframe: true
+      cacheLocation: BrowserCacheLocation.LocalStorage
     }
   });
 }

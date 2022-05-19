@@ -38,18 +38,17 @@ export class AppComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    
-    this.authService.instance.handleRedirectPromise().then(authResult=>{
+    this.authService.instance.handleRedirectPromise().then(authResult => {
       const account = this.authService.instance.getActiveAccount();
       if (!account) this.checkAndSetActiveAccount();
-    }).catch(err=>{
-      console.log(err);
-    });
+    }).catch(err=> console.log(err));
 
     this.setLoginDisplay();
     this.observer.observe(['(max-width: 600px)']).subscribe(_ => this.isMobile = _.matches);
     this.authService.instance.enableAccountStorageEvents();
     this.sharedService.getBranch().subscribe();
+
+    // Enables auto login/logout in other open windows/tabs
     this.msalBroadcastService.msalSubject$.pipe(
       filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED),
       tap(() => {
@@ -61,6 +60,12 @@ export class AppComponent implements OnInit, OnDestroy {
       })
     ).subscribe();
 
+    this.msalBroadcastService.msalSubject$.pipe(
+      filter((msg: EventMessage) => msg.eventType === EventType.LOGIN_SUCCESS && msg.payload['account']),
+      tap((msg: EventMessage) => this.authService.instance.setActiveAccount(msg.payload['account']))
+    ).subscribe();
+
+    // Periodically check for software updates
     this.msalBroadcastService.inProgress$.pipe(
       filter((status: InteractionStatus) => status === InteractionStatus.None),
       takeUntil(this._destroying$),
@@ -70,6 +75,7 @@ export class AppComponent implements OnInit, OnDestroy {
       })
     ).subscribe();
 
+    // Periodically check for software updates
     if (this.swUpdate.isEnabled) {
       withLatestFrom()
       this.swUpdate.versionUpdates.pipe(
@@ -79,6 +85,7 @@ export class AppComponent implements OnInit, OnDestroy {
       interval(this.checkInterval).subscribe(() => this.checkForUpdates());
     }
 
+    // Set the page title based on what is set in the router
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
       map(_ => {
@@ -99,9 +106,8 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   setLoginDisplay(): void {
-    const accounts = this.authService.instance.getAllAccounts();
-    this.accounts = accounts;
-    this.loginDisplay = accounts.length > 0;
+    this.accounts = this.authService.instance.getAllAccounts();
+    this.loginDisplay = this.accounts.length > 0;
     if (!this.loginDisplay && this.location.path() === '/logout') this.router.navigate(['/']);
     if (this.loginDisplay) this.getPhoto();
   }
@@ -110,7 +116,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.photo$ = this.sharedService.getPhoto();
   }
 
-  checkAndSetActiveAccount(){
+  checkAndSetActiveAccount(): void {
     const activeAccount = this.authService.instance.getActiveAccount();
     const allAccounts = this.authService.instance.getAllAccounts();
     if (!activeAccount && allAccounts.length > 0) {
