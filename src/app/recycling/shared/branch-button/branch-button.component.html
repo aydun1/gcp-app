@@ -2,8 +2,11 @@
   {{ cage.fields.Branch}}
 </button>
 
-<mat-menu #menu="matMenu" xPosition="before" >
+<mat-menu #menu="matMenu">
   <ng-template matMenuContent let-cage="cage">
+    <button mat-menu-item disabled>
+      <span>Allocate to:</span>
+    </button>
     <button mat-menu-item *ngFor="let branch of branches" (click)="setBranch(cage, branch)">
       <span>{{ branch }}</span>
     </button>

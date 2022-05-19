@@ -11,10 +11,16 @@
 <mat-menu #menu="matMenu" xPosition="before">
   <ng-template matMenuContent>
     <button mat-menu-item (click)="undo(cage.id, cage.fields.Status)" [disabled]="cage.statusId === 0">
+      <mat-icon>undo</mat-icon>
       <span>Undo</span>
     </button>
     <button mat-menu-item (click)="reset(cage.id)" [disabled]="cage.statusId === 0">
+      <mat-icon>restart_alt</mat-icon>
       <span>Reset</span>
+    </button>
+    <button mat-menu-item (click)="dehire(cage.id)" [disabled]="cage.statusId !== 0">
+      <mat-icon>assignment_return</mat-icon>
+      <span>Dehire</span>
     </button>
   </ng-template>
 </mat-menu>

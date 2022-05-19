@@ -135,8 +135,12 @@ export class RecyclingService {
       map(_ => {
         const cages = _.map(cage => cage);
         const i = cages.findIndex(cage => cage.id === res.id);
-        if (i > -1) cages[i] = res
-        else cages.unshift(res);
+        if (i > -1) {
+          if (res['fields']) cages[i] = res
+          else cages.splice(i, 1);
+        } else {
+          cages.unshift(res);
+        }
         this._cagesSubject$.next(cages);
         return res;
       })
@@ -311,6 +315,14 @@ export class RecyclingService {
   resetCage(id: string): Observable<Cage> {
     const payload = {fields: {Status: 'Available', CustomerNumber: null, Customer: null, Date1: null, Date2: null, Date3: null, Date4: null, GrossWeight: null}};
     return this.updateStatus(id, payload);
+  }
+
+  dehireCage(id: string): Observable<Cage> {
+    const url = this._cageTrackerUrl + `/items('${id}')`;
+    return this.http.delete<Cage>(url).pipe(
+      catchError((err: HttpErrorResponse) => this.handleError(err)),
+      switchMap(() => this.updateList({id} as Cage)),
+    );
   }
 
   getAvailableCages(): Observable<Cage[]> {

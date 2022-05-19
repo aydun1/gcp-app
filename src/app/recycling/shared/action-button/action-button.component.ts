@@ -7,6 +7,7 @@ import { of, switchMap } from 'rxjs';
 import { RecyclingService } from '../recycling.service';
 import { Cage } from '../cage';
 import { CustomerPickerDialogComponent } from '../../../customers/shared/customer-picker-dialog/customer-picker-dialog.component';
+import { NavigationService } from 'src/app/navigation.service';
 
 @Component({
   selector: 'gcp-action-button',
@@ -26,6 +27,7 @@ export class ActionButtonComponent implements OnInit {
     private fb: FormBuilder,
     private dialog: MatDialog,
     private router: Router,
+    private navService: NavigationService,
     private recyclingService: RecyclingService
   ) { }
 
@@ -91,6 +93,14 @@ export class ActionButtonComponent implements OnInit {
       if (this.router.url.startsWith('/recycling')) this.router.navigate(['recycling/cages', _[1]['id']], {replaceUrl: true});
       this.loading = false;
       this.updated.next(true);
+    });
+  }
+
+  dehire(id: string): void {
+    this.loading = true;
+    this.recyclingService.dehireCage(id).subscribe(_ => {
+      this.navService.back();
+      this.loading = false;
     });
   }
 
