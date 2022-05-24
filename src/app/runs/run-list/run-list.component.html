@@ -33,7 +33,9 @@
 
         <ng-container matColumnDef="notes">
           <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
-          <mat-cell *matCellDef="let delivery">{{ delivery.fields.Notes }}</mat-cell>
+          <mat-cell *matCellDef="let delivery">
+            <div [innerHTML]="delivery.fields.Notes"></div>
+          </mat-cell>
           <mat-footer-cell *matFooterCellDef></mat-footer-cell>
         </ng-container>
 

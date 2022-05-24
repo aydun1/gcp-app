@@ -69,13 +69,23 @@ h2 {
 .mat-column-site {
   white-space: pre-wrap;
 }
+
 ::ng-deep  .mat-checkbox-checked .mat-checkbox-background {
   background-color: #ff4081;
 }
+
 .mat-column-sequence {
   flex: 0 1 20px;
   padding-right: 30px;
   justify-content: flex-end;
+}
+
+.mat-column-customer {
+  flex: 0 1 200px;
+}
+
+.mat-column-site, .mat-column-notes {
+  flex: 0 1 200px;
 }
 
 .mat-column-actions {

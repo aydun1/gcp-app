@@ -154,7 +154,7 @@ export class DeliveryService {
     ).subscribe(_ => this._deliveriesSubject$.next(_));
   }
 
-  createDelivery(title: string, customer: Customer, site: Site, sequence: number): Observable<Delivery> {
+  createDelivery(title: string, customer: Customer, site: Site, notes: string, sequence: number): Observable<Delivery> {
     const fields = {
       Title: title,
       Customer: customer.name,
@@ -162,6 +162,7 @@ export class DeliveryService {
       CustomerId: customer.accountid,
       Sequence: sequence
     };
+    if (notes) fields['Notes'] = notes;
     if (site) fields['Site'] = site.fields.Title;
     fields['Address'] = site && site.fields.Address ? site.fields.Address : customer.address1_composite;
 

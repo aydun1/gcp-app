@@ -2,7 +2,7 @@ import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 import { Customer } from '../../customers/shared/customer';
 import { CustomerPickerDialogComponent } from '../../customers/shared/customer-picker-dialog/customer-picker-dialog.component';
@@ -79,7 +79,7 @@ export class RunListComponent implements OnInit {
     const data = {notes: true};
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().pipe(
-      switchMap(_ => _ ? this.addDelivery(_.customer, _.site) : of()),
+      switchMap(_ => _ ? this.addDelivery(_.customer, _.site, _.notes) : of()),
     ).subscribe(() => {
       this.loading = false;
     });
@@ -92,8 +92,8 @@ export class RunListComponent implements OnInit {
     ).subscribe()
   }
 
-  addDelivery(customer: Customer, site: Site) {
-    return this.deliveryService.createDelivery('runname', customer, site, this.listSize + 1);
+  addDelivery(customer: Customer, site: Site, notes: string) {
+    return this.deliveryService.createDelivery('runname', customer, site, notes, this.listSize + 1);
   }
 
   markComplete(id: string, currentStatus: string) {
