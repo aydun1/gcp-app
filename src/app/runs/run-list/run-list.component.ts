@@ -25,7 +25,7 @@ export class RunListComponent implements OnInit {
   public deliveries$: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
   public loading: false;
-  public displayedColumns = ['sequence', 'customer', 'site', 'actions', 'status', 'menu'];
+  public displayedColumns = ['sequence', 'customer', 'site', 'notes', 'actions', 'status', 'menu'];
   public dragDisabled = true;
 
   constructor(
@@ -76,7 +76,8 @@ export class RunListComponent implements OnInit {
   }
 
   openCustomerPicker(): void {
-    const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px'});
+    const data = {notes: true};
+    const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().pipe(
       switchMap(_ => _ ? this.addDelivery(_.customer, _.site) : of()),
     ).subscribe(() => {

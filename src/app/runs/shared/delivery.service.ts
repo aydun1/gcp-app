@@ -32,7 +32,7 @@ export class DeliveryService {
 
   private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
-    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,Address,CustomerNumber,CustomerId,Customer,Status)`;
+    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,Address,CustomerNumber,CustomerId,Customer,Status, Notes)`;
 
     const parsed = filterKeys.map(key => {
       switch (key) {
