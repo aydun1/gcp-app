@@ -16,8 +16,6 @@ import { PalletReconciliationListComponent } from './pallet-reconciliation-list/
 import { PalletDocketViewComponent } from './pallet-docket-view/pallet-docket-view.component';
 import { PalletReconciliationViewComponent } from './pallet-reconciliation-view/pallet-reconciliation-view.component';
 
-
-
 @NgModule({
   declarations: [
     PalletsComponent,

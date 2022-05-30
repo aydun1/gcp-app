@@ -6,13 +6,37 @@
   margin-bottom: 29.5px;
 }
 
+.mat-button-toggle-button {
+  align-items: stretch;
+  display: flex;
+}
+
 .mat-button-toggle {
   display: flex;
   flex: 1;
 }
 
+
+.name {
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  background: rgb(0 0 0 / 40%);
+  color: white;
+  line-height: 20px;
+  padding: 1px 6px;
+  border-radius: 20px;
+}
+
+.mat-button-toggle-checked .name {
+  background: rgb(0 0 0 / 90%);
+
+}
+
 img {
-  max-width: 100%;
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
 }
 
 .ng-submitted .mat-button-toggle-group.ng-invalid {

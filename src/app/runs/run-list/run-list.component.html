@@ -51,7 +51,7 @@
         <ng-container matColumnDef="status">
           <mat-header-cell *matHeaderCellDef></mat-header-cell>
           <mat-cell *matCellDef="let delivery">
-            <mat-checkbox color="primary" [checked]="delivery.fields.Status === 'Complete'" (click)="markComplete(delivery.id, delivery.fields.Status)"></mat-checkbox>          </mat-cell>
+            <mat-checkbox color="accent" [checked]="delivery.fields.Status === 'Complete'" (click)="markComplete(delivery.id, delivery.fields.Status)"></mat-checkbox>          </mat-cell>
           <mat-footer-cell *matFooterCellDef></mat-footer-cell>
         </ng-container>
 

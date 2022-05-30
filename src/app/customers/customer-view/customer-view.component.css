@@ -35,3 +35,8 @@
 dt {
   font-weight: bold;
 }
+
+.big-buttons {
+  display: grid;
+  grid-gap: 1rem;
+}
