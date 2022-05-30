@@ -321,6 +321,7 @@ export class RecyclingService {
     const url = this._cageTrackerUrl + `/items('${id}')`;
     return this.http.delete<Cage>(url).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err)),
+      tap(() => this.snackBar.open("Cage successfully dehired", '', {duration: 3000})),
       switchMap(() => this.updateList({id} as Cage)),
     );
   }
