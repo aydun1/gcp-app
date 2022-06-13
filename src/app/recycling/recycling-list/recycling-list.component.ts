@@ -18,7 +18,7 @@ interface choice {choice: {choices: Array<any>}, name: string};
 export class RecyclingListComponent implements OnInit {
   private _loadList: boolean;
   public cages$: Observable<Cage[]>;
-  public binFilter = new FormControl('');
+  public binFilter = new FormControl<number>(null);
   public branchFilter = new FormControl('');
   public statusFilter = new FormControl('');
   public assetTypeFilter = new FormControl('');
@@ -119,7 +119,7 @@ export class RecyclingListComponent implements OnInit {
       this.binFilter.patchValue(params['bin']);
       filters['bin'] = params['bin'];
     } else {
-      if (this.binFilter.value) this.binFilter.patchValue('');
+      if (this.binFilter.value) this.binFilter.patchValue(null);
     }
   }
 
@@ -155,7 +155,7 @@ export class RecyclingListComponent implements OnInit {
   }
 
   clearBinFilter(): void {
-    this.binFilter.patchValue('');
+    this.binFilter.patchValue(null);
   }
 
   announceSortChange(e: Sort): void {

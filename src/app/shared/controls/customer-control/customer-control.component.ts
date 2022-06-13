@@ -15,7 +15,6 @@ import { Customer } from '../../../customers/shared/customer';
   providers: [{provide: MatFormFieldControl, useExisting: CustomerControlComponent}]
 })
 export class CustomerControlComponent implements ControlValueAccessor, MatFormFieldControl<Customer>, OnDestroy, OnInit {
-  @Input('aria-describedby') userAriaDescribedBy: string;
   @HostBinding() id = `customer-input-${CustomerControlComponent.nextId++}`;
   @HostBinding('class.floating')
   get shouldLabelFloat(): boolean {
@@ -30,7 +29,7 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
   public customer: Customer;
   public filteredOptions: Observable<Customer[]>;  
   public isDisabled = false;
-  public myControl = new FormControl('', this.customerPickedValidator);
+  public myControl = new FormControl<Customer>(null, this.customerPickedValidator);
 
   onChange = (_: any) => {};
   onTouched = () => {};
@@ -155,7 +154,7 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
   }
 
   customerPickedValidator(control: FormControl): {unselected: boolean} {
-    if (control.value.accountnumber) return null;
+    if (control.value?.accountnumber) return null;
     return {unselected: true};
   }
 

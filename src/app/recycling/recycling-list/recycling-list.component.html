@@ -29,7 +29,7 @@
       </mat-form-field>
       <mat-form-field appearance="outline" class="bin-filter">
         <mat-label>Cage number</mat-label>
-        <input matInput [formControl]="binFilter" type="number" autocomplete="off" placeholder="Type to search...">
+        <input matInput [formControl]="binFilter" min="0" type="number" autocomplete="off" placeholder="Type to search...">
         <button *ngIf="!binFilter.value" matSuffix mat-icon-button disabled>
           <mat-icon>search</mat-icon>
         </button>

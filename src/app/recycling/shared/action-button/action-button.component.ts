@@ -108,7 +108,7 @@ export class ActionButtonComponent implements OnInit {
     this.loading = true;
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px'});
     dialogRef.afterClosed().pipe(
-      switchMap(_ => _ ? this.recyclingService.allocateToCustomer(id, _.customer.accountnumber, _.customer.name, _.site) : of()),
+      switchMap(_ => _ ? this.recyclingService.allocateToCustomer(id, _.customer.accountnumber, _.customer.name, _.site) : of(1)),
     ).subscribe(() => {
       this.loading = false;
       this.updated.next(true);
