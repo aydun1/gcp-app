@@ -3,7 +3,8 @@ import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
-import { SharedService } from 'src/app/shared.service';
+
+import { SharedService } from '../../shared.service';
 import { LoadingSchedule } from '../shared/loading-schedule';
 import { LoadingScheduleService } from '../shared/loading-schedule.service';
 
@@ -14,19 +15,19 @@ import { LoadingScheduleService } from '../shared/loading-schedule.service';
 })
 export class LoadingScheduleListComponent implements OnInit {
   private _loadingScheduleSubject$ = new BehaviorSubject<LoadingSchedule[]>([]);
-  private _loadList: boolean;
+  private _loadList!: boolean;
   public branchFilter = new FormControl('');
   public statusFilter = new FormControl('');
   public viewFilter = new FormControl('');
-  public loadingSchedule$: Observable<LoadingSchedule[]>;
-  public deliveries: LoadingSchedule[];
+  public loadingSchedule$!: Observable<LoadingSchedule[]>;
+  public deliveries!: LoadingSchedule[];
   public loadingList$ = this.loadingScheduleService.loading;
-  public loading: false;
+  public loading = false;
   public displayedColumns = ['reference', 'loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'status', 'notes', 'edit'];
-  public listSize: number;
-  public groups = [];
-  public grouped: boolean;
-  public totals: object;
+  public listSize!: number;
+  public groups!: Array<string>;
+  public grouped!: boolean;
+  public totals!: object;
   public states = this.shared.branches;
 
   constructor(
@@ -42,7 +43,7 @@ export class LoadingScheduleListComponent implements OnInit {
     this.loadingSchedule$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
-        startWith(new NavigationEnd(1, null, null)),
+        startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         map(() => _)
       )),

@@ -5,7 +5,7 @@
     </button>
     <a class="title" [routerLink]="['/']">Pallet Management System</a>
     <div class="toolbar-spacer"></div>
-    <div *ngIf="photo$ | async as photo; else noPic" class="photo-button" mat-button [matMenuTriggerFor]="menu"><img [src]="photo" [alt]="accounts[0].name"></div>
+    <div *ngIf="photo$ | async as photo; else noPic" class="photo-button" mat-button [matMenuTriggerFor]="menu"><img [src]="photo" [alt]="accounts[0].name" alt="Avatar"></div>
     <ng-template #noPic>
       <button *ngIf="loginDisplay" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>arrow_drop_down</mat-icon></button>
     </ng-template>

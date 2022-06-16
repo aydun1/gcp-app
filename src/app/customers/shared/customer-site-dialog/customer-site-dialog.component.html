@@ -18,7 +18,7 @@
     <mat-form-field appearance="outline" class="name">
       <mat-label>Site name (i.e. suburb)</mat-label>
       <input matInput type="text" formControlName="site" autocomplete="off" placeholder="Site name (i.e. suburb)">
-      <mat-error *ngIf="siteForm.get('site').hasError('forbiddenName')">
+      <mat-error *ngIf="siteForm.get('site')?.hasError('forbiddenName')">
         A site by this name already exists.
       </mat-error>
     </mat-form-field>

@@ -14,16 +14,16 @@ import { Cage } from '../shared/cage';
 export class RecyclingViewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
 
-  private cageSource$ = new BehaviorSubject<void>(null);
-  public cage$: Observable<Cage>;
-  public cageId: string;
-  public cageHistory$: Observable<Cage[]>;
+  private cageSource$ = new BehaviorSubject<void>(undefined);
+  public cage$!: Observable<Cage>;
+  public cageId!: string;
+  public cageHistory$!: Observable<Cage[]>;
   public displayedColumns = ['updated', 'customer', 'status', 'weight', 'nav'];
-  public totalWeight: number;
-  public isCage: boolean;
-  public editCageNotes: boolean;
-  public currentCageNotes: string;
-  public newCageNotes: string;
+  public totalWeight!: number;
+  public isCage!: boolean;
+  public editCageNotes!: boolean;
+  public currentCageNotes!: string;
+  public newCageNotes!: string;
   public loading = new BehaviorSubject<boolean>(true);
   public loadingHistory = new BehaviorSubject<boolean>(true);
 

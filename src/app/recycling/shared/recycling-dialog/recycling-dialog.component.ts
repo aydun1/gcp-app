@@ -18,13 +18,13 @@ export class RecyclingDialogComponent implements OnInit {
   public noDeliveredCages$ = new BehaviorSubject<boolean>(false);
   public noCageHistory$ = new BehaviorSubject<boolean>(false);
   public cages$ = new BehaviorSubject<Cage[]>([]);
-  public weightForm: FormGroup;
-  public allocatorForm: FormGroup;
-  public assigning: boolean;
-  public availableCages$: Observable<Cage[]>;
+  public weightForm!: FormGroup;
+  public allocatorForm!: FormGroup;
+  public assigning!: boolean;
+  public availableCages$!: Observable<Cage[]>;
   public loadingCages$ = new BehaviorSubject<boolean>(true);
   public loadingAvailableCages$ = new BehaviorSubject<boolean>(true);
-  public siteNames: Array<string>;
+  public siteNames!: Array<string>;
 
   constructor(
       public dialogRef: MatDialogRef<RecyclingDialogComponent>,

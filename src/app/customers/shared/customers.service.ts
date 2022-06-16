@@ -17,9 +17,9 @@ export class CustomersService {
   private _url = 'https://gardencityplastics.crm6.dynamics.com/api/data/v9.2';
   private _listUrl = 'lists/1e955039-1d2e-41f8-98a2-688319720410';
   private _sitesUrl = `${environment.endpoint}/${environment.siteUrl}/${this._listUrl}`;
-  private _nextPage: string;
+  private _nextPage!: string;
   private _customersSubject$ = new BehaviorSubject<Customer[]>([]);
-  private _loadingCustomers: boolean;
+  private _loadingCustomers!: boolean;
 
   public loading = new BehaviorSubject<boolean>(false);
 
@@ -35,7 +35,7 @@ export class CustomersService {
     if (filters['name']) filterArray.push(`(contains(name,'${this.shared.sanitiseName(filters['name'])}') or startswith(accountnumber,'${this.shared.sanitiseName(filters['name'])}'))`);
     if (filters['territory']) {
       if (filters['territory'] in this.shared.territories) {
-        filterArray.push('(' + this.shared.territories[filters['territory']].map(_ => `territoryid/name eq '${_}'`).join(' or ') + ')');
+        filterArray.push('(' + this.shared.territories[filters['territory']].map((_: any) => `territoryid/name eq '${_}'`).join(' or ') + ')');
       } else {
         filterArray.push(`territoryid/name eq '${filters['territory']}'`);
       }
@@ -69,7 +69,7 @@ export class CustomersService {
   }
 
   getNextPage(): void {
-    if (!this._nextPage || this._loadingCustomers) return null;
+    if (!this._nextPage || this._loadingCustomers) return;
     this._customersSubject$.pipe(
       take(1),
       switchMap(acc => this.getCustomers(this._nextPage).pipe(
@@ -87,7 +87,7 @@ export class CustomersService {
         this._loadingCustomers = false;
         this.loading.next(false);
       }),
-      map((_: {value: Customer[]}) => _.value as Customer[]),
+      map((_: any) => _.value as Customer[]),
       catchError(error => {
         if (error.status === 403) alert('No access. Contact Aidan to have your account enabled to use this page.');
         if (error.error instanceof ErrorEvent) {

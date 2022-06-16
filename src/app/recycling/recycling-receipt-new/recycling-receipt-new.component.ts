@@ -15,9 +15,9 @@ import { RecyclingReceiptsService } from '../shared/recycling-receipts.service';
 export class RecyclingReceiptNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
 
-  public newReceiptForm: FormGroup;
-  public loading: boolean;
-  public state: string;
+  public newReceiptForm!: FormGroup;
+  public loading!: boolean;
+  public state!: string;
   public states = this.sharedService.branches;
 
   constructor(
@@ -47,7 +47,7 @@ export class RecyclingReceiptNewComponent implements OnInit {
   onSubmit(): void {
     if (this.newReceiptForm.invalid) return;
     this.loading = true;
-    const branch = this.newReceiptForm.get('branch').value;
+    const branch = this.newReceiptForm.get('branch')?.value;
     const values = this.newReceiptForm.value;
     this.receiptsService.addNewReceipt(values.reference, branch, values.weight, values.date).pipe(
       tap(_ => {

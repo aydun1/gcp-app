@@ -3,8 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { catchError, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
-import { NavigationService } from 'src/app/navigation.service';
-import { SharedService } from 'src/app/shared.service';
+
+import { NavigationService } from '../../navigation.service';
+import { SharedService } from '../../shared.service';
 import { LoadingScheduleService } from '../shared/loading-schedule.service';
 import { TransportCompany } from '../shared/transport-company';
 
@@ -18,22 +19,22 @@ interface choice {choice: {choices: Array<any>}, name: string};
 export class LoadingScheduleNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
 
-  public transportCompanies$: Observable<any>;
-  public loadingScheduleForm: FormGroup;
+  public transportCompanies$!: Observable<any>;
+  public loadingScheduleForm!: FormGroup;
   public states = this.sharedService.branches;
-  public state: string;
-  public loading: boolean;
-  public choices: {TransportCompany: choice, Driver: choice, AssetType: choice, Branch: choice, Status: choice};
-  public id: string;
+  public state!: string;
+  public loading = false;
+  public choices!: {TransportCompany: choice, Driver: choice, AssetType: choice, Branch: choice, Status: choice};
+  public id: string | null = null;
 
   get targetStates(): Array<string> {
-    const from = this.loadingScheduleForm.get('from').value;
+    const from = this.loadingScheduleForm.get('from')?.value;
     const states = this.states.filter(_ => _ !== from);
     return states;
   }
 
   get fromStates(): Array<string> {
-    const to = this.loadingScheduleForm.get('to').value;
+    const to = this.loadingScheduleForm.get('to')?.value;
     const states = this.states.filter(_ => _ !== to);
     return states;
   }
@@ -75,7 +76,7 @@ export class LoadingScheduleNewComponent implements OnInit {
     });
   }
 
-  patchForm(transportCompanies: Array<TransportCompany>): Observable<TransportCompany[]> {
+  patchForm(transportCompanies: Array<TransportCompany> | null): Observable<TransportCompany[] | null> {
     if (!this.id) {
       const data = {status: 'Scheduled', from: 'VIC', to: this.state};
       this.loadingScheduleForm.patchValue(data);
@@ -88,7 +89,7 @@ export class LoadingScheduleNewComponent implements OnInit {
         data['arrivalDate'] = _.fields['ArrivalDate'];
         data['loadingDate'] = _.fields['LoadingDate'];
         data['destination'] = _.fields['Destination'];
-        data['transportCompany'] = transportCompanies.find(t => t.fields.Title === _.fields['TransportCompany']) || '';
+        data['transportCompany'] = transportCompanies ? transportCompanies.find(t => t.fields.Title === _.fields['TransportCompany']) : '';
         data['driver'] = _.fields['Driver'];
         data['spaces'] = _.fields['Spaces'];
         data['notes'] = _.fields['Notes'];
@@ -124,7 +125,7 @@ export class LoadingScheduleNewComponent implements OnInit {
     ).subscribe();
   }
 
-  displayFn(option) {
+  displayFn(option: any): string {
     return option.fields?.Title || option;
   }
 

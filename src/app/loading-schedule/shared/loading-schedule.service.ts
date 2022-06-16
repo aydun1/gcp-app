@@ -15,9 +15,9 @@ export class LoadingScheduleService {
   private _transportCompaniesListUrl = 'lists/5bed333e-0bc3-41ae-bda4-b851678347d1';
   private _loadingScheduleUrl = `${environment.endpoint}/${environment.siteUrl}/${this._listUrl}`;
   private _transportCompaniesUrl = `${environment.endpoint}/${environment.siteUrl}/${this._transportCompaniesListUrl}`;
-  private _nextPage: string;
+  private _nextPage!: string;
   private _loadingScheduleSubject$ = new BehaviorSubject<LoadingSchedule[]>([]);
-  private _loadingLoadingSchedule: boolean;
+  private _loadingLoadingSchedule!: boolean;
   private _columns$ = new BehaviorSubject<any>(null);
 
   public loading = new BehaviorSubject<boolean>(false);
@@ -55,7 +55,7 @@ export class LoadingScheduleService {
         this._loadingLoadingSchedule = false;
         this.loading.next(false);
       }),
-      map((res: {value: LoadingSchedule[]}) => res.value)
+      map((res: any) => res.value)
     );
   }
 
@@ -82,7 +82,7 @@ export class LoadingScheduleService {
   }
 
   getNextPage(): void {
-    if (!this._nextPage || this._loadingLoadingSchedule) return null;
+    if (!this._nextPage || this._loadingLoadingSchedule) return;
     this._loadingScheduleSubject$.pipe(
       take(1),
       switchMap(acc => this.getLoadingSchedule(this._nextPage).pipe(
@@ -98,7 +98,7 @@ export class LoadingScheduleService {
         if (_) return of(_);
         return this.http.get(`${this._loadingScheduleUrl}/columns`).pipe(
           map(_ => _['value']),
-          map(_ => _.reduce((a, v) => ({ ...a, [v.name]: v}), {})),
+          map(_ => _.reduce((acc: any, val: any) => ({ ...acc, [val.name]: val}), {})),
           tap(_ => this._columns$.next(_))
         );
       }),
@@ -107,7 +107,7 @@ export class LoadingScheduleService {
     return this._columns$;
   }
 
-  getLoadingScheduleEntry(id: string): Observable<LoadingSchedule> {
+  getLoadingScheduleEntry(id: string | null): Observable<LoadingSchedule> {
     const url = `${this._loadingScheduleUrl}/items('${id}')`;
     return this.http.get<LoadingSchedule>(url).pipe(
     );
@@ -116,9 +116,8 @@ export class LoadingScheduleService {
   getTransportCompanies() {
     const url = `${this._transportCompaniesUrl}/items?expand=fields(select=Title,Drivers,Droivers)`;
     return this.http.get(url).pipe(
-      map((res: {value: TransportCompany[]}) => res.value),
-      tap(_ => console.log(_)),
-      tap(_ => _.forEach(_ => _['fields']['DriversArray'] = _['fields']['Drivers']?.split(/[\r\n]+/)))
+      map((res: any) => res.value),
+      tap(_ => _.forEach((_: any) => _['fields']['DriversArray'] = _['fields']['Drivers']?.split(/[\r\n]+/)))
     );
   }
 
@@ -145,7 +144,7 @@ export class LoadingScheduleService {
     return this.http.patch<TransportCompany>(`${this._transportCompaniesUrl}/items('${id}')`, payload);
   }
 
-  createLoadingScheduleEntry(v: any,id: string): Observable<LoadingSchedule> {
+  createLoadingScheduleEntry(v: any, id: string | null): Observable<LoadingSchedule> {
     const drivers = v.transportCompany.fields?.Drivers || [];
     const isNewDriver = !drivers.includes(v.driver) && v.driver !== '';
     const isNewTransportCompany = v.transportCompany.fields ? false : true;

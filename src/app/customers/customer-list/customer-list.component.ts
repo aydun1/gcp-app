@@ -20,19 +20,19 @@ type Territory = {
   styleUrls: ['./customer-list.component.css']
 })
 export class CustomerListComponent implements OnInit {
-  private loadList: boolean;
+  private loadList!: boolean;
   public nameFilter = new FormControl('');
   public territoryFilter = new FormControl('');
-  public customers$: Observable<Customer[]>;
-  public territories$: Observable<Territory[]>;
+  public customers$!: Observable<Customer[]>;
+  public territories$!: Observable<Territory[]>;
   public get territories(): Array<string> {return this.sharedService.territoryNames};
   public loading = this.customersService.loading;
   public displayedColumns = ['name', 'accountnumber', 'new_pallets_loscam', 'new_pallets_chep', 'new_pallets_plain'];
-  public sortSort: string;
-  public sortOrder: 'asc' | 'desc';
-  public loscams: number;
-  public cheps: number;
-  public plains: number;
+  public sortSort!: string;
+  public sortOrder!: 'asc' | 'desc';
+  public loscams!: number;
+  public cheps!: number;
+  public plains!: number;
 
   constructor(
     private el: ElementRef,
@@ -53,7 +53,7 @@ export class CustomerListComponent implements OnInit {
     this.customers$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
-        startWith(new NavigationEnd(1, null, null)),
+        startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         map(() => _)
       )),
@@ -76,7 +76,7 @@ export class CustomerListComponent implements OnInit {
 
     this.nameFilter.valueChanges.pipe(
       debounceTime(200),
-      map(_ => _.length > 0 ? _ : null),
+      map(_ => _ && _.length > 0 ? _ : null),
       tap(_ => this.router.navigate([], { queryParams: {'name': _}, queryParamsHandling: 'merge', replaceUrl: true}))
     ).subscribe();
 

@@ -1,7 +1,7 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Component, ElementRef, HostBinding, Input, OnDestroy, OnInit, Optional, Self, ViewChild } from '@angular/core';
-import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
+import { ControlValueAccessor, NgControl, FormControl, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject, switchMap, tap } from 'rxjs';
 
@@ -26,15 +26,15 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
   public focused = false;
   public touched = false;
   public describedBy = '';
-  public customer: Customer;
-  public filteredOptions: Observable<Customer[]>;  
+  public customer: Customer | null = null;
+  public filteredOptions!: Observable<Customer[]>;  
   public isDisabled = false;
-  public myControl = new FormControl<Customer>(null, this.customerPickedValidator);
+  public myControl = new FormControl<Customer | null>(null, this.customerPickedValidator);
 
   onChange = (_: any) => {};
   onTouched = () => {};
 
-  @ViewChild('customerInput', { static: false }) customerInput: ElementRef<HTMLInputElement>;
+  @ViewChild('customerInput', { static: false }) customerInput!: ElementRef<HTMLInputElement>;
 
   get empty(): boolean {
     return !this.myControl.value;
@@ -46,7 +46,7 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
     this._placeholder = value;
     this.stateChanges.next();
   }
-  private _placeholder: string;
+  private _placeholder!: string;
 
   @Input()
   get required(): boolean { return this._required; }
@@ -111,7 +111,7 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
     this.filteredOptions = combineLatest([this.myControl.valueChanges, this._territory$]).pipe(
       tap(([value, state]) => {if (!value) {this.customer = {} as Customer; this.addCustomer();}}),
       debounceTime(200),
-      map(([value, state]) => [typeof value === 'string' ? value : value.name, state]),
+      map(([value, state]) => [typeof value === 'string' ? value : value?.name, state]),
       switchMap(([name, state]) => this.customersService.getFirstPage({name, territory: state}))
     );
   }
@@ -153,9 +153,11 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
     this.onChange(this.customer);
   }
 
-  customerPickedValidator(control: FormControl): {unselected: boolean} {
-    if (control.value?.accountnumber) return null;
-    return {unselected: true};
+  customerPickedValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const unselected = control.value?.accountnumber;
+      return unselected ? {forbiddenName: {value: control.value}} : null;
+    };
   }
 
   customerDisplayFn(customer: Customer): string {

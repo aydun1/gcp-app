@@ -17,8 +17,9 @@ export class StringColourPipe implements PipeTransform {
 
   constructor() { }
   
-  getColor(text: string): string {
-    return this.colors[text];
+  getColor(text: string): string | null {
+    const key = Object.entries(this.colors).find(_ => _[0] === text);
+    return key ? key[1] : null;
   }
 
   mixColor(color: Array<number>) {

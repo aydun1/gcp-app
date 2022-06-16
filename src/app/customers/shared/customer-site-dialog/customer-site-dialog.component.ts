@@ -15,10 +15,10 @@ import { CustomersService } from '../customers.service';
   styleUrls: ['./customer-site-dialog.component.css']
 })
 export class CustomerSiteDialogComponent implements OnInit {
-  public siteForm: FormGroup;
-  public loading: boolean;
-  public siteId: string;
-  public oldName: string;
+  public siteForm!: FormGroup;
+  public loading = false;
+  public siteId!: string;
+  public oldName!: string;
 
   constructor(
     private dialogRef: MatDialogRef<CustomerSiteDialogComponent>,
@@ -63,7 +63,7 @@ export class CustomerSiteDialogComponent implements OnInit {
 
   deleteSite(): void {
     const action = this.customerService.deleteSite(this.data.customer, this.siteId, this.oldName);
-    this.finaliseAction(action, 'removed').subscribe(() => this.navigate(null));
+    this.finaliseAction(action, 'removed').subscribe(() => this.navigate(''));
   }
 
   private finaliseAction(action: Observable<Object>, word: string): Observable<object> {

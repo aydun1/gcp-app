@@ -3,8 +3,8 @@ import { Component, HostBinding, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, catchError, combineLatest, map, Observable, Subject, switchMap, tap, throwError } from 'rxjs';
-import { SharedService } from 'src/app/shared.service';
 
+import { SharedService } from '../../shared.service';
 import { NavigationService } from '../../navigation.service';
 import { LoadingScheduleService } from '../shared/loading-schedule.service';
 
@@ -16,10 +16,10 @@ import { LoadingScheduleService } from '../shared/loading-schedule.service';
 export class LoadingScheduleViewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
 
-  private scheduleSource$: Subject<string>;
-  public loadingScheduleEntry$: Observable<any>;
-  public loading: boolean;
-  public edit: boolean;
+  private scheduleSource$!: Subject<string | null>;
+  public loadingScheduleEntry$!: Observable<any>;
+  public loading = false;
+  public edit = false;
   public loadingPage = new BehaviorSubject<boolean>(true);
 
   constructor(
@@ -32,7 +32,7 @@ export class LoadingScheduleViewComponent implements OnInit {
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
-    this.scheduleSource$ = new BehaviorSubject(id);
+    this.scheduleSource$ = new BehaviorSubject<string | null>(id);
     this.loadingScheduleEntry$ = this.scheduleSource$.pipe(
       switchMap(_ => combineLatest([this.loadingScheduleService.getLoadingScheduleEntry(_), this.sharedService.getBranch()])),
       tap(([transfer, state]) => {

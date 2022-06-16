@@ -1,7 +1,7 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { combineLatest, distinctUntilChanged, filter, map, Observable, startWith, Subject, switchMap, tap } from 'rxjs';
+import { combineLatest, distinctUntilChanged, filter, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { Customer } from '../shared/customer';
 import { Site } from '../shared/site';
@@ -25,15 +25,15 @@ export class CustomerViewComponent implements OnInit {
   private sitesSubject$ = new Subject<string>();
   private palletsSubject$ = new Subject<string>();
   private cagesSubject$ = new Subject<string>();
-  private customer: Customer;
-  public customer$: Observable<Customer>;
-  public site: string;
-  public sites: Array<Site>;
-  public palletsOwing: {Loscam: number, Chep: number, Plain: number};
-  public loscams: number;
-  public cheps: number;
-  public plains: number;
-  public cages: {count: number, weight: number};
+  private customer!: Customer;
+  public customer$!: Observable<Customer>;
+  public site!: string;
+  public sites!: Array<Site>;
+  public palletsOwing!: {Loscam: number, Chep: number, Plain: number} | null;
+  public loscams!: number;
+  public cheps!: number;
+  public plains!: number;
+  public cages!: {count: number, weight: number} | null;
 
   constructor(
     private route: ActivatedRoute,
@@ -49,7 +49,7 @@ export class CustomerViewComponent implements OnInit {
   ngOnInit(): void {
     this.customer$ =  combineLatest([this.route.paramMap, this.route.queryParams]).pipe(
       switchMap(_ => this.router.events.pipe(
-        startWith(new NavigationEnd(1, null, null)),
+        startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         map(() => _)
       )),
@@ -95,7 +95,8 @@ export class CustomerViewComponent implements OnInit {
     return sameSite;
   }
 
-  getCustomer(id: string): Observable<Customer> {
+  getCustomer(id: string | null): Observable<Customer> {
+    if (!id) return of();
     return this.cutomersService.getCustomer(id).pipe(
       tap(_ => {
         this.customer = _;
@@ -142,7 +143,7 @@ export class CustomerViewComponent implements OnInit {
     dialogRef.afterClosed().subscribe(() => this.refreshCages());
   }
 
-  setSite(customer: Customer, site: string): void {
+  setSite(customer: Customer, site: string | null): void {
     this.router.navigate([], { queryParams: {site: site}, queryParamsHandling: 'merge', replaceUrl: true}).then(
       () => this.sharedService.setTitle(`${customer.name} ${site ? '(' + this.site + ')' : '' }`)
     );

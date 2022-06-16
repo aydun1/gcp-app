@@ -11,8 +11,8 @@ import { Receipt } from './receipt';
   providedIn: 'root'
 })
 export class RecyclingReceiptsService {
-  private _loadingReceipts: boolean;
-  private _nextPage: string;
+  private _loadingReceipts = false;
+  private _nextPage = '';
   private _receiptsSubject$ = new BehaviorSubject<Receipt[]>([]);
   private _listUrl = 'lists/4a8dce10-aec9-4203-bd1e-5eb6bd761d4a';
   private _receiptTrackerUrl = `${environment.endpoint}/${environment.siteUrl}/${this._listUrl}`;
@@ -42,9 +42,9 @@ export class RecyclingReceiptsService {
   private getReceipts(url: string, paginate = false): Observable<Receipt[]> {
     return this.http.get(url).pipe(
       tap(_ => {
-        if (paginate) this._nextPage = _['@odata.nextLink'];
+        if (paginate) this._nextPage = _[''];
       }),
-      map((res: {value: Receipt[]}) => res.value)
+      map((res: any) => res.value)
     );
   }
 
@@ -75,7 +75,7 @@ export class RecyclingReceiptsService {
   }
 
   getNextPage(): void {
-    if (!this._nextPage || this._loadingReceipts) return null;
+    if (!this._nextPage || this._loadingReceipts) return;
     this._loadingReceipts = true;
     this._receiptsSubject$.pipe(
       take(1),

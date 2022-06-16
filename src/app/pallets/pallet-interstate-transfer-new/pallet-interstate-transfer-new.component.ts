@@ -16,12 +16,12 @@ import { PalletsService } from '../shared/pallets.service';
 export class PalletInterstateTransferNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
 
-  public palletTransferForm: FormGroup;
+  public palletTransferForm!: FormGroup;
   public states = this.sharedService.branches;
-  public state: string;
-  public loading: boolean;
+  public state!: string;
+  public loading!: boolean;
   get targetStates(): Array<string> {
-    const from = this.palletTransferForm.get('from').value;
+    const from = this.palletTransferForm.get('from')?.value;
     const states = this.states.filter(_ => _ !== from);
     return from === 'Transport' ? [this.state] : states;
   }
@@ -29,7 +29,7 @@ export class PalletInterstateTransferNewComponent implements OnInit {
     return this.states.filter(_ => this.state ? _ === this.state : _);
   }
   get fromTrans(): boolean {
-    return this.palletTransferForm.get('from').value === 'Transport';
+    return this.palletTransferForm.get('from')?.value === 'Transport';
   }
 
   constructor(
@@ -61,11 +61,11 @@ export class PalletInterstateTransferNewComponent implements OnInit {
       plain: ['', [Validators.min(0)]]
     });
 
-    this.palletTransferForm.get('from').valueChanges.subscribe(
+    this.palletTransferForm.get('from')?.valueChanges.subscribe(
       fromBranch => {
         const toBranch = this.palletTransferForm.get('to');
-        if (fromBranch === toBranch.value) toBranch.patchValue('');
-        if (fromBranch === 'Transport') toBranch.patchValue(this.state);
+        if (fromBranch === toBranch?.value) toBranch?.patchValue('');
+        if (fromBranch === 'Transport') toBranch?.patchValue(this.state);
       }
     )
   }

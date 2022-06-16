@@ -7,7 +7,7 @@ import { of, switchMap } from 'rxjs';
 import { RecyclingService } from '../recycling.service';
 import { Cage } from '../cage';
 import { CustomerPickerDialogComponent } from '../../../customers/shared/customer-picker-dialog/customer-picker-dialog.component';
-import { NavigationService } from 'src/app/navigation.service';
+import { NavigationService } from '../../../navigation.service';
 
 @Component({
   selector: 'gcp-action-button',
@@ -16,12 +16,12 @@ import { NavigationService } from 'src/app/navigation.service';
 })
 export class ActionButtonComponent implements OnInit {
 
-  @Input() cage: Cage;
+  @Input() cage!: Cage;
   @Output() updated = new EventEmitter<boolean>();
 
-  public loading: boolean;
-  public weightForm: FormGroup;
-  public dialogRef: MatDialogRef<CustomerPickerDialogComponent, any>;
+  public loading!: boolean;
+  public weightForm!: FormGroup;
+  public dialogRef!: MatDialogRef<CustomerPickerDialogComponent, any>;
 
   constructor(
     private fb: FormBuilder,

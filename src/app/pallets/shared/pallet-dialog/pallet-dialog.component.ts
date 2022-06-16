@@ -15,10 +15,10 @@ import { Customer } from '../../../customers/shared/customer';
   styleUrls: ['./pallet-dialog.component.css']
 })
 export class PalletDialogComponent implements OnInit {
-  private _state: string;
-  public palletForm: FormGroup;
-  public loading: boolean;
-  public siteNames: Array<string>;
+  private _state!: string;
+  public palletForm!: FormGroup;
+  public loading = false;
+  public siteNames!: Array<string>;
 
   constructor(
       public dialogRef: MatDialogRef<PalletDialogComponent>,

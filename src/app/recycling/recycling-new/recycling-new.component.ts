@@ -15,22 +15,29 @@ import { SharedService } from '../../shared.service';
 })
 export class RecyclingNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
-  @ViewChild('cageNumberInput') cageNumber: ElementRef;
-  private state: string;
+  @ViewChild('cageNumberInput') cageNumber!: ElementRef;
+  private state!: string;
   private assetType = new FormControl('', Validators.required);
   private defaultWeights = {
     'Cage - Folding (2.5m³)': '190',
     'Cage - Solid (2.5m³)': '170'
   };
-  public multi: number;
-  public cageForm: FormGroup;
-  public loading: boolean;
-  public choices$: BehaviorSubject<any>;
+  public multi!: number;
+  public cageForm!: FormGroup;
+  public loading!: boolean;
+  public choices$!: BehaviorSubject<any>;
 
   public get isCage(): boolean {
-    return this.assetType.value.startsWith('Cage');
+    return this.assetType.value?.startsWith('Cage') || false;
   }
 
+  public get duplicateId(): string {
+    const errors = this.cageForm.get('cageNumber')?.errors;
+    return errors ? errors['id'] : '';
+  }
+
+
+  
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -55,16 +62,16 @@ export class RecyclingNewComponent implements OnInit {
       branch: [{value: this.state, disabled: false}, Validators.required]
     });
  
-    this.cageForm.get('assetType').valueChanges.subscribe(val => {
+    this.cageForm.get('assetType')?.valueChanges.subscribe(val => {
       // Require cage number and weight if asset is a cage
       const cageNumberControl = this.cageForm.get('cageNumber');
       const cageWeightControl = this.cageForm.get('cageWeight');
-      val.startsWith('Cage') ? cageNumberControl.enable() : cageNumberControl.disable();
-      val.startsWith('Cage') ? cageWeightControl.enable() : cageWeightControl.disable();
+      val.startsWith('Cage') ? cageNumberControl?.enable() : cageNumberControl?.disable();
+      val.startsWith('Cage') ? cageWeightControl?.enable() : cageWeightControl?.disable();
 
       // Set default cage weights
       const cageWeight = this.defaultWeights[val];
-      this.cageForm.get('cageWeight').patchValue(cageWeight)
+      this.cageForm.get('cageWeight')?.patchValue(cageWeight)
     });
   }
 
@@ -84,8 +91,8 @@ export class RecyclingNewComponent implements OnInit {
         this.snackBar.open('Cage added', '', {duration: 3000});
         this.loading = false;
         if (this.multi === 1) {
-          this.cageForm.get('cageNumber').patchValue('');
-          this.cageForm.get('cageNumber').setErrors(null);
+          this.cageForm.get('cageNumber')?.patchValue('');
+          this.cageForm.get('cageNumber')?.setErrors(null);
           this.cageNumber.nativeElement.focus();
         } else {
           this.router.navigate(['recycling/cages', _.id], {replaceUrl: true});

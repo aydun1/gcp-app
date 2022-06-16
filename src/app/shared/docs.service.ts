@@ -4,6 +4,7 @@ import { catchError, expand, from, map, Observable, of, switchMap, take } from '
 
 import { environment } from '../../environments/environment';
 import { Doc } from './doc';
+import { TransportCompany } from '../loading-schedule/shared/transport-company';
 
 @Injectable({ providedIn: 'root' })
 export class DocsService {
@@ -26,7 +27,7 @@ export class DocsService {
         }
         return of([])
       }),
-      map(_ => _.sort((a, b) => b.createdDateTime > a.createdDateTime && 1 || -1))
+      map(_ => _.sort((a: TransportCompany, b: TransportCompany) => b.createdDateTime > a.createdDateTime && 1 || -1))
     );
   }
 

@@ -9,7 +9,7 @@
     <mat-label>Customer</mat-label>
     <gcp-customer-control placeholder="Type to search..." formControlName="customer" [territory]="branch"></gcp-customer-control>
     <mat-icon matSuffix>search</mat-icon>
-    <mat-error *ngIf="customerForm.get('customer').hasError('unselected')">
+    <mat-error *ngIf="customerForm.get('customer')?.hasError('unselected')">
       Select a customer from the list
     </mat-error>
   </mat-form-field>

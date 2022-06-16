@@ -18,12 +18,11 @@ import { SharedService } from './shared.service';
 export class AppComponent implements OnInit, OnDestroy {
   private readonly _destroying$ = new Subject<void>();
   private checkInterval = 1000 * 60 * 60 * 6;  // 6 hours
-  public loginDisplay: boolean;
-  public accounts: AccountInfo[];
-  public photo$: Observable<SafeUrl>;
-  public mobileQuery: MediaQueryList;
-  public isMobile: boolean;
-  public appTitle: string;
+  public loginDisplay = false;
+  public accounts: AccountInfo[] = [];
+  public photo$!: Observable<SafeUrl>;
+  public isMobile = false;
+  public appTitle = '';
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -61,8 +60,8 @@ export class AppComponent implements OnInit, OnDestroy {
     ).subscribe();
 
     this.msalBroadcastService.msalSubject$.pipe(
-      filter((msg: EventMessage) => msg.eventType === EventType.LOGIN_SUCCESS && msg.payload['account']),
-      tap((msg: EventMessage) => this.authService.instance.setActiveAccount(msg.payload['account']))
+      filter((msg: EventMessage) => msg.eventType === EventType.LOGIN_SUCCESS && msg.payload && msg.payload['account']),
+      tap((msg: EventMessage) => this.authService.instance.setActiveAccount(msg.payload ? msg.payload['account'] : null))
     ).subscribe();
 
     // Periodically check for software updates
@@ -90,6 +89,7 @@ export class AppComponent implements OnInit, OnDestroy {
       filter(event => event instanceof NavigationEnd),
       map(_ => {
         let child = this.activatedRoute.firstChild;
+        if (!child) return;
         while (child.firstChild) child = child.firstChild;
         return child.snapshot.data['title'];
       }),

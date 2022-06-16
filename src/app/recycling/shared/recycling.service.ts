@@ -4,8 +4,8 @@ import { AbstractControl, FormControl, ValidationErrors, ValidatorFn } from '@an
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
 import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
-import { Site } from 'src/app/customers/shared/site';
 
+import { Site } from '../../customers/shared/site';
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
 import { Cage } from './cage';
@@ -15,8 +15,8 @@ import { Cage } from './cage';
   providedIn: 'root'
 })
 export class RecyclingService {
-  private _loadingCages: boolean;
-  private _nextPage: string;
+  private _loadingCages!: boolean;
+  private _nextPage!: string;
   private _cagesSubject$ = new BehaviorSubject<Cage[]>([]);
   private _columns$ = new BehaviorSubject<any>(null);
   private _listUrl = 'lists/e96c2778-2322-46d6-8de9-3d0c8ca5aefd';
@@ -41,7 +41,7 @@ export class RecyclingService {
         if (_) return of(_);
         return this.http.get(`${this._cageTrackerUrl}/columns`).pipe(
           map(_ => _['value']),
-          map(_ => _.reduce((a, v) => ({ ...a, [v.name]: v}), {})),
+          map(_ => _.reduce((a: any, v: any) => ({ ...a, [v.name]: v}), {})),
           tap(_ => this._columns$.next(_)),
         );
       }),
@@ -118,11 +118,11 @@ export class RecyclingService {
         this._loadingCages = false;
         this.loading.next(false);
       }),
-      map((res: {value: Cage[]}) => res.value.map(cage => this.assignStatus(cage)))
+      map((res: any) => res.value.map((cage: Cage) => this.assignStatus(cage)))
     );
   }
 
-  private updateStatus(id, payload): Observable<Cage> {
+  private updateStatus(id: string, payload: any): Observable<Cage> {
     const url = this._cageTrackerUrl + `/items('${id}')`;
     return this.http.patch<Cage>(url, payload).pipe(
       switchMap(res => this.updateList(res))
@@ -156,7 +156,7 @@ export class RecyclingService {
   }
 
   getNextPage(): void {
-    if (!this._nextPage || this._loadingCages) return null;
+    if (!this._nextPage || this._loadingCages) return;
     this._cagesSubject$.pipe(
       take(1),
       switchMap(acc => this.getCages(this._nextPage, true).pipe(
@@ -172,9 +172,9 @@ export class RecyclingService {
     return this.getCages(url);
   }
 
-  getCage(id: string): Observable<Cage> {
+  getCage(id: string | null): Observable<Cage> {
     const url = this._cageTrackerUrl + `/items('${id}')`;
-    return this.http.get(url).pipe(map((res: Cage) => this.assignStatus(res)));
+    return this.http.get(url).pipe(map((res: any) => this.assignStatus(res)));
   }
 
   getCagesWithCustomer(custnmbr: string, site = ''): Observable<Cage[]> {
@@ -341,7 +341,7 @@ export class RecyclingService {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       return this.checkCageNumber(control.value, assetTypeControl.value).pipe(
         map((cage) => (cage ? { cageExists: true, id: cage.id } : null)),
-        catchError((err) => null)
+        catchError((err: HttpErrorResponse) => this.handleError(err)),
       );
     };
   }

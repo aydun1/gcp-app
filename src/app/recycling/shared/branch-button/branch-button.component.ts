@@ -10,10 +10,10 @@ import { RecyclingService } from '../recycling.service';
 })
 export class BranchButtonComponent implements OnInit {
 
-  @Input() cage: Cage;
+  @Input() cage!: Cage;
   @Output() updated = new EventEmitter<boolean>();
-  public branches: Array<string>;
-  public loading: boolean;
+  public branches!: Array<string>;
+  public loading = false;
 
   constructor(
     private sharedService: SharedService,

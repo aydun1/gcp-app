@@ -6,5 +6,7 @@ export interface LoadingSchedule {
     Reference: string,
     Branch: string,
     NetWeight: number,
+    Spaces: number,
+    Status: string,
   }
 }

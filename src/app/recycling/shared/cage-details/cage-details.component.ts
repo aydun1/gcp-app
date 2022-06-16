@@ -8,7 +8,7 @@ import { Cage } from '../cage';
 })
 export class CageDetailsComponent {
 
-  @Input() cage: Cage;
+  @Input() cage!: Cage;
 
   constructor() { }
 

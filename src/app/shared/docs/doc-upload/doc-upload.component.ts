@@ -11,13 +11,13 @@ import { PalletsService } from '../../../pallets/shared/pallets.service';
   styleUrls: ['./doc-upload.component.css']
 })
 export class DocUploadComponent implements OnInit {
-  @Input() id: string;
-  @Input() folder: string;
+  @Input() id!: string;
+  @Input() folder!: string;
 
-  private _docCount: number;
+  private _docCount!: number;
   private _uploads$ = new BehaviorSubject<Doc[]>([]);
   private _docStarter$ = new BehaviorSubject<string>('');
-  public docs$: Observable<Doc[]>;
+  public docs$!: Observable<Doc[]>;
 
   constructor(
     private docsService: DocsService,
@@ -25,7 +25,7 @@ export class DocUploadComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this._docStarter$.next(this.id);
+    if (this.id) this._docStarter$.next(this.id);
     this.docs$ = this._docStarter$.pipe(
       switchMap(_ => combineLatest([this._uploads$, this.docsService.listFiles(_, this.folder).pipe(tap(() => this._uploads$.next([])))])),
       map(_ => [..._[0], ..._[1]]),
@@ -71,7 +71,7 @@ export class DocUploadComponent implements OnInit {
 
   drop(e: DragEvent): void {
     e.preventDefault();
-    const items = e.dataTransfer.items;
+    const items = e.dataTransfer?.items;
     for (let key in items) {
       let item = items[key];
       if (item.kind === 'file') {
@@ -103,7 +103,7 @@ export class DocUploadComponent implements OnInit {
     this.docsService.downloadFile(url).subscribe(blob => {
       const url = URL.createObjectURL(blob);
       const w = window.open(url);
-      w.print();
+      w?.print();
     });
   }
 

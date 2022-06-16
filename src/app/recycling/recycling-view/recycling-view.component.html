@@ -39,13 +39,15 @@
         <form (ngSubmit)="setCageNotes(cage.id)">
           <mat-list-item>
             <mat-icon mat-list-icon>tag</mat-icon>
-            <div  *ngIf="editCageNotes" mat-line><input [(ngModel)]="currentCageNotes" [ngModelOptions]="{standalone: true}" type="text"></div>
-            <div  *ngIf="!editCageNotes" mat-line>{{ currentCageNotes }}</div>
+            <div *ngIf="editCageNotes" mat-line>
+              <input [(ngModel)]="currentCageNotes" [ngModelOptions]="{standalone: true}" type="text" placeholder="Reference number or cage notes">
+            </div>
+            <div *ngIf="!editCageNotes" mat-line>{{ currentCageNotes }}</div>
             <div mat-line>Reference</div>
             <button mat-icon-button type="button" *ngIf="!editCageNotes" (click)="editCageNotes = true"><mat-icon mat-list-icon class="last-icon">edit</mat-icon></button>
             <ng-container *ngIf="editCageNotes">
               <button mat-icon-button type="button" (click)="cancelEditCageNotes(cage.fields.Notes)"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
-              <button mat-icon-button><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
+              <button mat-icon-button type="submit"><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
             </ng-container>
           </mat-list-item>
         </form>

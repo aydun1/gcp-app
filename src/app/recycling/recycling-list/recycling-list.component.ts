@@ -16,19 +16,19 @@ interface choice {choice: {choices: Array<any>}, name: string};
   styleUrls: ['./recycling-list.component.css']
 })
 export class RecyclingListComponent implements OnInit {
-  private _loadList: boolean;
-  public cages$: Observable<Cage[]>;
-  public binFilter = new FormControl<number>(null);
+  private _loadList!: boolean;
+  public cages$!: Observable<Cage[]>;
+  public binFilter = new FormControl<number | null>(null);
   public branchFilter = new FormControl('');
   public statusFilter = new FormControl('');
   public assetTypeFilter = new FormControl('');
   public loading = this.recyclingService.loading;
-  public weight: number;
-  public count: number;
+  public weight!: number;
+  public count!: number;
   public displayedColumns = ['fields/CageNumber', 'assetType', 'status', 'fields/Modified', 'weight'];
-  public sortSort: string;
-  public sortOrder: 'asc' | 'desc';
-  public choices: {Status: choice, AssetType: choice, Branch: choice};
+  public sortSort!: string;
+  public sortOrder!: 'asc' | 'desc';
+  public choices!: {Status: choice, AssetType: choice, Branch: choice};
 
   constructor(
     private el: ElementRef,
@@ -48,7 +48,7 @@ export class RecyclingListComponent implements OnInit {
     this.cages$ = this.route.queryParams.pipe(
       startWith({} as Params),
       switchMap((_: Params) => this.router.events.pipe(
-        startWith(new NavigationEnd(1, null, null)),
+        startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         map(() => _)
       )),
@@ -67,7 +67,7 @@ export class RecyclingListComponent implements OnInit {
 
     this.binFilter.valueChanges.pipe(
       debounceTime(200),
-      map(_ => _ > 0 ? _ : null),
+      map(_ => _ && _ > 0 ? _ : null),
       tap(_ => this.router.navigate([], { queryParams: {'bin': _}, queryParamsHandling: 'merge', replaceUrl: true}))
     ).subscribe();
   }
@@ -76,7 +76,7 @@ export class RecyclingListComponent implements OnInit {
     this.recyclingService.getColumns().pipe(
       tap(_ => {
         if (!_) return;
-        _['Status']['choice']['choices'] = _['Status']['choice']['choices'].filter(c => c !== 'Complete');
+        _['Status']['choice']['choices'] = _['Status']['choice']['choices'].filter((c: string) => c !== 'Complete');
         this.choices = _;
       })
     ).subscribe();

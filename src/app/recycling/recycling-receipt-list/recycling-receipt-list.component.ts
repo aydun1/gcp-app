@@ -14,11 +14,11 @@ import { RecyclingReceiptsService } from '../shared/recycling-receipts.service';
   styleUrls: ['./recycling-receipt-list.component.css']
 })
 export class RecyclingReceiptListComponent implements OnInit {
-  private _loadList: boolean;
+  private _loadList!: boolean;
   public branchFilter = new FormControl('');
   public displayedColumns = ['date', 'receiptNumber', 'branch', 'weight'];
-  public weight: number;
-  public receipts$: Observable<Receipt[]>;
+  public weight!: number;
+  public receipts$!: Observable<Receipt[]>;
   public states = this.sharedService.branches;
 
   constructor(
@@ -32,7 +32,7 @@ export class RecyclingReceiptListComponent implements OnInit {
     this.receipts$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
-        startWith(new NavigationEnd(1, null, null)),
+        startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         map(() => _)
       )),

@@ -23,8 +23,8 @@ export class PalletsService {
   private _palletsOwedListUrl = 'lists/8ed9913e-a20e-41f1-9a2e-0142c09f2344';
   private _columns$ = new BehaviorSubject<any>(null);
   private _palletTrackerUrl = `${environment.endpoint}/${environment.siteUrl}/${this._palletListUrl}`;
-  private _loadingPallets: boolean;
-  private _nextPage: string;
+  private _loadingPallets!: boolean;
+  private _nextPage!: string;
   private _palletsSubject$ = new BehaviorSubject<Pallet[]>([]);
 
   public loading = new BehaviorSubject<boolean>(false);
@@ -76,7 +76,7 @@ export class PalletsService {
         this.loading.next(false);
         this._loadingPallets = false;
       }),
-      map((res: {value: Pallet[]}) => res.value),
+      map((res:any) => res.value),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         this.loading.next(false);
@@ -111,7 +111,7 @@ export class PalletsService {
         if (_) return of(_);
         return this.http.get(`${this._palletTrackerUrl}/columns`).pipe(
           map(_ => _['value']),
-          map(_ => _.reduce((a, v) => ({ ...a, [v.name]: v}), {})),
+          map(_ => _.reduce((acc: any, val: {name: string}) => ({ ...acc, [val.name]: val}), {})),
           tap(_ => this._columns$.next(_))
         );
       }),
@@ -129,7 +129,7 @@ export class PalletsService {
   }
 
   getNextPage(): void {
-    if (!this._nextPage || this._loadingPallets) return null;
+    if (!this._nextPage || this._loadingPallets) return;
     this._palletsSubject$.pipe(
       take(1),
       switchMap(acc => this.getPallets(this._nextPage, true).pipe(
@@ -161,7 +161,7 @@ export class PalletsService {
     const url = `${environment.siteUrl}/${this._palletListUrl}/items`;
     const headers = {'Content-Type': 'application/json'};
     const transfers = Object.entries(pallets).filter(_ => _[1]);
-    const requests = [];
+    const requests = [] as Array<{id: number, method: string, url: string, headers: any, body: any}>;
     let i = 1;
   
     transfers.forEach(_ => {
@@ -288,7 +288,7 @@ export class PalletsService {
     );
   }
 
-  getPalletTransfer(id: string): Observable<Pallet> {
+  getPalletTransfer(id: string | null): Observable<Pallet> {
     const url = this._palletTrackerUrl + `/items('${id}')`;
     return this.http.get<Pallet>(url);
   }
@@ -319,7 +319,7 @@ export class PalletsService {
     )
   }
 
-  getPalletsOwedByCustomer(custnmbr: string, site = null): Observable<PalletQuantities> {
+  getPalletsOwedByCustomer(custnmbr: string, site = ''): Observable<PalletQuantities> {
     const date = new Date();
     const startOfMonth = new Date(Date.UTC(date.getFullYear(), date.getUTCMonth(), 1)).toISOString();
     const dateInt = this.dateInt(date);
@@ -351,7 +351,7 @@ export class PalletsService {
     let url = this._palletTrackerUrl + `/items?expand=fields(select=Quantity,${pallet})`;
     url += `&filter=fields/From eq '${branch}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;
     url += ` and fields/Status ne 'Cancelled' and (fields/Status ne 'Transferred' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
-    return this.http.get(url).pipe(map(_ => _['value'].reduce((acc, val) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
+    return this.http.get(url).pipe(map(_ => _['value'].reduce((acc: number, val: Pallet) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
 
   getInTransitOn(branch: string, pallet: string): Observable<Pallet[]> {
@@ -359,10 +359,10 @@ export class PalletsService {
     let url = this._palletTrackerUrl + `/items?expand=fields(select=Quantity,${pallet})`;
     url += `&filter=fields/To eq '${branch}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;
     url += ` and fields/Status ne 'Cancelled' and (fields/Status eq 'Approved' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
-    return this.http.get(url).pipe(map(_ => _['value'].reduce((acc, val) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
+    return this.http.get(url).pipe(map(_ => _['value'].reduce((acc: number, val: Pallet) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
 
-  getInterstatePalletTransfer(id: string): Observable<{summary: any}> {
+  getInterstatePalletTransfer(id: string | null): Observable<{summary: any}> {
     const url = this._palletTrackerUrl + `/items('${id}')/versions`;
     return this.http.get<{value: Pallet[]}>(url).pipe(
       map(_ => {

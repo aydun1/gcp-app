@@ -16,13 +16,13 @@ import { NavigationService } from '../../navigation.service';
 export class PalletReconciliationNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
 
-  public palletRecForm: FormGroup;
+  public palletRecForm!: FormGroup;
   public adjBalance = 0;
   public stocktakeResult = 0;
   public pallets = ['Loscam', 'Chep', 'Plain'];
   public states = this.sharedService.branches;
-  public state: string;
-  public loading: boolean;
+  public state!: string;
+  public loading = false;
 
   constructor(
     private fb: FormBuilder,
@@ -33,11 +33,11 @@ export class PalletReconciliationNewComponent implements OnInit {
     private navService: NavigationService
   ) { }
 
-  get surplus(): number {
+  get surplus(): number | null {
     return this.stocktakeResult > 0 ? this.stocktakeResult : this.stocktakeResult === 0 ? 0 : null;
   }
 
-  get deficit(): number {
+  get deficit(): number | null {
     return this.stocktakeResult < 0 ? Math.abs(this.stocktakeResult) : this.stocktakeResult === 0 ? 0 : null;
   }
 
@@ -70,13 +70,13 @@ export class PalletReconciliationNewComponent implements OnInit {
       })
     ).subscribe();
 
-    this.palletRecForm.get('date').valueChanges.subscribe(() => this.updateTransits());
-    this.palletRecForm.get('pallet').valueChanges.subscribe(() => this.updateTransits());    
+    this.palletRecForm.get('date')?.valueChanges.subscribe(() => this.updateTransits());
+    this.palletRecForm.get('pallet')?.valueChanges.subscribe(() => this.updateTransits());    
   }
 
   updateTransits(): void {
-    const date = this.palletRecForm.get('date').value;
-    const pallet = this.palletRecForm.get('pallet').value;
+    const date = this.palletRecForm.get('date')?.value;
+    const pallet = this.palletRecForm.get('pallet')?.value;
     if (!pallet) return;
     this.loading = true;
     const offs = this.palletsService.getInTransitOff(this.state, pallet);

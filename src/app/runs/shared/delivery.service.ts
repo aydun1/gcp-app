@@ -18,8 +18,8 @@ export class DeliveryService {
   private _listUrl = 'lists/b8088299-ac55-4e30-9977-4b0b20947b84';
   private _columns$ = new BehaviorSubject<any>(null);
   private _deliveryListUrl = `${environment.endpoint}/${environment.siteUrl}/${this._listUrl}`;
-  private _loadingDeliveries: boolean;
-  private _nextPage: string;
+  private _loadingDeliveries!: boolean;
+  private _nextPage!: string;
   private _deliveriesSubject$ = new BehaviorSubject<Delivery[]>([]);
 
   public loading = new BehaviorSubject<boolean>(false);
@@ -69,7 +69,7 @@ export class DeliveryService {
         this.loading.next(false);
         this._loadingDeliveries = false;
       }),
-      map((res: {value: Delivery[]}) => res.value),
+      map((res: any) => res.value),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         this.loading.next(false);
@@ -127,7 +127,7 @@ export class DeliveryService {
         if (_) return of(_);
         return this.http.get(`${this._deliveryListUrl}/columns`).pipe(
           map(_ => _['value']),
-          map(_ => _.reduce((a, v) => ({ ...a, [v.name]: v}), {})),
+          map(_ => _.reduce((a: any, v: any) => ({ ...a, [v.name]: v}), {})),
           tap(_ => this._columns$.next(_))
         );
       }),
@@ -145,7 +145,7 @@ export class DeliveryService {
   }
 
   getNextPage(): void {
-    if (!this._nextPage || this._loadingDeliveries) return null;
+    if (!this._nextPage || this._loadingDeliveries) return;
     this._deliveriesSubject$.pipe(
       take(1),
       switchMap(acc => this.getDeliveries(this._nextPage, true).pipe(
@@ -205,7 +205,7 @@ export class DeliveryService {
 
   private updateSequence(items: Array<{id: string, index: number}>): Observable<Delivery[]> {
     const headers = {'Content-Type': 'application/json'};
-    const requests = [];
+    const requests: Array<{}> = [];
     let i = 1;
     items.forEach(_ => {
       let url = `${environment.siteUrl}/${this._listUrl}/items/${_['id']}`
@@ -215,7 +215,7 @@ export class DeliveryService {
       requests.push({id: i += 1, method: 'PATCH', url, headers, body: transferFrom});
     })
     return requests.length ? this.http.post(`${environment.endpoint}/$batch`, {requests}).pipe(
-      map((_: {responses: Array<Delivery>}) => _.responses.map(r => r['body'])),
+      map((_: any) => _.responses.map((r: any) => r['body'])),
       switchMap(_ => this.updateListMulti(_))
     ) : of([] as Delivery[]);
   }

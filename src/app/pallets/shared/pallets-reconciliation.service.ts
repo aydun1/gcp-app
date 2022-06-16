@@ -12,8 +12,8 @@ import { Reconciliation } from '../shared/reconciliation';
 export class PalletsReconciliationService {
   private _listUrl = 'lists/920f186f-60f2-4c7e-ba8e-855ff2d9c8aa';
   private _reconciliationTrackerUrl = `${environment.endpoint}/${environment.siteUrl}/${this._listUrl}`;
-  private _loadingPallets: boolean;
-  private _nextPage: string;
+  private _loadingPallets!: boolean;
+  private _nextPage!: string;
   private _palletsSubject$ = new BehaviorSubject<Reconciliation[]>([]);
   public loading = new BehaviorSubject<boolean>(false);
 
@@ -48,7 +48,7 @@ export class PalletsReconciliationService {
         this.loading.next(false);
         this._loadingPallets = false;
       }),
-      map((res: {value: Reconciliation[]}) => res.value)
+      map((res: any) => res.value)
     );
   }
 
@@ -61,7 +61,7 @@ export class PalletsReconciliationService {
   }
 
   getNextPage(): void {
-    if (!this._nextPage || this._loadingPallets) return null;
+    if (!this._nextPage || this._loadingPallets) return;
     this._palletsSubject$.pipe(
       take(1),
       switchMap(acc => this.getReconciliations(this._nextPage, true).pipe(

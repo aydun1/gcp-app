@@ -14,13 +14,13 @@ import { Pallet } from '../shared/pallet';
   styleUrls: ['./pallet-interstate-transfer-list.component.css']
 })
 export class PalletInterstateTransferListComponent implements OnInit {
-  private _loadList: boolean;
-  public pallets$: Observable<Pallet[]>;
+  private _loadList!: boolean;
+  public pallets$!: Observable<Pallet[]>;
   public fromFilter = new FormControl('');
   public toFilter = new FormControl('');
   public statusFilter = new FormControl('');
   public loading = this.palletsService.loading;
-  public total: number;
+  public total!: number;
   public displayedColumns = ['date', 'reference', 'pallet', 'from', 'to', 'quantity', 'status', 'attachment'];
   public statuses = ['Pending', 'Approved', 'Transferred', 'Cancelled'];
   public states = this.sharedService.branches.concat('Transport');
@@ -43,7 +43,7 @@ export class PalletInterstateTransferListComponent implements OnInit {
     this.pallets$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
-        startWith(new NavigationEnd(1, null, null)),
+        startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         map(() => _)
       )),
@@ -52,7 +52,7 @@ export class PalletInterstateTransferListComponent implements OnInit {
       map(_ => {return {..._, type: 'Transfer'}}),
       tap(() => this.total = 0),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
-      tap(pallets => this.total = pallets.map(_ => _.fields.Quantity).filter(_ => _).reduce((acc, val) => acc + val, 0))
+      tap(pallets => this.total = pallets.map(_ => _.fields.Quantity).filter(_ => _).reduce((acc, val) => acc + +val, 0))
     )
   }
 

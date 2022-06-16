@@ -19,7 +19,7 @@ export class SharedService {
     'WA': ['WA']
   };
   public branches = Object.keys(this.territories);
-  public branch: string;
+  public branch!: string;
   public territoryNames = this.branches.concat(['INT', 'NATIONAL']);
   private _state$ = new BehaviorSubject<string>('');
   private appTitle = this.titleService.getTitle();
@@ -54,10 +54,10 @@ export class SharedService {
 
   getName(): string {
     const activeAccount = this.authService.instance.getActiveAccount();
-    return activeAccount.name;
+    return activeAccount?.name || '';
   }
 
-  getAccount(): AccountInfo {
+  getAccount(): AccountInfo | null {
     const activeAccount = this.authService.instance.getActiveAccount();
     return activeAccount;
   }

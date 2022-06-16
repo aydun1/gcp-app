@@ -19,12 +19,12 @@ import { DeliveryService } from '../shared/delivery.service';
   styleUrls: ['./run-list.component.css']
 })
 export class RunListComponent implements OnInit {
-  private _loadList: boolean;
-  private listSize: number;
+  private _loadList = false;
+  private listSize!: number;
 
-  public deliveries$: Observable<Delivery[]>;
+  public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
-  public loading: false;
+  public loading = false;
   public displayedColumns = ['sequence', 'customer', 'site', 'notes', 'actions', 'status', 'menu'];
   public dragDisabled = true;
 
@@ -42,7 +42,7 @@ export class RunListComponent implements OnInit {
     this.deliveries$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
-        startWith(new NavigationEnd(1, null, null)),
+        startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         map(() => _)
       )),

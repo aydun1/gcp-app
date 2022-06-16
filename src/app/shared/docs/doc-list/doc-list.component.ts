@@ -9,10 +9,10 @@ import { DocsService } from '../../docs.service';
   styleUrls: ['./doc-list.component.css']
 })
 export class DocListComponent implements OnInit {
-  @Input() id: string;
-  @Input() folder: string;
+  @Input() id!: string;
+  @Input() folder!: string;
 
-  public docs$: Observable<Doc[]>;
+  public docs$!: Observable<Doc[]>;
   
   constructor(
     private docsService: DocsService

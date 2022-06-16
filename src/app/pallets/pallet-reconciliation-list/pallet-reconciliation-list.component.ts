@@ -6,7 +6,6 @@ import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, startWi
 
 import { SharedService } from '../../shared.service';
 import { PalletsReconciliationService } from '../shared/pallets-reconciliation.service';
-import { Pallet } from '../shared/pallet';
 import { Reconciliation } from '../shared/reconciliation';
 
 @Component({
@@ -15,12 +14,12 @@ import { Reconciliation } from '../shared/reconciliation';
   styleUrls: ['./pallet-reconciliation-list.component.css']
 })
 export class PalletReconciliationListComponent implements OnInit {
-  private _loadList: boolean;
-  public pallets$: Observable<Pallet[]>;
+  private _loadList!: boolean;
+  public pallets$!: Observable<Reconciliation[]>;
   public branchFilter = new FormControl('');
   public palletFilter = new FormControl('');
   public loading = this.palletsReconciliationService.loading;
-  public total: number;
+  public total!: number;
   public displayedColumns = ['date', 'reference', 'branch', 'pallet', 'surplus', 'deficit'];
   public states = this.sharedService.branches;
   public pallets = ['Loscam', 'Chep', 'Plain']
@@ -43,7 +42,7 @@ export class PalletReconciliationListComponent implements OnInit {
     this.pallets$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
-        startWith(new NavigationEnd(1, null, null)),
+        startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         map(() => _)
       )),
@@ -102,7 +101,7 @@ export class PalletReconciliationListComponent implements OnInit {
     this.router.navigate([], { queryParams: {pallet: pallet.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  trackByFn(index: number, item: Pallet): string {
+  trackByFn(index: number, item: Reconciliation): string {
     return item.id;
   }
 }

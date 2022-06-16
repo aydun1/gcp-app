@@ -13,8 +13,8 @@ import { PalletsService } from '../shared/pallets.service';
 export class PalletDocketViewComponent implements OnDestroy, OnInit {
   @HostBinding('class') class = 'app-component';
 
-  public transfer: Pallet;
-  public quantities: {Loscam: number, Chep: number, Plain: number}
+  public transfer!: Pallet;
+  public quantities!: {Loscam: number, Chep: number, Plain: number}
 
   constructor(
     private route: ActivatedRoute,

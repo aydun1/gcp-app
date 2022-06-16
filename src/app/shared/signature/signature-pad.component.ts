@@ -9,9 +9,9 @@ import SignaturePad from 'signature_pad';
   styleUrls: ['./signature-pad.component.css']
 })
 export class SignaturePadComponent implements AfterViewInit, OnDestroy, OnInit {
-  @ViewChild('sPad', {static: true}) signaturePadElement: ElementRef<HTMLCanvasElement>;
-  private signaturePad: SignaturePad;
-  private viewportChange: Subscription;
+  @ViewChild('sPad', {static: true}) signaturePadElement!: ElementRef<HTMLCanvasElement>;
+  private signaturePad!: SignaturePad;
+  private viewportChange!: Subscription;
 
 
   constructor(
@@ -36,7 +36,7 @@ export class SignaturePadComponent implements AfterViewInit, OnDestroy, OnInit {
     const ratio = Math.max(devicePixelRatio || 1, 1);
     this.signaturePadElement.nativeElement.width = this.signaturePadElement.nativeElement.offsetWidth * ratio;
     this.signaturePadElement.nativeElement.height = this.signaturePadElement.nativeElement.width * 0.51;
-    this.signaturePadElement.nativeElement.getContext('2d').scale(ratio, ratio);
+    this.signaturePadElement.nativeElement.getContext('2d')?.scale(ratio, ratio);
     this.signaturePad = new SignaturePad(this.signaturePadElement.nativeElement, {backgroundColor: 'rgb(255, 255, 255)'});
     this.clear();
   }

@@ -14,10 +14,10 @@ import { SharedService } from '../../../shared.service';
   styleUrls: ['./customer-picker-dialog.component.css']
 })
 export class CustomerPickerDialogComponent implements OnInit {
-  public loading: boolean;
-  public customerForm: FormGroup;
-  public sites$: Observable<Site[]>;
-  public branch: string;
+  public loading = false;
+  public customerForm!: FormGroup;
+  public sites$!: Observable<Site[]>;
+  public branch!: string;
   public get branches(): Array<string> {return this.shared.branches};
 
   constructor(
@@ -35,7 +35,7 @@ export class CustomerPickerDialogComponent implements OnInit {
       notes: '',
     });
     this.shared.getBranch().subscribe(_ => this.branch = _);
-    this.customerForm.get('customer').valueChanges.subscribe(_ => this.getSites(_));
+    this.customerForm.get('customer')?.valueChanges.subscribe(_ => this.getSites(_));
   }
 
   getSites(customer: Customer): void {
@@ -46,9 +46,9 @@ export class CustomerPickerDialogComponent implements OnInit {
 
   pickCustomer(): void {
     if (this.customerForm.invalid) return;
-    const customer = this.customerForm.get('customer').value as Customer;
-    const site = this.customerForm.get('site').value as Site;
-    const notes = this.customerForm.get('notes').value as string;
+    const customer = this.customerForm.get('customer')?.value as Customer;
+    const site = this.customerForm.get('site')?.value as Site;
+    const notes = this.customerForm.get('notes')?.value as string;
     this.dialogRef.close({customer, site, notes});
   }
 
