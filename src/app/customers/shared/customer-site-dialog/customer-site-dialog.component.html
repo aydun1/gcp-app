@@ -28,8 +28,8 @@
     </mat-form-field>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close tabindex=-1>Cancel</button>
-    <button mat-raised-button color="primary" [disabled]="loading">{{ siteId ? 'Save changes' : 'Add site'}}</button>
+    <button type="button" mat-button mat-dialog-close tabindex=-1>Cancel</button>
+    <button type="submit" mat-raised-button color="primary" [disabled]="loading">{{ siteId ? 'Save changes' : 'Add site'}}</button>
   </mat-dialog-actions>
 </form>
 

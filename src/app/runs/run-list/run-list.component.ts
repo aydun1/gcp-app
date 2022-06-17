@@ -11,6 +11,7 @@ import { PalletDialogComponent } from '../../pallets/shared/pallet-dialog/pallet
 import { RecyclingDialogComponent } from '../../recycling/shared/recycling-dialog/recycling-dialog.component';
 import { SharedService } from '../../shared.service';
 import { Delivery } from '../shared/delivery';
+import { DeliveryEditorDialogComponent } from '../shared/delivery-editor-dialog/delivery-editor-dialog.component';
 import { DeliveryService } from '../shared/delivery.service';
 
 @Component({
@@ -98,6 +99,12 @@ export class RunListComponent implements OnInit {
 
   markComplete(id: string, currentStatus: string) {
     return this.deliveryService.changeStatus(id, currentStatus).subscribe();
+  }
+
+  editDelivery(delivery: Delivery) {
+    const data = {delivery};
+    const dialogRef = this.dialog.open(DeliveryEditorDialogComponent, {width: '600px', data});
+    return dialogRef.afterClosed().subscribe();
   }
 
   deleteDelivery(id: string) {

@@ -6,11 +6,13 @@ import { SharedModule } from '../shared/shared.module';
 import { RunsRoutingModule } from './runs-routing.module';
 import { RunListComponent } from './run-list/run-list.component';
 import { RunsComponent } from './runs.component';
+import { DeliveryEditorDialogComponent } from './shared/delivery-editor-dialog/delivery-editor-dialog.component';
 
 @NgModule({
   declarations: [
     RunsComponent,
-    RunListComponent
+    RunListComponent,
+    DeliveryEditorDialogComponent
   ],
   imports: [
     CommonModule,

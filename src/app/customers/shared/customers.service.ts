@@ -60,6 +60,14 @@ export class CustomersService {
     return this.http.get(url) as Observable<Customer>;
   }
 
+  getCustomerByAccount(customerNumber: string): Observable<Customer> {
+    const url = `${this._url}/accounts?$select=name,accountnumber,address1_composite&$filter=accountnumber eq '${customerNumber}'`;
+    const customers = this.http.get(url) as Observable<{value: Customer[]}>;
+    return customers.pipe(
+      map(_ => _.value[0])
+    );
+  }
+
   getFirstPage(filters: Params): BehaviorSubject<Customer[]> {
     this._nextPage = '';
     this._loadingCustomers = false;

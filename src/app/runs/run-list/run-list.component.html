@@ -78,6 +78,9 @@
 </div>
 <mat-menu #menu="matMenu" xPosition="before">
   <ng-template matMenuContent let-delivery="delivery">
+    <button mat-menu-item (click)="editDelivery(delivery)">
+      <mat-icon>edit</mat-icon>Edit
+    </button>
     <button mat-menu-item (click)="deleteDelivery(delivery.id)">
       <mat-icon>delete</mat-icon>Delete
     </button>

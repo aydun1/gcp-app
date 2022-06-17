@@ -1,0 +1,19 @@
+.close-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+textarea {
+  height: 100px;
+}
+
+.header {
+  align-items: flex-end;
+  display: flex;
+  justify-content: space-between;
+}

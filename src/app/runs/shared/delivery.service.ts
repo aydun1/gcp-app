@@ -136,6 +136,14 @@ export class DeliveryService {
     return this._columns$;
   }
 
+  getDeliveryByAccount(customerNumber: string) {
+    const url = `${this._deliveryListUrl}/items?expand=fields(select=Notes)&filter=fields/CustomerNumber eq '${customerNumber}'`;
+    const runs = this.http.get(url) as Observable<{value: Delivery[]}>;
+    return runs.pipe(
+      map(_ => _.value[0])
+    );
+  }
+
   getFirstPage(filters: Params): BehaviorSubject<Delivery[]> {
     this._nextPage = '';
     this._loadingDeliveries = false;
@@ -176,6 +184,13 @@ export class DeliveryService {
   changeStatus(id: string, currentStatus: string): Observable<Delivery[]> {
     const status = currentStatus === 'Complete' ? 'Active' : 'Complete';
     const fields = {Status: status};
+    return this.http.patch<Delivery>(`${this._deliveryListUrl}/items('${id}')`, {fields}).pipe(
+      switchMap(_ => this.updateIndexesFrom(0))
+    );
+  }
+
+  updateDelivery(id: string, notes: string): Observable<Delivery[]> {
+    const fields = {Notes: notes};
     return this.http.patch<Delivery>(`${this._deliveryListUrl}/items('${id}')`, {fields}).pipe(
       switchMap(_ => this.updateIndexesFrom(0))
     );

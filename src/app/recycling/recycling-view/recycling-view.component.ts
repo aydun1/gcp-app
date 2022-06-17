@@ -53,6 +53,10 @@ export class RecyclingViewComponent implements OnInit {
     this.cageSource$.next();
   }
 
+  updating(e: boolean) {
+    this.loading.next(e);
+  }
+
   getCageHistory(bin: number, cageType: string): void {
     this.cageHistory$ = this.recyclingService.getCageHistory(bin, cageType).pipe(
       tap(cages => {

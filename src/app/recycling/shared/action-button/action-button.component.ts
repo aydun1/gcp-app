@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { of, Subject, switchMap, tap } from 'rxjs';
+import { combineLatest, of, Subject, switchMap, tap } from 'rxjs';
 
 import { RecyclingService } from '../recycling.service';
 import { Cage } from '../cage';
@@ -11,7 +11,8 @@ import { NavigationService } from '../../../navigation.service';
 import { SharedService } from '../../../shared.service';
 import { CustomersService } from '../../../customers/shared/customers.service';
 import { Site } from '../../../customers/shared/site';
-import { CustomerSiteDialogComponent } from 'src/app/customers/shared/customer-site-dialog/customer-site-dialog.component';
+import { CustomerSiteDialogComponent } from '../../../customers/shared/customer-site-dialog/customer-site-dialog.component';
+import { DeliveryService } from 'src/app/runs/shared/delivery.service';
 
 @Component({
   selector: 'gcp-action-button',
@@ -20,11 +21,18 @@ import { CustomerSiteDialogComponent } from 'src/app/customers/shared/customer-s
 })
 export class ActionButtonComponent implements OnInit {
 
-  @Input() cage!: Cage;
+  @Input()
+  get cage(): Cage { return this._cage; }
+  set cage(value: Cage) {
+    this._cage = value;
+    this.loading.next(false);
+  }
+  private _cage!: Cage;
+
   @Output() updated = new EventEmitter<boolean>();
-  
+
   private depotsSubject$ = new Subject<string>();
-  public loading!: boolean;
+  @Output() loading = new EventEmitter<boolean>(false);
   public weightForm!: FormGroup;
   public dialogRef!: MatDialogRef<CustomerPickerDialogComponent, any>;
   public branches!: Array<string>;
@@ -37,7 +45,8 @@ export class ActionButtonComponent implements OnInit {
     private sharedService: SharedService,
     private navService: NavigationService,
     private recyclingService: RecyclingService,
-    private cutomersService: CustomersService
+    private cutomersService: CustomersService,
+    private deliveryService: DeliveryService
   ) { }
 
   ngOnInit(): void {
@@ -61,7 +70,6 @@ export class ActionButtonComponent implements OnInit {
   }
 
   onComplete() {
-    this.loading = false;
     this.updated.next(true);
   }
 
@@ -70,39 +78,39 @@ export class ActionButtonComponent implements OnInit {
   }
 
   markWithCustomer(id: string): void {
-    this.loading = true;
+    this.loading.next(true);
     this.recyclingService.deliverToCustomer(id).subscribe(() => this.onComplete());
   }
 
   markAsCollected(id: string): void {
-    this.loading = true;
+    this.loading.next(true);
     this.recyclingService.collectFromCustomer(id).subscribe(() => this.onComplete());
   }
 
   markWithPolymer(id: string): void {
-    this.loading = true;
+    this.loading.next(true);
     this.recyclingService.deliverToPolymer(id).subscribe(() => this.onComplete());
   }
 
   markWithProcessing(id: string): void {
-    this.loading = true;
+    this.loading.next(true);
     this.recyclingService.deliverToProcessing(id).subscribe(() => this.onComplete());
   }
 
   collectFromProcessing(id: string, assetType: string): void {
-    this.loading = true;
+    this.loading.next(true);
     const action = assetType.startsWith('Cage') ? this.recyclingService.collectFromProcessing(id): this.recyclingService.collectAndComplete(id);
     action.subscribe(() => this.onComplete());
   }
 
   collectFromPolymer(id: string, assetType: string): void {
-    this.loading = true;
+    this.loading.next(true);
     const action = assetType.startsWith('Cage') ? this.recyclingService.collectFromPolymer(id): this.recyclingService.collectAndComplete(id);
     action.subscribe(() => this.onComplete());
   }
 
   markAvailable(id: string, cageNumber: number, branch: string, assetType: string, cageWeight: number): void {
-    this.loading = true;
+    this.loading.next(true);
     this.recyclingService.markCageAvailable(id, cageNumber, branch, assetType, cageWeight).subscribe(_ => {
       if (this.router.url.startsWith('/recycling')) this.router.navigate(['recycling/cages', _[1]['id']], {replaceUrl: true});
       this.onComplete();
@@ -110,15 +118,15 @@ export class ActionButtonComponent implements OnInit {
   }
 
   dehire(id: string): void {
-    this.loading = true;
+    this.loading.next(true);
     this.recyclingService.dehireCage(id).subscribe(_ => {
       this.navService.back();
-      this.loading = false;
+      this.loading.next(false);
     });
   }
 
   setBranch(id: string, branch: string) {
-    this.loading = true;
+    this.loading.next(true);
     this.recyclingService.setBranch(id, branch).subscribe(() => {
       this.onComplete();
       this.refreshDepots(branch);
@@ -126,12 +134,12 @@ export class ActionButtonComponent implements OnInit {
   }
 
   setDepot(id: string, depot: string) {
-    this.loading = true;
+    this.loading.next(true);
     this.recyclingService.setDepot(id, depot).subscribe(() => this.onComplete());
   }
 
   openCustomerPicker(id: string): void {
-    this.loading = true;
+    this.loading.next(true);
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px'});
     dialogRef.afterClosed().pipe(
       switchMap(_ => _ ? this.recyclingService.allocateToCustomer(id, _.customer.accountnumber, _.customer.name, _.site) : of(1)),
@@ -139,20 +147,37 @@ export class ActionButtonComponent implements OnInit {
   }
 
   saveWeight(id: string): void {
-    this.loading = true;
+    this.loading.next(true);
     if (this.weightForm.invalid) return;
     const netWeight = this.weightForm.value.weight - this.cage.fields.CageWeight;
     this.recyclingService.setGrossWeight(id, netWeight).subscribe(() => this.onComplete());
   }
 
   undo(id: string, status: string): void {
-    console.log(id, status)
-    this.loading = true;
+    this.loading.next(true);
     this.recyclingService.undo(id, status).subscribe(_ => this.onComplete());
   }
 
   reset(id: string): void {
-    this.loading = true;
+    this.loading.next(true);
     this.recyclingService.resetCage(id).subscribe(_ => this.onComplete());
+  }
+
+  addToRunList() {
+    this.loading.next(true);
+    const run = this.deliveryService.getDeliveryByAccount(this.cage.fields.CustomerNumber);
+    const cust = this.cutomersService.getCustomerByAccount(this.cage.fields.CustomerNumber);
+    combineLatest([run, cust]).pipe(
+      switchMap(([run, customer]) => {
+        const site = {fields: {Title: this.cage.fields.Site}} as Site;
+        const message = 'Cage ready for collection'
+        if (run) {
+          const notes = run.fields.Notes ? `${run.fields.Notes}<br>${message}` : message;
+          return this.deliveryService.updateDelivery(run.id, notes);
+         } else {
+          return this.deliveryService.createDelivery('runname', customer, site, message, 0);
+         }
+      })
+    ).subscribe(() => this.onComplete());
   }
 }
