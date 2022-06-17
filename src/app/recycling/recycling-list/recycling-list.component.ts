@@ -25,7 +25,7 @@ export class RecyclingListComponent implements OnInit {
   public loading = this.recyclingService.loading;
   public weight!: number;
   public count!: number;
-  public displayedColumns = ['fields/CageNumber', 'assetType', 'status', 'fields/Modified', 'weight'];
+  public displayedColumns = ['fields/CageNumber', 'assetType', 'status', 'location', 'fields/Modified', 'weight'];
   public sortSort!: string;
   public sortOrder!: 'asc' | 'desc';
   public choices!: {Status: choice, AssetType: choice, Branch: choice};

@@ -17,8 +17,7 @@
       <div *ngIf="!isCage" class="title">
         <h2>{{ cage.fields.AssetType }}</h2>
       </div>
-      <gcp-branch-button [cage]="cage" (updated)="getCage()"></gcp-branch-button>
-      <gcp-action-button [cage]="cage" (updated)="getCage()"></gcp-action-button>
+      <gcp-action-button [cage]="cage" (updated)="getCage()" class="actions"></gcp-action-button>
     </div>
     <mat-card>
       <mat-list>
@@ -27,6 +26,11 @@
           <mat-icon mat-list-icon>timeline</mat-icon>
           <div mat-line>{{ cage.fields.Status }}</div>
           <div mat-line>Status</div>
+        </mat-list-item>
+        <mat-list-item *ngIf="cage.fields.Status">
+          <mat-icon mat-list-icon>location_city</mat-icon>
+          <div mat-line>{{ cage.fields.Branch }}</div>
+          <div mat-line>Branch</div>
         </mat-list-item>
         <mat-list-item *ngIf="cage.fields.CustomerNumber">
           <mat-icon mat-list-icon>business</mat-icon>
@@ -56,10 +60,7 @@
       </mat-list>
       <gcp-cage-details [cage]="cage"></gcp-cage-details>
     </mat-card>
-
   </div>
-
-
 
   <div *ngIf="isCage" class="inner">
     <h3>Cage history</h3>

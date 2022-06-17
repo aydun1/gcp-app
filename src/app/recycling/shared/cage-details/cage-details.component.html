@@ -1,5 +1,5 @@
 <mat-list>
-  <div mat-subheader *ngIf="cage.fields.Date1 || cage.fields.Date2 || cage.fields.Date3 || cage.fields.Date4">Dates</div>
+  <div mat-subheader *ngIf="cage.fields.Date1 || cage.fields.Date2 || cage.fields.Date3 || cage.fields.Date4 || cage.fields.ToDepot">Dates</div>
   <mat-list-item *ngIf="cage.fields.Date4">
     <div mat-line>{{ cage.fields.Date4 | date: 'dd/MM/yyyy' }}</div>
     <div mat-line>Collected from Polymer</div>
@@ -23,5 +23,9 @@
   <mat-list-item *ngIf="cage.fields.Date1">
     <div mat-line>{{ cage.fields.Date1 | date: 'dd/MM/yyyy' }}</div>
     <div mat-line>Delivered to customer</div>
+  </mat-list-item>
+  <mat-list-item *ngIf="cage.fields.ToDepot">
+    <div mat-line>{{ cage.fields.ToDepot | date: 'dd/MM/yyyy' }}</div>
+    <div mat-line>Delivered to depot ({{ cage.fields.Depot }})</div>
   </mat-list-item>
 </mat-list>

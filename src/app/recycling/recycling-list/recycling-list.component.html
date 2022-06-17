@@ -83,12 +83,17 @@
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
         <mat-cell *matCellDef="let cage">
-          <div>
+          <div [class]="'chip' + cage.statusId">
             {{ cage.fields.Status }}
           </div>
-          <div *ngIf="cage.statusId > 1 && cage.statusId < 3" class="customer">
-            {{ cage.fields.Customer }}
-          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="location">
+        <mat-header-cell *matHeaderCellDef> Location </mat-header-cell>
+        <mat-cell *matCellDef="let cage">
+          {{ cage.location }}
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>

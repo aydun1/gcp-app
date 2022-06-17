@@ -12,10 +12,6 @@ input {
   display: flex;
 }
 
-.title {
-  flex: 1;
-}
-
 .content {
   display: block;
   margin: 0 auto;
@@ -78,4 +74,8 @@ input {
 .active {
   background: #f3f2f1;
   border-left: 2px solid red;
+}
+
+.actions {
+  margin-left: auto;
 }

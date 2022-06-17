@@ -46,24 +46,29 @@
 }
 
 .mat-column-fields-CageNumber {
-  flex: 0 1 120px;
+  flex: 0 1 80px;
 }
 
 .mat-column-fields-Modified {
-  flex: 0 1 160px;
+  flex: 0 1 120px;
 }
 
 .mat-column-assetType {
-  flex: 0 1 220px;
+  flex: 0 1 100px;
 }
 
 .mat-column-status {
-  flex: 0 1 320px;
+  flex: 0 1 200px;
+  margin-right: 10px;
+}
+
+.mat-column-location {
+  flex: 0 1 200px;
   margin-right: 10px;
 }
 
 .mat-column-weight {
-  flex: 0 1 120px;
+  flex: 0 1 80px;
 }
 
 .mat-cell.mat-column-status {
@@ -73,6 +78,17 @@
 }
 
 .mat-cell.mat-column-assetType {
+  font-weight: 500;
+}
+
+.chip0 {
+  background-color: #95f395;
+  display: inline-flex;
+  padding: 7px 12px;
+  border-radius: 16px;
+  align-items: center;
+  height: 32px;
+  box-sizing: border-box;
   font-weight: 500;
 }
 

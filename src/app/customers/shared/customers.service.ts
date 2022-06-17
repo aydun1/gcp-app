@@ -136,8 +136,9 @@ export class CustomersService {
   }
 
   uniqueSiteValidator(sites: Array<Site>): ValidatorFn {
-    const siteNames = sites.map(_ => _.fields.Title);
     return (control: AbstractControl): ValidationErrors | null => {
+      if (!sites) return null;
+      const siteNames = sites.map(_ => _.fields.Title);
       const exists = siteNames.includes(control.value);
       return exists ? {forbiddenName: {value: control.value}} : null;
     };

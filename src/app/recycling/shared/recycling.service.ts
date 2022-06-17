@@ -89,20 +89,27 @@ export class RecyclingService {
 
     if (cage.fields.Status === 'Available') {
       cage['statusId'] = 0;
+      cage['location'] = cage.fields.Depot || cage.fields.Branch;
     } else if (cage.fields.Status === 'Complete') {
       cage['statusId'] = 7;
     } else if ((cage.fields.Date4 || cage.fields.FromLocalProcessing) && cage.fields.Status !== 'Complete') {
       cage['statusId'] = 6;
+      cage['location'] = cage.fields.Branch;
     } else if (cage.fields.Date3 && !cage.fields.Date4) {
       cage['statusId'] = 5;
+      cage['location'] = 'Polymer processors';
     } else if (cage.fields.ToLocalProcessing && !cage.fields.FromLocalProcessing) {
       cage['statusId'] = 4;
+      cage['location'] = 'Local processor';
     } else if ((cage.fields.Date2) && !(cage.fields.Date3)) {
       cage['statusId'] = 3;
+      cage['location'] = cage.fields.Branch;
     } else if (cage.fields.Date1 && !cage.fields.Date2) {
       cage['statusId'] = 2;
+      cage['location'] = cage.fields.Customer;
     } else if (cage.fields.CustomerNumber && !cage.fields.Date1) {
       cage['statusId'] = 1;
+      cage['location'] = cage.fields.Depot || cage.fields.Branch;
     } else {
       cage['status'] = cage.fields.Status;
     }
@@ -130,19 +137,20 @@ export class RecyclingService {
   }
 
   private updateList(res: Cage): Observable<Cage> {
+    const newCage = this.assignStatus(res);
     return this._cagesSubject$.pipe(
       take(1),
       map(_ => {
         const cages = _.map(cage => cage);
-        const i = cages.findIndex(cage => cage.id === res.id);
+        const i = cages.findIndex(cage => cage.id === newCage.id);
         if (i > -1) {
-          if (res['fields']) cages[i] = res
+          if (newCage['fields']) cages[i] = newCage
           else cages.splice(i, 1);
         } else {
-          cages.unshift(res);
+          cages.unshift(newCage);
         }
         this._cagesSubject$.next(cages);
-        return res;
+        return newCage;
       })
     );
   }
@@ -295,6 +303,11 @@ export class RecyclingService {
 
   setBranch(id: string, branch: string): Observable<Cage> {
     const payload = {fields: {Branch: branch}};
+    return this.updateStatus(id, payload);
+  }
+
+  setDepot(id: string, depot: string): Observable<Cage> {
+    const payload = {fields: {Depot: depot, ToDepot: new Date()}};
     return this.updateStatus(id, payload);
   }
 
