@@ -13,6 +13,7 @@ import { PalletsService } from '../../pallets/shared/pallets.service';
 import { CustomerSiteDialogComponent } from '../shared/customer-site-dialog/customer-site-dialog.component';
 import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
+import { RecyclingDocketDialogComponent } from 'src/app/recycling/shared/recycling-docket-dialog/recycling-docket-dialog.component';
 
 @Component({
   selector: 'gcp-customer-view',
@@ -141,6 +142,12 @@ export class CustomerViewComponent implements OnInit {
     const data = {customer, sites: this.sites, site: this.site};
     const dialogRef = this.dialog.open(RecyclingDialogComponent, {width: '800px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe(() => this.refreshCages());
+  }
+
+  openRecyclingDocketDialog(customer: Customer): void {
+    const data = {customer};
+    const dialogRef = this.dialog.open(RecyclingDocketDialogComponent, {width: '800px', data});
+    dialogRef.afterClosed().subscribe();
   }
 
   setSite(customer: Customer, site: string | null): void {

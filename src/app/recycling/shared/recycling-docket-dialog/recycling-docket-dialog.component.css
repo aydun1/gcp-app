@@ -1,0 +1,38 @@
+
+
+.header {
+  align-items: center;
+  display: flex;
+  height: 110px;
+}
+
+img {
+  margin-right: 16px;
+  width: 110px;
+}
+
+h2, h3 {
+  margin: 10px 0;
+}
+
+.customer {
+  display: flex;
+  margin: 20px 0;
+}
+
+.customer > .details {
+  margin-left: 10px;
+}
+
+.address {
+  white-space: pre;
+}
+
+.signs {
+  display: flex;
+  margin-bottom: 180px;
+}
+
+.sender {
+  margin-right: 20px;
+}

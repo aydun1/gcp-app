@@ -56,7 +56,7 @@ export class CustomersService {
   }
 
   getCustomer(id: string): Observable<Customer> {
-    const url = `${this._url}/accounts(${id})?$select=name,accountnumber`;
+    const url = `${this._url}/accounts(${id})?$select=name,accountnumber,address1_composite`;
     return this.http.get(url) as Observable<Customer>;
   }
 

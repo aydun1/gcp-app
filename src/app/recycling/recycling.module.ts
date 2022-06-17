@@ -7,6 +7,7 @@ import { RecyclingService } from './shared/recycling.service';
 import { RecyclingReceiptsService } from './shared/recycling-receipts.service';
 import { RecyclingComponent } from './recycling.component';
 import { RecyclingDialogComponent } from './shared/recycling-dialog/recycling-dialog.component';
+import { RecyclingDocketDialogComponent } from './shared/recycling-docket-dialog/recycling-docket-dialog.component';
 import { RecyclingListComponent } from './recycling-list/recycling-list.component';
 import { RecyclingViewComponent } from './recycling-view/recycling-view.component';
 import { RecyclingNewComponent } from './recycling-new/recycling-new.component';
@@ -22,6 +23,7 @@ import { SignaturePadModule } from '../shared/signature/signature-pad.module';
   declarations: [
     RecyclingComponent,
     RecyclingDialogComponent,
+    RecyclingDocketDialogComponent,
     RecyclingListComponent,
     RecyclingViewComponent,
     RecyclingNewComponent,

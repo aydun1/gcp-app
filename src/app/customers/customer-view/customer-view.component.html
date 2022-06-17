@@ -13,8 +13,11 @@
       <h2 class="name">{{ customer.name || 'Unnamed customer' }}</h2>
       <p class="number">{{ customer.accountnumber }}</p>
     </div>
-    <button mat-stroked-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{customer: customer}" [disabled]="!sites">
+    <button mat-stroked-button type="button" [matMenuTriggerFor]="sitesMenu" [matMenuTriggerData]="{customer: customer}" [disabled]="!sites">
       {{ site || 'All sites'}}
+    </button>
+    <button mat-icon-button type="button" class="menu" [matMenuTriggerFor]="actionsMenu" [matMenuTriggerData]="{customer: customer}">
+      <mat-icon>more_vert</mat-icon>
     </button>
   </div>
   <div class="inner">
@@ -53,7 +56,7 @@
   </div>
 </div>
 
-<mat-menu #menu="matMenu" xPosition="before">
+<mat-menu #sitesMenu="matMenu" xPosition="before">
   <ng-template matMenuContent let-customer="customer">
     <button mat-menu-item (click)="setSite(customer, null)">
       <span>All sites</span>
@@ -68,6 +71,15 @@
   </ng-template>
 </mat-menu>
 
+<mat-menu #actionsMenu="matMenu" xPosition="before">
+  <ng-template matMenuContent let-customer="customer">
+    <button type="button" mat-menu-item (click)="openRecyclingDocketDialog(customer)">
+      <mat-icon>receipt</mat-icon>
+      <span>Cage collection docket</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
 <ng-template #loadingPage>
   <gcp-loading-page></gcp-loading-page>
 </ng-template>
@@ -77,3 +89,5 @@
     <gcp-loading-dots></gcp-loading-dots>
   </dd>
 </ng-template>
+
+<router-outlet></router-outlet>
