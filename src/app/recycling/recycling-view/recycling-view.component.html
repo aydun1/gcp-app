@@ -58,7 +58,7 @@
         <div mat-subheader>Weights</div>
         <gcp-cage-weights [cage]="cage" (updated)="getCage()"></gcp-cage-weights>
       </mat-list>
-      <gcp-cage-details [cage]="cage"></gcp-cage-details>
+      <gcp-cage-details [cage]="cage" (updated)="getCage()"></gcp-cage-details>
     </mat-card>
   </div>
 

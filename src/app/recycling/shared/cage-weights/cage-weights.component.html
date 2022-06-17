@@ -1,26 +1,26 @@
 <form (ngSubmit)="setCageWeight()">
   <mat-list-item *ngIf="cage.fields.Status">
     <mat-icon mat-list-icon>scale</mat-icon>
-    <div  *ngIf="editCageWeight" mat-line><input [(ngModel)]="cageWeight" [ngModelOptions]="{standalone: true}" type="number"></div>
+    <div  *ngIf="editCageWeight" mat-line><input [(ngModel)]="cageWeight" [ngModelOptions]="{standalone: true}" type="number" placeholder="Weight in kg"></div>
     <div  *ngIf="!editCageWeight" mat-line>{{ cage.fields.CageWeight || 0 }} kg</div>
     <div mat-line>Cage weight</div>
     <button mat-icon-button type="button" *ngIf="!editCageWeight" (click)="editCageWeight = true"><mat-icon mat-list-icon class="last-icon">edit</mat-icon></button>
     <ng-container *ngIf="editCageWeight">
       <button mat-icon-button type="button" (click)="cancelCageWeight()"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
-      <button mat-icon-button><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
+      <button mat-icon-button type="submit"><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
     </ng-container>
   </mat-list-item>
 </form>
 <form (ngSubmit)="setGrossWeight()">
   <mat-list-item *ngIf="cage.fields.Status">
     <mat-icon mat-list-icon>scale</mat-icon>
-    <div *ngIf="editGrossWeight" mat-line><input [(ngModel)]="grossWeight" [ngModelOptions]="{standalone: true}" type="number"></div>
+    <div *ngIf="editGrossWeight" mat-line><input [(ngModel)]="grossWeight" [ngModelOptions]="{standalone: true}" type="number" placeholder="Weight in kg"></div>
     <div *ngIf="!editGrossWeight" mat-line>{{ cage.fields.GrossWeight || 0 }} kg</div>
     <div mat-line>Gross weight</div>
     <button mat-icon-button type="button" *ngIf="!editGrossWeight" (click)="editGrossWeight = true"><mat-icon mat-list-icon class="last-icon">edit</mat-icon></button>
     <ng-container *ngIf="editGrossWeight">
       <button mat-icon-button type="button" (click)="cancelGrossWeight()"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
-      <button mat-icon-button><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
+      <button mat-icon-button type="submit"><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
     </ng-container>
   </mat-list-item>
 </form>

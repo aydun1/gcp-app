@@ -59,12 +59,10 @@
 
 .mat-column-status {
   flex: 0 1 200px;
-  margin-right: 10px;
 }
 
 .mat-column-location {
-  flex: 0 1 200px;
-  margin-right: 10px;
+  flex: 1 1 200px;
 }
 
 .mat-column-weight {

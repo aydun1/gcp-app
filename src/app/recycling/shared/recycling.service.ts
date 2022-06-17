@@ -82,6 +82,7 @@ export class RecyclingService {
   }
 
   private assignStatus(cage: Cage): Cage {
+    if (!cage.fields) return cage;
     cage['Date'] = cage.fields.Date4 || cage.fields.Date3 || cage.fields.ToLocalProcessing || cage.fields.Date2 || cage.fields.Date1 || cage.fields.Created;
     cage['Cage'] = cage.fields.AssetType?.startsWith('Cage');
     cage['Type'] = cage['Cage'] ? cage.fields.AssetType.split('-', 2)[1].split(' ', 2)[1][0].toLowerCase() : null;
@@ -303,12 +304,23 @@ export class RecyclingService {
 
   setBranch(id: string, branch: string): Observable<Cage> {
     const payload = {fields: {Branch: branch}};
-    return this.updateStatus(id, payload);
+    return this.updateStatus(id, payload).pipe(
+      tap(() => this.snackBar.open("Branch updated", '', {duration: 3000})),
+    );
   }
 
   setDepot(id: string, depot: string): Observable<Cage> {
     const payload = {fields: {Depot: depot, ToDepot: new Date()}};
-    return this.updateStatus(id, payload);
+    return this.updateStatus(id, payload).pipe(
+      tap(() => this.snackBar.open("Cage transferred to depot", '', {duration: 3000})),
+    );
+  }
+
+  removeDepot(id: string): Observable<Cage> {
+    const payload = {fields: {Depot: null, ToDepot: null}};
+    return this.updateStatus(id, payload).pipe(
+      tap(() => this.snackBar.open("Cage removed from depot", '', {duration: 3000})),
+    );
   }
 
   addNewCage(cageNumber: number, branch: string, assetType: string, cageWeight: number): Observable<Cage> {
