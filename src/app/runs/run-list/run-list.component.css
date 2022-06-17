@@ -126,16 +126,6 @@ h2 {
   position: absolute;
 }
 
-@media print {
-  :host {
-    overflow-y: auto;
-  }
-
-  .options {
-    display: none;
-  }
-}
-
 @media (max-width: 1024px) {
   .mat-column-actions {
     flex: 0 1 110px;
@@ -176,9 +166,6 @@ h2 {
   .mat-cell.mat-column-sequence {
     grid-row: 1;
     justify-content: inherit;
-  }
-
-  .mat-cell.mat-column-sequence {
     padding-bottom: 0;
     padding-top: 0;
   }
@@ -220,5 +207,38 @@ h2 {
 
   .mat-cell.mat-column-actions > button {
     margin-bottom: 0;
+  }
+}
+
+
+@media print {
+  .scroller {
+    overflow-y: auto;
+  }
+
+  .options {
+    display: none;
+  }
+
+  .mat-table {
+    border: 0;
+  }
+  .mat-header-row {
+    display: flex;
+  }
+
+  .mat-column-sequence,
+  .mat-column-actions,
+  .mat-column-menu {
+    display: none;
+  }
+
+  .mat-header-cell.mat-column-customer {
+    margin-left: 10px;
+    margin-right: -10px;
+  }
+
+  .mat-row {
+    display: flex;
   }
 }
