@@ -14,6 +14,7 @@ import { CustomerSiteDialogComponent } from '../shared/customer-site-dialog/cust
 import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
 import { RecyclingDocketDialogComponent } from 'src/app/recycling/shared/recycling-docket-dialog/recycling-docket-dialog.component';
+import { DeliveryService } from 'src/app/runs/shared/delivery.service';
 
 @Component({
   selector: 'gcp-customer-view',
@@ -43,6 +44,7 @@ export class CustomerViewComponent implements OnInit {
     private navService: NavigationService,
     private sharedService: SharedService,
     private cutomersService: CustomersService,
+    private deliveryService: DeliveryService,
     private recyclingService: RecyclingService,
     private palletsService: PalletsService
   ) { }
@@ -122,6 +124,11 @@ export class CustomerViewComponent implements OnInit {
   refreshCages(): void {
     if (!this.customer) return;
     this.cagesSubject$.next(this.customer.accountnumber);
+  }
+
+  requestCages() {
+    this.deliveryService.requestCageTransfer(this.customer.accountnumber, this.site, false).subscribe();
+
   }
 
   openSiteDialog(customer: Customer): void {

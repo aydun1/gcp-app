@@ -165,19 +165,6 @@ export class ActionButtonComponent implements OnInit {
 
   addToRunList() {
     this.loading.next(true);
-    const run = this.deliveryService.getDeliveryByAccount(this.cage.fields.CustomerNumber);
-    const cust = this.cutomersService.getCustomerByAccount(this.cage.fields.CustomerNumber);
-    combineLatest([run, cust]).pipe(
-      switchMap(([run, customer]) => {
-        const site = {fields: {Title: this.cage.fields.Site}} as Site;
-        const message = 'Cage ready for collection'
-        if (run) {
-          const notes = run.fields.Notes ? `${run.fields.Notes}<br>${message}` : message;
-          return this.deliveryService.updateDelivery(run.id, notes);
-         } else {
-          return this.deliveryService.createDelivery('runname', customer, site, message, 0);
-         }
-      })
-    ).subscribe(() => this.onComplete());
+    this.deliveryService.requestCageTransfer(this.cage.fields.CustomerNumber, this.cage.fields.Site, true).subscribe(() => this.onComplete());
   }
 }

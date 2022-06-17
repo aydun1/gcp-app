@@ -3,11 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
-import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
 import { Customer } from '../../customers/shared/customer';
+import { CustomersService } from '../../customers/shared/customers.service';
 import { Site } from '../../customers/shared/site';
 import { Delivery } from './delivery';
 
@@ -27,7 +28,8 @@ export class DeliveryService {
   constructor(
     private http: HttpClient,
     private snackBar: MatSnackBar,
-    private shared: SharedService
+    private shared: SharedService,
+    private cutomersService: CustomersService
   ) { }
 
   private createUrl(filters: Params): string {
@@ -215,6 +217,26 @@ export class DeliveryService {
           tap(a => this._deliveriesSubject$.next(a)),
         );
       })
+    )
+  }
+
+  requestCageTransfer(customerNumber: string, siteName: string, collect: boolean) {
+    this.loading.next(true);
+    const run = this.getDeliveryByAccount(customerNumber);
+    const cust = this.cutomersService.getCustomerByAccount(customerNumber);
+    return combineLatest([run, cust]).pipe(
+      switchMap(([run, customer]) => {
+        const site = {fields: {Title: siteName}} as Site;
+        const message = collect ? 'Cage ready for collection' : 'Cage requested for delivery';
+        if (run) {
+          const notes = run.fields.Notes ? `${run.fields.Notes}<br>${message}` : message;
+          return this.updateDelivery(run.id, notes);
+         } else {
+          return this.createDelivery('runname', customer, site, message, 0);
+         }
+      }),
+      tap(_ =>this.snackBar.open('Added to run list', '', {duration: 3000})
+      )
     )
   }
 
