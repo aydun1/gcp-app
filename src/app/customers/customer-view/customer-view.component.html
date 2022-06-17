@@ -49,10 +49,20 @@
         </dl>
       </div>
     </div>
+    <h3>
+      Actions
+    </h3>
     <div class="big-buttons">
       <gcp-big-button [target]="[]" (click)="openPalletDialog(customer)">Transfer Pallets</gcp-big-button>
       <gcp-big-button [target]="[]" (click)="openRecyclingDialog(customer)">Manage Recycling</gcp-big-button>
     </div>
+    <h3>
+      Attachments
+    </h3>
+    <mat-card>
+      <gcp-doc-upload [id]="customer.accountnumber" folder="transfers">
+      </gcp-doc-upload>
+    </mat-card>
   </div>
 </div>
 
