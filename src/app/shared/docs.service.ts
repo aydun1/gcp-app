@@ -38,7 +38,7 @@ export class DocsService {
         '@microsoft.graph.conflictBehavior': 'rename',
         'name': file.name
       }
-    }
+    };
     return this.http.post(url, payload).pipe(
       expand(res => this.readFragment(file, res['next'] ? res['next'] : 0, res)),
       take(Math.ceil(file.size / this.chunkLength) + 1)

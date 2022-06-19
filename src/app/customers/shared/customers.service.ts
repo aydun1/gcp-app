@@ -56,6 +56,7 @@ export class CustomersService {
   }
 
   getCustomer(id: string): Observable<Customer> {
+    if (id.length < 8) return this.getCustomerByAccount(id);
     const url = `${this._url}/accounts(${id})?$select=name,accountnumber,address1_composite`;
     return this.http.get(url) as Observable<Customer>;
   }

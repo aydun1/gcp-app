@@ -32,14 +32,18 @@
           <div mat-line>{{ cage.fields.Branch }}</div>
           <div mat-line>Branch</div>
         </mat-list-item>
-        <mat-list-item *ngIf="cage.fields.CustomerNumber">
+      </mat-list>
+      <mat-nav-list>
+        <a mat-list-item *ngIf="cage.fields.CustomerNumber" [routerLink]="['/customers', cage.fields.CustomerNumber]">
           <mat-icon mat-list-icon>business</mat-icon>
           <div mat-line>{{ cage.fields.Customer }} 
             <span>({{ cage.fields.CustomerNumber }})</span>
             <span *ngIf="cage.fields.Site">({{ cage.fields.Site }})</span>
           </div>
           <div mat-line>Assigned to</div>
-        </mat-list-item>
+        </a>
+      </mat-nav-list>
+      <mat-list>
         <form (ngSubmit)="setCageNotes(cage.id)">
           <mat-list-item>
             <mat-icon mat-list-icon>tag</mat-icon>
