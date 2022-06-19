@@ -69,9 +69,16 @@
           </mat-footer-cell>
         </ng-container>
 
+        <ng-container matColumnDef="empty">
+          <mat-footer-cell *matFooterCellDef>
+            Click the above button to add a delivery!
+          </mat-footer-cell>
+        </ng-container>
+
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag></mat-row>
         <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loadingList$ | async) ? false : true"></mat-footer-row>
+        <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="(loadingList$ | async) === false && !listSize ? false : true"></mat-footer-row>
       </mat-table>
     </div>
   </div>

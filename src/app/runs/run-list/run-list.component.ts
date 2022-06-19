@@ -21,11 +21,12 @@ import { DeliveryService } from '../shared/delivery.service';
 })
 export class RunListComponent implements OnInit {
   private _loadList = false;
-  private listSize!: number;
+  public listSize!: number;
 
   public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
   public loading = false;
+  public empty = true;
   public displayedColumns = ['sequence', 'customer', 'site', 'notes', 'actions', 'status', 'menu'];
   public dragDisabled = true;
 
@@ -51,7 +52,6 @@ export class RunListComponent implements OnInit {
       switchMap(_ => state$.pipe(map(state => !_['branch'] ? {..._, branch: state} : _))),
       tap(_ => this.parseParams(_)),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
-
       tap(_ => this.listSize = _.length),
     )
 

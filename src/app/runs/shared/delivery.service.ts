@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
-import { BehaviorSubject, catchError, combineLatest, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, map, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
@@ -23,7 +23,7 @@ export class DeliveryService {
   private _nextPage!: string;
   private _deliveriesSubject$ = new BehaviorSubject<Delivery[]>([]);
 
-  public loading = new BehaviorSubject<boolean>(false);
+  public loading = new BehaviorSubject<boolean>(true);
 
   constructor(
     private http: HttpClient,
@@ -95,7 +95,7 @@ export class DeliveryService {
       map(_ => {
         const deliveries = _.map(delivery => delivery);
         const i = deliveries.findIndex(delivery => delivery.id === res.id);
-        if (i > -1) deliveries[i] = res
+        if (i > -1) deliveries[i] = res;
         else deliveries.push(res);
         this._deliveriesSubject$.next(deliveries);
         return res
