@@ -130,6 +130,10 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     this.editQuantity = false
   }
 
+  markFileAttached(id: string, status: boolean) {
+    this.palletsService.markFileAttached(id, status).subscribe();
+  }
+
   goBack(): void {
     this.navService.back();
   }

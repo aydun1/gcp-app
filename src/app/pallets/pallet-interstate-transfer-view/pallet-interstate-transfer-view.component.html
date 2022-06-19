@@ -113,7 +113,7 @@
     <mat-card-header>
       <mat-card-title>Attachments</mat-card-title>
     </mat-card-header>
-    <gcp-doc-upload [id]="transfer.summary.id" folder="transfers">
+    <gcp-doc-upload [id]="transfer.summary.id" folder="transfers" (statusChanged)="markFileAttached(transfer.summary.id, $event)">
     </gcp-doc-upload>
   </mat-card>
 </div>

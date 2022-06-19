@@ -1,9 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { BehaviorSubject, combineLatest, map, Observable, switchMap, take, tap } from 'rxjs';
 
 import { Doc } from '../../doc';
 import { DocsService } from '../../docs.service';
-import { PalletsService } from '../../../pallets/shared/pallets.service';
 
 @Component({
   selector: 'gcp-doc-upload',
@@ -13,6 +12,7 @@ import { PalletsService } from '../../../pallets/shared/pallets.service';
 export class DocUploadComponent implements OnInit {
   @Input() id!: string;
   @Input() folder!: string;
+  @Output() statusChanged = new EventEmitter<boolean>();
 
   private _docCount!: number;
   private _uploads$ = new BehaviorSubject<Doc[]>([]);
@@ -20,8 +20,7 @@ export class DocUploadComponent implements OnInit {
   public docs$!: Observable<Doc[]>;
 
   constructor(
-    private docsService: DocsService,
-    private palletsService: PalletsService
+    private docsService: DocsService
   ) { }
 
   ngOnInit(): void {
@@ -32,7 +31,7 @@ export class DocUploadComponent implements OnInit {
       tap(_ => {
         const complete = _.filter(d => d.id).length || 0;
         const attachStatusChanged = this._docCount !== undefined && this._docCount !== complete && (this._docCount === 0 || complete === 0);
-        if (attachStatusChanged && this.folder === 'transfers') this.palletsService.markFileAttached(this.id, complete > 0).subscribe();
+        if (attachStatusChanged) this.statusChanged.emit(complete > 0);
         this._docCount = complete;
       })
     );
