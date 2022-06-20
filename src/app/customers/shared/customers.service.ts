@@ -115,7 +115,7 @@ export class CustomersService {
     url = customer.length <= 7 ?
     `${url}&$filter=parentid_account/accountnumber eq '${customer}'` :
     `${url}&$filter=_parentid_value eq '${customer}'`;
-    return this.http.get(url).pipe(map(_ => _['value']));
+    return this.http.get(url).pipe(map(_ => _['value'].filter((_: Address) => _.name)));
   }
 
   getRegions(): Observable<Object> {
