@@ -29,8 +29,15 @@ h2, h3 {
 }
 
 .signs {
-  display: flex;
-  margin-bottom: 240px;
+  height: 220px;
+}
+
+.notes {
+  height: 100px
+}
+
+.addresses {
+  margin-right: 10px;
 }
 
 .sender {
@@ -47,4 +54,18 @@ h2, h3 {
   width: 60px;
   display: inline-block;
   border-bottom: black 1px solid;
+}
+
+.long {
+  width: 180px;
+}
+
+.buttons {
+  margin-left: auto;
+}
+
+@media print {
+  .buttons {
+    display: none;
+  }
 }

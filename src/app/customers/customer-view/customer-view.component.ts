@@ -13,8 +13,9 @@ import { PalletsService } from '../../pallets/shared/pallets.service';
 import { CustomerSiteDialogComponent } from '../shared/customer-site-dialog/customer-site-dialog.component';
 import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
-import { RecyclingDocketDialogComponent } from 'src/app/recycling/shared/recycling-docket-dialog/recycling-docket-dialog.component';
-import { DeliveryService } from 'src/app/runs/shared/delivery.service';
+import { RecyclingDocketDialogComponent } from '../../recycling/shared/recycling-docket-dialog/recycling-docket-dialog.component';
+import { DeliveryService } from '../../runs/shared/delivery.service';
+import { Address } from '../shared/address';
 
 @Component({
   selector: 'gcp-customer-view',
@@ -36,6 +37,7 @@ export class CustomerViewComponent implements OnInit {
   public cheps!: number;
   public plains!: number;
   public cages!: {count: number, weight: number} | null;
+  public addresses: Array<Address> = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -105,10 +107,16 @@ export class CustomerViewComponent implements OnInit {
         this.customer = _;
         this.setTitle();
         this.refreshSites();
+        this.getAddresses();
         this.refreshPallets();
         this.refreshCages();
       })
     );
+  }
+
+  getAddresses(): void {
+    if (!this.customer) return;
+    this.cutomersService.getAddresses(this.customer.accountnumber).subscribe(_ => this.addresses = _);
   }
 
   refreshSites(): void {
@@ -152,8 +160,8 @@ export class CustomerViewComponent implements OnInit {
   }
 
   openRecyclingDocketDialog(customer: Customer): void {
-    const data = {customer};
-    const dialogRef = this.dialog.open(RecyclingDocketDialogComponent, {width: '800px', data});
+    const data = {customer, addresses: this.addresses};
+    const dialogRef = this.dialog.open(RecyclingDocketDialogComponent, {width: '800px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe();
   }
 
