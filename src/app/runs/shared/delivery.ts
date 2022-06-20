@@ -11,6 +11,7 @@ export interface Delivery {
   fields: {
     id: string,
     Title: string,
+    Address: string,
     Branch: string,
     Customer: string,
     CustomerNumber: string,

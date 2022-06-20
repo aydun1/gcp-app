@@ -1,9 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { catchError, tap, throwError } from 'rxjs';
 
-import { SharedService } from '../../../shared.service';
 import { Delivery } from '../delivery';
 import { DeliveryService } from '../delivery.service';
 
@@ -20,13 +19,12 @@ export class DeliveryEditorDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: {delivery: Delivery},
     private dialogRef: MatDialogRef<DeliveryEditorDialogComponent>,
     private fb: FormBuilder,
-    private shared: SharedService,
     private deliveryService: DeliveryService
   ) { }
 
   ngOnInit(): void {
-    console.log(this.data.delivery)
     this.deliveryForm = this.fb.group({
+      address: this.data.delivery.fields.Address,
       notes: this.data.delivery.fields.Notes,
     });
   }
@@ -42,7 +40,7 @@ export class DeliveryEditorDialogComponent implements OnInit {
         this.loading = false;
         return throwError(() => new Error(err));
       })
-    ).subscribe()
+    ).subscribe();
   }
 
   closeDialog(): void {

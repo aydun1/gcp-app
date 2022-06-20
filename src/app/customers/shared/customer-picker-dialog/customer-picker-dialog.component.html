@@ -13,14 +13,14 @@
       Select a customer from the list
     </mat-error>
   </mat-form-field>
-  <ng-container *ngIf="addresses$ | async as addresses">
-    <mat-form-field *ngIf="data?.address && addresses.length > 0" color="primary" appearance="outline">
-      <mat-label>Address</mat-label>
-      <mat-select formControlName="address">
-        <mat-option *ngFor="let a of addresses" [value]="a">{{ a.name }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </ng-container>
+
+  <mat-form-field *ngIf="data?.address && !this.customerForm.get('site')?.value" color="primary" appearance="outline">
+    <mat-label>Address</mat-label>
+    <mat-select formControlName="address" [disabled]="loadingAddresses">
+      <mat-option *ngFor="let a of addresses$ | async" [value]="a">{{ a.name }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
   <ng-container *ngIf="sites$ | async as sites">
     <mat-form-field *ngIf="sites.length > 0" color="primary" appearance="outline">
       <mat-label>Site</mat-label>
@@ -31,7 +31,7 @@
   </ng-container>
   <mat-form-field *ngIf="data?.notes" color="primary" appearance="outline">
     <mat-label>Notes</mat-label>
-    <input matInput formControlName="notes" type="text" autocomplete="off" placeholder="Optional notes">
+    <textarea matInput formControlName="notes" autocomplete="off" placeholder="Optional notes"></textarea>
   </mat-form-field>
   <pre *ngIf="data?.address">{{ address || customerForm.get('customer')?.value?.address1_composite }}</pre>
   <mat-dialog-actions align="end">
