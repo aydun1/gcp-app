@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
-import { BehaviorSubject, catchError, combineLatest, map, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
@@ -223,7 +223,7 @@ export class DeliveryService {
   requestCageTransfer(customerNumber: string, siteName: string, collect: boolean) {
     this.loading.next(true);
     const run = this.getDeliveryByAccount(customerNumber);
-    const cust = this.cutomersService.getCustomerByAccount(customerNumber);
+    const cust = this.cutomersService.getCustomer(customerNumber);
     return combineLatest([run, cust]).pipe(
       switchMap(([run, customer]) => {
         const site = {fields: {Title: siteName}} as Site;
