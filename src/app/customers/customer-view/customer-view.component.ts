@@ -135,8 +135,8 @@ export class CustomerViewComponent implements OnInit {
   }
 
   requestCages() {
-    this.deliveryService.requestCageTransfer(this.customer.accountnumber, this.site, false).subscribe();
-
+    const cageNumber = 0;
+    this.deliveryService.requestCageTransfer(this.customer.accountnumber, this.site, cageNumber, false).subscribe();
   }
 
   openSiteDialog(customer: Customer): void {

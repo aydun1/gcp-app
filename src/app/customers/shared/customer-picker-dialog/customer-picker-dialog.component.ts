@@ -3,10 +3,10 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, tap } from 'rxjs';
 
-import { CustomersService } from '../customers.service';
 import { Address } from '../address';
 import { Customer } from '../customer';
 import { Site } from '../site';
+import { CustomersService } from '../customers.service';
 import { SharedService } from '../../../shared.service';
 
 @Component({
@@ -55,7 +55,7 @@ export class CustomerPickerDialogComponent implements OnInit {
   }
 
   getAddresses(customer: Customer): void {
-    this.loadingAddresses = true;
+    if (this.data?.address) this.loadingAddresses = true;
     this.addresses$ = this.customersService.getAddresses(customer.accountnumber).pipe(
       tap(_ => {
         this.loadingAddresses = false;

@@ -139,9 +139,9 @@ export class ActionButtonComponent implements OnInit {
   }
 
   openCustomerPicker(id: string): void {
-    this.loading.next(true);
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px'});
     dialogRef.afterClosed().pipe(
+      tap(() => this.loading.next(true)),
       switchMap(_ => _ ? this.recyclingService.allocateToCustomer(id, _.customer.accountnumber, _.customer.name, _.site) : of(1)),
     ).subscribe(() => this.onComplete());
   }
@@ -163,8 +163,8 @@ export class ActionButtonComponent implements OnInit {
     this.recyclingService.resetCage(id).subscribe(_ => this.onComplete());
   }
 
-  addToRunList() {
+  addToRunList(cageNumber: number) {
     this.loading.next(true);
-    this.deliveryService.requestCageTransfer(this.cage.fields.CustomerNumber, this.cage.fields.Site, true).subscribe(() => this.onComplete());
+    this.deliveryService.requestCageTransfer(this.cage.fields.CustomerNumber, this.cage.fields.Site, cageNumber, true).subscribe(() => this.onComplete());
   }
 }

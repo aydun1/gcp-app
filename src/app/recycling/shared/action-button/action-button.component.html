@@ -22,7 +22,7 @@
       <mat-icon>assignment_return</mat-icon>
       <span>Dehire</span>
     </button>
-    <button type="button" mat-menu-item (click)="addToRunList()" [disabled]="cage.statusId !== 2">
+    <button type="button" mat-menu-item (click)="addToRunList(cage.fields.CageNumber)" [disabled]="cage.statusId !== 2">
       <mat-icon>flag</mat-icon>
       <span>Ready to return?</span>
     </button>

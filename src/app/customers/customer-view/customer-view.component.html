@@ -14,7 +14,7 @@
       <p class="number">{{ customer.accountnumber }}</p>
     </div>
     <button mat-stroked-button type="button" [matMenuTriggerFor]="sitesMenu" [matMenuTriggerData]="{customer: customer}" [disabled]="!sites">
-      {{ site || 'All sites'}}
+      {{ site || 'All sites' }}
     </button>
     <button mat-icon-button type="button" class="menu" [matMenuTriggerFor]="actionsMenu" [matMenuTriggerData]="{customer: customer}">
       <mat-icon>more_vert</mat-icon>
