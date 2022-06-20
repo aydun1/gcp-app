@@ -164,7 +164,7 @@ export class DeliveryService {
     ).subscribe(_ => this._deliveriesSubject$.next(_));
   }
 
-  createDelivery(title: string, customer: Customer, site: Site, notes: string, sequence: number): Observable<Delivery> {
+  createDelivery(title: string, customer: Customer, site: Site, address: string, notes: string, sequence: number): Observable<Delivery> {
     const fields = {
       Title: title,
       Customer: customer.name,
@@ -174,7 +174,7 @@ export class DeliveryService {
     };
     if (notes) fields['Notes'] = notes;
     if (site) fields['Site'] = site.fields.Title;
-    fields['Address'] = site && site.fields.Address ? site.fields.Address : customer.address1_composite;
+    fields['Address'] = address ? address : site && site.fields.Address ? site.fields.Address : customer.address1_composite;
 
     return this.shared.getBranch().pipe(
       switchMap(_ => this.http.post<Delivery>(`${this._deliveryListUrl}/items`, {fields: {...fields, Branch: _}}).pipe(
@@ -228,11 +228,12 @@ export class DeliveryService {
       switchMap(([run, customer]) => {
         const site = {fields: {Title: siteName}} as Site;
         const message = collect ? 'Cage ready for collection' : 'Cage requested for delivery';
+        const address = '';
         if (run) {
           const notes = run.fields.Notes ? `${run.fields.Notes}<br>${message}` : message;
           return this.updateDelivery(run.id, notes);
          } else {
-          return this.createDelivery('runname', customer, site, message, 0);
+          return this.createDelivery('runname', customer, site, address, message, 0);
          }
       }),
       tap(_ =>this.snackBar.open('Added to run list', '', {duration: 3000})

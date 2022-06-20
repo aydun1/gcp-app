@@ -13,6 +13,14 @@
       Select a customer from the list
     </mat-error>
   </mat-form-field>
+  <ng-container *ngIf="addresses$ | async as addresses">
+    <mat-form-field *ngIf="data?.address && addresses.length > 0" color="primary" appearance="outline">
+      <mat-label>Address</mat-label>
+      <mat-select formControlName="address">
+        <mat-option *ngFor="let a of addresses" [value]="a">{{ a.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </ng-container>
   <ng-container *ngIf="sites$ | async as sites">
     <mat-form-field *ngIf="sites.length > 0" color="primary" appearance="outline">
       <mat-label>Site</mat-label>
@@ -25,15 +33,16 @@
     <mat-label>Notes</mat-label>
     <input matInput formControlName="notes" type="text" autocomplete="off" placeholder="Optional notes">
   </mat-form-field>
+  <pre *ngIf="data?.address">{{ address || customerForm.get('customer')?.value?.address1_composite }}</pre>
   <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close tabindex=-1>Cancel</button>
-    <button mat-raised-button color="primary" [disabled]="loading">{{'Ok'}}</button>
+    <button type="button" mat-button mat-dialog-close tabindex=-1>Cancel</button>
+    <button type="submit" mat-raised-button color="primary" [disabled]="loading || loadingAddresses || loadingSites">{{'Ok'}}</button>
   </mat-dialog-actions>
 </form>
 
 <button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>
 
-<mat-menu #menu="matMenu" xPosition="before" >
+<mat-menu #menu="matMenu" xPosition="before">
   <ng-template matMenuContent>
     <button mat-menu-item *ngFor="let branch of branches" (click)="setBranch(branch)">
       <span>{{ branch }}</span>

@@ -77,10 +77,10 @@ export class RunListComponent implements OnInit {
   }
 
   openCustomerPicker(): void {
-    const data = {notes: true};
+    const data = {notes: true, address: true};
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().pipe(
-      switchMap(_ => _ ? this.addDelivery(_.customer, _.site, _.notes) : of()),
+      switchMap(_ => _ ? this.addDelivery(_.customer, _.site, _.address, _.notes) : of()),
     ).subscribe(() => {
       this.loading = false;
     });
@@ -93,8 +93,8 @@ export class RunListComponent implements OnInit {
     ).subscribe()
   }
 
-  addDelivery(customer: Customer, site: Site, notes: string) {
-    return this.deliveryService.createDelivery('runname', customer, site, notes, this.listSize + 1);
+  addDelivery(customer: Customer, site: Site, address: string, notes: string) {
+    return this.deliveryService.createDelivery('runname', customer, site, address, notes, this.listSize + 1);
   }
 
   markComplete(id: string, currentStatus: string) {
