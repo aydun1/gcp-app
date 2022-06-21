@@ -146,7 +146,7 @@ export class PalletListComponent implements OnInit {
 
   openRecyclingDocketDialog(id: string): void {
     const data = {id};
-    const dialogRef = this.dialog.open(PalletDocketDialogComponent, {width: '1200px', data, autoFocus: false});
+    const dialogRef = this.dialog.open(PalletDocketDialogComponent, {width: '856px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe();
   }
 

@@ -15,6 +15,7 @@ import { PalletInterstateTransferViewComponent } from './pallet-interstate-trans
 import { PalletReconciliationListComponent } from './pallet-reconciliation-list/pallet-reconciliation-list.component';
 import { PalletReconciliationViewComponent } from './pallet-reconciliation-view/pallet-reconciliation-view.component';
 import { PalletDocketDialogComponent } from './shared/pallet-docket-dialog/pallet-docket-dialog.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,9 @@ import { PalletDocketDialogComponent } from './shared/pallet-docket-dialog/palle
   imports: [
     CommonModule,
     SharedModule,
-    PalletsRoutingModule
+    PalletsRoutingModule,
+    MatProgressSpinnerModule,
+
   ],
   providers: [
     PalletsService

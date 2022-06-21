@@ -14,6 +14,7 @@ export class PalletDocketDialogComponent implements OnInit, OnDestroy {
 
   public transfer!: Pallet;
   public quantities!: {Loscam: number, Chep: number, Plain: number};
+  public loading = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -31,7 +32,8 @@ export class PalletDocketDialogComponent implements OnInit, OnDestroy {
       switchMap(id => this.palletService.getPalletTransfer(id)),
       tap(_ => this.transfer = _),
       switchMap(transfer => this.palletService.getPalletsOwedByCustomer(transfer.fields.CustomerNumber, transfer.fields.Site)),
-      tap(_ => this.quantities = _)
+      tap(_ => this.quantities = _),
+      tap(() => this.loading = false)
     ).subscribe()
   }
 

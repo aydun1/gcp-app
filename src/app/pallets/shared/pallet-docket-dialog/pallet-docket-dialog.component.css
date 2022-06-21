@@ -9,7 +9,14 @@
 }
 
 .buttons {
+  align-items: center;
+  align-self: flex-start;
+  display: flex;
   margin-left: auto;
+}
+
+.mat-spinner {
+  margin-right: 10px;
 }
 
 .sub-header {
