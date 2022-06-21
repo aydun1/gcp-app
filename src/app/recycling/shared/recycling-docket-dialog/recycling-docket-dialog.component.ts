@@ -25,15 +25,8 @@ export class RecyclingDocketDialogComponent implements OnDestroy, OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.renderer.addClass(document.body, 'print');
     this.address = this.data.addresses.filter(_ => _.addresstypecode === 2)[0]
-    console.log(this.address)
-    ////this.route.paramMap.pipe(
-    //  map(params => params.get('id')),
-    //  switchMap(id => this.palletService.getPalletTransfer(id)),
-    //  tap(_ => this.transfer = _),
-    //  switchMap(transfer => this.palletService.getPalletsOwedByCustomer(transfer.fields.CustomerNumber, transfer.fields.Site)),
-    //  tap(_ => this.quantities = _)
-    //).subscribe()
   }
 
 

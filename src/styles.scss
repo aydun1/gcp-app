@@ -93,8 +93,9 @@ a {
   left: 0;
 }
 
-.print .outer {
-  display: none;
+.print gcp-customer-list,
+.print gcp-pallet-list {
+  height: 0px;
 }
 
 .hidden {
