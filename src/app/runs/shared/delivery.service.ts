@@ -169,7 +169,6 @@ export class DeliveryService {
       Title: title,
       Customer: customer.name,
       CustomerNumber: customer.accountnumber,
-      CustomerId: customer.accountid,
       Sequence: sequence
     };
     if (notes) fields['Notes'] = notes;

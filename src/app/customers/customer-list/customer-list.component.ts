@@ -148,6 +148,6 @@ export class CustomerListComponent implements OnInit {
   }
 
   trackByFn(index: number, item: Customer): string {
-    return item.accountid;
+    return item.accountnumber;
   }
 }
