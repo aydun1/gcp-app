@@ -1,4 +1,12 @@
+:host {
+  height: 100%;
+}
 
+.mat-dialog-content {
+  height: 100%;
+  max-height: calc(100vh - 158px);
+  overflow: hidden;
+}
 
 .header {
   align-items: center;
@@ -29,11 +37,13 @@ h2, h3 {
 }
 
 .signs {
-  height: 220px;
+  height: calc((100% - 10% - 320px) / 2);
+  min-height: 50px;
 }
 
 .notes {
-  height: 100px
+  height: calc((100% - 80% - 320px));
+  min-height: 50px;
 }
 
 .addresses {
