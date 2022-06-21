@@ -1,0 +1,69 @@
+.mat-dialog-content {
+  display: flex;
+}
+
+.header {
+  align-items: center;
+  display: flex;
+  height: 110px;
+}
+
+.buttons {
+  margin-left: auto;
+}
+
+.sub-header {
+  display: none;
+}
+
+img {
+  margin-right: 16px;
+  width: 110px;
+}
+
+h2, h3 {
+  margin: 10px 0;
+}
+
+.signs {
+  display: flex;
+  margin-top: 60px;
+}
+
+.sender {
+  margin-right: 20px;
+}
+
+.list-container {
+  height: 368px;
+}
+
+@media print {
+  @page {
+    size: landscape
+  }
+
+  .docket {
+    position: fixed;
+    right: 0;
+    width: 500px;
+    height: 500px;
+  }
+  
+  .docket1 {
+    left: 40px;
+  }
+  
+  .docket2 {
+    right: 0;
+  }
+
+  .main-header {
+    display: none;
+  }
+
+  .sub-header {
+    display: flex;
+  }
+
+}

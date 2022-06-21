@@ -1,6 +1,20 @@
+<div class="header main-header">
+  <img alt="Company logo" src="assets/logo.png">
+  <div>
+    <h2>Garden City Plastics</h2>
+    <h3>Pallet Management System</h3>
+  </div>
+  <div class="buttons">
+    <button mat-icon-button type="button" (click)="print()">
+      <mat-icon>print</mat-icon>
+    </button>
+  </div>
+</div>
+
+<mat-dialog-content>
 <div class="docket docket{{ i }}" *ngFor="let i of [1, 2]">
-  <div class="header">
-    <img src="assets/logo.png">
+  <div class="header sub-header">
+    <img src="assets/logo.png" alt="Logo">
     <div>
       <h2>Garden City Plastics</h2>
       <h3>Pallet Management System</h3>
@@ -9,11 +23,10 @@
   <div class="list-container">
     <mat-list *ngIf="transfer?.fields as docket">
       <mat-list-item>
-        <div mat-line>{{ docket.Title | titlecase }}</div>
-        <div mat-line>Customer</div>
+        <div mat-line><strong>{{ docket.Title | titlecase }}</strong></div>
       </mat-list-item>
-      <mat-list-item>
-        <div mat-line>{{ docket.Notes || '' }}</div>
+      <mat-list-item *ngIf="docket.Notes">
+        <div mat-line>{{ docket.Notes }}</div>
         <div mat-line>Reference number</div>
       </mat-list-item>
       <mat-list-item>
@@ -36,3 +49,4 @@
     <div>Received by: ________________</div>
   </div>
 </div>
+</mat-dialog-content>

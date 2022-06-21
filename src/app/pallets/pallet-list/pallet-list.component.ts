@@ -1,11 +1,13 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { Pallet } from '../shared/pallet';
+import { PalletDocketDialogComponent } from '../shared/pallet-docket-dialog/pallet-docket-dialog.component';
 import { PalletsService } from '../shared/pallets.service';
 
 @Component({
@@ -30,6 +32,7 @@ export class PalletListComponent implements OnInit {
     private el: ElementRef,
     private route: ActivatedRoute,
     private router: Router,
+    private dialog: MatDialog,
     private palletsService: PalletsService,
     private sharedService: SharedService
   ) { }
@@ -139,6 +142,12 @@ export class PalletListComponent implements OnInit {
 
   clearNameFilter(): void {
     this.nameFilter.patchValue('');
+  }
+
+  openRecyclingDocketDialog(id: string): void {
+    const data = {id};
+    const dialogRef = this.dialog.open(PalletDocketDialogComponent, {width: '1200px', data, autoFocus: false});
+    dialogRef.afterClosed().subscribe();
   }
 
   trackByFn(index: number, item: Pallet): string {
