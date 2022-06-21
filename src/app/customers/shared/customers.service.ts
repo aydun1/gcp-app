@@ -21,6 +21,7 @@ export class CustomersService {
   private _nextPage!: string;
   private _customersSubject$ = new BehaviorSubject<Customer[]>([]);
   private _loadingCustomers!: boolean;
+  private maxDebtorIdLength = 15;
 
   public loading = new BehaviorSubject<boolean>(false);
 
@@ -57,7 +58,7 @@ export class CustomersService {
   }
 
   getCustomer(id: string): Observable<Customer> {
-    const isAccountNumber = id.length < 8;
+    const isAccountNumber = id.length <= this.maxDebtorIdLength;
     let url = `${this._url}/accounts`;
     url = isAccountNumber ?
     `${url}?$select=name,accountnumber,address1_composite&$filter=accountnumber eq '${this.shared.sanitiseName(id)}'` :
