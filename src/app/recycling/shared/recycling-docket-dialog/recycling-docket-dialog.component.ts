@@ -29,7 +29,6 @@ export class RecyclingDocketDialogComponent implements OnDestroy, OnInit {
     this.address = this.data.addresses.filter(_ => _.addresstypecode === 2)[0]
   }
 
-
   ngOnDestroy() {
     this.renderer.removeClass(document.body, 'print');
   }
