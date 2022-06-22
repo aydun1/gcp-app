@@ -133,7 +133,7 @@
 
 <mat-menu #menu="matMenu" xPosition="before">
   <ng-template matMenuContent let-delivery="delivery">
-    <button *ngIf="delivery.fields.Status !== 'Delivered'"mat-menu-item (click)="markDelivered(delivery.id)">
+    <button type="button" *ngIf="delivery.fields.Status !== 'Delivered'" mat-menu-item (click)="markDelivered(delivery.id)" [disabled]="delivery.fields.To !== state">
       <mat-icon>check</mat-icon>Mark as delivered
     </button>
   </ng-template>

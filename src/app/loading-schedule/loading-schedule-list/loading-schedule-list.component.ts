@@ -29,6 +29,7 @@ export class LoadingScheduleListComponent implements OnInit {
   public grouped!: boolean;
   public totals!: object;
   public states = this.shared.branches;
+  public state = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -48,7 +49,12 @@ export class LoadingScheduleListComponent implements OnInit {
         map(() => _)
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
-      switchMap(_ => state$.pipe(map(state => !_['branch'] ? {..._, branch: state} : _))),
+      switchMap(params => state$.pipe(
+        map(state => {
+          this.state = state;
+          return !params['branch'] ? {...params, branch: state} : {...params};
+        })
+      )),
       tap(_ => {
         this.parseParams(_);
         this.groups = _['view'] === 'grouped' ? ['Pan list sent', 'Scheduled', 'Delivered'] : [];
