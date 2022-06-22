@@ -10,8 +10,7 @@ export class AuthGuard implements CanActivate {
   constructor(private authService: MsalService, private router: Router) {}
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | boolean {
-    const accounts = this.authService.instance.getAllAccounts()[0];
-    console.log(accounts);
+    const account = this.authService.instance.getAllAccounts()[0];
     return of(true);
     //return this.authService.watchLogin().pipe(
     //  take(1),
