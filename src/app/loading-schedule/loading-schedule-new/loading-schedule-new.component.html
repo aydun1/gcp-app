@@ -72,7 +72,7 @@
         <mat-label>Driver</mat-label>
         <input type="text" title="Driver" matInput formControlName="driver" [matAutocomplete]="auto2">
         <mat-autocomplete #auto2="matAutocomplete">
-          <mat-option *ngFor="let option of loadingScheduleForm.value['transportCompany'].fields?.DriversArray" [value]="option">
+          <mat-option *ngFor="let option of loadingScheduleForm.value['transportCompany']?.fields?.DriversArray" [value]="option">
             {{option}}
           </mat-option>
         </mat-autocomplete>

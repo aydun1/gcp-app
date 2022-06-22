@@ -54,8 +54,8 @@ export class LoadingScheduleNewComponent implements OnInit {
       status: ['', [Validators.required]],
       loadingDate: ['', [Validators.required]],
       arrivalDate: ['', [Validators.required]],
-      from: [{value: 'VIC'}, [Validators.required]],
-      to: [{value: this.state}, [Validators.required]],
+      from: ['VIC', [Validators.required]],
+      to: [this.state !== 'VIC' ? this.state : '', [Validators.required]],
       transportCompany: [''],
       driver: [''],
       spaces: ['', [Validators.min(0)]],
@@ -63,22 +63,22 @@ export class LoadingScheduleNewComponent implements OnInit {
     });
 
     this.id = this.route.snapshot.paramMap.get('id');
-    this.transportCompanies$ = this.loadingScheduleService.getTransportCompanies().pipe(
+
+    this.transportCompanies$ = this.sharedService.getBranch().pipe(
+      tap(state => {
+        this.state = state;
+      }),
+      switchMap(state => this.loadingScheduleService.getTransportCompanies(state)),
       switchMap(_ => this.patchForm(_)),
       tap(() => this.loading = false)
     );
 
     this.getOptions();
-
-    this.sharedService.getBranch().subscribe(state => {
-      this.state = state;
-      if (this.loadingScheduleForm) this.patchForm(null);
-    });
   }
 
   patchForm(transportCompanies: Array<TransportCompany> | null): Observable<TransportCompany[] | null> {
     if (!this.id) {
-      const data = {status: 'Scheduled', from: 'VIC', to: this.state};
+      const data = {status: 'Scheduled', from: 'VIC', to: this.state !== 'VIC' ? this.state : ''};
       this.loadingScheduleForm.patchValue(data);
       return of(transportCompanies);
     }
@@ -89,7 +89,7 @@ export class LoadingScheduleNewComponent implements OnInit {
         data['arrivalDate'] = _.fields['ArrivalDate'];
         data['loadingDate'] = _.fields['LoadingDate'];
         data['destination'] = _.fields['Destination'];
-        data['transportCompany'] = transportCompanies ? transportCompanies.find(t => t.fields.Title === _.fields['TransportCompany']) : '';
+        data['transportCompany'] = transportCompanies ? transportCompanies.find(t => t.fields.Title === _.fields['TransportCompany']) || _.fields['TransportCompany'] : _.fields['TransportCompany'];
         data['driver'] = _.fields['Driver'];
         data['spaces'] = _.fields['Spaces'];
         data['notes'] = _.fields['Notes'];
@@ -105,7 +105,7 @@ export class LoadingScheduleNewComponent implements OnInit {
     if (this.loadingScheduleForm.invalid) return;
     this.loading = true;
     const payload = {...this.loadingScheduleForm.getRawValue()};
-    this.loadingScheduleService.createLoadingScheduleEntry(payload, this.id).pipe(
+    this.loadingScheduleService.createLoadingScheduleEntry(payload, this.id, this.state).pipe(
       tap(_ => {
         this.goBack();
         this.snackBar.open(`${this.id ? 'Updated' : 'Added'} loading schedule entry`, '', {duration: 3000});
@@ -126,7 +126,7 @@ export class LoadingScheduleNewComponent implements OnInit {
   }
 
   displayFn(option: any): string {
-    return option.fields?.Title || option;
+    return option?.fields?.Title || option;
   }
 
   goBack(): void {

@@ -113,8 +113,8 @@ export class LoadingScheduleService {
     );
   }
 
-  getTransportCompanies() {
-    const url = `${this._transportCompaniesUrl}/items?expand=fields(select=Title,Drivers,Droivers)`;
+  getTransportCompanies(branch: string) {
+    const url = `${this._transportCompaniesUrl}/items?expand=fields(select=Title,Drivers)&filter=fields/Branch eq '${branch}'`;
     return this.http.get(url).pipe(
       map((res: any) => res.value),
       tap(_ => _.forEach((_: any) => _['fields']['DriversArray'] = _['fields']['Drivers']?.split(/[\r\n]+/)))
@@ -144,7 +144,7 @@ export class LoadingScheduleService {
     return this.http.patch<TransportCompany>(`${this._transportCompaniesUrl}/items('${id}')`, payload);
   }
 
-  createLoadingScheduleEntry(v: any, id: string | null): Observable<LoadingSchedule> {
+  createLoadingScheduleEntry(v: any, id: string | null, branch: string): Observable<LoadingSchedule> {
     const drivers = v.transportCompany.fields?.Drivers || [];
     const isNewDriver = !drivers.includes(v.driver) && v.driver !== '';
     const isNewTransportCompany = v.transportCompany.fields ? false : true;
@@ -154,7 +154,7 @@ export class LoadingScheduleService {
       LoadingDate: v.loadingDate,
       ArrivalDate: v.arrivalDate,
       Spaces: v.spaces || null,
-      TransportCompany: transportCompany,
+      TransportCompany: transportCompany.trim(),
       Driver: v.driver,
       From: v.from,
       To: v.to,
@@ -167,12 +167,12 @@ export class LoadingScheduleService {
       const fields = {
         Title: transportCompany,
         Drivers: v.driver,
-        Branch: v.destination
+        Branch: branch
       };
-      a = this.http.post<TransportCompany>(`${this._transportCompaniesUrl}/items`, {fields});
+      a = this.http.post<TransportCompany>(`${this._transportCompaniesUrl}/items`, {fields});     
     } else if (transportCompany && isNewDriver) {
       const fields = {
-        Drivers: `${drivers}\n${v.driver}`
+        Drivers: `${drivers}\n${v.driver}`.trim()
       };
       a = this.http.patch<TransportCompany>(`${this._transportCompaniesUrl}/items('${v.transportCompany.id}')`, {fields});
     } else {
