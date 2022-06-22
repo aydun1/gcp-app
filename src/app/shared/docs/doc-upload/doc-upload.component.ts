@@ -14,14 +14,19 @@ export class DocUploadComponent implements OnInit {
   @Input() folder!: string;
   @Output() statusChanged = new EventEmitter<boolean>();
 
-  private _docCount!: number;
   private _uploads$ = new BehaviorSubject<Doc[]>([]);
   private _docStarter$ = new BehaviorSubject<string>('');
   public docs$!: Observable<Doc[]>;
-
+  public docCount!: number;
   constructor(
     private docsService: DocsService
   ) { }
+
+  get idle() {
+    return this._uploads$.pipe(
+      map(_ => _.length === 0)
+    )
+  }
 
   ngOnInit(): void {
     if (this.id) this._docStarter$.next(this.id);
@@ -30,9 +35,9 @@ export class DocUploadComponent implements OnInit {
       map(_ => [..._[0], ..._[1]]),
       tap(_ => {
         const complete = _.filter(d => d.id).length || 0;
-        const attachStatusChanged = this._docCount !== undefined && this._docCount !== complete && (this._docCount === 0 || complete === 0);
+        const attachStatusChanged = this.docCount !== undefined && this.docCount !== complete && (this.docCount === 0 || complete === 0);
         if (attachStatusChanged) this.statusChanged.emit(complete > 0);
-        this._docCount = complete;
+        this.docCount = complete;
       })
     );
   }
