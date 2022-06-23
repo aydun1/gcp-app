@@ -108,7 +108,7 @@ export class CustomersService {
 
   getAddresses(customer: string): Observable<Address[]> {
     let url = `${this._url}/customeraddresses?$select=name,addressnumber,addresstypecode,primarycontactname,line1,line2,line3,city,stateorprovince,postalcode`;
-    url = customer.length <= 7 ?
+    url = customer.length <= this._maxDebtorIdLength ?
     `${url}&$filter=parentid_account/accountnumber eq '${this.shared.sanitiseName(customer)}'` :
     `${url}&$filter=_parentid_value eq '${customer}'`;
     return this.http.get(url).pipe(map(_ => _['value'].filter((_: Address) => _.name)));
