@@ -149,12 +149,12 @@ export class DeliveryService {
           requests.push({id: i += 1, method: 'PATCH', url, headers, body: payload});
         })
         return requests.length ? this.http.post(`${environment.endpoint}/$batch`, {requests}) : of(1);
-      }),
-      tap(_ => console.log(_))
+      })
     );
   }
 
   getRuns(branch: string): Observable<Run[]> {
+    this.loading.next(true);
     const url = `${this._runsListUrl}/items?expand=fields(select=Title)&filter=fields/Branch eq '${branch}'`;
     return this.http.get(url).pipe(
       map((res: any) => res.value),
