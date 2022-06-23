@@ -22,6 +22,12 @@ h2 {
   flex: 1;
 }
 
+.mat-form-field {
+  font-size: 14px;
+  margin-right: 10px;
+  width: 145px;
+}
+
 .inner {
   margin: 10px 10px;
 }

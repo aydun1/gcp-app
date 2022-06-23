@@ -106,7 +106,8 @@ export class CustomersService {
     );
   }
 
-  getAddresses(customer: string): Observable<Address[]> {
+  getAddresses(customer: string | null): Observable<Address[]> {
+    if (!customer) return of([]);
     let url = `${this._url}/customeraddresses?$select=name,addressnumber,addresstypecode,primarycontactname,line1,line2,line3,city,stateorprovince,postalcode`;
     url = customer.length <= this._maxDebtorIdLength ?
     `${url}&$filter=parentid_account/accountnumber eq '${this.shared.sanitiseName(customer)}'` :

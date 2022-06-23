@@ -1,5 +1,5 @@
 <div class="header">
-  <h2 mat-dialog-title>Pick a customer</h2>
+  <h2 mat-dialog-title>{{ data?.title || 'Pick a customer' }}</h2>
   <button mat-stroked-button [matMenuTriggerFor]="menu" tabindex="-1">
     {{ branch || 'All branches'}}
   </button>
@@ -39,8 +39,6 @@
     <button type="submit" mat-raised-button color="primary" [disabled]="loading || loadingAddresses || loadingSites">{{'Ok'}}</button>
   </mat-dialog-actions>
 </form>
-
-<button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>
 
 <mat-menu #menu="matMenu" xPosition="before">
   <ng-template matMenuContent>

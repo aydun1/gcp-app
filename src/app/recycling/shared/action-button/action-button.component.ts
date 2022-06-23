@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { combineLatest, of, Subject, switchMap, tap } from 'rxjs';
+import { of, Subject, switchMap, tap } from 'rxjs';
 
 import { RecyclingService } from '../recycling.service';
 import { Cage } from '../cage';
@@ -12,7 +12,7 @@ import { SharedService } from '../../../shared.service';
 import { CustomersService } from '../../../customers/shared/customers.service';
 import { Site } from '../../../customers/shared/site';
 import { CustomerSiteDialogComponent } from '../../../customers/shared/customer-site-dialog/customer-site-dialog.component';
-import { DeliveryService } from 'src/app/runs/shared/delivery.service';
+import { RunPickerDialogComponent } from '../../../runs/shared/run-picker-dialog/run-picker-dialog.component';
 
 @Component({
   selector: 'gcp-action-button',
@@ -45,8 +45,7 @@ export class ActionButtonComponent implements OnInit {
     private sharedService: SharedService,
     private navService: NavigationService,
     private recyclingService: RecyclingService,
-    private cutomersService: CustomersService,
-    private deliveryService: DeliveryService
+    private cutomersService: CustomersService
   ) { }
 
   ngOnInit(): void {
@@ -164,7 +163,8 @@ export class ActionButtonComponent implements OnInit {
   }
 
   addToRunList(cageNumber: number) {
-    this.loading.next(true);
-    this.deliveryService.requestCageTransfer(this.cage.fields.CustomerNumber, this.cage.fields.Site, cageNumber, true).subscribe(() => this.onComplete());
+    const collect = true;
+    const data = {accountnumber: this.cage.fields.CustomerNumber, site: this.cage.fields.Site, cageNumber, collect};
+    this.dialog.open(RunPickerDialogComponent, {width: '600px', data, autoFocus: false});
   }
 }

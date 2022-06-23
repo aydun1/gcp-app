@@ -1,0 +1,23 @@
+.close-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.mat-list {
+  margin-bottom: 16px;
+  padding: 0;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+.active {
+  background-color: #f3f2f1;
+  border-left: 2px solid red;
+}
+
+.delete {
+  margin: 0 12px;
+}

@@ -63,7 +63,7 @@ export class CustomerSiteDialogComponent implements OnInit {
 
   deleteSite(): void {
     const action = this.customerService.deleteSite(this.data.customer, this.siteId, this.oldName);
-    this.finaliseAction(action, 'removed').subscribe(() => this.navigate(''));
+    this.finaliseAction(action, 'removed').subscribe(() => this.navigate(null));
   }
 
   private finaliseAction(action: Observable<Object>, word: string): Observable<object> {
@@ -81,7 +81,7 @@ export class CustomerSiteDialogComponent implements OnInit {
     )
   }
 
-  navigate(site: string): void {
+  navigate(site: string | null): void {
     this.router.navigate([], { queryParams: {site}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 

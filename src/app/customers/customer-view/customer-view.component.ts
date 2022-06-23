@@ -16,6 +16,7 @@ import { SharedService } from '../../shared.service';
 import { RecyclingDocketDialogComponent } from '../../recycling/shared/recycling-docket-dialog/recycling-docket-dialog.component';
 import { DeliveryService } from '../../runs/shared/delivery.service';
 import { Address } from '../shared/address';
+import { RunPickerDialogComponent } from '../../runs/shared/run-picker-dialog/run-picker-dialog.component';
 
 @Component({
   selector: 'gcp-customer-view',
@@ -136,7 +137,9 @@ export class CustomerViewComponent implements OnInit {
 
   requestCages() {
     const cageNumber = 0;
-    this.deliveryService.requestCageTransfer(this.customer.accountnumber, this.site, cageNumber, false).subscribe();
+    const collect = false;
+    const data = {accountnumber: this.customer.accountnumber, site: this.site, cageNumber, collect};
+    this.dialog.open(RunPickerDialogComponent, {width: '600px', data, autoFocus: false});
   }
 
   openSiteDialog(customer: Customer): void {

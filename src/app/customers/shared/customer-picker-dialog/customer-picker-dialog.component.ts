@@ -23,10 +23,10 @@ export class CustomerPickerDialogComponent implements OnInit {
   public addresses$!: Observable<Address[]>;
   public branch!: string;
   public get branches(): Array<string> {return this.shared.branches};
-  public address!: string;
+  public address!: string | null;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {notes: boolean, address: boolean},
+    @Inject(MAT_DIALOG_DATA) public data: {notes: boolean, address: boolean, title: string},
     private dialogRef: MatDialogRef<CustomerPickerDialogComponent>,
     private fb: FormBuilder,
     private customersService: CustomersService,
@@ -42,6 +42,7 @@ export class CustomerPickerDialogComponent implements OnInit {
     });
     this.shared.getBranch().subscribe(_ => this.branch = _);
     this.customerForm.get('customer')?.valueChanges.subscribe(_ => {
+      this.address = null;
       this.getAddresses(_);
       this.getSites(_);
     });

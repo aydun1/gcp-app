@@ -1,6 +1,8 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
@@ -13,6 +15,8 @@ import { SharedService } from '../../shared.service';
 import { Delivery } from '../shared/delivery';
 import { DeliveryEditorDialogComponent } from '../shared/delivery-editor-dialog/delivery-editor-dialog.component';
 import { DeliveryService } from '../shared/delivery.service';
+import { Run } from '../shared/run';
+import { RunManagerDialogComponent } from '../shared/run-manager-dialog/run-manager-dialog.component';
 
 @Component({
   selector: 'gcp-run-list',
@@ -22,9 +26,12 @@ import { DeliveryService } from '../shared/delivery.service';
 export class RunListComponent implements OnInit {
   private _loadList = false;
   public listSize!: number;
+  public runFilter = new FormControl('');
 
   public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
+  public runs: Array<Run> = [];
+  public run = '';
   public loading = false;
   public empty = true;
   public displayedColumns = ['sequence', 'customer', 'site', 'notes', 'actions', 'status', 'menu'];
@@ -49,12 +56,17 @@ export class RunListComponent implements OnInit {
         map(() => _)
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
-      switchMap(_ => state$.pipe(map(state => !_['branch'] ? {..._, branch: state} : _))),
+      switchMap(_ => state$.pipe(
+        map(state => !_['branch'] ? {..._, branch: state} : _),
+      )),
+      switchMap(_ => this.deliveryService.getRuns(_['branch']).pipe(
+        tap(runs => this.runs = runs),
+        map(() => _)
+      )),
       tap(_ => this.parseParams(_)),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
       tap(_ => this.listSize = _.length),
     )
-
   }
 
   getFirstPage(params: Params): Observable<Delivery[]> {
@@ -64,6 +76,14 @@ export class RunListComponent implements OnInit {
   parseParams(params: Params): void {
     if (!params) return;
     const filters: Params = {};
+    if ('run' in params) {
+      this.run = params['run'];
+      this.runFilter.patchValue(this.run);
+      filters['run'] = this.run;
+    } else {
+      this.run = '';
+      this.runFilter.patchValue('');
+    }
   }
 
   compareQueryStrings(prev: Params, curr: Params): boolean {
@@ -73,17 +93,25 @@ export class RunListComponent implements OnInit {
     }
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
-    return true && this._loadList;
+    const sameRun = prev['run'] === curr['run'];
+    return sameRun && this._loadList;
   }
 
   openCustomerPicker(): void {
-    const data = {notes: true, address: true};
+    const data = {notes: true, address: true, title: 'Delivery details'};
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().pipe(
       switchMap(_ => _ ? this.addDelivery(_.customer, _.site, _.address, _.notes) : of()),
     ).subscribe(() => {
       this.loading = false;
     });
+  }
+
+  openRunManager(): void {
+    const data = {notes: true, address: true, runs: this.runs};
+    const dialogRef = this.dialog.open(RunManagerDialogComponent, {width: '600px', data, autoFocus: false});
+    dialogRef.afterClosed().pipe(
+    ).subscribe()
   }
 
   moveItem(event: CdkDragDrop<Delivery[]>) {
@@ -94,7 +122,8 @@ export class RunListComponent implements OnInit {
   }
 
   addDelivery(customer: Customer, site: Site, address: string, notes: string) {
-    return this.deliveryService.createDelivery('runname', customer, site, address, notes, this.listSize + 1);
+    const run = this.runFilter.value || '';
+    return this.deliveryService.createDelivery(run, customer, site, address, notes, this.listSize + 1);
   }
 
   markComplete(id: string, currentStatus: string) {
@@ -127,4 +156,11 @@ export class RunListComponent implements OnInit {
     this.dialog.open(RecyclingDialogComponent, {width: '800px', data, autoFocus: false});
   }
 
+  pickRun(run: MatSelectChange): void {
+    if (run.value === undefined){
+      this.runFilter.patchValue(this.run);
+      return;
+    };
+    this.router.navigate([], { queryParams: {run: run.value || null}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
 }

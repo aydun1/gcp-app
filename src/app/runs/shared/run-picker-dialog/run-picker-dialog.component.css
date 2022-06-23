@@ -13,3 +13,7 @@
   display: flex;
   justify-content: space-between;
 }
+
+.mat-spinner {
+  margin: 0 auto;
+}
