@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
-import { BehaviorSubject, catchError, combineLatest, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, startWith, switchMap, take, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
@@ -25,6 +25,7 @@ export class DeliveryService {
   private _loadingDeliveries!: boolean;
   private _nextPage!: string;
   private _deliveriesSubject$ = new BehaviorSubject<Delivery[]>([]);
+  private _runsSubject$ = new BehaviorSubject<Delivery[]>([]);
 
   public loading = new BehaviorSubject<boolean>(true);
 
@@ -154,10 +155,14 @@ export class DeliveryService {
   }
 
   getRuns(branch: string): Observable<Run[]> {
-    this.loading.next(true);
     const url = `${this._runsListUrl}/items?expand=fields(select=Title)&filter=fields/Branch eq '${branch}'`;
     return this.http.get(url).pipe(
-      map((res: any) => res.value),
+      startWith(this._runsSubject$),
+      map((res: any) => res.value as Delivery[]),
+      distinctUntilChanged((prev, curr) => {
+        return prev.map(_ => _.fields.Title).join('') === curr.map(_ => _.fields.Title).join('')
+      }),
+      tap(_ => this._runsSubject$.next(_)),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         return of([]);
