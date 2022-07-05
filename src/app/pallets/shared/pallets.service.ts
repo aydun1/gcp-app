@@ -326,7 +326,7 @@ export class PalletsService {
 
     let url = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}/items?expand=fields(select=Title,Pallet,Owing)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt lt '${dateInt}'`;
     let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}' and fields/Created ge '${startOfMonth}'`;
-    if (site) {
+    if (site !== undefined) {
       const filter = 'and fields/Site eq ' + (site ? `'${this.shared.sanitiseName(site)}'` : 'null');
       url += filter;
       url2 += filter;
