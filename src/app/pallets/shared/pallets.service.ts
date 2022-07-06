@@ -305,7 +305,7 @@ export class PalletsService {
     const eod = new Date(date.setHours(23,59,59,999)).toISOString();
 
     let url = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}/items?expand=fields(select=Owing)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/DateInt lt '${dateInt}'&top=2000`;
-    let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null and fields/Created ge '${startOfMonth}' and fields/Created lt '${eod}'&top=2000`;
+    let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Created ge '${startOfMonth}' and fields/Created lt '${eod}' and fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null&top=2000`;
 
     const prevMonths: Observable<PalletTotals[]> = this.http.get(url).pipe(map(_ => _['value']));
     const currMonth: Observable<Pallet[]> = this.http.get(url2).pipe(map(_ => _['value']));
@@ -325,7 +325,7 @@ export class PalletsService {
     const dateInt = this.dateInt(date);
 
     let url = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}/items?expand=fields(select=Title,Pallet,Owing)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt lt '${dateInt}'`;
-    let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}' and fields/Created ge '${startOfMonth}'`;
+    let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/Created ge '${startOfMonth}' and fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
     if (site !== undefined) {
       const filter = 'and fields/Site eq ' + (site ? `'${this.shared.sanitiseName(site)}'` : 'null');
       url += filter;
