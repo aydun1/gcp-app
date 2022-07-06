@@ -62,6 +62,8 @@ export class PalletsService {
     }
     if (filterKeys.includes('branch')) parsed.unshift(`fields/Branch eq '${filters['branch']}'`);
     if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Cancelled'`);
+    const earlier = new Date(new Date().getTime() - 1000*60*60*24*60);
+    parsed.unshift(`fields/Created ge '${earlier.toISOString()}'`);
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
     url += `&orderby=fields/Created desc&top=25`;
     return url;
