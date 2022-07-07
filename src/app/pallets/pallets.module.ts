@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { SharedModule } from '../shared/shared.module';
 import { PalletsRoutingModule } from './pallets-routing.module';
@@ -15,7 +16,7 @@ import { PalletInterstateTransferViewComponent } from './pallet-interstate-trans
 import { PalletReconciliationListComponent } from './pallet-reconciliation-list/pallet-reconciliation-list.component';
 import { PalletReconciliationViewComponent } from './pallet-reconciliation-view/pallet-reconciliation-view.component';
 import { PalletDocketDialogComponent } from './shared/pallet-docket-dialog/pallet-docket-dialog.component';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { PalletCustomerListDialogComponent } from './shared/pallet-customer-list-dialog/pallet-customer-list-dialog.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     PalletReconciliationListComponent,
     PalletReconciliationNewComponent,
     PalletListComponent,
+    PalletCustomerListDialogComponent,
     PalletInterstateTransferNewComponent,
     PalletInterstateTransferListComponent,
     PalletInterstateTransferViewComponent,

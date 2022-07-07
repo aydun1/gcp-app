@@ -22,10 +22,14 @@
   </div>
   <div class="inner">
     <div class="cards">
+      <mat-divider></mat-divider>
       <div class="status-card">
-        <h3>
-          Pallets with customer
-        </h3>
+        <div class="section-heading">
+          <h3>
+            Pallets with customer
+          </h3>
+          <button type="button" mat-stroked-button (click)="openPalletHistory(customer)">History</button>
+        </div>
         <dl>
           <dt>Loscams</dt>
           <dd *ngIf="palletsOwing; else loadingDots">{{ palletsOwing.Loscam }}</dd>
@@ -35,10 +39,13 @@
           <dd *ngIf="palletsOwing; else loadingDots">{{ palletsOwing.Plain }}</dd>
         </dl>
       </div>
+      <mat-divider></mat-divider>
       <div class="status-card">
-        <h3>
-          Cages
-        </h3>
+        <div class="section-heading">
+          <h3>
+            Cages
+          </h3>
+        </div>
         <dl>
           <dt>Active</dt>
           <dd *ngIf="cages; else loadingDots">{{ cages.count }}</dd>
@@ -48,20 +55,26 @@
           <dd *ngIf="cages; else loadingDots">{{ cages.weight }} kg</dd>
         </dl>
       </div>
+      <mat-divider></mat-divider>
+      <div class="status-card">
+        <div class="big-buttons">
+          <gcp-big-button [target]="[]" (click)="openPalletDialog(customer)">Transfer Pallets</gcp-big-button>
+          <gcp-big-button [target]="[]" (click)="openRecyclingDialog(customer)">Manage Recycling</gcp-big-button>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="status-card">
+        <div class="section-heading">
+          <h3>
+            Attachments
+          </h3>
+        </div>
+        <mat-card>
+          <gcp-doc-upload [id]="customer.accountnumber" folder="debtors"></gcp-doc-upload>
+        </mat-card>
+      </div>
+      <mat-divider></mat-divider>
     </div>
-    <h3>
-      Actions
-    </h3>
-    <div class="big-buttons">
-      <gcp-big-button [target]="[]" (click)="openPalletDialog(customer)">Transfer Pallets</gcp-big-button>
-      <gcp-big-button [target]="[]" (click)="openRecyclingDialog(customer)">Manage Recycling</gcp-big-button>
-    </div>
-    <h3>
-      Attachments
-    </h3>
-    <mat-card>
-      <gcp-doc-upload [id]="customer.accountnumber" folder="debtors"></gcp-doc-upload>
-    </mat-card>
   </div>
 </div>
 

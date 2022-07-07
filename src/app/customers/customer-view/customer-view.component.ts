@@ -14,9 +14,9 @@ import { CustomerSiteDialogComponent } from '../shared/customer-site-dialog/cust
 import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
 import { RecyclingDocketDialogComponent } from '../../recycling/shared/recycling-docket-dialog/recycling-docket-dialog.component';
-import { DeliveryService } from '../../runs/shared/delivery.service';
 import { Address } from '../shared/address';
 import { RunPickerDialogComponent } from '../../runs/shared/run-picker-dialog/run-picker-dialog.component';
+import { PalletCustomerListDialogComponent } from '../../pallets/shared/pallet-customer-list-dialog/pallet-customer-list-dialog.component';
 
 @Component({
   selector: 'gcp-customer-view',
@@ -47,7 +47,6 @@ export class CustomerViewComponent implements OnInit {
     private navService: NavigationService,
     private sharedService: SharedService,
     private cutomersService: CustomersService,
-    private deliveryService: DeliveryService,
     private recyclingService: RecyclingService,
     private palletsService: PalletsService
   ) { }
@@ -165,6 +164,12 @@ export class CustomerViewComponent implements OnInit {
   openRecyclingDocketDialog(customer: Customer): void {
     const data = {customer, addresses: this.addresses};
     const dialogRef = this.dialog.open(RecyclingDocketDialogComponent, {width: '800px', data, autoFocus: false});
+    dialogRef.afterClosed().subscribe();
+  }
+
+  openPalletHistory(customer: Customer) {
+    const data = {customer, addresses: this.addresses};
+    const dialogRef = this.dialog.open(PalletCustomerListDialogComponent, {width: '800px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe();
   }
 

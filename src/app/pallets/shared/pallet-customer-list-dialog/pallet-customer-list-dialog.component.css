@@ -1,0 +1,51 @@
+.mat-form-field {
+  font-size: 14px;
+  margin-right: 10px;
+  width: 145px;
+}
+
+.mat-footer-row {
+  font-weight: bold;
+}
+
+.mat-dialog-content {
+  height: 40vh;
+}
+
+.options {
+  align-items: baseline;
+  display: flex;
+}
+
+.buttons {
+  flex: 1;
+}
+
+.mat-table {
+  border: 0;
+}
+
+.mat-column-notes {
+  flex: 1 1 180px;
+}
+
+.mat-column-pallet, .mat-column-date {
+  flex: 0 1 115px;
+}
+
+.mat-column-out, .mat-column-in {
+    flex: 0 1 80px;
+}
+
+.mat-column-docket {
+  flex: 0 1 40px;
+}
+
+@media print {
+  .mat-dialog-content {
+    height: auto;
+  }
+  .options {
+    display: none;
+  }
+}

@@ -295,9 +295,11 @@ export class PalletsService {
     return this.http.get<Pallet>(url);
   }
 
-  getCustomerPallets(custnmbr: string, site = ''): Observable<Pallet[]> {
-    let url = this._palletTrackerUrl + `/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
+  getCustomerPallets(custnmbr: string, pallet: string, site: string): Observable<Pallet[]> {
+    let url = this._palletTrackerUrl + `/items?expand=fields(select=Title,Created,Notes,Pallet,Out,In)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
+    if (pallet) url += `and fields/Pallet eq '${pallet}'`;
     if (site) url += `and fields/Site eq '${this.shared.sanitiseName(site)}'`;
+    url += `&orderby=fields/Created desc`;
     return this.http.get(url).pipe(map(_ => _['value']));
   }
 
