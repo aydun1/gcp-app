@@ -30,6 +30,7 @@ export class CustomerViewComponent implements OnInit {
   private palletsSubject$ = new Subject<string>();
   private cagesSubject$ = new Subject<string>();
   private customer!: Customer;
+  private branch_!: string;
   public customer$!: Observable<Customer>;
   public site!: string;
   public sites!: Array<Site>;
@@ -72,6 +73,8 @@ export class CustomerViewComponent implements OnInit {
       switchMap(id => this.cutomersService.getSites(id)),
       tap(sites => this.sites = sites)
     ).subscribe();
+
+    this.sharedService.getBranch().subscribe(branch => this.branch_ = branch);
 
     this.palletsSubject$.pipe(
       tap(() => this.palletsOwing = null),
@@ -156,7 +159,7 @@ export class CustomerViewComponent implements OnInit {
 
   openRecyclingDialog(customer: Customer): void {
     if (!this.sites) return;
-    const data = {customer, sites: this.sites, site: this.site};
+    const data = {customer, sites: this.sites, site: this.site, branch: this.branch_};
     const dialogRef = this.dialog.open(RecyclingDialogComponent, {width: '800px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe(() => this.refreshCages());
   }

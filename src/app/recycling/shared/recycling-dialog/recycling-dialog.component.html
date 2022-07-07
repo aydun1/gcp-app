@@ -1,7 +1,7 @@
 <ng-container *ngIf="assigning">
   <div class="buttons">
     <button mat-icon-button (click)="closeAssigningPage()"><mat-icon>arrow_back</mat-icon></button>
-    <h2 mat-dialog-title>Available cages</h2>
+    <h2 mat-dialog-title>Available cages <span *ngIf="data.branch">in {{data.branch}}</span></h2>
   </div>
   <mat-dialog-content>
     <mat-accordion>

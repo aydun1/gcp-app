@@ -351,8 +351,10 @@ export class RecyclingService {
     );
   }
 
-  getAvailableCages(): Observable<Cage[]> {
-    const url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/CageNumber asc&filter=fields/Status eq 'Available'`;
+  getAvailableCages(branch = ''): Observable<Cage[]> {
+    let url = this._cageTrackerUrl + `/items?expand=fields&filter=fields/Status eq 'Available'`;
+    if (branch) url += `and fields/Branch eq '${branch}'`
+    url += '&orderby=fields/CageNumber asc';
     return this.getCages(url);
   }
 

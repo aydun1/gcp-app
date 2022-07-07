@@ -28,7 +28,7 @@ export class RecyclingDialogComponent implements OnInit {
 
   constructor(
       public dialogRef: MatDialogRef<RecyclingDialogComponent>,
-      @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>, site: string},
+      @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>, site: string, branch: string},
       private recyclingService: RecyclingService,
       private fb: FormBuilder
   ) { }
@@ -43,7 +43,7 @@ export class RecyclingDialogComponent implements OnInit {
       weight: ['', Validators.required]
     });
     this.getContainers();
-    this.availableCages$ = this.recyclingService.getAvailableCages().pipe(
+    this.availableCages$ = this.recyclingService.getAvailableCages(this.data.branch).pipe(
       tap(_ => this.loadingAvailableCages$.next(false))
     );
   }

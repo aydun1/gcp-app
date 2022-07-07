@@ -25,9 +25,10 @@ import { RunManagerDialogComponent } from '../shared/run-manager-dialog/run-mana
 })
 export class RunListComponent implements OnInit {
   private _loadList = false;
+  private _branch!: string;
+
   public listSize!: number;
   public runFilter = new FormControl('');
-
   public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
   public runs: Array<Run> = [];
@@ -57,6 +58,7 @@ export class RunListComponent implements OnInit {
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       switchMap(_ => state$.pipe(
+        tap(_ => this._branch = _),
         map(state => !_['branch'] ? {..._, branch: state} : _),
       )),
       switchMap(_ => this.deliveryService.getRuns(_['branch']).pipe(
@@ -152,7 +154,7 @@ export class RunListComponent implements OnInit {
 
   openRecyclingDialog(name: string, accountnumber: string, site: string): void {
     const customer = {name, accountnumber};
-    const data = {customer, site};
+    const data = {customer, site, branch: this._branch};
     this.dialog.open(RecyclingDialogComponent, {width: '800px', data, autoFocus: false});
   }
 
