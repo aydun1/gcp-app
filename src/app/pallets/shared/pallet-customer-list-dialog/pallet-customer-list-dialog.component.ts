@@ -1,11 +1,10 @@
-import { Component, ElementRef, HostListener, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
-import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
-import { Site } from 'src/app/customers/shared/site';
+import { map, Observable, tap } from 'rxjs';
 
+import { Site } from '../../../customers/shared/site';
 import { Customer } from '../../../customers/shared/customer';
 import { SharedService } from '../../../shared.service';
 import { Pallet } from '../pallet';
@@ -16,8 +15,7 @@ import { PalletsService } from '../pallets.service';
   templateUrl: './pallet-customer-list-dialog.component.html',
   styleUrls: ['./pallet-customer-list-dialog.component.css']
 })
-export class PalletCustomerListDialogComponent implements OnInit {
-  private _loadList!: boolean;
+export class PalletCustomerListDialogComponent implements OnInit, OnDestroy {
   public pallets$!: Observable<Pallet[]>;
   public branchFilter = new FormControl('');
   public palletFilter = new FormControl('');
@@ -25,11 +23,13 @@ export class PalletCustomerListDialogComponent implements OnInit {
   public totalOut = 0;
   public totalIn = 0;
   public states = this.sharedService.branches;
-  public pallets = ['Loscam', 'Chep', 'Plain'];
+  public palletTypes = ['Loscam', 'Chep', 'Plain'];
+  public palletType!: string;
   public displayedColumns = ['date', 'notes', 'pallet', 'in', 'out', 'docket'];
 
 
   constructor(
+    private renderer: Renderer2,
     public dialogRef: MatDialogRef<PalletCustomerListDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>, site: string},
     private palletsService: PalletsService,
@@ -37,12 +37,18 @@ export class PalletCustomerListDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.renderer.addClass(document.body, 'print-dialog');
     this.getCustomerPallets();
   }
 
+  ngOnDestroy() {
+    this.renderer.removeClass(document.body, 'print-dialog');
+  }
+
   getCustomerPallets(): void {
-    const pallet = this.palletFilter.value || '';
-    this.pallets$ = this.palletsService.getCustomerPallets(this.data.customer.accountnumber, pallet, '').pipe(
+    const pallet = this.palletType || '';
+    const site = this.data.site || '';
+    this.pallets$ = this.palletsService.getCustomerPallets(this.data.customer.accountnumber, pallet, site).pipe(
       tap(() => {
           this.totalIn = 0;
           this.totalOut = 0;
@@ -66,8 +72,13 @@ export class PalletCustomerListDialogComponent implements OnInit {
     console.log(branch);
   }
 
-  setPallet(pallet: MatSelectChange): void {
+  setPallet(palletType: string): void {
+    this.palletType = palletType;
     this.getCustomerPallets();
+  }
+
+  print() {
+    window.print();
   }
 
   trackByFn(index: number, item: Pallet): string {

@@ -58,3 +58,9 @@ dt {
 .menu {
   margin-left: 10px;
 }
+
+@media print {
+  .mat-toolbar {
+    display: none;
+  }
+}

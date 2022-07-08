@@ -1,4 +1,4 @@
-import { Component, HostBinding, OnInit } from '@angular/core';
+import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { combineLatest, distinctUntilChanged, filter, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
@@ -23,7 +23,7 @@ import { PalletCustomerListDialogComponent } from '../../pallets/shared/pallet-c
   templateUrl: './customer-view.component.html',
   styleUrls: ['./customer-view.component.css']
 })
-export class CustomerViewComponent implements OnInit {
+export class CustomerViewComponent implements OnInit, OnDestroy {
   @HostBinding('class') class = 'app-component';
 
   private sitesSubject$ = new Subject<string>();
@@ -44,6 +44,7 @@ export class CustomerViewComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private renderer: Renderer2,
     private dialog: MatDialog,
     private navService: NavigationService,
     private sharedService: SharedService,
@@ -53,6 +54,7 @@ export class CustomerViewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.renderer.addClass(document.body, 'print');
     this.customer$ =  combineLatest([this.route.paramMap, this.route.queryParams]).pipe(
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, '', '')),
@@ -90,6 +92,10 @@ export class CustomerViewComponent implements OnInit {
         return {count: activeCages, weight: totalWeight};
       })
     ).subscribe(cages => this.cages = cages);
+  }
+
+  ngOnDestroy() {
+    this.renderer.removeClass(document.body, 'print');
   }
 
   parseParams(params: Params): void {
@@ -171,7 +177,7 @@ export class CustomerViewComponent implements OnInit {
   }
 
   openPalletHistory(customer: Customer) {
-    const data = {customer, addresses: this.addresses};
+    const data = {customer, addresses: this.addresses, site: this.site};
     const dialogRef = this.dialog.open(PalletCustomerListDialogComponent, {width: '800px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe();
   }
