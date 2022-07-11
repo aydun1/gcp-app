@@ -94,7 +94,11 @@ export class ActionButtonComponent implements OnInit {
   markReadyForProcessing(id: string, cageNumber: number): void {
     this.loading.next(true);
     const action = this.recyclingService.readyForProcessing(id);
-    action.subscribe(() => this.onComplete());
+    const customerNumber = this.cage.fields.CustomerNumber;
+    const message = `Cage ${cageNumber} ready for delivery to local processing`;
+    action.pipe(
+      tap(() => this.addToRunList(customerNumber, message))
+    ).subscribe(() => this.onComplete());
   }
 
   markWithProcessing(id: string): void {
@@ -117,9 +121,10 @@ export class ActionButtonComponent implements OnInit {
   markReadyForPolymer(id: string, cageNumber: number): void {
     this.loading.next(true);
     const action = this.recyclingService.readyForPolymer(id);
+    const customerNumber = '011866';
     const message = `Cage ${cageNumber} ready for delivery to Polymer`;
     action.pipe(
-      tap(() => this.addToRunList(message))
+      tap(() => this.addToRunList(customerNumber, message))
     )
     .subscribe(() => this.onComplete());
   }
@@ -179,12 +184,13 @@ export class ActionButtonComponent implements OnInit {
   }
 
   readyForCollection(cageNumber: number) {
+    const customerNumber = this.cage.fields.CustomerNumber;
     const message = `Cage ${cageNumber ? cageNumber + ' ' : ''}ready for collection`;
-    this.addToRunList(message);
+    this.addToRunList(customerNumber, message);
   }
 
-  addToRunList(message: string) {
-    const data = {accountnumber: this.cage.fields.CustomerNumber, site: this.cage.fields.Site, message};
+  addToRunList(accountnumber: string, message: string) {
+    const data = {accountnumber, site: this.cage.fields.Site, message};
     return this.dialog.open(RunPickerDialogComponent, {width: '600px', data, autoFocus: false});
   }
 }
