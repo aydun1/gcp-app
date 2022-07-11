@@ -1,0 +1,69 @@
+<div class="header">
+  <img alt="Company logo" src="assets/logo.png">
+  <div>
+    <h2>Garden City Plastics</h2>
+    <h3>Pallet Management System</h3>
+  </div>
+  <div class="buttons">
+    <button mat-icon-button type="button" (click)="print()">
+      <mat-icon>print</mat-icon>
+    </button>
+  </div>
+</div>
+<div class="customer">
+  <div>
+    {{ this.data.customer.name }} <span *ngIf="data.site">({{ data.site }})</span>
+  </div>
+</div>
+<mat-dialog-content>
+  <div *ngIf="(cages$ | async) as cages">
+    <mat-table #table [dataSource]="cages" [trackBy]="trackByFn">
+      <ng-container matColumnDef="date">
+        <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+        <mat-cell *matCellDef="let cage">
+          {{ cage.fields.Created | date: 'dd/MM/yyyy' }}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="cage-number">
+        <mat-header-cell *matHeaderCellDef> Number </mat-header-cell>
+        <mat-cell *matCellDef="let cage" [routerLink]="['recycling/cages', cage.id]" (click)="closeDialog()">
+          <a [routerLink]="['recycling/cages', cage.id]" class="cage-link">{{ cage.fields.CageNumber || '-' }}</a>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="asset-type">
+        <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+        <mat-cell *matCellDef="let cage">
+          {{ cage.fields.AssetTypeClean }}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+        <mat-cell *matCellDef="let cage">
+        {{ cage.fields.Status }}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="from">
+        <mat-header-cell *matHeaderCellDef> From </mat-header-cell>
+        <mat-cell *matCellDef="let cage">
+          {{ cage.fields.From }}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="net-weight">
+        <mat-header-cell *matHeaderCellDef> Net weight </mat-header-cell>
+        <mat-cell *matCellDef="let cage">
+          {{ cage.fields.NetWeight }} kg
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>{{ netWeight | number }} kg</mat-footer-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+    </mat-table>
+  </div>
+  <gcp-loading-row *ngIf="loading$ | async"></gcp-loading-row>
+</mat-dialog-content>

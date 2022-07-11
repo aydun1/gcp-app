@@ -24,12 +24,6 @@ h2, h3 {
   margin: 10px 0;
 }
 
-.mat-form-field {
-  font-size: 14px;
-  margin-right: 10px;
-  width: 145px;
-}
-
 .mat-footer-row {
   font-weight: bold;
 }
@@ -45,28 +39,24 @@ h2, h3 {
   margin-left: auto;
 }
 
-.pallet-types {
-  margin-right: 10px;
-}
-
 .mat-table {
   border: 0;
 }
 
-.mat-column-notes {
-  flex: 1 1 180px;
+.mat-column-cage-number {
+  flex: 0 1 80px;
 }
 
-.mat-column-pallet, .mat-column-date {
+.mat-column-date, .mat-column-asset-type {
   flex: 0 1 115px;
 }
 
-.mat-column-out, .mat-column-in {
-    flex: 0 1 80px;
+.mat-column-status {
+  flex: 1 1 180px;
 }
 
-.mat-column-docket {
-  flex: 0 1 40px;
+.mat-column-net-weight {
+  flex: 0 1 80px;
 }
 
 @media print {

@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
-import { map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, Subject, tap } from 'rxjs';
 
 import { Site } from '../../../customers/shared/site';
 import { Customer } from '../../../customers/shared/customer';
@@ -19,7 +19,7 @@ export class PalletCustomerListDialogComponent implements OnInit, OnDestroy {
   public pallets$!: Observable<Pallet[]>;
   public branchFilter = new FormControl('');
   public palletFilter = new FormControl('');
-  public loading = this.palletsService.loading;
+  public loading$ = new BehaviorSubject<boolean>(true);
   public totalOut = 0;
   public totalIn = 0;
   public states = this.sharedService.branches;
@@ -46,6 +46,7 @@ export class PalletCustomerListDialogComponent implements OnInit, OnDestroy {
   }
 
   getCustomerPallets(): void {
+    this.loading$.next(true);
     const pallet = this.palletType || '';
     const site = this.data.site || '';
     this.pallets$ = this.palletsService.getCustomerPallets(this.data.customer.accountnumber, pallet, site).pipe(
@@ -62,6 +63,7 @@ export class PalletCustomerListDialogComponent implements OnInit, OnDestroy {
           pallet.fields['Change'] = pallet.fields['Out'] - pallet.fields['In'];
           this.totalIn += pallet.fields['In'];
           this.totalOut += pallet.fields['Out'];
+          this.loading$.next(false);
           return pallet;
         })
       )
