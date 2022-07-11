@@ -28,6 +28,10 @@
   flex: 1;
 }
 
+.status-header {
+  display: none;
+}
+
 .add-cage {
   margin-left: auto;
 }
@@ -39,6 +43,10 @@
   margin-right: 10px;
   max-width: 100%;
   text-overflow: ellipsis;
+}
+
+.hidden {
+  width: 0;
 }
 
 .mat-column-fields-CageNumber {
@@ -65,6 +73,10 @@
   flex: 0 1 80px;
 }
 
+.mat-column-check {
+  display: none;
+}
+
 .mat-cell.mat-column-status {
   align-items: baseline;
   flex-direction: column;
@@ -89,6 +101,14 @@
 @media print {
   :host {
     overflow-y: auto;
+  }
+
+  .status-header {
+    display: block;
+  }
+
+  .mat-column-check {
+    display: flex;
   }
 
   .options {

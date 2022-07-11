@@ -286,14 +286,13 @@ export class DeliveryService {
     )
   }
 
-  requestCageTransfer(runName: string, customerNumber: string, siteName: string, cageNumber: number, collect: boolean) {
+  requestCageTransfer(runName: string, customerNumber: string, siteName: string, message: string) {
     this.loading.next(true);
     const run = this.getDeliveriesByAccount(customerNumber, runName);
     const cust = this.cutomersService.getCustomer(customerNumber);
     return combineLatest([run, cust]).pipe(
       switchMap(([run, customer]) => {
         const site = {fields: {Title: siteName}} as Site;
-        const message = collect ? `Cage ${cageNumber ? cageNumber + ' ' : ''}ready for collection` : 'Cage requested for delivery';
         const address = '';
         if (run) {
           const notes = run.fields.Notes ? `${run.fields.Notes}<br>${message}` : message;

@@ -14,7 +14,7 @@ export class RunPickerDialogComponent implements OnInit {
   public loading = true;
   public runs$!: Observable<Run[]>;
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {accountnumber: string, site: string, cageNumber: number, collect: boolean},
+    @Inject(MAT_DIALOG_DATA) public data: {accountnumber: string, site: string, message: string},
     private dialogRef: MatDialogRef<RunPickerDialogComponent>,
     private shared: SharedService,
     private deliveryService: DeliveryService,
@@ -28,7 +28,7 @@ export class RunPickerDialogComponent implements OnInit {
   }
 
   pickRun(run: string) {
-    this.deliveryService.requestCageTransfer(run, this.data.accountnumber, this.data.site, this.data.cageNumber, this.data.collect).subscribe(_ => {
+    this.deliveryService.requestCageTransfer(run, this.data.accountnumber, this.data.site, this.data.message).subscribe(_ => {
       this.closeDialog();
     });
   }

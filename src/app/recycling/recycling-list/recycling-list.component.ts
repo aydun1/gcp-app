@@ -25,10 +25,11 @@ export class RecyclingListComponent implements OnInit {
   public loading = this.recyclingService.loading;
   public weight!: number;
   public count!: number;
-  public displayedColumns = ['fields/CageNumber', 'assetType', 'status', 'location', 'fields/Modified', 'weight'];
+  public displayedColumns: Array<string> = [];
   public sortSort!: string;
   public sortOrder!: 'asc' | 'desc';
   public choices!: {Status: choice, AssetType: choice, Branch: choice};
+  public statusPicked!: boolean;
 
   constructor(
     private el: ElementRef,
@@ -78,6 +79,7 @@ export class RecyclingListComponent implements OnInit {
         if (!_) return;
         _['Status']['choice']['choices'] = _['Status']['choice']['choices'].filter((c: string) => c !== 'Complete');
         this.choices = _;
+        this.hideStatus(this.choices?.Status?.choice?.choices.includes(this.statusFilter.value));
       })
     ).subscribe();
   }
@@ -147,6 +149,7 @@ export class RecyclingListComponent implements OnInit {
   }
 
   setStatus(status: MatSelectChange): void {
+    if (this.choices) this.hideStatus(this.choices?.Status?.choice?.choices.includes(this.statusFilter.value) );
     this.router.navigate([], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
@@ -162,6 +165,12 @@ export class RecyclingListComponent implements OnInit {
     const sort = e.direction ? e.active : null;
     const order = e.direction || null;
     this.router.navigate([], { queryParams: {sort, order}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  hideStatus(hide: boolean) {
+    const displayedColumns = ['fields/CageNumber', 'assetType', 'status', 'location', 'fields/Modified', 'weight', 'check'];
+    this.displayedColumns = hide ? displayedColumns.filter(_ => _ !== 'status') : displayedColumns;
+    console.log(this.displayedColumns)
   }
 
   trackByFn(index: number, item: Cage): string {

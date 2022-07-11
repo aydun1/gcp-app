@@ -22,7 +22,7 @@
       <mat-icon>assignment_return</mat-icon>
       <span>Dehire</span>
     </button>
-    <button type="button" mat-menu-item (click)="addToRunList(cage.fields.CageNumber)" *ngIf="cage.statusId === 2">
+    <button type="button" mat-menu-item (click)="readyForCollection(cage.fields.CageNumber)" *ngIf="cage.statusId === 2">
       <mat-icon>flag</mat-icon>
       <span>Ready for collection</span>
     </button>
@@ -45,8 +45,8 @@
 </mat-menu>
 
 <mat-menu #readyMenu="matMenu">
-  <button type="button" mat-menu-item (click)="markReadyForPolymer(cage.id)">Polymer</button>
-  <button type="button" mat-menu-item (click)="markReadyForProcessing(cage.id)">Local</button>
+  <button type="button" mat-menu-item (click)="markReadyForPolymer(cage.id, cage.fields.CageNumber)">Polymer</button>
+  <button type="button" mat-menu-item (click)="markReadyForProcessing(cage.id, cage.fields.CageNumber)">Local</button>
 </mat-menu>
 
 <mat-menu #depotMenu="matMenu">

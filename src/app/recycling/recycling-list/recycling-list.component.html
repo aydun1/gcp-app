@@ -41,6 +41,8 @@
     <a mat-raised-button [routerLink]="['new']" color="primary" class="add-cage">Add New Cage</a>
   </div>
 
+  <div class="status-header inner">{{ statusFilter.value }}</div>
+
   <div *ngIf="(cages$ | async) as cages" class="inner">
     <mat-table #table [dataSource]="cages" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
 
@@ -94,6 +96,14 @@
         <mat-header-cell *matHeaderCellDef> Location </mat-header-cell>
         <mat-cell *matCellDef="let cage">
           {{ cage.location }}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="check">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let cage">
+          <mat-checkbox color="accent"></mat-checkbox>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
