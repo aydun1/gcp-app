@@ -1,8 +1,7 @@
-<div class="header">
-  <h2 mat-dialog-title>Pick a run</h2>
-</div>
+<h2 mat-dialog-title>Pick a run</h2>
 <mat-nav-list>
   <mat-list-item (click)="pickRun('')">Default</mat-list-item>
   <mat-list-item *ngFor="let run of runs$ | async" mat-list-item (click)="pickRun(run.fields.Title)">{{ run.fields.Title }}</mat-list-item>
   <mat-list-item *ngIf="loading" mat-list-item><mat-spinner diameter="24"></mat-spinner></mat-list-item>
 </mat-nav-list>
+<button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>
