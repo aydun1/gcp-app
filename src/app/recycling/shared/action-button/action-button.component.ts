@@ -91,6 +91,12 @@ export class ActionButtonComponent implements OnInit {
     this.recyclingService.deliverToPolymer(id).subscribe(() => this.onComplete());
   }
 
+  markReadyForProcessing(id: string): void {
+    this.loading.next(true);
+    const action = this.recyclingService.readyForProcessing(id);
+    action.subscribe(() => this.onComplete());
+  }
+
   markWithProcessing(id: string): void {
     this.loading.next(true);
     this.recyclingService.deliverToProcessing(id).subscribe(() => this.onComplete());
@@ -105,6 +111,12 @@ export class ActionButtonComponent implements OnInit {
   collectFromPolymer(id: string, assetType: string): void {
     this.loading.next(true);
     const action = assetType.startsWith('Cage') ? this.recyclingService.collectFromPolymer(id): this.recyclingService.collectAndComplete(id);
+    action.subscribe(() => this.onComplete());
+  }
+
+  markReadyForPolymer(id: string): void {
+    this.loading.next(true);
+    const action = this.recyclingService.readyForPolymer(id);
     action.subscribe(() => this.onComplete());
   }
 

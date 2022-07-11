@@ -231,6 +231,11 @@ export class RecyclingService {
     return this.updateStatus(id, payload);
   }
 
+  readyForProcessing(id: string): Observable<Cage> {
+    const payload = {fields: {Status: 'Ready for delivery to local processing'}};
+    return this.updateStatus(id, payload);
+  }
+
   collectFromPolymer(id: string): Observable<Cage> {
     const payload = {fields: {Status: 'Collected from Polymer', Date4: new Date()}};
     return this.updateStatus(id, payload);
@@ -265,6 +270,8 @@ export class RecyclingService {
     break;
     case 'Delivered to Polymer':
     case 'Delivered to local processing':
+    case 'Ready for delivery to local processing':
+    case 'Ready for delivery to Polymer':
       fields['Status'] = 'Collected from customer';
       fields['Date3'] = null;
       fields['ToLocalProcessing'] = null;
