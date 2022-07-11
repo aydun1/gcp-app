@@ -31,10 +31,6 @@
   max-width: 800px;
 }
 
-.inner {
-  margin: 10px 10px;
-}
-
 .region {
   margin-right: 10px;
 }
@@ -57,10 +53,4 @@ dt {
 
 .menu {
   margin-left: 10px;
-}
-
-@media print {
-  .mat-toolbar {
-    display: none;
-  }
 }

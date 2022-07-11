@@ -18,25 +18,8 @@ input {
   max-width: 1024px;
 }
 
-.inner {
-  margin: 10px 10px;
-  position: relative;
-}
-
 .mat-footer-row {
   font-weight: bold;
-}
-
-.note {
-  background: white;
-  bottom: 0;
-  left: 0;
-  padding-top: 40px;
-  padding-bottom: 80px;
-  position: absolute;
-  right: 0;
-  text-align: center;
-  top: 97px;
 }
 
 .mat-subheader {

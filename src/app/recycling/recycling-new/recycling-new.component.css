@@ -8,11 +8,6 @@ h2 {
   margin-right: 10px;
 }
 
-.inner {
-  margin-left: 10px;
-  margin-right: 10px;
-}
-
 .buttons {
   display: flex;
   flex-direction: row-reverse;

@@ -1,4 +1,4 @@
-import { Component, HostBinding, OnInit } from '@angular/core';
+import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, combineLatest, map, Observable, switchMap, tap } from 'rxjs';
 
@@ -11,7 +11,7 @@ import { Cage } from '../shared/cage';
   templateUrl: './recycling-view.component.html',
   styleUrls: ['./recycling-view.component.css']
 })
-export class RecyclingViewComponent implements OnInit {
+export class RecyclingViewComponent implements OnDestroy, OnInit {
   @HostBinding('class') class = 'app-component';
 
   private cageSource$ = new BehaviorSubject<void>(undefined);
@@ -29,11 +29,13 @@ export class RecyclingViewComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private renderer: Renderer2,
     private navService: NavigationService,
     private recyclingService: RecyclingService
   ) { }
 
   ngOnInit(): void {
+    this.renderer.addClass(document.body, 'print');
     this.cage$ = combineLatest([this.route.paramMap, this.cageSource$]).pipe(
       map(_ => _[0].get('id')),
       tap(() => this.loading.next(true)),
@@ -47,6 +49,10 @@ export class RecyclingViewComponent implements OnInit {
       }),
     );
     this.getCage();
+  }
+
+  ngOnDestroy() {
+    this.renderer.removeClass(document.body, 'print');
   }
 
   getCage(): void {

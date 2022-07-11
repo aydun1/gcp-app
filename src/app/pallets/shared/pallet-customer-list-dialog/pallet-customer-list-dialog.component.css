@@ -62,7 +62,7 @@ h2, h3 {
 }
 
 .mat-column-out, .mat-column-in {
-    flex: 0 1 80px;
+  flex: 0 1 80px;
 }
 
 .mat-column-docket {

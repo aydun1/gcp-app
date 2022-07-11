@@ -110,6 +110,10 @@ a {
   height: 100%;
 }
 
+.inner {
+  margin: 10px;
+}
+
 @media (max-width: 800px) {
   .home-cards {
     margin: 10px;
@@ -121,6 +125,31 @@ a {
     size: portrait;
   }
 
+  .inner {
+    margin: 10px 0;
+  }
+
+  .app-component {
+    overflow-y: visible;
+    position: absolute;
+  }
+
+  .mat-drawer-container {
+    background: none;
+  }
+
+  .mat-card {
+    box-shadow: none !important;
+  }
+
+  .mat-table {
+    border: none;
+  }
+
+  .mat-toolbar {
+    display: none !important;
+  }
+
   .mat-row {
     break-inside: avoid;
   }
@@ -130,7 +159,8 @@ a {
   }
 
   .print gcp-customer-list,
-  .print gcp-pallet-list {
+  .print gcp-pallet-list,
+  .print gcp-recycling-list  {
     height: 0px;
   }
 

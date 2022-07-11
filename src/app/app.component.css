@@ -128,10 +128,6 @@
     margin-left: 0!important;
   }
 
-  .mat-toolbar {
-    display: none;
-  }
-
   .print-heading {
     display: block;
   }

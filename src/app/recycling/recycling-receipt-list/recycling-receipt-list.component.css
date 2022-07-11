@@ -32,10 +32,6 @@
   margin-left: auto;
 }
 
-.inner {
-  margin: 10px 10px;
-}
-
 @media print {
   .options {
     display: none;

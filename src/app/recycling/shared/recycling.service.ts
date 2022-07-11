@@ -71,7 +71,7 @@ export class RecyclingService {
       }
     }).filter(_ => _);
 
-    if (!filterKeys.includes('assetType')) parsed.push(`fields/CageNumber gt 0`);
+    if (!filterKeys.includes('assetType')) parsed.push(`fields/CageNumber ne null`);
     if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Complete'`);
 
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');

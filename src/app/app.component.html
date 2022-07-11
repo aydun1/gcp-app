@@ -10,11 +10,6 @@
       <button *ngIf="loginDisplay" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>arrow_drop_down</mat-icon></button>
     </ng-template>
   </mat-toolbar>
-
-  <div class="print-heading">
-    <h1>Pallet Management System</h1>
-  </div>
-
   <mat-sidenav-container>
     <mat-sidenav #snav [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile">
       <mat-nav-list>
@@ -37,6 +32,9 @@
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>
+      <div class="print-heading">
+        <h1>Pallet Management System</h1>
+      </div>
       <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>
