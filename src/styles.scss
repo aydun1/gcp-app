@@ -114,6 +114,10 @@ a {
   margin: 10px;
 }
 
+.print-heading {
+  display: none;
+}
+
 @media (max-width: 800px) {
   .home-cards {
     margin: 10px;
@@ -179,5 +183,13 @@ a {
     box-shadow: none;
     overflow-x: hidden!important;
     padding: 0!important;
+  }
+
+  .print-heading {
+    display: block;
+  }
+
+  .print .print-heading {
+    display: none;
   }
 }

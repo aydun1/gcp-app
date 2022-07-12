@@ -60,10 +60,6 @@
   padding: 0 16px;
 }
 
-.print-heading {
-  display: none;
-}
-
 .mat-drawer-container {
   flex: 1;
   position: static;
@@ -126,9 +122,5 @@
 
   .mat-drawer-content {
     margin-left: 0!important;
-  }
-
-  .print-heading {
-    display: block;
   }
 }

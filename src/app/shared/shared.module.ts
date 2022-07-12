@@ -30,11 +30,13 @@ import { ControlsModule } from './controls/controls.module';
 import { DocsModule } from './docs/docs.module';
 import { LoadingModule } from './loading/loading.module';
 import { LoadingDotsComponent } from './loading-dots/loading-dots.component';
+import { LetterheadComponent } from './letterhead/letterhead.component';
 
 @NgModule({
   declarations: [
     BigButtonComponent,
-    LoadingDotsComponent
+    LoadingDotsComponent,
+    LetterheadComponent
   ],
   imports: [
     CommonModule,
@@ -67,6 +69,7 @@ import { LoadingDotsComponent } from './loading-dots/loading-dots.component';
     ReactiveFormsModule,
     BigButtonComponent,
     LoadingDotsComponent,
+    LetterheadComponent,
     LoadingModule,
     PipeModule,
     ControlsModule,

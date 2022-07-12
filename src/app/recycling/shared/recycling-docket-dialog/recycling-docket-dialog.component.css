@@ -9,18 +9,7 @@
 }
 
 .header {
-  align-items: center;
   display: flex;
-  height: 110px;
-}
-
-img {
-  margin-right: 16px;
-  width: 110px;
-}
-
-h2, h3 {
-  margin: 10px 0;
 }
 
 .customer {

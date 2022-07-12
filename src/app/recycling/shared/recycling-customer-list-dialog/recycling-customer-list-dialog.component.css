@@ -5,23 +5,12 @@ gcp-loading-row {
 }
 
 .header {
-  align-items: center;
   display: flex;
-  height: 110px;
 }
 
 .customer {
   display: flex;
   margin: 40px 0 20px 0;
-}
-
-img {
-  margin-right: 16px;
-  width: 110px;
-}
-
-h2, h3 {
-  margin: 10px 0;
 }
 
 .mat-footer-row {
