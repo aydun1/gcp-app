@@ -51,10 +51,10 @@ export class PalletCustomerListDialogComponent implements OnInit, OnDestroy {
     const site = this.data.site || '';
     this.pallets$ = this.palletsService.getCustomerPallets(this.data.customer.accountnumber, pallet, site).pipe(
       tap(() => {
-          this.totalIn = 0;
-          this.totalOut = 0;
-        }
-      ),
+        this.loading$.next(false);
+        this.totalIn = 0;
+        this.totalOut = 0;
+      }),
       map(_=>
         _.map(pallet =>  {
           const isSource = pallet.fields.From === this.branchFilter.value;
@@ -63,7 +63,6 @@ export class PalletCustomerListDialogComponent implements OnInit, OnDestroy {
           pallet.fields['Change'] = pallet.fields['Out'] - pallet.fields['In'];
           this.totalIn += pallet.fields['In'];
           this.totalOut += pallet.fields['Out'];
-          this.loading$.next(false);
           return pallet;
         })
       )
