@@ -9,6 +9,7 @@ import { InteractionStatus, EventMessage, EventType, AccountInfo, RedirectReques
 import { filter, interval, map, Observable, Subject, takeUntil, tap, withLatestFrom } from 'rxjs';
 
 import { SharedService } from './shared.service';
+import { app } from "@microsoft/teams-js";
 
 @Component({
   selector: 'gcp-root',
@@ -23,6 +24,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public photo$!: Observable<SafeUrl>;
   public isMobile = false;
   public appTitle = '';
+  public teams: boolean | undefined;
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -95,6 +97,14 @@ export class AppComponent implements OnInit, OnDestroy {
       }),
       tap((ttl: string) => this.sharedService.setTitle(ttl))
     ).subscribe();
+
+    app.getContext().then((context) => {
+      if (context === null || context === undefined) {
+        console.log('Not Teams');
+      } else {
+        this.teams = true;
+      }
+    })
   }
 
   checkForUpdates(): void {
