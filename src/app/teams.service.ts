@@ -11,7 +11,10 @@ export class TeamsService {
   constructor(
   ) {
     app.initialize().then(
-      () => this.isTeams.next(true)
+      () => {
+        this.isTeams.next(true);
+        app.notifySuccess();
+      }
     ).catch(
       () =>this.isTeams.next(false)
     );
