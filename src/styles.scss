@@ -119,6 +119,14 @@ a {
   display: none;
 }
 
+.teams .site-toolbar {
+  display: none;
+}
+
+.teams gcp-root {
+  top: 0;
+}
+
 @media (max-width: 800px) {
   .home-cards {
     margin: 10px;

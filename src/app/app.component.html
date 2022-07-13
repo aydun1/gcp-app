@@ -1,9 +1,9 @@
 <ng-container *ngIf="loginDisplay">
-  <mat-toolbar>
+  <mat-toolbar class="site-toolbar">
     <button *ngIf="snav" mat-icon-button (click)="snav.toggle()">
       <mat-icon>menu</mat-icon>
     </button>
-    <a class="title" [routerLink]="['/']">Pallet Management System</a> <span *ngIf="teams | async">(Teams)</span>
+    <a class="title" [routerLink]="['/']">Pallet Management System</a>
     <div class="toolbar-spacer"></div>
     <div *ngIf="photo$ | async as photo; else noPic" class="photo-button" mat-button [matMenuTriggerFor]="menu"><img [src]="photo" [alt]="accounts[0].name" alt="Avatar"></div>
     <ng-template #noPic>

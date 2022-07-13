@@ -1,5 +1,5 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy, Renderer2 } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { Location } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
@@ -24,7 +24,6 @@ export class AppComponent implements OnInit, OnDestroy {
   public photo$!: Observable<SafeUrl>;
   public isMobile = false;
   public appTitle = '';
-  public teams = this.teamsService.isTeams;
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -33,6 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private authService: MsalService,
     private location: Location,
     private msalBroadcastService: MsalBroadcastService,
+    private renderer: Renderer2,
     private router: Router,
     private sharedService: SharedService,
     private observer: BreakpointObserver,
@@ -44,8 +44,8 @@ export class AppComponent implements OnInit, OnDestroy {
       const account = this.authService.instance.getActiveAccount();
       if (!account) this.checkAndSetActiveAccount();
     }).catch(err=> console.log(err));
-
     this.setLoginDisplay();
+    this.checkIfTeams();
     this.observer.observe(['(max-width: 600px)']).subscribe(_ => this.isMobile = _.matches);
     this.authService.instance.enableAccountStorageEvents();
     this.sharedService.getBranch().subscribe();
@@ -106,6 +106,12 @@ export class AppComponent implements OnInit, OnDestroy {
     ).catch(
       e => console.error('error when checking for update', e)
     );
+  }
+
+  checkIfTeams() {
+    this.teamsService.isTeams.pipe(
+      tap(_ => _ ? this.renderer.addClass(document.body, 'teams') : null),
+    ).subscribe()
   }
 
   setLoginDisplay(): void {
