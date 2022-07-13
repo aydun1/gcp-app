@@ -37,7 +37,9 @@ export class AppComponent implements OnInit, OnDestroy {
     private sharedService: SharedService,
     private observer: BreakpointObserver,
     private teamsService: TeamsService
-  ) { }
+  ) {
+    this.checkIfTeams();
+  }
 
   ngOnInit(): void {
     this.authService.instance.handleRedirectPromise().then(authResult => {
@@ -45,7 +47,6 @@ export class AppComponent implements OnInit, OnDestroy {
       if (!account) this.checkAndSetActiveAccount();
     }).catch(err=> console.log(err));
     this.setLoginDisplay();
-    this.checkIfTeams();
     this.observer.observe(['(max-width: 600px)']).subscribe(_ => this.isMobile = _.matches);
     this.authService.instance.enableAccountStorageEvents();
     this.sharedService.getBranch().subscribe();
