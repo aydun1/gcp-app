@@ -6,13 +6,15 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class TeamsService {
-  public isTeams = new BehaviorSubject<boolean>(false);
+  public isTeams = new BehaviorSubject<boolean | undefined>(undefined);
 
   constructor(
   ) {
     app.initialize().then(
       () => this.isTeams.next(true)
-    ).catch(() => console.log('Is not teams'));
+    ).catch(
+      () =>this.isTeams.next(false)
+    );
   }
 
 }

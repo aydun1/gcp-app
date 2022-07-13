@@ -24,6 +24,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public photo$!: Observable<SafeUrl>;
   public isMobile = false;
   public appTitle = '';
+  public checkedTeams = false;
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -37,9 +38,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private sharedService: SharedService,
     private observer: BreakpointObserver,
     private teamsService: TeamsService
-  ) {
-    this.checkIfTeams();
-  }
+  ) { }
 
   ngOnInit(): void {
     this.authService.instance.handleRedirectPromise().then(authResult => {
@@ -47,6 +46,7 @@ export class AppComponent implements OnInit, OnDestroy {
       if (!account) this.checkAndSetActiveAccount();
     }).catch(err=> console.log(err));
     this.setLoginDisplay();
+    this.checkIfTeams();
     this.observer.observe(['(max-width: 600px)']).subscribe(_ => this.isMobile = _.matches);
     this.authService.instance.enableAccountStorageEvents();
     this.sharedService.getBranch().subscribe();
@@ -111,7 +111,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   checkIfTeams() {
     this.teamsService.isTeams.pipe(
-      tap(_ => _ ? this.renderer.addClass(document.body, 'teams') : null),
+      tap(_ => {
+        if (_ !== undefined) this.checkedTeams = true;
+        if (_) this.renderer.addClass(document.body, 'teams');
+    }),
     ).subscribe()
   }
 

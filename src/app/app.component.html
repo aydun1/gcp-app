@@ -1,4 +1,4 @@
-<ng-container *ngIf="loginDisplay">
+<ng-container *ngIf="loginDisplay && checkedTeams">
   <mat-toolbar class="site-toolbar">
     <button *ngIf="snav" mat-icon-button (click)="snav.toggle()">
       <mat-icon>menu</mat-icon>
