@@ -17,6 +17,7 @@ export class RecyclingViewComponent implements OnDestroy, OnInit {
   private cageSource$ = new BehaviorSubject<void>(undefined);
   public cage$!: Observable<Cage>;
   public cageId!: string;
+  public cageNumber!: number;
   public cageHistory$!: Observable<Cage[]>;
   public displayedColumns = ['updated', 'customer', 'status', 'weight', 'nav'];
   public totalWeight!: number;
@@ -42,6 +43,7 @@ export class RecyclingViewComponent implements OnDestroy, OnInit {
       switchMap(_ => this.recyclingService.getCage(_)),
       tap(_ => {
         this.cageId = _.fields.id;
+        this.cageNumber = _.fields.CageNumber;
         this.isCage = _.fields.AssetType.startsWith('Cage');
         this.currentCageNotes = _.fields.Notes;
         this.getCageHistory(_.fields.CageNumber, _.fields.AssetType);

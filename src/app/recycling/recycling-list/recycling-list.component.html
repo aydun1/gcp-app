@@ -49,7 +49,7 @@
       <ng-container matColumnDef="fields/CageNumber">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Number </mat-header-cell>
         <mat-cell *matCellDef="let cage" [routerLink]="[cage.id]">
-          <a [routerLink]="[cage.id]" class="cage-link">{{ cage.fields.CageNumber || '-' }}</a>
+          <a [routerLink]="[cage.id]" class="cage-link">{{ cage.fields.CageNumber !== undefined ?  cage.fields.CageNumber : '-' }}</a>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
       </ng-container>
