@@ -170,7 +170,6 @@ export class RecyclingListComponent implements OnInit {
   hideStatus(hide: boolean) {
     const displayedColumns = ['fields/CageNumber', 'assetType', 'status', 'location', 'fields/Modified', 'weight', 'check'];
     this.displayedColumns = hide ? displayedColumns.filter(_ => _ !== 'status') : displayedColumns;
-    console.log(this.displayedColumns)
   }
 
   trackByFn(index: number, item: Cage): string {
