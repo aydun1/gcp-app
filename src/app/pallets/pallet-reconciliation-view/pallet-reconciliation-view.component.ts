@@ -24,8 +24,8 @@ export class PalletReconciliationViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.stocktake$ = this.route.paramMap.pipe(
-      switchMap(params => this.getReconciliation(params.get('id'))
-    ))
+      switchMap(params => this.getReconciliation(params.get('id')))
+    )
   }
 
   getReconciliation(id: string | null): Observable<Reconciliation> {

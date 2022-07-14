@@ -33,8 +33,8 @@
         <div mat-line>Adjusted count</div>
       </mat-list-item>
       <mat-divider></mat-divider>
-      <mat-list-item *ngIf="stocktake.fields.Surplus">
-        <div mat-line class="green">{{ stocktake.fields.Surplus }}</div>
+      <mat-list-item *ngIf="stocktake.fields.Surplus !== undefined">
+        <div mat-line class="green">{{ stocktake.fields.Surplus}}</div>
         <div mat-line>Surplus (Physical > Invoice)</div>
       </mat-list-item>
       <mat-list-item *ngIf="stocktake.fields.Deficit">
