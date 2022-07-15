@@ -35,7 +35,7 @@ export class PalletsService {
     private shared: SharedService
   ) { }
 
-  private createUrl(filters: Params): string {
+  private createUrl(filters: Params, limit: boolean): string {
     const filterKeys = Object.keys(filters);
     let url = `${this._palletTrackerUrl}/items?expand=fields(select=Created,Title,Pallet,In,Out,From,To,Quantity,Reference,Status,Notes,Attachment,Site,CustomerNumber)`;
 
@@ -62,8 +62,10 @@ export class PalletsService {
     }
     if (filterKeys.includes('branch')) parsed.unshift(`fields/Branch eq '${filters['branch']}'`);
     if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Cancelled'`);
-    const earlier = new Date(new Date().getTime() - 1000*60*60*24*60);
-    parsed.unshift(`fields/Created ge '${earlier.toISOString()}'`);
+    if (limit) {
+      const earlier = new Date(new Date().getTime() - 1000*60*60*24*60).toISOString();
+      parsed.unshift(`fields/Created ge '${earlier}'`);
+  };
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
     url += `&orderby=fields/Created desc&top=25`;
     return url;
@@ -122,10 +124,10 @@ export class PalletsService {
     return this._columns$;
   }
 
-  getFirstPage(filters: Params): BehaviorSubject<Pallet[]> {
+  getFirstPage(filters: Params, limit: boolean): BehaviorSubject<Pallet[]> {
     this._nextPage = '';
     this._loadingPallets = false;
-    const url = this.createUrl(filters);
+    const url = this.createUrl(filters, limit);
     this.getPallets(url, true).subscribe(_ => this._palletsSubject$.next(_));
     return this._palletsSubject$;
   }

@@ -75,7 +75,7 @@ export class PalletListComponent implements OnInit {
   }
 
   getFirstPage(params: Params): Observable<Pallet[]> {
-    return this.palletsService.getFirstPage(params).pipe(
+    return this.palletsService.getFirstPage(params, true).pipe(
       map(_=>
         _.map(pallet =>  {
           const isSource = pallet.fields.From === this.branchFilter.value;
