@@ -26,11 +26,17 @@
 
 .notes {
   height: calc((100% - 80% - 320px));
-  min-height: 50px;
+  min-height: 100px;
+
 }
 
 .addresses {
   margin-right: 10px;
+}
+
+.cages {
+  padding: 0 10px;
+  margin-left: auto;
 }
 
 .sender {

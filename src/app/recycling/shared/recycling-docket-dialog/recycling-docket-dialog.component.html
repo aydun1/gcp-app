@@ -22,6 +22,19 @@
         <div>{{ address?.city }} {{ address?.stateorprovince }} {{ address?.postalcode }}</div>
       </div>
     </div>
+    <div *ngIf="cages$ | async as cages" class="cages">
+      <div>Solid cages: {{ cageTypes.solid.length }}
+        <span *ngIf="cageTypes.solid.length > 0">
+          (<span *ngFor="let cageNumber of cageTypes.solid; let isLast=last">{{ cageNumber }}<span *ngIf="!isLast">, </span></span>)
+        </span>
+      </div>
+      <div>Folding cages: {{ cageTypes.folding.length }}
+        <span *ngIf="cageTypes.folding.length > 0">
+          (<span *ngFor="let cageNumber of cageTypes.folding; let isLast=last">{{ cageNumber }}<span *ngIf="!isLast">, </span></span>)
+        </span>
+      </div>
+      <div>Other: {{ cageTypes.other }}</div>
+    </div>
   </div>
   <mat-divider></mat-divider>
   <p>Number of cages delivered:</p>

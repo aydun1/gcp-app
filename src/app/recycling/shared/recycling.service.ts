@@ -187,7 +187,16 @@ export class RecyclingService {
   }
 
   getCagesWithCustomer(custnmbr: string, site = ''): Observable<Cage[]> {
-    let url = this._cageTrackerUrl + `/items?expand=fields&orderby=fields/Modified desc&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
+    let url = this._cageTrackerUrl + `/items?expand=fields(select=AssetType,CageNumber,CageWeight,GrossWeight,Modified,NetWeight,Site,Status)`;
+    url += '&orderby=fields/Modified desc';
+    url += `&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
+    if (site) url += `and fields/Site eq '${this.shared.sanitiseName(site)}'`;
+    return this.getCages(url);
+  }
+
+  getActiveCagesWithCustomer(custnmbr: string, site = ''): Observable<Cage[]> {
+    let url = this._cageTrackerUrl + `/items?expand=fields(select=AssetType,CageNumber)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
+    url += `and fields/Date2 eq null'`;
     if (site) url += `and fields/Site eq '${this.shared.sanitiseName(site)}'`;
     return this.getCages(url);
   }
