@@ -23,7 +23,7 @@ export class LoadingScheduleListComponent implements OnInit {
   public deliveries!: LoadingSchedule[];
   public loadingList$ = this.loadingScheduleService.loading;
   public loading = false;
-  public displayedColumns = ['reference', 'loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'status', 'notes', 'edit'];
+  public displayedColumns = ['reference', 'loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'status', 'notes', 'menu'];
   public listSize!: number;
   public groups!: Array<string>;
   public grouped!: boolean;
@@ -59,8 +59,8 @@ export class LoadingScheduleListComponent implements OnInit {
         this.parseParams(_);
         this.groups = _['view'] === 'grouped' ? ['Pan list sent', 'Scheduled', 'Delivered'] : [];
         this.displayedColumns = _['view'] === 'grouped' ?
-          ['reference', 'loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'notes', 'edit'] :
-          ['reference', 'loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'status', 'notes', 'edit'];
+          ['reference', 'loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'notes', 'menu'] :
+          ['reference', 'loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'status', 'notes', 'menu'];
 
       }),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),

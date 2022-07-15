@@ -44,15 +44,18 @@
             <ng-container matColumnDef="loadingDate">
               <mat-header-cell *matHeaderCellDef> Loading </mat-header-cell>
               <mat-cell *matCellDef="let delivery">
-                <div>
-                  {{ delivery.fields.LoadingDate | date: 'EEEE' }}
+                <div class="loadDetails">
+                  <div>
+                    {{ delivery.fields.LoadingDate | date: 'EEEE' }}
+                  </div>
+                  <div>
+                    {{ delivery.fields.LoadingDate | date: 'd MMM yyyy' }}
+                  </div>
+                  <div>
+                    {{ delivery.fields.From }}
+                  </div>
                 </div>
-                <div>
-                  {{ delivery.fields.LoadingDate | date: 'd MMM yyyy' }}
-                </div>
-                <div>
-                  {{ delivery.fields.From }}
-                </div>
+                <mat-icon class="mobile arrow">arrow_forward</mat-icon>
               </mat-cell>
               <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
             </ng-container>
@@ -60,14 +63,16 @@
             <ng-container matColumnDef="arrivalDate">
               <mat-header-cell *matHeaderCellDef> Arriving </mat-header-cell>
               <mat-cell *matCellDef="let delivery">
-                <div>
-                  {{ delivery.fields.ArrivalDate | date: 'EEEE' }}
-                </div>
-                <div>
-                  {{ delivery.fields.ArrivalDate | date: 'd MMM yyyy' }}
-                </div>
-                <div>
-                  {{ delivery.fields.To }}
+                <div class="loadDetails">
+                  <div>
+                    {{ delivery.fields.ArrivalDate | date: 'EEEE' }}
+                  </div>
+                  <div>
+                    {{ delivery.fields.ArrivalDate | date: 'd MMM yyyy' }}
+                  </div>
+                  <div>
+                    {{ delivery.fields.To }}
+                  </div>
                 </div>
               </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
@@ -86,7 +91,10 @@
 
             <ng-container matColumnDef="spaces">
               <mat-header-cell *matHeaderCellDef> Spaces </mat-header-cell>
-              <mat-cell *matCellDef="let delivery">{{ delivery.fields.Spaces }}</mat-cell>
+              <mat-cell *matCellDef="let delivery">
+                <span>{{ delivery.fields.Spaces }}</span>
+                <span class="mobile"> spaces</span>
+              </mat-cell>
               <mat-footer-cell *matFooterCellDef>{{ groups[i] ? totals[groups[i]] : totals['total'] }}</mat-footer-cell>
             </ng-container>
 
@@ -106,7 +114,7 @@
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
 
-            <ng-container matColumnDef="edit">
+            <ng-container matColumnDef="menu">
               <mat-header-cell *matHeaderCellDef></mat-header-cell>
               <mat-cell *matCellDef="let delivery">
                 <button mat-icon-button [matMenuTriggerData]="{delivery}" [matMenuTriggerFor]="menu" class="menu"><mat-icon>more_vert</mat-icon></button>
