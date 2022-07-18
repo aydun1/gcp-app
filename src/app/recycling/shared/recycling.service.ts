@@ -175,7 +175,8 @@ export class RecyclingService {
   }
 
   getCageHistory(cageNumber: number, cageType: string): Observable<Cage[]> {
-    let url = this._cageTrackerUrl + `/items?expand=fields(select=id,Customer,NetWeight,Modified,Created,Status)&orderby=fields/Created desc&filter=`;
+    const fields = ['Customer', 'NetWeight', 'Modified', 'Created', 'Status'];
+    let url = this._cageTrackerUrl + `/items?expand=fields(select=${fields.join(',')})&orderby=fields/Created desc&filter=`;
     url += ` fields/CageNumber eq ${cageNumber}`;
     url += ` and fields/AssetType eq '${cageType}'`;
     return this.getCages(url);
@@ -187,7 +188,8 @@ export class RecyclingService {
   }
 
   getCagesWithCustomer(custnmbr: string, site = ''): Observable<Cage[]> {
-    let url = this._cageTrackerUrl + `/items?expand=fields(select=AssetType,CageNumber,CageWeight,GrossWeight,Modified,NetWeight,Site,Status)`;
+    const fields = ['AssetType', 'CageNumber', 'CageWeight', 'Created', 'Date1', 'Date2', 'Date3', 'Date4', 'GrossWeight', 'Modified', 'NetWeight', 'Site', 'Status', 'ToLocalProcessing'];
+    let url = this._cageTrackerUrl + `/items?expand=fields(select=${fields.join(',')})`;
     url += '&orderby=fields/Modified desc';
     url += `&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
     if (site) url += `and fields/Site eq '${this.shared.sanitiseName(site)}'`;
@@ -195,7 +197,8 @@ export class RecyclingService {
   }
 
   getActiveCagesWithCustomer(custnmbr: string, site = ''): Observable<Cage[]> {
-    let url = this._cageTrackerUrl + `/items?expand=fields(select=AssetType,CageNumber)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
+    const fields = ['AssetType', 'CageNumber', 'CageWeight', 'Created', 'CustomerNumber', 'Date1', 'Date2', 'Date3', 'Date4', 'GrossWeight', 'Modified', 'NetWeight', 'Site', 'Status', 'ToLocalProcessing'];
+    let url = this._cageTrackerUrl + `/items?expand=fields(select=${fields.join(',')})&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
     url += `and fields/Date2 eq null'`;
     if (site) url += `and fields/Site eq '${this.shared.sanitiseName(site)}'`;
     return this.getCages(url);

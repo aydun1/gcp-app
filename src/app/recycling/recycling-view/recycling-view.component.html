@@ -105,7 +105,7 @@
       <ng-container matColumnDef="nav">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
         <mat-cell *matCellDef="let cage">
-          <a mat-icon-button [disabled]="cage.fields.id === cageId" [routerLink]="['..', cage.fields.id]" class="pallet-link"><mat-icon>arrow_forward</mat-icon></a>
+          <a mat-icon-button [disabled]="cage.id === cageId" [routerLink]="['..', cage.id]" class="pallet-link"><mat-icon>arrow_forward</mat-icon></a>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
@@ -117,7 +117,7 @@
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;let cage" [class.active]="cage.fields.id === cageId"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;let cage" [class.active]="cage.id === cageId"></mat-row>
       <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loadingHistory | async) ? false : true"></mat-footer-row>
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
