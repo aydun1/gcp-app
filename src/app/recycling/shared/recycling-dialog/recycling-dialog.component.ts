@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 
+import { SharedService } from '../../../shared.service';
 import { RecyclingService } from '../../shared/recycling.service';
 import { Cage } from '../../shared/cage';
 import { Customer } from '../../../customers/shared/customer';
@@ -25,10 +26,12 @@ export class RecyclingDialogComponent implements OnInit {
   public loadingCages$ = new BehaviorSubject<boolean>(true);
   public loadingAvailableCages$ = new BehaviorSubject<boolean>(true);
   public siteNames!: Array<string>;
+  public get branches(): Array<string> {return this.shared.branches};
 
   constructor(
       public dialogRef: MatDialogRef<RecyclingDialogComponent>,
       @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>, site: string, branch: string},
+      private shared: SharedService,
       private recyclingService: RecyclingService,
       private fb: FormBuilder
   ) { }
@@ -42,13 +45,11 @@ export class RecyclingDialogComponent implements OnInit {
     this.weightForm = this.fb.group({
       weight: ['', Validators.required]
     });
-    this.getContainers();
-    this.availableCages$ = this.recyclingService.getAvailableCages(this.data.branch).pipe(
-      tap(_ => this.loadingAvailableCages$.next(false))
-    );
+    this.getCagesWithCustomer();
+    this.getAvailableCages(this.data.branch);
   }
 
-  getContainers(): void {
+  getCagesWithCustomer(): void {
     this.loadingCages$.next(true);
     this.recyclingService.getActiveCagesWithCustomer(this.data.customer.accountnumber, this.data.site).subscribe(
       _ => {
@@ -66,6 +67,14 @@ export class RecyclingDialogComponent implements OnInit {
     this.recyclingService.allocateToCustomer(id, this.data.customer.accountnumber, this.data.customer.name, site).subscribe(() => this.closeAssigningPage());
   }
 
+  getAvailableCages(branch: string): void {
+    this.loadingAvailableCages$.next(true);
+    this.data.branch = branch;
+    this.availableCages$ = this.recyclingService.getAvailableCages(this.data.branch).pipe(
+      tap(_ => this.loadingAvailableCages$.next(false))
+    );
+  }
+
   openAssigningPage(): void {
     this.assigning = true;
     this.noAllocatedCages$.next(false);
@@ -76,7 +85,7 @@ export class RecyclingDialogComponent implements OnInit {
   closeAssigningPage(): void {
     this.assigning = false;
     this.loadingAvailableCages$.next(true);
-    this.getContainers();
+    this.getCagesWithCustomer();
   }
 
   closeDialog(): void {

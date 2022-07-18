@@ -1,7 +1,10 @@
 <ng-container *ngIf="assigning">
   <div class="buttons">
     <button mat-icon-button (click)="closeAssigningPage()"><mat-icon>arrow_back</mat-icon></button>
-    <h2 mat-dialog-title>Available cages <span *ngIf="data.branch">in {{data.branch}}</span></h2>
+    <h2 mat-dialog-title>Available cages</h2>
+    <button mat-stroked-button [matMenuTriggerFor]="menu" tabindex="-1" class="branch-picker">
+      {{ data.branch || 'All branches'}}
+    </button>
   </div>
   <mat-dialog-content>
     <mat-accordion>
@@ -63,7 +66,7 @@
               <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> <span class="cage-type">{{ cage.fields.AssetTypeClean }}</span></mat-panel-title>
               <mat-panel-description>{{ cage.fields.Status }}</mat-panel-description>
             </mat-expansion-panel-header>
-            <gcp-action-button [cage]="cage" (updated)="getContainers()" class="actions"></gcp-action-button>
+            <gcp-action-button [cage]="cage" (updated)="getCagesWithCustomer()" class="actions"></gcp-action-button>
             <mat-list>
               <mat-list-item *ngIf="cage.fields.Site">
                 <mat-icon mat-list-icon>business</mat-icon>
@@ -71,7 +74,7 @@
                 <div mat-line>Site</div>            
               </mat-list-item>
               <div mat-subheader>Weights</div>
-              <gcp-cage-weights [cage]="cage" (updated)="getContainers()"></gcp-cage-weights>
+              <gcp-cage-weights [cage]="cage" (updated)="getCagesWithCustomer()"></gcp-cage-weights>
             </mat-list>
             <gcp-cage-details [cage]="cage"></gcp-cage-details>
           </mat-expansion-panel>
@@ -82,3 +85,11 @@
 </ng-container>
 
 <button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>
+
+<mat-menu #menu="matMenu" xPosition="before">
+  <ng-template matMenuContent>
+    <button mat-menu-item *ngFor="let branch of branches" (click)="getAvailableCages(branch)">
+      <span>{{ branch }}</span>
+    </button>
+  </ng-template>
+</mat-menu>
