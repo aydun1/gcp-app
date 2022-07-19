@@ -78,10 +78,10 @@
 
 <mat-menu #sitesMenu="matMenu" xPosition="before">
   <ng-template matMenuContent let-customer="customer">
-    <button mat-menu-item (click)="setSite(customer, null)">
+    <button mat-menu-item (click)="setSite(null)">
       <span>All sites</span>
     </button>
-    <button mat-menu-item *ngFor="let site of sites" (click)="setSite(customer, site.fields.Title)">
+    <button mat-menu-item *ngFor="let site of sites" (click)="setSite(site.fields.Title)">
       <span>{{ site.fields.Title }}</span>
     </button>
     <button mat-menu-item (click)="openSiteDialog(customer)">

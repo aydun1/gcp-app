@@ -1,12 +1,13 @@
 import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, tap } from 'rxjs';
 
+import { RecyclingService } from '../recycling.service';
+import { Cage } from '../cage';
 import { Address } from '../../../customers/shared/address';
 import { Customer } from '../../../customers/shared/customer';
-import { Cage } from '../cage';
-
-import { RecyclingService } from '../recycling.service';
+import { Site } from '../../../customers/shared/site';
 
 @Component({
   selector: 'gcp-recycling-docket-dialog',
@@ -15,7 +16,8 @@ import { RecyclingService } from '../recycling.service';
 })
 export class RecyclingDocketDialogComponent implements OnDestroy, OnInit {
   public quantities!: {Loscam: number, Chep: number, Plain: number}
-  public address!: Address | null;
+  public address!: Address | undefined;
+  public site!: Site | undefined;
   public cages$!: Observable<Cage[]>;
   public cageTypes = {
     solid: [] as Array<number>,
@@ -25,16 +27,26 @@ export class RecyclingDocketDialogComponent implements OnDestroy, OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<RecyclingDocketDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, addresses: Address[]},
-
+    @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, addresses: Array<Address>, sites: Array<Site>, site: string},
     private renderer: Renderer2,
+    private router: Router,
     private recyclingService: RecyclingService
   ) { }
 
   ngOnInit(): void {
+    this.site = this.data.sites.find(_ => _.fields.Title === this.data.site);
     this.renderer.addClass(document.body, 'print-dialog');
     this.address = this.data.addresses.filter(_ => _.addresstypecode === 2)[0];
-    this.cages$ = this.recyclingService.getActiveCagesWithCustomer(this.data.customer.accountnumber).pipe(
+    this.cages$ = this.getCages(this.data.site);
+  }
+
+  ngOnDestroy(): void {
+    this.renderer.removeClass(document.body, 'print-dialog');
+  }
+
+  getCages(site: string): Observable<Cage[]> {
+    this.cageTypes = {solid: [], folding: [], other: 0};
+    return this.recyclingService.getActiveCagesWithCustomer(this.data.customer.accountnumber, site).pipe(
       tap(_ => _.forEach(cage => {
         if (cage.fields.AssetTypeClean === 'Solid cage') this.cageTypes.solid.push(cage.fields.CageNumber);
         else if (cage.fields.AssetTypeClean === 'Folding cage') this.cageTypes.folding.push(cage.fields.CageNumber);
@@ -43,15 +55,18 @@ export class RecyclingDocketDialogComponent implements OnDestroy, OnInit {
     );
   }
 
-  ngOnDestroy() {
-    this.renderer.removeClass(document.body, 'print-dialog');
-  }
-
-  print() {
+  print(): void {
     window.print();
   }
 
-  setAddress(address: Address) {
+  setAddress(address: Address): void {
     this.address = address;
+  }
+
+  setSite(site: Site): void {
+    this.site = site;
+    this.cages$ = this.getCages(site.fields.Title);
+    this.router.navigate([], { queryParams: {site: site.fields.Title}, queryParamsHandling: 'merge', replaceUrl: true});
+
   }
 }

@@ -60,7 +60,8 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-        map(() => _)
+        map(() => _),
+        tap(() => this.setTitle())
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       tap(_ => {
@@ -95,7 +96,7 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
     ).subscribe(cages => this.cages = cages);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.renderer.removeClass(document.body, 'print');
   }
 
@@ -144,7 +145,7 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
     this.cagesSubject$.next(this.customer.accountnumber);
   }
 
-  requestCages() {
+  requestCages(): void {
     const message = 'Cage requested for delivery';
     const data = {accountnumber: this.customer.accountnumber, site: this.site, message};
     this.dialog.open(RunPickerDialogComponent, {width: '600px', data, autoFocus: false});
@@ -171,31 +172,30 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
   }
 
   openRecyclingDocketDialog(customer: Customer): void {
-    const data = {customer, addresses: this.addresses};
+    const data = {customer, addresses: this.addresses, sites: this.sites, site: this.site};
     const dialogRef = this.dialog.open(RecyclingDocketDialogComponent, {width: '800px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe();
   }
 
-  openPalletHistory(customer: Customer) {
+  openPalletHistory(customer: Customer): void {
     const data = {customer, addresses: this.addresses, site: this.site};
     const dialogRef = this.dialog.open(PalletCustomerListDialogComponent, {width: '800px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe();
   }
 
-  openCageHistory(customer: Customer) {
+  openCageHistory(customer: Customer): void {
     const data = {customer, addresses: this.addresses, site: this.site};
     const dialogRef = this.dialog.open(RecyclingCustomerListDialogComponent, {width: '800px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe();
   }
 
-  setSite(customer: Customer, site: string | null): void {
-    this.router.navigate([], { queryParams: {site: site}, queryParamsHandling: 'merge', replaceUrl: true}).then(
-      () => this.sharedService.setTitle(`${customer.name} ${site ? '(' + this.site + ')' : '' }`)
-    );
+  setSite(site: string | null): void {
+    this.router.navigate([], { queryParams: {site: site}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setTitle() {
-    this.sharedService.setTitle(`${this.customer.name} ${this.site ? '(' + this.site + ')' : '' }`)
+  setTitle(): void {
+    if (!this.customer) return;
+    this.sharedService.setTitle(`${this.customer.name} ${this.site ? '(' + this.site + ')' : '' }`);
   }
 
   goBack(): void {

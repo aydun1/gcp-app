@@ -1,8 +1,11 @@
 <div class="header">
   <gcp-letterhead></gcp-letterhead>
   <div class="buttons">
-    <button mat-stroked-button type="button" [matMenuTriggerFor]="addressesMenu" class="addresses">
+    <button *ngIf="!data.sites" mat-stroked-button type="button" [matMenuTriggerFor]="addressesMenu" class="addresses">
       {{ address?.name || 'Address' }}
+    </button>
+    <button mat-stroked-button type="button" [matMenuTriggerFor]="sitesMenu" class="addresses">
+      {{ site ? site.fields.Title : 'Site' }}
     </button>
     <button mat-icon-button type="button" (click)="print()">
       <mat-icon>print</mat-icon>
@@ -16,10 +19,13 @@
     <div class="details">
       <div class="address">
         <div>{{ data.customer.name }}</div>
-        <div>{{ address?.line1 }}</div>
-        <div>{{ address?.line2 }}</div>
-        <div>{{ address?.line3 }}</div>
-        <div>{{ address?.city }} {{ address?.stateorprovince }} {{ address?.postalcode }}</div>
+        <div *ngIf="site">{{ site.fields.Address }}</div>
+        <div *ngIf="address">
+          <div>{{ address.line1 }}</div>
+          <div>{{ address.line2 }}</div>
+          <div>{{ address.line3 }}</div>
+          <div>{{ address.city }} {{ address.stateorprovince }} {{ address.postalcode }}</div>
+        </div>
       </div>
     </div>
     <div *ngIf="cages$ | async as cages" class="cages">
@@ -54,6 +60,14 @@
   <ng-template matMenuContent>
     <button mat-menu-item *ngFor="let address of data.addresses" (click)="setAddress(address)">
       <span>{{ address.name }}</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #sitesMenu="matMenu" xPosition="before">
+  <ng-template matMenuContent>
+    <button mat-menu-item *ngFor="let site of data.sites" (click)="setSite(site)">
+      <span>{{ site.fields.Title }}</span>
     </button>
   </ng-template>
 </mat-menu>
