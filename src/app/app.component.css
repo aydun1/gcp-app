@@ -104,6 +104,10 @@
   margin: 0 auto;
 }
 
+.token {
+  color: lightgray;
+}
+
 @media (max-width: 600px) {
   :host {
     top: 56px;

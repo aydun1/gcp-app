@@ -7,6 +7,7 @@ import { SwUpdate, VersionEvent } from '@angular/service-worker';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { InteractionStatus, EventMessage, EventType, AccountInfo, RedirectRequest } from '@azure/msal-browser';
 import { filter, interval, map, Observable, Subject, takeUntil, tap, withLatestFrom } from 'rxjs';
+import { authentication } from '@microsoft/teams-js';
 
 import { SharedService } from './shared.service';
 import { TeamsService } from './teams.service';
@@ -25,6 +26,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public isMobile = false;
   public appTitle = '';
   public checkedTeams = false;
+  public token: string | undefined;
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -51,6 +53,12 @@ export class AppComponent implements OnInit, OnDestroy {
     this.authService.instance.enableAccountStorageEvents();
     this.sharedService.getBranch().subscribe();
 
+    authentication.getAuthToken().then(
+      _ => this.token = _
+    ).catch(
+      _ => console.log(_)
+    )
+    
     // Enables auto login/logout in other open windows/tabs
     this.msalBroadcastService.msalSubject$.pipe(
       filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED),
