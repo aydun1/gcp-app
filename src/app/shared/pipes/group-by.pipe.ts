@@ -6,8 +6,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class GroupByPipe implements PipeTransform {
   private extras = 'Other';
 
-  transform(input: any, prop: Array<string>): Array<any> {
-    if (!Array.isArray(input)) return input;
+  transform(input: Array<any> | null, prop: Array<string>): Array<any> {
+    if (!Array.isArray(input)) return [];
 
     const a = input.reduce((result, item) => ({
       ...result,

@@ -41,7 +41,7 @@ export class RecyclingCustomerListDialogComponent implements OnInit, OnDestroy {
   getCustomerCages(): void {
     this.loading$.next(true);
     const site = this.data.site || '';
-    this.cages$ = this.recyclingService.getCagesWithCustomer(this.data.customer.accountnumber, site).pipe(
+    this.cages$ = this.recyclingService.getAllCustomerCages(this.data.customer.accountnumber, site).pipe(
       tap(_ => {
         this.netWeight = 0;
         _.forEach(cage => this.netWeight += +cage.fields['NetWeight'] || 0);

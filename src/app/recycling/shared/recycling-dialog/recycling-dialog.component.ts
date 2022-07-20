@@ -15,9 +15,12 @@ import { Site } from '../../../customers/shared/site';
   styleUrls: ['./recycling-dialog.component.css']
 })
 export class RecyclingDialogComponent implements OnInit {
+  readonly allocated = 1;
+  readonly delivered = 2;
+  readonly returned = 3;
   public noAllocatedCages$ = new BehaviorSubject<boolean>(false);
   public noDeliveredCages$ = new BehaviorSubject<boolean>(false);
-  public noCageHistory$ = new BehaviorSubject<boolean>(false);
+  public noReturnedCages$ = new BehaviorSubject<boolean>(false);
   public cages$ = new BehaviorSubject<Cage[]>([]);
   public weightForm!: FormGroup;
   public allocatorForm!: FormGroup;
@@ -51,10 +54,11 @@ export class RecyclingDialogComponent implements OnInit {
 
   getCagesWithCustomer(): void {
     this.loadingCages$.next(true);
-    this.recyclingService.getActiveCagesWithCustomer(this.data.customer.accountnumber, this.data.site).subscribe(
+    this.recyclingService.getActiveCustomerCages(this.data.customer.accountnumber, this.data.site, true).subscribe(
       _ => {
-        this.noAllocatedCages$.next(_.filter(c => c['fields']['Status'] === 'Allocated to customer').length === 0);
-        this.noDeliveredCages$.next(_.filter(c => c['fields']['Status'] !== 'Allocated to customer').length === 0);
+        this.noAllocatedCages$.next(_.filter(c => c['statusId'] === this.allocated).length === 0);
+        this.noDeliveredCages$.next(_.filter(c => c['statusId'] === this.delivered).length === 0);
+        this.noReturnedCages$.next(_.filter(c => c['statusId'] && c['statusId'] >= this.returned).length === 0);
         this.cages$.next(_);
         this.loadingCages$.next(false);
       }
@@ -79,7 +83,7 @@ export class RecyclingDialogComponent implements OnInit {
     this.assigning = true;
     this.noAllocatedCages$.next(false);
     this.noDeliveredCages$.next(false);
-    this.noCageHistory$.next(false);
+    this.noReturnedCages$.next(false);
   }
 
   closeAssigningPage(): void {

@@ -35,7 +35,7 @@
   <h2 mat-dialog-title>Manage cages for {{ data.customer.name }} ({{ data.customer.accountnumber }}) <span *ngIf="data.site">({{ data.site }})</span></h2>
   <mat-dialog-content>
 
-    <ng-container *ngIf="(cages$ | async | groupBy:['Allocated to customer']) as groups">
+    <ng-container *ngIf="(cages$ | async | groupCages:[allocated, delivered]) as groups">
       <div *ngFor="let cages of groups;let indexOfelement=index;trackBy: trackByIndex" class="section">
         <ng-container *ngIf="indexOfelement === 0" >
           <div class="buttons">
@@ -55,6 +55,17 @@
           </div>
           <p *ngIf="noDeliveredCages$ | async" class="note">
             No delivered cages
+          </p>
+          <p *ngIf="loadingCages$ | async" class="note">
+            Loading...
+          </p>
+        </ng-container>
+        <ng-container *ngIf="indexOfelement === 2" >
+          <div class="buttons">
+            <h3 class="section-title">Returned cages</h3>
+          </div>
+          <p *ngIf="noReturnedCages$ | async" class="note">
+            No returned cages
           </p>
           <p *ngIf="loadingCages$ | async" class="note">
             Loading...

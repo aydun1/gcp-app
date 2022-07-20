@@ -87,7 +87,7 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
 
     this.cagesSubject$.pipe(
       tap(() => this.cages = null),
-      switchMap(id => this.recyclingService.getCagesWithCustomer(id, this.site)),
+      switchMap(id => this.recyclingService.getAllCustomerCages(id, this.site)),
       map(cages => {
         const activeCages = cages.filter(_ => _.fields.Status === 'Delivered to customer').map(_ => 1).reduce((acc, curr) => acc + curr, 0);
         const totalWeight = cages.map(_ => +_.fields.NetWeight || 0).reduce((acc, curr) => acc + curr, 0);
