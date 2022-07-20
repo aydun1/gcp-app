@@ -1,10 +1,10 @@
 <div class="header">
   <gcp-letterhead></gcp-letterhead>
   <div class="buttons">
-    <button *ngIf="!data.sites" mat-stroked-button type="button" [matMenuTriggerFor]="addressesMenu" class="addresses">
+    <button *ngIf="data.sites.length === 0" mat-stroked-button type="button" [matMenuTriggerFor]="addressesMenu" class="addresses">
       {{ address?.name || 'Address' }}
     </button>
-    <button mat-stroked-button type="button" [matMenuTriggerFor]="sitesMenu" class="addresses">
+    <button *ngIf="data.sites.length > 0" mat-stroked-button type="button" [matMenuTriggerFor]="sitesMenu" class="addresses">
       {{ site ? site.fields.Title : 'Site' }}
     </button>
     <button mat-icon-button type="button" (click)="print()">
