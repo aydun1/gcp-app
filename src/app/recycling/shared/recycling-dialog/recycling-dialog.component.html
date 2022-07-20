@@ -56,7 +56,7 @@
           <p *ngIf="noDeliveredCages$ | async" class="note">
             No delivered cages
           </p>
-          <p *ngIf="loadingCages$ | async" class="note">
+          <p *ngIf="loadingCages$ | async" class="note load">
             Loading...
           </p>
         </ng-container>
@@ -67,7 +67,7 @@
           <p *ngIf="noReturnedCages$ | async" class="note">
             No returned cages
           </p>
-          <p *ngIf="loadingCages$ | async" class="note">
+          <p *ngIf="loadingCages$ | async" class="note load">
             Loading...
           </p>
         </ng-container>
