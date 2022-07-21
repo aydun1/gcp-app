@@ -1,3 +1,10 @@
+.header {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  margin-right: 16px;
+}
+
 .mat-dialog-content {
   min-height: 396px;
 }

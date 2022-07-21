@@ -16,10 +16,10 @@
           <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> <span class="cage-type">{{ cage.fields.AssetTypeClean }}</span></mat-panel-title>
         </mat-expansion-panel-header>
           <form [formGroup]="allocatorForm">
-            <mat-form-field appearance="outline" *ngIf="siteNames.length">
+            <mat-form-field appearance="outline" *ngIf="sites.length > 0 || site">
               <mat-label>Site</mat-label>
               <mat-select formControlName="site">
-                <mat-option *ngFor="let site of siteNames" [value]="site">{{ site }}</mat-option>
+                <mat-option *ngFor="let site of sites" [value]="site">{{ site }}</mat-option>
               </mat-select>
             </mat-form-field>
             <div class="actions">
@@ -32,9 +32,13 @@
 </ng-container>
 
 <ng-container *ngIf="!assigning">
-  <h2 mat-dialog-title>Manage cages for {{ data.customer.name }} ({{ data.customer.accountnumber }}) <span *ngIf="data.site">({{ data.site }})</span></h2>
+  <div class="header">
+    <h2 mat-dialog-title>Manage cages for {{ data.customer.name }}</h2>
+    <button *ngIf="sites && sites.length > 0 || site" mat-stroked-button type="button" [matMenuTriggerFor]="sitesMenu" class="addresses">
+      {{ site ? site : 'Site' }}
+    </button>
+  </div>
   <mat-dialog-content>
-
     <ng-container *ngIf="(cages$ | async | groupCages:[allocated, delivered]) as groups">
       <div *ngFor="let cages of groups;let indexOfelement=index;trackBy: trackByIndex" class="section">
         <ng-container *ngIf="indexOfelement === 0" >
@@ -45,7 +49,7 @@
           <p *ngIf="noAllocatedCages$ | async" class="note">
             No allocated cages
           </p>
-          <p *ngIf="loadingCages$ | async" class="note load">
+          <p *ngIf="(loadingCages$ | async) && !cages" class="note load">
             Loading...
           </p>
         </ng-container>
@@ -56,7 +60,7 @@
           <p *ngIf="noDeliveredCages$ | async" class="note">
             No delivered cages
           </p>
-          <p *ngIf="loadingCages$ | async" class="note load">
+          <p *ngIf="(loadingCages$ | async) && !cages" class="note load">
             Loading...
           </p>
         </ng-container>
@@ -67,7 +71,7 @@
           <p *ngIf="noReturnedCages$ | async" class="note">
             No returned cages
           </p>
-          <p *ngIf="loadingCages$ | async" class="note load">
+          <p *ngIf="(loadingCages$ | async) && !cages" class="note load">
             Loading...
           </p>
         </ng-container>
@@ -101,6 +105,14 @@
   <ng-template matMenuContent>
     <button mat-menu-item *ngFor="let branch of branches" (click)="getAvailableCages(branch)">
       <span>{{ branch }}</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #sitesMenu="matMenu" xPosition="before">
+  <ng-template matMenuContent>
+    <button mat-menu-item *ngFor="let site of sites" (click)="setSite(site)">
+      <span>{{ site }}</span>
     </button>
   </ng-template>
 </mat-menu>

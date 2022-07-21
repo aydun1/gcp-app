@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 
@@ -28,22 +29,25 @@ export class RecyclingDialogComponent implements OnInit {
   public availableCages$!: Observable<Cage[]>;
   public loadingCages$ = new BehaviorSubject<boolean>(true);
   public loadingAvailableCages$ = new BehaviorSubject<boolean>(true);
-  public siteNames!: Array<string>;
+  public sites!: Array<string>;
+  public site!: string | undefined;
   public get branches(): Array<string> {return this.shared.branches};
 
   constructor(
       public dialogRef: MatDialogRef<RecyclingDialogComponent>,
       @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>, site: string, branch: string},
+      private router: Router,
       private shared: SharedService,
       private recyclingService: RecyclingService,
       private fb: FormBuilder
   ) { }
 
   ngOnInit(): void {
-    const requireSite = this.data.site || this.data.sites?.length;
-    this.siteNames = this.data.sites ? this.data.sites.map(_ => _.fields.Title) : [this.data.site].filter(_ => _);
+    const requireSite = this.data.site || this.data.sites?.length > 0;
+    this.site = this.data.site;
+    this.sites = this.data.sites ? this.data.sites.map(_ => _.fields.Title) : [this.site].filter(_ => _);
     this.allocatorForm = this.fb.group({
-      site: [this.data.site, requireSite ? Validators.required : '']
+      site: [this.site, requireSite ? Validators.required : '']
     });
     this.weightForm = this.fb.group({
       weight: ['', Validators.required]
@@ -54,7 +58,7 @@ export class RecyclingDialogComponent implements OnInit {
 
   getCagesWithCustomer(): void {
     this.loadingCages$.next(true);
-    this.recyclingService.getActiveCustomerCages(this.data.customer.accountnumber, this.data.site, true).subscribe(
+    this.recyclingService.getActiveCustomerCages(this.data.customer.accountnumber, this.site, true).subscribe(
       _ => {
         this.noAllocatedCages$.next(_.filter(c => c['statusId'] === this.allocated).length === 0);
         this.noDeliveredCages$.next(_.filter(c => c['statusId'] === this.delivered).length === 0);
@@ -94,6 +98,13 @@ export class RecyclingDialogComponent implements OnInit {
 
   closeDialog(): void {
     this.dialogRef.close();
+  }
+
+  setSite(site: string): void {
+    this.site = site;
+    this.getCagesWithCustomer();
+    this.allocatorForm.patchValue({site});
+    if(this.data.sites) this.router.navigate([], { queryParams: {site: this.site}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   trackByIndex(index: number, item: Cage): number {
