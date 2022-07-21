@@ -1,18 +1,18 @@
 <div class="outer">
-  <div class="options inner">
+  <div *ngIf="choices$ | async as choices"class="options inner">
     <div class="buttons">
       <mat-form-field appearance="outline" class="branch">
-        <mat-label>{{ choices?.Branch?.name }}</mat-label>
+        <mat-label>{{ choices.Branch.name }}</mat-label>
         <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
           <mat-option>All</mat-option>
-          <mat-option *ngFor="let s of choices?.Branch?.choice?.choices" value="{{ s }}">{{ s }}</mat-option>
+          <mat-option *ngFor="let s of choices.Branch.choice.choices" value="{{ s }}">{{ s }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="status">
-        <mat-label>{{ choices?.Status?.name }}</mat-label>
-        <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event)">
+        <mat-label>{{ choices.Status.name }}</mat-label>
+        <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event, choices.Status.choice.choices)">
           <mat-option>All</mat-option>
-          <mat-option *ngFor="let s of choices?.Status?.choice?.choices" value="{{ s }}">{{ s }}</mat-option>
+          <mat-option *ngFor="let s of choices.Status.choice.choices" value="{{ s }}">{{ s }}</mat-option>
           <mat-optgroup label="Cage history">
             <mat-option value="Complete">All complete cages</mat-option>
             <mat-option value="Local processing">Local processing</mat-option>
@@ -21,10 +21,10 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="asset-type">
-        <mat-label>{{ choices?.AssetType?.name }}</mat-label>
+        <mat-label>{{ choices.AssetType.name }}</mat-label>
         <mat-select [formControl]="assetTypeFilter" (selectionChange)="setAssetType($event)">
           <mat-option>All</mat-option>
-          <mat-option *ngFor="let s of choices?.AssetType?.choice?.choices" value="{{ s }}">{{ s }}</mat-option>
+          <mat-option *ngFor="let s of choices.AssetType.choice.choices" value="{{ s }}">{{ s }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="bin-filter">

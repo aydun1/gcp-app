@@ -28,8 +28,9 @@ export class RecyclingListComponent implements OnInit {
   public displayedColumns: Array<string> = [];
   public sortSort!: string;
   public sortOrder!: 'asc' | 'desc';
-  public choices!: {Status: choice, AssetType: choice, Branch: choice};
+  public choices$: Observable<{Status: choice, AssetType: choice, Branch: choice}> | undefined;
   public statusPicked!: boolean;
+  public placeholder = {AssetType: {choice: {choices: []}, name: ''}, Status: {choice: {choices: []}, name: ''}, Branch: {choice: {choices: []}, name: ''}}
 
   constructor(
     private el: ElementRef,
@@ -74,14 +75,13 @@ export class RecyclingListComponent implements OnInit {
   }
 
   getOptions(): void {
-    this.recyclingService.getColumns().pipe(
+    this.choices$ = this.recyclingService.getColumns().pipe(
       tap(_ => {
         if (!_) return;
         _['Status']['choice']['choices'] = _['Status']['choice']['choices'].filter((c: string) => c !== 'Complete');
-        this.choices = _;
-        this.hideStatus(this.choices?.Status?.choice?.choices.includes(this.statusFilter.value));
+        this.hideStatus(_.Status.choice.choices.includes(this.statusFilter.value));
       })
-    ).subscribe();
+    );
   }
 
   getFirstPage(_: Params): BehaviorSubject<Cage[]> {
@@ -148,8 +148,8 @@ export class RecyclingListComponent implements OnInit {
     this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setStatus(status: MatSelectChange): void {
-    if (this.choices) this.hideStatus(this.choices?.Status?.choice?.choices.includes(this.statusFilter.value) );
+  setStatus(status: MatSelectChange, choices: Array<string>): void {
+    this.hideStatus(choices.includes(status.value));
     this.router.navigate([], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 

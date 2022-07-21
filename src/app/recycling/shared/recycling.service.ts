@@ -18,7 +18,9 @@ export class RecyclingService {
   private _loadingCages!: boolean;
   private _nextPage!: string;
   private _cagesSubject$ = new BehaviorSubject<Cage[]>([]);
-  private _columns$ = new BehaviorSubject<any>(null);
+  private _columns$ = new BehaviorSubject<any>(
+    {Placeholder: true, AssetType: {choice: {choices: []}, name: ''}, Status: {choice: {choices: []}, name: ''}, Branch: {choice: {choices: []}, name: ''}}
+  );
   private _listUrl = 'lists/e96c2778-2322-46d6-8de9-3d0c8ca5aefd';
   private _cageTrackerUrl = `${environment.endpoint}/${environment.siteUrl}/${this._listUrl}`;
   private types = {
@@ -38,11 +40,11 @@ export class RecyclingService {
     this._columns$.pipe(
       take(1),
       map(_ => {
-        if (_) return of(_);
+        if (!_.Placeholder) return of(_);
         return this.http.get(`${this._cageTrackerUrl}/columns`).pipe(
           map(_ => _['value']),
           map(_ => _.reduce((a: any, v: any) => ({ ...a, [v.name]: v}), {})),
-          tap(_ => this._columns$.next(_)),
+          tap(_ => this._columns$.next(_))
         );
       }),
       switchMap(_ => _),
