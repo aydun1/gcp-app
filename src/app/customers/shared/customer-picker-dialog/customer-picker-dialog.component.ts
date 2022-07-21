@@ -70,6 +70,7 @@ export class CustomerPickerDialogComponent implements OnInit {
       tap(_ => {
         this.customerForm.patchValue({site: _.length > 0 ? _[0] : null});
         this.loadingSites = false;
+        this.loadingAddresses = false;
       })
     );
   }
