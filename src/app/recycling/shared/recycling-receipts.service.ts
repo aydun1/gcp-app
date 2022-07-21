@@ -35,7 +35,7 @@ export class RecyclingReceiptsService {
     }).filter(_ => _);
 
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
-    url += `&orderby=fields/Created asc&top=25`;
+    url += `&orderby=fields/Created desc&top=25`;
     return url;
   }
 
