@@ -26,7 +26,7 @@ export class CustomerPickerDialogComponent implements OnInit {
   public address!: string | null;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {notes: boolean, address: boolean, title: string},
+    @Inject(MAT_DIALOG_DATA) public data: {notes: boolean, address: boolean, title: string} | undefined,
     private dialogRef: MatDialogRef<CustomerPickerDialogComponent>,
     private fb: FormBuilder,
     private customersService: CustomersService,
