@@ -126,7 +126,7 @@ export class CustomersService {
     return this.http.get(url).pipe(map(_ => _['value']));
   }
 
-  renameSite(customer: Customer, siteId: string, newName: string, oldName: string, newAddress: string): Observable<Object> {
+  renameSite(customer: Customer, siteId: string, newName: string, oldName: string, newAddress: string | null | undefined): Observable<Object> {
     const payload = {fields: {
       Title: newName,
       Address: newAddress
@@ -135,14 +135,15 @@ export class CustomersService {
     return this.sitePalletTransfer(action, customer, oldName, newName);
   }
 
-  addSite(customer: Customer, newName: string, newAddress: string): Observable<Object> {
+  addSite(customer: Customer, siteName: string, address: string | null | undefined): Observable<Object> {
     const payload = {fields: {
       Customer: customer.accountnumber,
-      Title: newName,
-      Address: newAddress
+      Title: siteName,
+      Address: address
     }};
+    if (address) payload['fields']['Address'] = address;
     const action = this.http.post(`${this._sitesUrl}/items`, payload);
-    return this.sitePalletTransfer(action, customer, '', newName);
+    return this.sitePalletTransfer(action, customer, '', siteName);
   }
 
   deleteSite(customer: Customer, siteId: string, oldName: string): Observable<Object> {

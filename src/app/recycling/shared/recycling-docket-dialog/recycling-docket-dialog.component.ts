@@ -67,6 +67,5 @@ export class RecyclingDocketDialogComponent implements OnDestroy, OnInit {
     this.site = site;
     this.cages$ = this.getCages(site.fields.Title);
     this.router.navigate([], { queryParams: {site: site.fields.Title}, queryParamsHandling: 'merge', replaceUrl: true});
-
   }
 }

@@ -351,7 +351,7 @@ export class PalletsService {
     )
   }
 
-  getInTransitOff(branch: string, pallet: string): Observable<Pallet[]> {
+  getInTransitOff(branch: string, pallet: string): Observable<number> {
     const melbourneMidnight = new Date(new Date(new Date().toLocaleString('en-US', {timeZone: 'Australia/Melbourne'})).setHours(0,0,0,0)).toISOString();
     let url = this._palletTrackerUrl + `/items?expand=fields(select=Quantity,${pallet})`;
     url += `&filter=fields/From eq '${branch}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;
@@ -359,7 +359,7 @@ export class PalletsService {
     return this.http.get(url).pipe(map(_ => _['value'].reduce((acc: number, val: Pallet) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
 
-  getInTransitOn(branch: string, pallet: string): Observable<Pallet[]> {
+  getInTransitOn(branch: string, pallet: string): Observable<number> {
     const melbourneMidnight = new Date(new Date(new Date().toLocaleString('en-US', {timeZone: 'Australia/Melbourne'})).setHours(0,0,0,0)).toISOString();
     let url = this._palletTrackerUrl + `/items?expand=fields(select=Quantity,${pallet})`;
     url += `&filter=fields/To eq '${branch}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;

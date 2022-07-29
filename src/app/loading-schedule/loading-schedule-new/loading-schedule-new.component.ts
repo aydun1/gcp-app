@@ -1,5 +1,5 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { catchError, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
@@ -11,6 +11,18 @@ import { TransportCompany } from '../shared/transport-company';
 
 interface choice {choice: {choices: Array<any>}, name: string};
 
+interface LoadingScheduleForm {
+  status: FormControl<string | null>;
+  loadingDate: FormControl<string | null>;
+  arrivalDate: FormControl<string | null>;
+  from: FormControl<string | null>;
+  to: FormControl<string | null>;
+  transportCompany: FormControl<TransportCompany | null>;
+  driver: FormControl<string | null>;
+  spaces: FormControl<string | null>;
+  notes: FormControl<string | null>;
+}
+
 @Component({
   selector: 'gcp-loading-schedule-new',
   templateUrl: './loading-schedule-new.component.html',
@@ -19,8 +31,8 @@ interface choice {choice: {choices: Array<any>}, name: string};
 export class LoadingScheduleNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
 
-  public transportCompanies$!: Observable<any>;
-  public loadingScheduleForm!: FormGroup;
+  public transportCompanies$!: Observable<TransportCompany[] | null>;
+  public loadingScheduleForm!: FormGroup<LoadingScheduleForm>;
   public states = this.sharedService.branches;
   public state!: string;
   public loading = false;
@@ -56,10 +68,10 @@ export class LoadingScheduleNewComponent implements OnInit {
       arrivalDate: ['', [Validators.required]],
       from: ['VIC', [Validators.required]],
       to: [this.state !== 'VIC' ? this.state : '', [Validators.required]],
-      transportCompany: [''],
-      driver: [''],
+      transportCompany: new FormControl(),
+      driver: new FormControl(),
       spaces: ['', [Validators.min(0)]],
-      notes: [''],
+      notes: new FormControl()
     });
 
     this.id = this.route.snapshot.paramMap.get('id');

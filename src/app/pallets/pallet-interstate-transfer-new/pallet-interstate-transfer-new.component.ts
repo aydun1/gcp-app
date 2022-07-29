@@ -1,5 +1,5 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
@@ -7,6 +7,17 @@ import { catchError, tap, throwError } from 'rxjs';
 import { SharedService } from '../../shared.service';
 import { NavigationService } from '../../navigation.service';
 import { PalletsService } from '../shared/pallets.service';
+
+interface PalletTransferForm {
+  date: FormControl<Date | null>;
+  name: FormControl<string | null>;
+  from: FormControl<string | null>;
+  to: FormControl<string | null>;
+  reference: FormControl<string | null>;
+  loscam: FormControl<string | null>;
+  chep: FormControl<string | null>;
+  plain: FormControl<string | null>;
+}
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer-new',
@@ -16,7 +27,7 @@ import { PalletsService } from '../shared/pallets.service';
 export class PalletInterstateTransferNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
 
-  public palletTransferForm!: FormGroup;
+  public palletTransferForm!: FormGroup<PalletTransferForm>;
   public states = this.sharedService.branches;
   public state!: string;
   public loading!: boolean;
@@ -51,8 +62,8 @@ export class PalletInterstateTransferNewComponent implements OnInit {
     });
 
     this.palletTransferForm = this.fb.group({
-      date: [{value: date, disabled: true}, Validators.required],
-      name: [{value: name, disabled: true}, Validators.required],
+      date: new FormControl({value: date, disabled: true}, Validators.required),
+      name: new FormControl({value: name, disabled: true}, Validators.required),
       from: [this.state, Validators.required],
       to: ['', Validators.required],
       reference: ['', [Validators.required]],

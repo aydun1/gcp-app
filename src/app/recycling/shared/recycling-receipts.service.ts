@@ -86,7 +86,7 @@ export class RecyclingReceiptsService {
     ).subscribe(_ => this._receiptsSubject$.next(_));
   }
 
-  addNewReceipt(receiptNumber: number, branch: string, netWeight: number, date: Date): Observable<Receipt> {
+  addNewReceipt(receiptNumber: string, branch: string, netWeight: number | string, date: Date): Observable<Receipt> {
     const url = this._receiptTrackerUrl + `/items`;
     const payload = {fields: {Title: receiptNumber, Branch: branch, NetWeight: netWeight, Date: date}};
     return this.http.post<Receipt>(url, payload).pipe(

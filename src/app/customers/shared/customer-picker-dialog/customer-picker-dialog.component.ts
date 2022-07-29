@@ -9,6 +9,13 @@ import { Site } from '../site';
 import { CustomersService } from '../customers.service';
 import { SharedService } from '../../../shared.service';
 
+interface CustomerForm {
+  customer: FormControl<Customer | null>;
+  address: FormControl<Address | null>;
+  site: FormControl<Site | null>;
+  notes: FormControl<string | null>;
+}
+
 @Component({
   selector: 'gcp-customer-picker-dialog',
   templateUrl: './customer-picker-dialog.component.html',
@@ -18,12 +25,12 @@ export class CustomerPickerDialogComponent implements OnInit {
   public loading = false;
   public loadingAddresses = false;
   public loadingSites = false;
-  public customerForm!: FormGroup;
+  public customerForm!: FormGroup<CustomerForm>;
   public sites$!: Observable<Site[]>;
   public addresses$!: Observable<Address[]>;
   public branch!: string;
   public get branches(): Array<string> {return this.shared.branches};
-  public address!: string | null;
+  public address!: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: {notes: boolean, address: boolean, title: string} | undefined,
@@ -35,20 +42,27 @@ export class CustomerPickerDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.customerForm = this.fb.group({
-      customer: new FormControl<Customer | null>(null, [Validators.required]),
-      address: new FormControl<Address | null>(null),
-      site: new FormControl<Site | null>(null),
-      notes: new FormControl<string | null>(null),
+      customer: new FormControl(null as unknown as Customer, [Validators.required]),
+      address: new FormControl(),
+      site: new FormControl(),
+      notes: new FormControl(),
     });
     this.shared.getBranch().subscribe(_ => this.branch = _);
     this.customerForm.get('customer')?.valueChanges.subscribe(_ => {
-      this.address = null;
-      this.getAddresses(_);
-      this.getSites(_);
+      this.customerForm.get('address')?.reset();
+      this.customerForm.get('site')?.reset();
+      if (_) {
+        this.getAddresses(_);
+        this.getSites(_);
+      }
     });
     this.customerForm.get('address')?.valueChanges.subscribe(_ => {
-      const lastLine = [_.city, _.stateorprovince, _.postalcode];
-      this.address = [_.line1, _.line2, _.line3, lastLine.join(' ')].filter(_ => _).join('\r\n');
+      if (_) {
+        const lastLine = [_.city, _.stateorprovince, _.postalcode];
+        this.address = [_.line1, _.line2, _.line3, lastLine.join(' ')].filter(_ => _).join('\r\n');
+      } else {
+        this.address = '';
+      }
     });
     this.customerForm.get('site')?.valueChanges.subscribe(_ => {
       if (_) this.address = _.fields.Address;
@@ -56,10 +70,15 @@ export class CustomerPickerDialogComponent implements OnInit {
   }
 
   getAddresses(customer: Customer): void {
-    if (this.data?.address) this.loadingAddresses = true;
+    const addField = this.customerForm.get('address');
+    if (this.data?.address) {
+      this.loadingAddresses = true;
+      addField?.disable();
+    };
     this.addresses$ = this.customersService.getAddresses(customer.accountnumber).pipe(
       tap(_ => {
         this.loadingAddresses = false;
+        addField?.enable();
       })
     );
   }

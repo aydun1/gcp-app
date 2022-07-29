@@ -31,7 +31,7 @@ export class RunListComponent implements OnInit {
   public runFilter = new FormControl('');
   public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
-  public runs: Array<Run> = [];
+  public runs: Array<Run> = [{fields: {Title: 'Default'}} as Run];
   public run = '';
   public loading = false;
   public empty = true;

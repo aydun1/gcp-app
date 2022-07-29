@@ -1,15 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'gcp-loading-schedule',
   templateUrl: './loading-schedule.component.html',
   styleUrls: ['./loading-schedule.component.css']
 })
-export class LoadingScheduleComponent implements OnInit {
+export class LoadingScheduleComponent {
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }

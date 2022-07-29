@@ -207,7 +207,7 @@ export class RecyclingService {
     return this.getCages(url);
   }
 
-  allocateToCustomer(id: string, custnmbr: string, customerName: string, site: Site | string): Observable<Cage> {
+  allocateToCustomer(id: string, custnmbr: string, customerName: string, site: Site | string | null | undefined): Observable<Cage> {
     const fields = {Status: 'Allocated to customer', CustomerNumber: custnmbr, Customer: customerName};
     if (site) fields['Site'] = typeof site === 'string' ? site : site.fields?.Title;
     return this.shared.getBranch().pipe(
@@ -345,7 +345,7 @@ export class RecyclingService {
     );
   }
 
-  addNewCage(cageNumber: number, branch: string, assetType: string, cageWeight: number): Observable<Cage> {
+  addNewCage(cageNumber: number | string, branch: string, assetType: string, cageWeight: number | string): Observable<Cage> {
     const url = this._cageTrackerUrl + `/items`;
     const payload = {fields: {Status: 'Available', CageNumber: cageNumber, Branch: branch, AssetType: assetType, CageWeight: cageWeight}};
     return this.http.post<Cage>(url, payload).pipe(

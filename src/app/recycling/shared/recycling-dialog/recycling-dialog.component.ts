@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
@@ -9,6 +9,10 @@ import { RecyclingService } from '../../shared/recycling.service';
 import { Cage } from '../../shared/cage';
 import { Customer } from '../../../customers/shared/customer';
 import { Site } from '../../../customers/shared/site';
+
+interface AllocatorForm {
+  site: FormControl<string | null>;
+}
 
 @Component({
   selector: 'gcp-recycling-dialog',
@@ -23,8 +27,7 @@ export class RecyclingDialogComponent implements OnInit {
   public noDeliveredCages$ = new BehaviorSubject<boolean>(false);
   public noReturnedCages$ = new BehaviorSubject<boolean>(false);
   public cages$ = new BehaviorSubject<Cage[]>([]);
-  public weightForm!: FormGroup;
-  public allocatorForm!: FormGroup;
+  public allocatorForm!: FormGroup<AllocatorForm>;
   public assigning!: boolean;
   public availableCages$!: Observable<Cage[]>;
   public loadingCages$ = new BehaviorSubject<boolean>(true);
@@ -47,10 +50,7 @@ export class RecyclingDialogComponent implements OnInit {
     this.site = this.data.site;
     this.sites = this.data.sites ? this.data.sites.map(_ => _.fields.Title) : [this.site].filter(_ => _);
     this.allocatorForm = this.fb.group({
-      site: [this.site, requireSite ? Validators.required : '']
-    });
-    this.weightForm = this.fb.group({
-      weight: ['', Validators.required]
+      site: new FormControl(this.site, requireSite ? [Validators.required] : [])
     });
     this.getCagesWithCustomer();
     this.getAvailableCages(this.data.branch);

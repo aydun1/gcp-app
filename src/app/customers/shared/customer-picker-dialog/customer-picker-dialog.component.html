@@ -14,9 +14,9 @@
     </mat-error>
   </mat-form-field>
 
-  <mat-form-field *ngIf="data?.address && !this.customerForm.get('site')?.value" color="primary" appearance="outline">
+  <mat-form-field *ngIf="data?.address && !this.customerForm.value.site" color="primary" appearance="outline">
     <mat-label>Address</mat-label>
-    <mat-select formControlName="address" [disabled]="loadingAddresses">
+    <mat-select formControlName="address">
       <mat-option *ngFor="let a of addresses$ | async" [value]="a">{{ a.name }}</mat-option>
     </mat-select>
   </mat-form-field>
@@ -33,7 +33,7 @@
     <mat-label>Notes</mat-label>
     <textarea matInput formControlName="notes" autocomplete="off" placeholder="Optional notes"></textarea>
   </mat-form-field>
-  <pre *ngIf="data?.address">{{ address || customerForm.get('customer')?.value?.address1_composite }}</pre>
+  <pre *ngIf="data?.address">{{ address || customerForm.value.customer?.address1_composite }}</pre>
   <mat-dialog-actions align="end">
     <button type="button" mat-button mat-dialog-close tabindex=-1>Cancel</button>
     <button type="submit" mat-raised-button color="primary" [disabled]="loading || loadingAddresses || loadingSites">{{'Ok'}}</button>

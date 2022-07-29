@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, tap, throwError } from 'rxjs';
@@ -9,6 +9,15 @@ import { SharedService } from '../../../shared.service';
 import { Site } from '../../../customers/shared/site';
 import { Customer } from '../../../customers/shared/customer';
 
+interface PalletForm {
+  date: FormControl<Date | null>;
+  inQty: FormControl<string | null>;
+  notes: FormControl<string | null>;
+  outQty: FormControl<string | null>;
+  palletType: FormControl<string | null>;
+  site: FormControl<string | null>;
+}
+
 @Component({
   selector: 'gcp-pallet-dialog',
   templateUrl: './pallet-dialog.component.html',
@@ -16,7 +25,7 @@ import { Customer } from '../../../customers/shared/customer';
 })
 export class PalletDialogComponent implements OnInit {
   private _state!: string;
-  public palletForm!: FormGroup;
+  public palletForm!: FormGroup<PalletForm>;
   public loading = false;
   public siteNames!: Array<string>;
 

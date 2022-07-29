@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -9,13 +9,18 @@ import { Site } from '../site';
 import { Customer } from '../customer';
 import { CustomersService } from '../customers.service';
 
+interface SiteForm {
+  address: FormControl<string | null>;
+  site: FormControl<string | null>;
+}
+
 @Component({
   selector: 'gcp-customer-site-dialog',
   templateUrl: './customer-site-dialog.component.html',
   styleUrls: ['./customer-site-dialog.component.css']
 })
 export class CustomerSiteDialogComponent implements OnInit {
-  public siteForm!: FormGroup;
+  public siteForm!: FormGroup<SiteForm>;
   public loading = false;
   public siteId!: string;
   public oldName!: string;
@@ -46,17 +51,17 @@ export class CustomerSiteDialogComponent implements OnInit {
   }
 
   addSite(): void {
-    if (this.siteForm.invalid) return;
     const newName = this.siteForm.value['site'];
     const newAddress = this.siteForm.value['address'];
+    if (this.siteForm.invalid || !newName) return;
     const action = this.customerService.addSite(this.data.customer, newName, newAddress);
     this.finaliseAction(action, 'added new').subscribe(() => this.navigate(newName));
   }
 
   renameSite(): void {
-    if (this.siteForm.invalid) return;
     const newName = this.siteForm.value['site'];
     const newAddress = this.siteForm.value['address'];
+    if (this.siteForm.invalid || !newName) return;
     const action = this.customerService.renameSite(this.data.customer, this.siteId, newName, this.oldName, newAddress);
     this.finaliseAction(action, 'edited').subscribe(() => this.navigate(newName));
   }

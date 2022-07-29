@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { of, Subject, switchMap, tap } from 'rxjs';
@@ -33,13 +32,11 @@ export class ActionButtonComponent implements OnInit {
 
   private depotsSubject$ = new Subject<string>();
   @Output() loading = new EventEmitter<boolean>(false);
-  public weightForm!: FormGroup;
   public dialogRef!: MatDialogRef<CustomerPickerDialogComponent, any>;
   public branches!: Array<string>;
   public depots!: Array<Site>;
 
   constructor(
-    private fb: FormBuilder,
     private dialog: MatDialog,
     private router: Router,
     private sharedService: SharedService,
@@ -50,9 +47,6 @@ export class ActionButtonComponent implements OnInit {
 
   ngOnInit(): void {
     this.branches = this.sharedService.branches;
-    this.weightForm = this.fb.group({
-      weight: ['', Validators.required]
-    });
 
     this.depotsSubject$.pipe(
       switchMap(branch => this.cutomersService.getSites(branch)),
@@ -62,7 +56,7 @@ export class ActionButtonComponent implements OnInit {
   }
 
   openSiteDialog(branch: String): void {
-    const customer = {accountnumber: this.cage.fields.Branch};
+    const customer = {accountnumber: branch};
     const data = {customer, sites: this.depots};
     const dialogRef = this.dialog.open(CustomerSiteDialogComponent, {width: '600px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe(() => this.refreshDepots());
@@ -164,13 +158,6 @@ export class ActionButtonComponent implements OnInit {
       tap(() => this.loading.next(true)),
       switchMap(_ => _ ? this.recyclingService.allocateToCustomer(id, _.customer.accountnumber, _.customer.name, _.site) : of(1)),
     ).subscribe(() => this.onComplete());
-  }
-
-  saveWeight(id: string): void {
-    this.loading.next(true);
-    if (this.weightForm.invalid) return;
-    const netWeight = this.weightForm.value.weight - this.cage.fields.CageWeight;
-    this.recyclingService.setGrossWeight(id, netWeight).subscribe(() => this.onComplete());
   }
 
   undo(id: string, status: string): void {

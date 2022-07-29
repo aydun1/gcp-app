@@ -57,7 +57,7 @@ export class PalletInterstateTransferListComponent implements OnInit {
   }
 
   getFirstPage(_: Params): BehaviorSubject<Pallet[]> {
-    this.sharedService.getBranch().subscribe(_ => console.log(_))
+    this.sharedService.getBranch().subscribe();
     return this.palletsService.getFirstPage(_, false);
   }
 

@@ -1,10 +1,15 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { catchError, tap, throwError } from 'rxjs';
 
 import { Delivery } from '../delivery';
 import { DeliveryService } from '../delivery.service';
+
+interface DeliveryForm {
+  address: FormControl<string | null>;
+  notes: FormControl<string | null>;
+}
 
 @Component({
   selector: 'gcp-delivery-editor-dialog',
@@ -13,7 +18,7 @@ import { DeliveryService } from '../delivery.service';
 })
 export class DeliveryEditorDialogComponent implements OnInit {
   public loading = false;
-  public deliveryForm!: FormGroup;
+  public deliveryForm!: FormGroup<DeliveryForm>;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: {delivery: Delivery},
@@ -31,7 +36,8 @@ export class DeliveryEditorDialogComponent implements OnInit {
 
   updateDelivery(): void {
     this.loading = true;
-    const action = this.deliveryService.updateDelivery(this.data.delivery.id, this.deliveryForm.get('notes')?.value)
+    const notes = this.deliveryForm.value.notes || '';
+    const action = this.deliveryService.updateDelivery(this.data.delivery.id, notes)
     action.pipe(
       tap(_ => {
         this.dialogRef.close();

@@ -1,10 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { DeliveryService } from '../delivery.service';
 import { Run } from '../run';
+
+interface RunForm {
+  run: FormControl<string | null>;
+}
 
 @Component({
   selector: 'gcp-run-manager-dialog',
@@ -14,7 +18,7 @@ import { Run } from '../run';
 export class RunManagerDialogComponent implements OnInit {
   public loading = true;
   public runs$!: Observable<Run[]>;
-  public runForm!: FormGroup;
+  public runForm!: FormGroup<RunForm>;
   public runId!: string;
   public oldName!: string;
 
@@ -29,8 +33,7 @@ export class RunManagerDialogComponent implements OnInit {
   ngOnInit(): void {
     this.loading = false;
     this.runForm = this.fb.group({
-      run: ['', [Validators.required, this.deliveryService.uniqueRunValidator(this.data.runs)]],
-      address: ['']
+      run: ['', [Validators.required, this.deliveryService.uniqueRunValidator(this.data.runs)]]
     });
   }
 
@@ -38,25 +41,27 @@ export class RunManagerDialogComponent implements OnInit {
     this.runId = runId;
     this.oldName = name;
     this.runForm = this.fb.group({
-      run: [name, [Validators.required, this.deliveryService.uniqueRunValidator(this.data.runs.filter(_ => _.fields.Title !== this.oldName))]],
+      run: [name, [Validators.required, this.deliveryService.uniqueRunValidator(this.data.runs.filter(_ => _.fields.Title !== this.oldName))]]
     });
   }
 
   addRun(): void {
-    if (this.runForm.invalid) return;
     this.loading = true;
-    const run = this.runForm.value['run'];
-    this.deliveryService.addRun(run).subscribe(_ => {
+    const runName = this.runForm.value['run'];
+    if (this.runForm.invalid || !runName) return;
+    this.deliveryService.addRun(runName).subscribe(_ => {
       this.loading = false;
       this.closeDialog();
-      this.navigate(run);
+      this.navigate(runName);
     });
   }
 
   renameRun(): void {
-    if (this.runForm.invalid) return;
+    this.loading = true;
     const newName = this.runForm.value['run'];
+    if (this.runForm.invalid || !newName) return;
     this.deliveryService.renameRun(this.runId, newName, this.oldName).subscribe(_ => {
+      this.loading = false;
       this.closeDialog();
       this.navigate(newName);
     });
