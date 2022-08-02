@@ -21,7 +21,7 @@ import { Platform } from '@angular/cdk/platform';
 import { AuthGuard } from './auth-guard';
 
 class CustomDateAdapter extends NativeDateAdapter {
-  override parse(value: any): Date | null {
+  override parse(value: string): Date | null {
       const currentDate = new Date();
       let year: number = currentDate.getFullYear();
       let month: number = currentDate.getMonth();

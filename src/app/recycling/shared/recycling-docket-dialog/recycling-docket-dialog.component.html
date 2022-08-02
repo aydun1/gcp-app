@@ -1,15 +1,21 @@
 <div class="header">
-  <gcp-letterhead></gcp-letterhead>
-  <div class="buttons">
-    <button *ngIf="data.sites.length === 0" mat-stroked-button type="button" [matMenuTriggerFor]="addressesMenu" class="addresses">
-      {{ address?.name || 'Address' }}
-    </button>
-    <button *ngIf="data.sites.length > 0" mat-stroked-button type="button" [matMenuTriggerFor]="sitesMenu" class="addresses">
-      {{ site ? site.fields.Title : 'Site' }}
-    </button>
-    <button mat-icon-button type="button" (click)="print()">
-      <mat-icon>print</mat-icon>
-    </button>
+  <gcp-letterhead>Cage Collection Docket</gcp-letterhead>
+  <div class="right">
+    <div class="buttons">
+      <button *ngIf="data.sites.length === 0" mat-stroked-button type="button" [matMenuTriggerFor]="addressesMenu" class="addresses">
+        {{ address?.name || 'Address' }}
+      </button>
+      <button *ngIf="data.sites.length > 0" mat-stroked-button type="button" [matMenuTriggerFor]="sitesMenu" class="addresses">
+        {{ site ? site.fields.Title : 'Site' }}
+      </button>
+      <button mat-icon-button type="button" (click)="print()">
+        <mat-icon>print</mat-icon>
+      </button>
+    </div>
+    <div class="date">
+      <strong>Date: </strong>
+      <span>{{ date | date:'dd/MM/yyyy' }}</span>
+    </div>
   </div>
 </div>
 

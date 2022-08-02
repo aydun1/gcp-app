@@ -18,6 +18,7 @@ export class RecyclingDocketDialogComponent implements OnDestroy, OnInit {
   public quantities!: {Loscam: number, Chep: number, Plain: number}
   public address!: Address | undefined;
   public site!: Site | undefined;
+  public date!: Date;
   public cages$!: Observable<Cage[]>;
   public cageTypes = {
     solid: [] as Array<number>,
@@ -34,6 +35,7 @@ export class RecyclingDocketDialogComponent implements OnDestroy, OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.date = new Date();
     this.site = this.data.sites.find(_ => _.fields.Title === this.data.site);
     this.renderer.addClass(document.body, 'print-dialog');
     this.address = this.data.addresses.filter(_ => _.addresstypecode === 2)[0];

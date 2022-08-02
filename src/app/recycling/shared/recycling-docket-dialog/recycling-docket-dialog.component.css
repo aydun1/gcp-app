@@ -59,11 +59,18 @@
   width: 180px;
 }
 
+.right {
+  margin-left: auto;
+}
+
 .buttons {
   align-items: center;
   align-self: flex-start;
   display: flex;
-  margin-left: auto;
+}
+
+.date {
+  margin-top: 26px;
 }
 
 @media print {
