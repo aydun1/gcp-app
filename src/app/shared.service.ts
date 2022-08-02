@@ -2,7 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { DomSanitizer, SafeUrl, Title } from '@angular/platform-browser';
 import { MsalService } from '@azure/msal-angular';
+import { AccountInfo } from '@azure/msal-browser';
 import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
+
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +19,7 @@ export class SharedService {
     'WA': ['WA']
   };
   public branches = Object.keys(this.territories);
-  public branch: string;
+  public branch!: string;
   public territoryNames = this.branches.concat(['INT', 'NATIONAL']);
   private _state$ = new BehaviorSubject<string>('');
   private appTitle = this.titleService.getTitle();
@@ -29,7 +32,7 @@ export class SharedService {
   ) { }
 
   getPhoto(): Observable<SafeUrl> {
-    const url = 'https://graph.microsoft.com/v1.0/me/photo/$value';
+    const url = `${environment.endpoint}/me/photo/$value`;
     return this.http.get(url, { responseType: 'blob' }).pipe(
       map(_ => URL.createObjectURL(_)),
       map(_ => this.dom.bypassSecurityTrustUrl(_))
@@ -37,7 +40,7 @@ export class SharedService {
   }
 
   getBranch(): Observable<string> {
-    const url = 'https://graph.microsoft.com/v1.0/me/state';
+    const url = `${environment.endpoint}/me/state`;
     return this._state$.pipe(
       switchMap(cur => cur ? of(cur) : this.http.get(url).pipe(
         map(_ => _['value'] ? _['value'] : 'NA'),
@@ -51,7 +54,12 @@ export class SharedService {
 
   getName(): string {
     const activeAccount = this.authService.instance.getActiveAccount();
-    return activeAccount.name;
+    return activeAccount?.name || '';
+  }
+
+  getAccount(): AccountInfo | null {
+    const activeAccount = this.authService.instance.getActiveAccount();
+    return activeAccount;
   }
 
   sanitiseName(name: string): string {

@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
 import { BehaviorSubject, catchError, combineLatest, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
 import { Pallet } from './pallet';
 import { PalletTotals } from './pallet-totals';
@@ -18,13 +19,12 @@ interface PalletQuantities {
   providedIn: 'root'
 })
 export class PalletsService {
-  private _endpoint = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4';
-  private _palletsUrl = 'lists/38f14082-02e5-4978-bf92-f42be2220166';
-  private _palletsOwedUrl = 'lists/8ed9913e-a20e-41f1-9a2e-0142c09f2344';
+  private _palletListUrl = 'lists/38f14082-02e5-4978-bf92-f42be2220166';
+  private _palletsOwedListUrl = 'lists/8ed9913e-a20e-41f1-9a2e-0142c09f2344';
   private _columns$ = new BehaviorSubject<any>(null);
-  private _palletTrackerUrl = `${this._endpoint}/${this._palletsUrl}`;
-  private _loadingPallets: boolean;
-  private _nextPage: string;
+  private _palletTrackerUrl = `${environment.endpoint}/${environment.siteUrl}/${this._palletListUrl}`;
+  private _loadingPallets!: boolean;
+  private _nextPage!: string;
   private _palletsSubject$ = new BehaviorSubject<Pallet[]>([]);
 
   public loading = new BehaviorSubject<boolean>(false);
@@ -35,7 +35,7 @@ export class PalletsService {
     private shared: SharedService
   ) { }
 
-  private createUrl(filters: Params): string {
+  private createUrl(filters: Params, limit: boolean): string {
     const filterKeys = Object.keys(filters);
     let url = `${this._palletTrackerUrl}/items?expand=fields(select=Created,Title,Pallet,In,Out,From,To,Quantity,Reference,Status,Notes,Attachment,Site,CustomerNumber)`;
 
@@ -45,8 +45,6 @@ export class PalletsService {
           return `fields/From eq '${filters['from']}'`;
         case 'to':
           return `fields/To eq '${filters['to']}'`;
-        case 'branch':
-          return `fields/Branch eq '${filters['branch']}'`;
         case 'status':
           if (filters['status'] === 'Pending') return `(fields/Status eq 'Pending' or fields/Status eq 'Edited')`
           return `fields/Status eq '${filters['status']}'`;
@@ -62,7 +60,12 @@ export class PalletsService {
       const cleanName = this.shared.sanitiseName(filters['name']);
       parsed.push(`(startswith(fields/CustomerNumber, '${cleanName}') or startswith(fields/Title, '${cleanName}'))`);
     }
+    if (filterKeys.includes('branch')) parsed.unshift(`fields/Branch eq '${filters['branch']}'`);
     if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Cancelled'`);
+    if (limit) {
+      const earlier = new Date(new Date().getTime() - 1000*60*60*24*60).toISOString();
+      parsed.unshift(`fields/Created ge '${earlier}'`);
+  };
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
     url += `&orderby=fields/Created desc&top=25`;
     return url;
@@ -77,7 +80,7 @@ export class PalletsService {
         this.loading.next(false);
         this._loadingPallets = false;
       }),
-      map((res: {value: Pallet[]}) => res.value),
+      map((res:any) => res.value),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         this.loading.next(false);
@@ -105,14 +108,14 @@ export class PalletsService {
     return `${date.getUTCFullYear()}${('00' + (date.getUTCMonth() + 1)).slice(-2)}`;
   }
 
-  getColumns(): any {
+  getColumns(): BehaviorSubject<any> {
     this._columns$.pipe(
       take(1),
       map(_ => {
         if (_) return of(_);
         return this.http.get(`${this._palletTrackerUrl}/columns`).pipe(
           map(_ => _['value']),
-          map(_ => _.reduce((a, v) => ({ ...a, [v.name]: v}), {})),
+          map(_ => _.reduce((acc: any, val: {name: string}) => ({ ...acc, [val.name]: val}), {})),
           tap(_ => this._columns$.next(_))
         );
       }),
@@ -121,16 +124,16 @@ export class PalletsService {
     return this._columns$;
   }
 
-  getFirstPage(filters: Params): BehaviorSubject<Pallet[]> {
+  getFirstPage(filters: Params, limit: boolean): BehaviorSubject<Pallet[]> {
     this._nextPage = '';
     this._loadingPallets = false;
-    const url = this.createUrl(filters);
+    const url = this.createUrl(filters, limit);
     this.getPallets(url, true).subscribe(_ => this._palletsSubject$.next(_));
     return this._palletsSubject$;
   }
 
   getNextPage(): void {
-    if (!this._nextPage || this._loadingPallets) return null;
+    if (!this._nextPage || this._loadingPallets) return;
     this._palletsSubject$.pipe(
       take(1),
       switchMap(acc => this.getPallets(this._nextPage, true).pipe(
@@ -159,10 +162,10 @@ export class PalletsService {
   }
 
   siteTransfer(branch: string, custName: string, custNmbr: string, oldSite: string, newSite: string, pallets: PalletQuantities) {
-    const url = `sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4/lists/38f14082-02e5-4978-bf92-f42be2220166/items`;
+    const url = `${environment.siteUrl}/${this._palletListUrl}/items`;
     const headers = {'Content-Type': 'application/json'};
     const transfers = Object.entries(pallets).filter(_ => _[1]);
-    const requests = [];
+    const requests = [] as Array<{id: number, method: string, url: string, headers: any, body: any}>;
     let i = 1;
   
     transfers.forEach(_ => {
@@ -198,7 +201,7 @@ export class PalletsService {
       if (newSite) transferTo['fields']['Site'] = newSite;
       requests.push({id: i += 1, method: 'POST', url, headers, body: transferTo});
     })
-    return requests.length ? this.http.post(`https://graph.microsoft.com/v1.0/$batch`, {requests}) : of(1);
+    return requests.length ? this.http.post(`${environment.endpoint}/$batch`, {requests}) : of(1);
   }
 
   createInterstatePalletTransfer(v: any): Observable<Pallet> {
@@ -289,14 +292,16 @@ export class PalletsService {
     );
   }
 
-  getPalletTransfer(id: string): Observable<Pallet> {
+  getPalletTransfer(id: string | null): Observable<Pallet> {
     const url = this._palletTrackerUrl + `/items('${id}')`;
     return this.http.get<Pallet>(url);
   }
 
-  getCustomerPallets(custnmbr: string, site = ''): Observable<Pallet[]> {
-    let url = this._palletTrackerUrl + `/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
+  getCustomerPallets(custnmbr: string, pallet: string, site: string): Observable<Pallet[]> {
+    let url = this._palletTrackerUrl + `/items?expand=fields(select=Title,Created,Notes,Pallet,Out,In)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
+    if (pallet) url += `and fields/Pallet eq '${pallet}'`;
     if (site) url += `and fields/Site eq '${this.shared.sanitiseName(site)}'`;
+    url += `&orderby=fields/Created desc`;
     return this.http.get(url).pipe(map(_ => _['value']));
   }
 
@@ -305,8 +310,8 @@ export class PalletsService {
     const dateInt = this.dateInt(date);
     const eod = new Date(date.setHours(23,59,59,999)).toISOString();
 
-    let url = `${this._endpoint}/${this._palletsOwedUrl}/items?expand=fields(select=Owing)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/DateInt lt '${dateInt}'&top=2000`;
-    let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null and fields/Created ge '${startOfMonth}' and fields/Created lt '${eod}'&top=2000`;
+    let url = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}/items?expand=fields(select=Owing)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/DateInt lt '${dateInt}'&top=2000`;
+    let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Created ge '${startOfMonth}' and fields/Created lt '${eod}' and fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null&top=2000`;
 
     const prevMonths: Observable<PalletTotals[]> = this.http.get(url).pipe(map(_ => _['value']));
     const currMonth: Observable<Pallet[]> = this.http.get(url2).pipe(map(_ => _['value']));
@@ -320,15 +325,14 @@ export class PalletsService {
     )
   }
 
-  getPalletsOwedByCustomer(custnmbr: string, site = null): Observable<PalletQuantities> {
+  getPalletsOwedByCustomer(custnmbr: string, site?: string | undefined): Observable<PalletQuantities> {
     const date = new Date();
     const startOfMonth = new Date(Date.UTC(date.getFullYear(), date.getUTCMonth(), 1)).toISOString();
     const dateInt = this.dateInt(date);
 
-    let url = `${this._endpoint}/${this._palletsOwedUrl}/items?expand=fields(select=Title,Pallet,Owing)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt lt '${dateInt}'`;
-    let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}' and fields/Created ge '${startOfMonth}'`;
-
-    if (site !== null) {
+    let url = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}/items?expand=fields(select=Title,Pallet,Owing)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt lt '${dateInt}'`;
+    let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/Created ge '${startOfMonth}' and fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
+    if (site !== undefined) {
       const filter = 'and fields/Site eq ' + (site ? `'${this.shared.sanitiseName(site)}'` : 'null');
       url += filter;
       url2 += filter;
@@ -347,23 +351,23 @@ export class PalletsService {
     )
   }
 
-  getInTransitOff(branch: string, pallet: string): Observable<Pallet[]> {
+  getInTransitOff(branch: string, pallet: string): Observable<number> {
     const melbourneMidnight = new Date(new Date(new Date().toLocaleString('en-US', {timeZone: 'Australia/Melbourne'})).setHours(0,0,0,0)).toISOString();
     let url = this._palletTrackerUrl + `/items?expand=fields(select=Quantity,${pallet})`;
     url += `&filter=fields/From eq '${branch}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;
     url += ` and fields/Status ne 'Cancelled' and (fields/Status ne 'Transferred' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
-    return this.http.get(url).pipe(map(_ => _['value'].reduce((acc, val) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
+    return this.http.get(url).pipe(map(_ => _['value'].reduce((acc: number, val: Pallet) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
 
-  getInTransitOn(branch: string, pallet: string): Observable<Pallet[]> {
+  getInTransitOn(branch: string, pallet: string): Observable<number> {
     const melbourneMidnight = new Date(new Date(new Date().toLocaleString('en-US', {timeZone: 'Australia/Melbourne'})).setHours(0,0,0,0)).toISOString();
     let url = this._palletTrackerUrl + `/items?expand=fields(select=Quantity,${pallet})`;
     url += `&filter=fields/To eq '${branch}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;
     url += ` and fields/Status ne 'Cancelled' and (fields/Status eq 'Approved' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
-    return this.http.get(url).pipe(map(_ => _['value'].reduce((acc, val) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
+    return this.http.get(url).pipe(map(_ => _['value'].reduce((acc: number, val: Pallet) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
 
-  getInterstatePalletTransfer(id: string): Observable<{summary: any}> {
+  getInterstatePalletTransfer(id: string | null): Observable<{summary: any}> {
     const url = this._palletTrackerUrl + `/items('${id}')/versions`;
     return this.http.get<{value: Pallet[]}>(url).pipe(
       map(_ => {

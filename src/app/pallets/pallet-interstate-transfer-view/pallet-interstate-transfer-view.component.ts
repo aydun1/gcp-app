@@ -16,17 +16,17 @@ import { NavigationService } from '../../navigation.service';
 export class PalletInterstateTransferViewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
 
-  private transferSource$: Subject<string>;
-  public transfer$: Observable<any>;
-  public loading: boolean;
-  public editQuantity: boolean;
-  public transferReference: string;
-  public loscamQuantity: number;
-  public chepQuantity: number;
-  public plainQuantity: number;
-  public sender: boolean;
-  public receiver: boolean;
-  public transport: boolean;
+  private transferSource$!: Subject<string | null>;
+  public transfer$!: Observable<any>;
+  public loading = false;
+  public editQuantity!: boolean;
+  public transferReference!: string;
+  public loscamQuantity!: number;
+  public chepQuantity!: number;
+  public plainQuantity!: number;
+  public sender!: boolean;
+  public receiver!: boolean;
+  public transport!: boolean;
   public loadingPage = new BehaviorSubject<boolean>(true);
 
   constructor(
@@ -128,6 +128,10 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     this.chepQuantity = chep;
     this.plainQuantity = plain;
     this.editQuantity = false
+  }
+
+  markFileAttached(id: string, status: boolean) {
+    this.palletsService.markFileAttached(id, status).subscribe();
   }
 
   goBack(): void {

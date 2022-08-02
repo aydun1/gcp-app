@@ -1,0 +1,81 @@
+<div class="header">
+  <gcp-letterhead></gcp-letterhead>
+  <div class="buttons">
+    <button mat-stroked-button type="button" [matMenuTriggerFor]="palletsMenu" class="pallet-types">
+      {{ palletType || 'Pallet' }}
+    </button>
+    <button mat-icon-button type="button" (click)="print()">
+      <mat-icon>print</mat-icon>
+    </button>
+  </div>
+</div>
+<div class="customer">
+  <div>
+    {{ this.data.customer.name }} <span *ngIf="data.site">({{ data.site }})</span>
+  </div>
+</div>
+
+
+<mat-dialog-content>
+  <div *ngIf="(pallets$ | async) as pallets">
+    <mat-table #table [dataSource]="pallets" [trackBy]="trackByFn">
+      <ng-container matColumnDef="date">
+        <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+        <mat-cell *matCellDef="let pallet">
+          {{ pallet.fields.Created | date: 'dd/MM/yyyy' }}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="notes">
+        <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
+        <mat-cell *matCellDef="let pallet">
+        {{ pallet.fields.Notes || pallet.fields.Reference || '-' }}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="docket">
+        <mat-header-cell *matHeaderCellDef>  </mat-header-cell>
+        <mat-cell *matCellDef="let pallet">
+
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>{{ totalOut - totalIn }}</mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="from">
+        <mat-header-cell *matHeaderCellDef> From </mat-header-cell>
+        <mat-cell *matCellDef="let pallet">
+          {{ pallet.fields.From }}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="pallet">
+        <mat-header-cell *matHeaderCellDef> Pallet </mat-header-cell>
+        <mat-cell *matCellDef="let pallet">
+          {{ pallet.fields.Pallet }}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="in">
+        <mat-header-cell *matHeaderCellDef> Returned </mat-header-cell>
+        <mat-cell *matCellDef="let pallet">{{ pallet.fields.In }}</mat-cell>
+        <mat-footer-cell *matFooterCellDef>{{ totalIn }}</mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="out">
+        <mat-header-cell *matHeaderCellDef> Delivered </mat-header-cell>
+        <mat-cell *matCellDef="let pallet">{{ pallet.fields.Out }}</mat-cell>
+        <mat-footer-cell *matFooterCellDef>{{ totalOut }}</mat-footer-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+    </mat-table>
+  </div>
+  <gcp-loading-row *ngIf="loading$ | async"></gcp-loading-row>
+
+</mat-dialog-content>
+<mat-menu #palletsMenu="matMenu" xPosition="before">
+  <ng-template matMenuContent>
+    <button mat-menu-item *ngFor="let palletType of palletTypes" (click)="setPallet(palletType)">
+      <span>{{ palletType }}</span>
+    </button>
+  </ng-template>
+</mat-menu>

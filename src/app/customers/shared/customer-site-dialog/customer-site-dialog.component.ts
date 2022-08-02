@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -9,16 +9,21 @@ import { Site } from '../site';
 import { Customer } from '../customer';
 import { CustomersService } from '../customers.service';
 
+interface SiteForm {
+  address: FormControl<string | null>;
+  site: FormControl<string | null>;
+}
+
 @Component({
   selector: 'gcp-customer-site-dialog',
   templateUrl: './customer-site-dialog.component.html',
   styleUrls: ['./customer-site-dialog.component.css']
 })
 export class CustomerSiteDialogComponent implements OnInit {
-  public siteForm: FormGroup;
-  public loading: boolean;
-  public siteId: string;
-  public oldName: string;
+  public siteForm!: FormGroup<SiteForm>;
+  public loading = false;
+  public siteId!: string;
+  public oldName!: string;
 
   constructor(
     private dialogRef: MatDialogRef<CustomerSiteDialogComponent>,
@@ -31,28 +36,34 @@ export class CustomerSiteDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.siteForm = this.fb.group({
-      site: ['', [Validators.required, this.customerService.uniqueSiteValidator(this.data.sites)]]
+      site: ['', [Validators.required, this.customerService.uniqueSiteValidator(this.data.sites)]],
+      address: ['']
     });
   }
 
-  openEditor(siteId: string, name: string): void {
+  openEditor(siteId: string, name: string, address: string): void {
     this.siteId = siteId;
     this.oldName = name;
-    this.siteForm.patchValue({site: name});
+    this.siteForm = this.fb.group({
+      site: [name, [Validators.required, this.customerService.uniqueSiteValidator(this.data.sites.filter(_ => _.fields.Title !== this.oldName))]],
+      address: [address]
+    });
   }
 
   addSite(): void {
-    if (this.siteForm.invalid) return;
     const newName = this.siteForm.value['site'];
-    const action = this.customerService.addSite(this.data.customer, newName);
+    const newAddress = this.siteForm.value['address'];
+    if (this.siteForm.invalid || !newName) return;
+    const action = this.customerService.addSite(this.data.customer, newName, newAddress);
     this.finaliseAction(action, 'added new').subscribe(() => this.navigate(newName));
   }
 
   renameSite(): void {
-    if (this.siteForm.invalid) return;
     const newName = this.siteForm.value['site'];
-    const action = this.customerService.renameSite(this.data.customer, this.siteId, newName, this.oldName);
-    this.finaliseAction(action, 'renamed').subscribe(() => this.navigate(newName));
+    const newAddress = this.siteForm.value['address'];
+    if (this.siteForm.invalid || !newName) return;
+    const action = this.customerService.renameSite(this.data.customer, this.siteId, newName, this.oldName, newAddress);
+    this.finaliseAction(action, 'edited').subscribe(() => this.navigate(newName));
   }
 
   deleteSite(): void {
@@ -75,7 +86,7 @@ export class CustomerSiteDialogComponent implements OnInit {
     )
   }
 
-  navigate(site: string): void {
+  navigate(site: string | null): void {
     this.router.navigate([], { queryParams: {site}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 

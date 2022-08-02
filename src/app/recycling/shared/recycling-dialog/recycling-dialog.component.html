@@ -2,6 +2,9 @@
   <div class="buttons">
     <button mat-icon-button (click)="closeAssigningPage()"><mat-icon>arrow_back</mat-icon></button>
     <h2 mat-dialog-title>Available cages</h2>
+    <button mat-stroked-button [matMenuTriggerFor]="menu" tabindex="-1" class="branch-picker">
+      {{ data.branch || 'All branches'}}
+    </button>
   </div>
   <mat-dialog-content>
     <mat-accordion>
@@ -13,14 +16,14 @@
           <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> <span class="cage-type">{{ cage.fields.AssetTypeClean }}</span></mat-panel-title>
         </mat-expansion-panel-header>
           <form [formGroup]="allocatorForm">
-            <mat-form-field appearance="outline" *ngIf="siteNames.length">
+            <mat-form-field appearance="outline" *ngIf="sites.length > 0 || site">
               <mat-label>Site</mat-label>
               <mat-select formControlName="site">
-                <mat-option *ngFor="let site of siteNames" [value]="site">{{ site }}</mat-option>
+                <mat-option *ngFor="let site of sites" [value]="site">{{ site }}</mat-option>
               </mat-select>
             </mat-form-field>
             <div class="actions">
-              <button mat-raised-button color="primary" (click)="assignToCustomer(cage.id)">Assign to {{ data.customer.name || data.customer.accountnumber }}</button>
+              <button mat-raised-button type="submit" color="primary" (click)="assignToCustomer(cage.id)">Assign to {{ data.customer.name || data.customer.accountnumber }}</button>
             </div>
           </form>
       </mat-expansion-panel>
@@ -29,12 +32,14 @@
 </ng-container>
 
 <ng-container *ngIf="!assigning">
-  <h2 mat-dialog-title>Manage cages for {{ data.customer.name }} ({{ data.customer.accountnumber }}) <span *ngIf="data.site">({{ data.site }})</span></h2>
+  <div class="header">
+    <h2 mat-dialog-title>Manage cages for {{ data.customer.name }}</h2>
+    <button *ngIf="sites && sites.length > 0 || site" mat-stroked-button type="button" [matMenuTriggerFor]="sitesMenu" class="addresses">
+      {{ site ? site : 'Site' }}
+    </button>
+  </div>
   <mat-dialog-content>
-
-
-
-    <ng-container *ngIf="(cages$ | async | groupBy:['Allocated to customer', 'Delivered to customer']) as groups">
+    <ng-container *ngIf="(cages$ | async | groupCages:[allocated, delivered]) as groups">
       <div *ngFor="let cages of groups;let indexOfelement=index;trackBy: trackByIndex" class="section">
         <ng-container *ngIf="indexOfelement === 0" >
           <div class="buttons">
@@ -44,7 +49,7 @@
           <p *ngIf="noAllocatedCages$ | async" class="note">
             No allocated cages
           </p>
-          <p *ngIf="loadingCages$ | async" class="note load">
+          <p *ngIf="(loadingCages$ | async) && !cages" class="note load">
             Loading...
           </p>
         </ng-container>
@@ -55,16 +60,18 @@
           <p *ngIf="noDeliveredCages$ | async" class="note">
             No delivered cages
           </p>
-          <p *ngIf="loadingCages$ | async" class="note">
+          <p *ngIf="(loadingCages$ | async) && !cages" class="note load">
             Loading...
           </p>
         </ng-container>
         <ng-container *ngIf="indexOfelement === 2" >
-          <h3 class="section-title">History</h3>
-          <p *ngIf="noCageHistory$ | async" class="note">
-            No cage history
+          <div class="buttons">
+            <h3 class="section-title">Returned cages</h3>
+          </div>
+          <p *ngIf="noReturnedCages$ | async" class="note">
+            No returned cages
           </p>
-          <p *ngIf="loadingCages$ | async" class="note">
+          <p *ngIf="(loadingCages$ | async) && !cages" class="note load">
             Loading...
           </p>
         </ng-container>
@@ -74,7 +81,7 @@
               <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> <span class="cage-type">{{ cage.fields.AssetTypeClean }}</span></mat-panel-title>
               <mat-panel-description>{{ cage.fields.Status }}</mat-panel-description>
             </mat-expansion-panel-header>
-            <gcp-action-button [cage]="cage" (updated)="getContainers()" class="actions"></gcp-action-button>
+            <gcp-action-button [cage]="cage" (updated)="getCagesWithCustomer()" class="actions"></gcp-action-button>
             <mat-list>
               <mat-list-item *ngIf="cage.fields.Site">
                 <mat-icon mat-list-icon>business</mat-icon>
@@ -82,7 +89,7 @@
                 <div mat-line>Site</div>            
               </mat-list-item>
               <div mat-subheader>Weights</div>
-              <gcp-cage-weights [cage]="cage" (updated)="getContainers()"></gcp-cage-weights>
+              <gcp-cage-weights [cage]="cage" (updated)="getCagesWithCustomer()"></gcp-cage-weights>
             </mat-list>
             <gcp-cage-details [cage]="cage"></gcp-cage-details>
           </mat-expansion-panel>
@@ -93,3 +100,19 @@
 </ng-container>
 
 <button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>
+
+<mat-menu #menu="matMenu" xPosition="before">
+  <ng-template matMenuContent>
+    <button mat-menu-item *ngFor="let branch of branches" (click)="getAvailableCages(branch)">
+      <span>{{ branch }}</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #sitesMenu="matMenu" xPosition="before">
+  <ng-template matMenuContent>
+    <button mat-menu-item *ngFor="let site of sites" (click)="setSite(site)">
+      <span>{{ site }}</span>
+    </button>
+  </ng-template>
+</mat-menu>

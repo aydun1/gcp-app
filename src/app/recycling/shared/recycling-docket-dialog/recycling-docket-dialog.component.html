@@ -1,0 +1,79 @@
+<div class="header">
+  <gcp-letterhead>Cage Collection Docket</gcp-letterhead>
+  <div class="right">
+    <div class="buttons">
+      <button *ngIf="data.sites.length === 0" mat-stroked-button type="button" [matMenuTriggerFor]="addressesMenu" class="addresses">
+        {{ address?.name || 'Address' }}
+      </button>
+      <button *ngIf="data.sites.length > 0" mat-stroked-button type="button" [matMenuTriggerFor]="sitesMenu" class="addresses">
+        {{ site ? site.fields.Title : 'Site' }}
+      </button>
+      <button mat-icon-button type="button" (click)="print()">
+        <mat-icon>print</mat-icon>
+      </button>
+    </div>
+    <div class="date">
+      <strong>Date: </strong>
+      <span>{{ date | date:'dd/MM/yyyy' }}</span>
+    </div>
+  </div>
+</div>
+
+<mat-dialog-content>
+  <div class="customer">
+    <strong>Deliver to: </strong>
+    <div class="details">
+      <div class="address">
+        <div>{{ data.customer.name }}</div>
+        <div *ngIf="site">{{ site.fields.Address }}</div>
+        <div *ngIf="address">
+          <div>{{ address.line1 }}</div>
+          <div>{{ address.line2 }}</div>
+          <div>{{ address.line3 }}</div>
+          <div>{{ address.city }} {{ address.stateorprovince }} {{ address.postalcode }}</div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="cages$ | async as cages" class="cages">
+      <div>Solid cages: {{ cageTypes.solid.length }}
+        <span *ngIf="cageTypes.solid.length > 0">
+          (<span *ngFor="let cageNumber of cageTypes.solid; let isLast=last">{{ cageNumber }}<span *ngIf="!isLast">, </span></span>)
+        </span>
+      </div>
+      <div>Folding cages: {{ cageTypes.folding.length }}
+        <span *ngIf="cageTypes.folding.length > 0">
+          (<span *ngFor="let cageNumber of cageTypes.folding; let isLast=last">{{ cageNumber }}<span *ngIf="!isLast">, </span></span>)
+        </span>
+      </div>
+      <div>Other: {{ cageTypes.other }}</div>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+  <p>Number of cages delivered:</p>
+  <p class="signs">Cage numbers:</p>
+  <mat-divider></mat-divider>
+  <p>Number of cages collected:</p>
+  <p class="signs">Cage numbers and weights:</p>
+  <mat-divider></mat-divider>
+  <p class="notes">Notes:</p>
+  <div class="signatures">
+    <div class="sender">Sent by: <span class="underline long"></span></div>
+    <div>Received by: <span class="underline long"></span></div>
+  </div>
+</mat-dialog-content>
+
+<mat-menu #addressesMenu="matMenu" xPosition="before">
+  <ng-template matMenuContent>
+    <button mat-menu-item *ngFor="let address of data.addresses" (click)="setAddress(address)">
+      <span>{{ address.name }}</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #sitesMenu="matMenu" xPosition="before">
+  <ng-template matMenuContent>
+    <button mat-menu-item *ngFor="let site of data.sites" (click)="setSite(site)">
+      <span>{{ site.fields.Title }}</span>
+    </button>
+  </ng-template>
+</mat-menu>

@@ -17,8 +17,7 @@
       <div *ngIf="!isCage" class="title">
         <h2>{{ cage.fields.AssetType }}</h2>
       </div>
-      <gcp-branch-button [cage]="cage" (updated)="getCage()"></gcp-branch-button>
-      <gcp-action-button [cage]="cage" (updated)="getCage()"></gcp-action-button>
+      <gcp-action-button [cage]="cage" (updated)="getCage()" (loading)="updating($event)" class="actions"></gcp-action-button>
     </div>
     <mat-card>
       <mat-list>
@@ -28,35 +27,46 @@
           <div mat-line>{{ cage.fields.Status }}</div>
           <div mat-line>Status</div>
         </mat-list-item>
-        <mat-list-item *ngIf="cage.fields.CustomerNumber">
-          <mat-icon mat-list-icon>business</mat-icon>
-          <div mat-line>{{ cage.fields.Customer }}<span *ngIf="cage.fields.Site">({{ cage.fields.Site }})</span></div>
-          <div mat-line>Assigned to</div>
+        <mat-list-item *ngIf="cage.fields.Status">
+          <mat-icon mat-list-icon>location_city</mat-icon>
+          <div mat-line>{{ cage.fields.Branch }}</div>
+          <div mat-line>Branch</div>
         </mat-list-item>
+      </mat-list>
+      <mat-nav-list>
+        <a mat-list-item *ngIf="cage.fields.CustomerNumber" [routerLink]="['/customers', cage.fields.CustomerNumber]">
+          <mat-icon mat-list-icon>business</mat-icon>
+          <div mat-line>{{ cage.fields.Customer }} 
+            <span>({{ cage.fields.CustomerNumber }})</span>
+            <span *ngIf="cage.fields.Site">({{ cage.fields.Site }})</span>
+          </div>
+          <div mat-line>Assigned to</div>
+        </a>
+      </mat-nav-list>
+      <mat-list>
         <form (ngSubmit)="setCageNotes(cage.id)">
           <mat-list-item>
             <mat-icon mat-list-icon>tag</mat-icon>
-            <div  *ngIf="editCageNotes" mat-line><input [(ngModel)]="currentCageNotes" [ngModelOptions]="{standalone: true}" type="text"></div>
-            <div  *ngIf="!editCageNotes" mat-line>{{ currentCageNotes }}</div>
+            <div *ngIf="editCageNotes" mat-line>
+              <input [(ngModel)]="currentCageNotes" [ngModelOptions]="{standalone: true}" type="text" placeholder="Reference number or cage notes">
+            </div>
+            <div *ngIf="!editCageNotes" mat-line>{{ currentCageNotes }}</div>
             <div mat-line>Reference</div>
             <button mat-icon-button type="button" *ngIf="!editCageNotes" (click)="editCageNotes = true"><mat-icon mat-list-icon class="last-icon">edit</mat-icon></button>
             <ng-container *ngIf="editCageNotes">
               <button mat-icon-button type="button" (click)="cancelEditCageNotes(cage.fields.Notes)"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
-              <button mat-icon-button><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
+              <button mat-icon-button type="submit"><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
             </ng-container>
           </mat-list-item>
         </form>
         <div mat-subheader>Weights</div>
         <gcp-cage-weights [cage]="cage" (updated)="getCage()"></gcp-cage-weights>
       </mat-list>
-      <gcp-cage-details [cage]="cage"></gcp-cage-details>
+      <gcp-cage-details [cage]="cage" (updated)="getCage()"></gcp-cage-details>
     </mat-card>
-
   </div>
 
-
-
-  <div *ngIf="isCage" class="inner">
+  <div *ngIf="isCage && cageNumber !== undefined" class="inner">
     <h3>Cage history</h3>
 
     <mat-table #table [dataSource]="cageHistory$" >
@@ -95,7 +105,7 @@
       <ng-container matColumnDef="nav">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
         <mat-cell *matCellDef="let cage">
-          <a mat-icon-button [disabled]="cage.fields.id === cageId" [routerLink]="['..', cage.fields.id]" class="pallet-link"><mat-icon>arrow_forward</mat-icon></a>
+          <a mat-icon-button [disabled]="cage.id === cageId" [routerLink]="['..', cage.id]" class="pallet-link"><mat-icon>arrow_forward</mat-icon></a>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
@@ -107,7 +117,7 @@
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;let cage" [class.active]="cage.fields.id === cageId"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;let cage" [class.active]="cage.id === cageId"></mat-row>
       <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loadingHistory | async) ? false : true"></mat-footer-row>
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>

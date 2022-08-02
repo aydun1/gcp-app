@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FailedComponent } from './failed.component';
+import { RunPickerDialogComponent } from './run-picker-dialog.component';
 
-describe('FailedComponent', () => {
-  let component: FailedComponent;
-  let fixture: ComponentFixture<FailedComponent>;
+describe('RunPickerDialogComponent', () => {
+  let component: RunPickerDialogComponent;
+  let fixture: ComponentFixture<RunPickerDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FailedComponent ]
+      declarations: [ RunPickerDialogComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FailedComponent);
+    fixture = TestBed.createComponent(RunPickerDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

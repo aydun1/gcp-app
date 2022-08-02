@@ -1,0 +1,30 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { SharedModule } from '../shared/shared.module';
+import { LoadingScheduleComponent } from './loading-schedule.component';
+import { LoadingScheduleRoutingModule } from './loading-schedule-routing.module';
+import { LoadingScheduleService } from './shared/loading-schedule.service';
+import { LoadingScheduleListComponent } from './loading-schedule-list/loading-schedule-list.component';
+import { LoadingScheduleNewComponent } from './loading-schedule-new/loading-schedule-new.component';
+import { LoadingScheduleViewComponent } from './loading-schedule-view/loading-schedule-view.component';
+import { PipeModule } from '../shared/pipes/pipe.module';
+
+@NgModule({
+  declarations: [
+    LoadingScheduleComponent,
+    LoadingScheduleListComponent,
+    LoadingScheduleNewComponent,
+    LoadingScheduleViewComponent
+  ],
+  imports: [
+    CommonModule,
+    SharedModule,
+    PipeModule,
+    LoadingScheduleRoutingModule
+  ],
+  providers: [
+    LoadingScheduleService
+  ]
+})
+export class LoadingScheduleModule { }

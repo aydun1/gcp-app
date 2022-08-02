@@ -4,9 +4,21 @@
 
 .top-buttons {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   margin: 20px 10px 10px 10px;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 16px 0;
+  min-height: 36px;
+}
+
+.section-heading > h3 {
+  margin: 0;
 }
 
 .details {
@@ -17,10 +29,6 @@
   display: block;
   margin: 0 auto;
   max-width: 800px;
-}
-
-.inner {
-  margin: 10px 10px;
 }
 
 .region {
@@ -34,4 +42,15 @@
 
 dt {
   font-weight: bold;
+}
+
+.big-buttons {
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  margin: 16px 0;
+}
+
+.menu {
+  margin-left: 10px;
 }

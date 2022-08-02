@@ -19,6 +19,7 @@ export interface Reconciliation {
     ToBeRepaid: number,
     InTransitOff: number,
     InTransitOn: number,
+    Quantity: number,
     Surplus: number,
     Deficit: number
   }

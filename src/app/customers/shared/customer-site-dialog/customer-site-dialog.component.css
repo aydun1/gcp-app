@@ -4,8 +4,12 @@
   top: 0;
 }
 
+.mat-list {
+  margin-bottom: 16px;
+  padding: 0;
+}
+
 .mat-form-field {
-  margin-top: 20px;
   width: 100%;
 }
 
@@ -16,4 +20,8 @@
 
 .delete {
   margin: 0 12px;
+}
+
+textarea {
+  height: 50px;
 }

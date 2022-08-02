@@ -1,9 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { BehaviorSubject, combineLatest, map, Observable, switchMap, take, tap } from 'rxjs';
 
 import { Doc } from '../../doc';
 import { DocsService } from '../../docs.service';
-import { PalletsService } from '../../../pallets/shared/pallets.service';
 
 @Component({
   selector: 'gcp-doc-upload',
@@ -11,44 +10,50 @@ import { PalletsService } from '../../../pallets/shared/pallets.service';
   styleUrls: ['./doc-upload.component.css']
 })
 export class DocUploadComponent implements OnInit {
-  @Input() id: string;
+  @Input() id!: string;
+  @Input() folder!: string;
+  @Output() statusChanged = new EventEmitter<boolean>();
 
-  private _docCount: number;
   private _uploads$ = new BehaviorSubject<Doc[]>([]);
   private _docStarter$ = new BehaviorSubject<string>('');
-  public docs$: Observable<Doc[]>;
-
+  public docs$!: Observable<Doc[]>;
+  public docCount!: number;
   constructor(
-    private docsService: DocsService,
-    private palletsService: PalletsService
+    private docsService: DocsService
   ) { }
 
+  get idle() {
+    return this._uploads$.pipe(
+      map(_ => _.length === 0)
+    )
+  }
+
   ngOnInit(): void {
-    this._docStarter$.next(this.id);
+    if (this.id) this._docStarter$.next(this.id);
     this.docs$ = this._docStarter$.pipe(
-      switchMap(_ => combineLatest([this._uploads$, this.docsService.listFiles(_).pipe(tap(() => this._uploads$.next([])))])),
+      switchMap(_ => combineLatest([this._uploads$, this.docsService.listFiles(_, this.folder).pipe(tap(() => this._uploads$.next([])))])),
       map(_ => [..._[0], ..._[1]]),
       tap(_ => {
         const complete = _.filter(d => d.id).length || 0;
-        const attachStatusChanged = this._docCount !== undefined && this._docCount !== complete && (this._docCount === 0 || complete === 0);
-        if (attachStatusChanged) this.palletsService.markFileAttached(this.id, complete > 0).subscribe();
-        this._docCount = complete;
+        const attachStatusChanged = this.docCount !== undefined && this.docCount !== complete && (this.docCount === 0 || complete === 0);
+        if (attachStatusChanged) this.statusChanged.emit(complete > 0);
+        this.docCount = complete;
       })
     );
   }
 
-  fileChangeEvent(id: string, e: any): void {
+  fileChangeEvent(e: any): void {
     const files = e.target.files;
     const keys = Array.from(Array(files.length).keys());
     for (let key in keys) {
       const file = files[key];
-      this.uploadFile(id, file);
+      this.uploadFile(file);
     }
   }
 
-  uploadFile(id: string, file: File): void {
+  uploadFile(file: File): void {
     const date = new Date();
-    this.docsService.createUploadSession(id, file).pipe(
+    this.docsService.createUploadSession(this.id, this.folder, file).pipe(
       switchMap(upload => this._uploads$.pipe(
         take(1),
         map(pending => {
@@ -70,18 +75,18 @@ export class DocUploadComponent implements OnInit {
 
   drop(e: DragEvent): void {
     e.preventDefault();
-    const items = e.dataTransfer.items;
+    const items = e.dataTransfer?.items;
     for (let key in items) {
       let item = items[key];
       if (item.kind === 'file') {
         const file = item.getAsFile();
-        this.uploadFile(this.id, file);
+        this.uploadFile(file);
       }
     }
   }
 
-  deleteFile(id: string): void {
-    this.docsService.deleteFile(this.id, id).subscribe(
+  deleteFile(fileName: string): void {
+    this.docsService.deleteFile(this.id, this.folder, fileName).subscribe(
       _ => this._docStarter$.next(this.id)
     );
   }
@@ -102,7 +107,7 @@ export class DocUploadComponent implements OnInit {
     this.docsService.downloadFile(url).subscribe(blob => {
       const url = URL.createObjectURL(blob);
       const w = window.open(url);
-      w.print();
+      w?.print();
     });
   }
 

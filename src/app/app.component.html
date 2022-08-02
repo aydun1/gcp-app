@@ -1,20 +1,15 @@
-<ng-container *ngIf="loginDisplay">
-  <mat-toolbar>
+<ng-container *ngIf="loginDisplay && checkedTeams">
+  <mat-toolbar class="site-toolbar">
     <button *ngIf="snav" mat-icon-button (click)="snav.toggle()">
       <mat-icon>menu</mat-icon>
     </button>
     <a class="title" [routerLink]="['/']">Pallet Management System</a>
     <div class="toolbar-spacer"></div>
-    <div *ngIf="photo$ | async as photo; else noPic" class="photo-button" mat-button [matMenuTriggerFor]="menu"><img [src]="photo" [alt]="accounts[0].name"></div>
+    <div *ngIf="photo$ | async as photo; else noPic" class="photo-button" mat-button [matMenuTriggerFor]="menu"><img [src]="photo" [alt]="accounts[0].name" alt="Avatar"></div>
     <ng-template #noPic>
       <button *ngIf="loginDisplay" mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>arrow_drop_down</mat-icon></button>
     </ng-template>
   </mat-toolbar>
-
-  <div class="print-heading">
-    <h1>Pallet Management System</h1>
-  </div>
-
   <mat-sidenav-container>
     <mat-sidenav #snav [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile">
       <mat-nav-list>
@@ -33,9 +28,12 @@
           <mat-divider></mat-divider>
         </ng-container>
         <a mat-list-item routerLink="/runs" routerLinkActive="active"><mat-icon>local_shipping</mat-icon><span class="menu-label">Runs</span></a>
+        <a mat-list-item routerLink="/loading-schedule" routerLinkActive="active"><mat-icon>departure_board</mat-icon><span class="menu-label">Loading schedule</span></a>
       </mat-nav-list>
+      <div class="token">{{ token }}</div>
     </mat-sidenav>
     <mat-sidenav-content>
+      <gcp-letterhead class="print-heading"></gcp-letterhead>
       <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>

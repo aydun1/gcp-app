@@ -1,5 +1,5 @@
 <div class="header">
-  <h2 mat-dialog-title>Pick a customer</h2>
+  <h2 mat-dialog-title>{{ data?.title || 'Pick a customer' }}</h2>
   <button mat-stroked-button [matMenuTriggerFor]="menu" tabindex="-1">
     {{ branch || 'All branches'}}
   </button>
@@ -9,10 +9,18 @@
     <mat-label>Customer</mat-label>
     <gcp-customer-control placeholder="Type to search..." formControlName="customer" [territory]="branch"></gcp-customer-control>
     <mat-icon matSuffix>search</mat-icon>
-    <mat-error *ngIf="customerForm.get('customer').hasError('unselected')">
+    <mat-error *ngIf="customerForm.get('customer')?.hasError('unselected')">
       Select a customer from the list
     </mat-error>
   </mat-form-field>
+
+  <mat-form-field *ngIf="data?.address && !this.customerForm.value.site" color="primary" appearance="outline">
+    <mat-label>Address</mat-label>
+    <mat-select formControlName="address">
+      <mat-option *ngFor="let a of addresses$ | async" [value]="a">{{ a.name }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
   <ng-container *ngIf="sites$ | async as sites">
     <mat-form-field *ngIf="sites.length > 0" color="primary" appearance="outline">
       <mat-label>Site</mat-label>
@@ -21,16 +29,18 @@
       </mat-select>
     </mat-form-field>
   </ng-container>
-
+  <mat-form-field *ngIf="data?.notes" color="primary" appearance="outline">
+    <mat-label>Notes</mat-label>
+    <textarea matInput formControlName="notes" autocomplete="off" placeholder="Optional notes"></textarea>
+  </mat-form-field>
+  <pre *ngIf="data?.address">{{ address || customerForm.value.customer?.address1_composite }}</pre>
   <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close tabindex=-1>Cancel</button>
-    <button mat-raised-button color="primary" [disabled]="loading">{{'Ok'}}</button>
+    <button type="button" mat-button mat-dialog-close tabindex=-1>Cancel</button>
+    <button type="submit" mat-raised-button color="primary" [disabled]="loading || loadingAddresses || loadingSites">{{'Ok'}}</button>
   </mat-dialog-actions>
 </form>
 
-<button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>
-
-<mat-menu #menu="matMenu" xPosition="before" >
+<mat-menu #menu="matMenu" xPosition="before">
   <ng-template matMenuContent>
     <button mat-menu-item *ngFor="let branch of branches" (click)="setBranch(branch)">
       <span>{{ branch }}</span>

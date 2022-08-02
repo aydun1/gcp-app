@@ -1,0 +1,46 @@
+.outer {
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+h2 {
+  margin-left: 10px;
+}
+
+textarea {
+  height: 50px;
+}
+
+.mat-card {
+  margin: 10px;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+.field-container {
+  display: flex;
+  margin: 0 -8px;
+}
+
+.field-container > .mat-form-field {
+  flex: 1;
+  min-width: 120px;
+  margin: 0 8px;
+}
+
+.field-container > .arrow {
+  margin: 0 12px;
+  padding-top: 18px;
+}
+
+.spacer {
+  margin-bottom: 20px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin: 30px 10px;
+}

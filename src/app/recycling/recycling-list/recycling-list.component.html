@@ -1,18 +1,18 @@
 <div class="outer">
-  <div class="options inner">
+  <div *ngIf="choices$ | async as choices"class="options inner">
     <div class="buttons">
       <mat-form-field appearance="outline" class="branch">
-        <mat-label>{{ choices?.Branch.name }}</mat-label>
+        <mat-label>{{ choices.Branch.name }}</mat-label>
         <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
           <mat-option>All</mat-option>
-          <mat-option *ngFor="let s of choices?.Branch.choice.choices" value="{{ s }}">{{ s }}</mat-option>
+          <mat-option *ngFor="let s of choices.Branch.choice.choices" value="{{ s }}">{{ s }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="status">
-        <mat-label>{{ choices?.Status.name }}</mat-label>
-        <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event)">
+        <mat-label>{{ choices.Status.name }}</mat-label>
+        <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event, choices.Status.choice.choices)">
           <mat-option>All</mat-option>
-          <mat-option *ngFor="let s of choices?.Status.choice.choices" value="{{ s }}">{{ s }}</mat-option>
+          <mat-option *ngFor="let s of choices.Status.choice.choices" value="{{ s }}">{{ s }}</mat-option>
           <mat-optgroup label="Cage history">
             <mat-option value="Complete">All complete cages</mat-option>
             <mat-option value="Local processing">Local processing</mat-option>
@@ -21,15 +21,15 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="asset-type">
-        <mat-label>{{ choices?.AssetType.name }}</mat-label>
+        <mat-label>{{ choices.AssetType.name }}</mat-label>
         <mat-select [formControl]="assetTypeFilter" (selectionChange)="setAssetType($event)">
           <mat-option>All</mat-option>
-          <mat-option *ngFor="let s of choices?.AssetType.choice.choices" value="{{ s }}">{{ s }}</mat-option>
+          <mat-option *ngFor="let s of choices.AssetType.choice.choices" value="{{ s }}">{{ s }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="bin-filter">
         <mat-label>Cage number</mat-label>
-        <input matInput [formControl]="binFilter" type="number" autocomplete="off" placeholder="Type to search...">
+        <input matInput [formControl]="binFilter" min="0" type="number" autocomplete="off" placeholder="Type to search...">
         <button *ngIf="!binFilter.value" matSuffix mat-icon-button disabled>
           <mat-icon>search</mat-icon>
         </button>
@@ -41,13 +41,15 @@
     <a mat-raised-button [routerLink]="['new']" color="primary" class="add-cage">Add New Cage</a>
   </div>
 
+  <div class="status-header inner">{{ statusFilter.value }}</div>
+
   <div *ngIf="(cages$ | async) as cages" class="inner">
     <mat-table #table [dataSource]="cages" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
 
       <ng-container matColumnDef="fields/CageNumber">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Number </mat-header-cell>
         <mat-cell *matCellDef="let cage" [routerLink]="[cage.id]">
-          <a [routerLink]="[cage.id]" class="cage-link">{{ cage.fields.CageNumber || '-' }}</a>
+          <a [routerLink]="[cage.id]" class="cage-link">{{ cage.fields.CageNumber !== undefined ?  cage.fields.CageNumber : '-' }}</a>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
       </ng-container>
@@ -82,7 +84,27 @@
 
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
-        <mat-cell *matCellDef="let cage">{{ cage.fields.Status }}</mat-cell>
+        <mat-cell *matCellDef="let cage">
+          <div [class]="'chip' + cage.statusId">
+            {{ cage.fields.Status }}
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="location">
+        <mat-header-cell *matHeaderCellDef> Location </mat-header-cell>
+        <mat-cell *matCellDef="let cage">
+          {{ cage.location }}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="check">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let cage">
+          <mat-checkbox color="accent"></mat-checkbox>
+        </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
 

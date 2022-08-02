@@ -182,8 +182,10 @@
       }
     }
   },
-  "defaultProject": "gcp-app",
   "cli": {
-    "defaultCollection": "@angular-eslint/schematics"
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ],
+    "analytics": "2db98c11-1331-4d50-9576-41f4df9d86ef"
   }
 }

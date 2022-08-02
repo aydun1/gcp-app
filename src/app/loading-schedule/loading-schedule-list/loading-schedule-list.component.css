@@ -1,0 +1,167 @@
+.scroller {
+  display: block;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.outer {
+  margin: 0 auto;
+  max-width: 1024px;
+}
+
+.coloured {
+  border-radius: 10px;
+  color: white;
+  padding: 5px 10px;
+  min-width: 80px;
+}
+
+.mobile {
+  display: none;
+}
+
+h2 {
+  margin-left: 10px;
+}
+
+.mat-row {
+  min-height: 72px;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  margin-right: 10px;
+  width: 145px;
+}
+
+.mat-footer-row {
+  font-weight: bold;
+}
+
+.options {
+  align-items: baseline;
+  display: flex;
+}
+
+.buttons {
+  flex: 1;
+}
+
+.mat-column-loadingDate {
+  flex: 0 1 90px;
+}
+
+.mat-column-arrivalDate {
+  flex: 0 1 90px;
+}
+
+.mat-column-reference {
+  flex: 0 1 60px;
+}
+
+.loadDetails {
+  align-items: flex-start;
+  flex: 0 1 120px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mat-column-spaces {
+  flex: 0 1 60px;
+}
+
+.mat-column-transportCompany {
+  align-items: flex-start;
+  flex: 1 1 120px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mat-column-status {
+  flex: 0 1 120px;
+}
+
+.mat-column-notes {
+  flex: 1 1 100px;
+}
+
+.mat-column-menu {
+  flex: 0 1 40px;
+}
+
+@media (max-width: 800px) {
+  .mobile {
+    display: inherit;
+    white-space: pre;
+  }
+
+  .mat-header-row {
+    display: none;
+  }
+
+  .mat-cell {
+    min-height: 0;
+  }
+
+  .mat-cell:first-of-type{
+    padding-left: 0;
+  }
+
+  .mat-row {
+    display: grid;
+    gap: 5px;
+    grid-template-columns: 50px 80px 1fr 40px;
+    grid-template-rows: 40px 44px 51px 1fr;
+    padding: 10px;
+  }
+
+  .mat-cell.mat-column-reference {
+    grid-row: 1;
+    justify-content: inherit;
+    padding-bottom: 0;
+    padding-top: 0;
+    padding-right: 0;
+  }
+
+  .mat-cell.mat-column-transportCompany {
+    grid-column: 1 / 4;
+    grid-row: 2;
+    align-items: inherit;
+    flex-direction: row;
+    justify-content: inherit;
+
+  }
+
+  .mat-cell.mat-column-menu {
+    grid-row: 1;
+    max-width: 50px;
+    padding-right: 0;
+  }
+
+  .mat-cell.mat-column-loadingDate {
+    grid-column: 1/3;
+    grid-row: 3;
+    justify-content: inherit;
+  }
+
+  .mat-cell.mat-column-arrivalDate {
+    grid-column: 3/5;
+    grid-row: 3;
+    justify-content: inherit;
+    margin-left: 36px;
+  }
+
+  .mat-cell.mat-column-spaces {
+    grid-row: 1;
+  }
+
+  .mat-cell.mat-column-status {
+    grid-row: 1;
+    margin-left: auto;
+  }
+
+  .mat-cell.mat-column-notes {
+    grid-column: 1 / 5;
+    grid-row: 4;
+  }
+}

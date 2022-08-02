@@ -1,5 +1,12 @@
+.header {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  margin-right: 16px;
+}
+
 .mat-dialog-content {
-  height: 65vh;
+  min-height: 396px;
 }
 
 .mat-accordion {
@@ -56,9 +63,15 @@
 
 .cage-number {
   font-weight: bold;
-  width: 42px;
+  font-weight: bold;
+  margin-right: 20px;
+  min-width: 20px;
 }
 
 .cage-type {
   font-weight: 500;
+}
+
+.branch-picker {
+  margin-right: 16px;
 }

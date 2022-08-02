@@ -2,19 +2,21 @@ import { Injectable } from '@angular/core'
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, expand, from, map, Observable, of, switchMap, take } from 'rxjs';
 
+import { environment } from '../../environments/environment';
 import { Doc } from './doc';
+import { TransportCompany } from '../loading-schedule/shared/transport-company';
 
 @Injectable({ providedIn: 'root' })
 export class DocsService {
-  private endpoint = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4';
+  private endpoint = `${environment.endpoint}/${environment.siteUrl}`;
   private chunkLength = 320 * 1024;
 
   constructor(
     private http: HttpClient
   ) { }
 
-  listFiles(id: string): Observable<Doc[]> {
-    const url = `${this.endpoint}/drive/root:/transfers/${id}:/children?$orderby=name`
+  listFiles(id: string, folder: string): Observable<Doc[]> {
+    const url = `${this.endpoint}/drive/root:/${folder}/${id}:/children?$orderby=name`
     return this.http.get(url).pipe(
       map(_ => _['value']),
       catchError((error: HttpErrorResponse) => {
@@ -25,18 +27,18 @@ export class DocsService {
         }
         return of([])
       }),
-      map(_ => _.sort((a, b) => b.createdDateTime > a.createdDateTime && 1 || -1))
+      map(_ => _.sort((a: TransportCompany, b: TransportCompany) => b.createdDateTime > a.createdDateTime && 1 || -1))
     );
   }
 
-  createUploadSession(id: string, file: File): Observable<any> {
-    const url = `${this.endpoint}/drive/root:/transfers/${id}/${file.name}:/createUploadSession`;
+  createUploadSession(id: string, folder: string, file: File): Observable<any> {
+    const url = `${this.endpoint}/drive/root:/${folder}/${id}/${file.name}:/createUploadSession`;
     const payload = {
       'item': {
         '@microsoft.graph.conflictBehavior': 'rename',
         'name': file.name
       }
-    }
+    };
     return this.http.post(url, payload).pipe(
       expand(res => this.readFragment(file, res['next'] ? res['next'] : 0, res)),
       take(Math.ceil(file.size / this.chunkLength) + 1)
@@ -58,8 +60,8 @@ export class DocsService {
     )
   }
 
-  deleteFile(folder: string, fileName: string): Observable<Object> {
-    const url = `${this.endpoint}/drive/root:/transfers/${folder}/${fileName}:`;
+  deleteFile(id: string, folder: string, fileName: string): Observable<Object> {
+    const url = `${this.endpoint}/drive/root:/${folder}/${id}/${fileName}:`;
     return this.http.delete(url);
   }
 

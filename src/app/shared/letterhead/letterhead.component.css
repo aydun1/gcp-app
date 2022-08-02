@@ -1,0 +1,15 @@
+.letterhead {
+  align-items: center;
+  height: 110px;
+  display: flex;
+}
+
+img {
+  margin-right: 16px;
+  width: 110px;
+}
+
+h2,
+h3 {
+  margin: 10px 0;
+}

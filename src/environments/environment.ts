@@ -4,7 +4,9 @@
 
 export const environment = {
   production: false,
-  redirectUri: 'http://localhost:4200/'
+  redirectUri: 'http://localhost:4200/',
+  endpoint: 'https://graph.microsoft.com/v1.0',
+  siteUrl: 'sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4',
 };
 
 /*

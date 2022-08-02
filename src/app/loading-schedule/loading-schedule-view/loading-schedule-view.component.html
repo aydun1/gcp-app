@@ -1,0 +1,93 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="goBack()" class="mobile-button">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <ng-container>
+    <div class="title">Loading schedule entry</div>
+  </ng-container>
+</mat-toolbar>
+
+<div class="content" *ngIf="loadingScheduleEntry$ | async as loadingScheduleEntry; else loadingPage">
+  <div class="header">
+    <h2>Loading schedule entry</h2>
+    <div class="actions">
+      <div class="edit">
+        <button mat-raised-button (click)="edit = true">Edit entry</button>
+      </div>
+    </div>
+  </div>
+
+
+  <mat-card class="inner">
+    <mat-list>
+      <mat-list-item>
+        <mat-icon mat-list-icon>business</mat-icon>
+        <div mat-line>{{ loadingScheduleEntry.fields.TransportCompany }}</div>
+        <div mat-line>Transport company</div>
+      </mat-list-item>
+      <mat-list-item>
+        <mat-icon mat-list-icon>person</mat-icon>
+        <div mat-line>{{ loadingScheduleEntry.fields.Driver }}</div>
+        <div mat-line>Driver</div>
+      </mat-list-item>
+      <mat-list-item>
+        <mat-icon mat-list-icon>tag</mat-icon>
+        <div mat-line>{{ loadingScheduleEntry.fields.Spaces }}</div>
+        <div mat-line>Spaces</div>
+      </mat-list-item>
+      <mat-list-item>
+        <mat-icon mat-list-icon>notes</mat-icon>
+        <div mat-line>{{ loadingScheduleEntry.fields.Notes }}</div>
+        <div mat-line>Notes</div>
+      </mat-list-item>
+    </mat-list>
+    <div class="side-by-side">
+      <mat-list>
+        <h3 matSubheader>Loading</h3>
+        <mat-list-item>
+          <mat-icon mat-list-icon>place</mat-icon>
+          <div mat-line>{{ loadingScheduleEntry.fields.From }}</div>
+          <div mat-line>From</div>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon mat-list-icon>today</mat-icon>
+          <div mat-line>{{ loadingScheduleEntry.fields.LoadingDate | date:'dd/MM/yyyy' }}</div>
+          <div mat-line>Loading on</div>
+        </mat-list-item>
+      </mat-list>
+      <mat-icon class="arrow">arrow_forward</mat-icon>
+      <mat-list>
+        <h3 matSubheader>Arriving</h3>
+        <mat-list-item>
+          <mat-icon mat-list-icon>place</mat-icon>
+          <div mat-line>{{ loadingScheduleEntry.fields.To }}</div>
+          <div mat-line>To</div>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon mat-list-icon>event</mat-icon>
+          <div mat-line>{{ (loadingScheduleEntry.fields.ArrivalDate | date:'dd/MM/yyyy') || '-' }}</div>
+          <div mat-line>Arriving on</div>
+        </mat-list-item>
+      </mat-list>
+      <div class="status">
+        <div class="approved">
+          <span>{{ loadingScheduleEntry.fields.Status }}</span>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+
+  <mat-card class="inner">
+    <mat-card-header>
+      <mat-card-title>Attachments</mat-card-title>
+    </mat-card-header>
+    <gcp-doc-upload [id]="loadingScheduleEntry.id" folder="loading-schedule">
+    </gcp-doc-upload>
+  </mat-card>
+</div>
+
+<gcp-loading-schedule-new *ngIf="edit"></gcp-loading-schedule-new>
+
+<ng-template #loadingPage>
+  <gcp-loading-page></gcp-loading-page>
+</ng-template>

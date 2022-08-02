@@ -1,11 +1,18 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, tap, throwError } from 'rxjs';
 
 import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
 import { RecyclingReceiptsService } from '../shared/recycling-receipts.service';
+
+interface NewReceiptForm {
+  date: FormControl<Date | null>;
+  branch: FormControl<string | null>;
+  weight: FormControl<string | null>;
+  reference: FormControl<string | null>;
+}
 
 @Component({
   selector: 'gcp-recycling-receipt-new',
@@ -15,9 +22,9 @@ import { RecyclingReceiptsService } from '../shared/recycling-receipts.service';
 export class RecyclingReceiptNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
 
-  public newReceiptForm: FormGroup;
-  public loading: boolean;
-  public state: string;
+  public newReceiptForm!: FormGroup<NewReceiptForm>;
+  public loading!: boolean;
+  public state!: string;
   public states = this.sharedService.branches;
 
   constructor(
@@ -37,18 +44,19 @@ export class RecyclingReceiptNewComponent implements OnInit {
     });
 
     this.newReceiptForm = this.fb.group({
-      date: [{value: date, disabled: false}, Validators.required],
-      branch: [{value: this.state, disabled: false}, [Validators.required]],
-      weight: ['', [Validators.required, Validators.min(0)]],
-      reference: ['', [Validators.required]]
+      date: new FormControl({value: date, disabled: false}, [Validators.required]),
+      branch: new FormControl({value: this.state, disabled: false}, [Validators.required]),
+      weight: new FormControl('', [Validators.required, Validators.min(0)]),
+      reference: new FormControl('', [Validators.required])
     });
   }
 
   onSubmit(): void {
-    if (this.newReceiptForm.invalid) return;
-    this.loading = true;
-    const branch = this.newReceiptForm.get('branch').value;
+    const branch = this.newReceiptForm.get('branch')?.value;
     const values = this.newReceiptForm.value;
+    if (this.newReceiptForm.invalid || !values.reference || !branch || !values.weight || !values.date) return;
+    this.loading = true;
+
     this.receiptsService.addNewReceipt(values.reference, branch, values.weight, values.date).pipe(
       tap(_ => {
         this.goBack();
