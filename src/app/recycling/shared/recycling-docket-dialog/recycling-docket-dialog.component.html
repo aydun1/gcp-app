@@ -1,6 +1,6 @@
 <div class="header">
   <gcp-letterhead>Cage Collection Docket</gcp-letterhead>
-  <div class="right">
+  <div>
     <div class="buttons">
       <button *ngIf="data.sites.length === 0" mat-stroked-button type="button" [matMenuTriggerFor]="addressesMenu" class="addresses">
         {{ address?.name || 'Address' }}
@@ -57,8 +57,8 @@
   <mat-divider></mat-divider>
   <p class="notes">Notes:</p>
   <div class="signatures">
-    <div class="sender">Sent by: <span class="underline long"></span></div>
-    <div>Received by: <span class="underline long"></span></div>
+    <div class="sender">Sent by: <span class="underline"></span></div>
+    <div>Received by: <span class="underline"></span></div>
   </div>
 </mat-dialog-content>
 

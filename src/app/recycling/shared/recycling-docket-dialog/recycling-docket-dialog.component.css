@@ -4,6 +4,7 @@
 
 .header {
   display: flex;
+  justify-content: space-between;
 }
 
 .customer {
@@ -11,12 +12,29 @@
   margin: 40px 0 20px 0;
 }
 
-.customer > .details {
+.date {
+  margin: 0 10px;
+  margin-top: 32px;
+  width: 128px;
+}
+
+.addresses {
+  margin: 0 10px;
+}
+
+.details {
+  flex: 1;
   margin-left: 10px;
+  overflow: hidden;
 }
 
 .address {
   white-space: pre;
+}
+
+.cages {
+  margin: 0 10px;
+  flex: 0 0 128px;
 }
 
 .signs {
@@ -27,16 +45,6 @@
 .notes {
   height: calc((100% - 80% - 320px));
   min-height: 100px;
-
-}
-
-.addresses {
-  margin-right: 10px;
-}
-
-.cages {
-  padding: 0 10px;
-  margin-left: auto;
 }
 
 .sender {
@@ -50,27 +58,9 @@
 }
 
 .underline {
-  width: 60px;
+  width: 180px;
   display: inline-block;
   border-bottom: black 1px solid;
-}
-
-.long {
-  width: 180px;
-}
-
-.right {
-  margin-left: auto;
-}
-
-.buttons {
-  align-items: center;
-  align-self: flex-start;
-  display: flex;
-}
-
-.date {
-  margin-top: 26px;
 }
 
 @media print {
