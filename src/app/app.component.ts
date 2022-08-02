@@ -45,7 +45,7 @@ export class AppComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    // this.automateService.doThing()
+    // this.automateService.getAndSet().subscribe();
     this.authService.instance.handleRedirectPromise().then(authResult => {
       const account = this.authService.instance.getActiveAccount();
       if (!account) this.checkAndSetActiveAccount();

@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { combineLatest, map, Observable, switchMap, tap, timer } from 'rxjs';
+import { combineLatest, map, Observable, of, switchMap, tap, timer } from 'rxjs';
 
-import { SharedService } from 'src/app/shared.service';
+import { SharedService } from '../shared.service';
 import { Pallet } from '../pallets/shared/pallet';
 
 @Injectable({
@@ -27,7 +27,7 @@ export class AutomateService {
   updateGP(): Observable<number> {
     let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created)&filter=fields/CustomerNumber ne null &top=2000`;
     const a$: Observable<string[]> = this.http.get(url).pipe(
-      map((res: {value: Pallet[]}) => res.value),
+      map((res: any) => res.value as Pallet[]),
       map(_ => _.map(p => p.id))
     );
 
@@ -39,33 +39,32 @@ export class AutomateService {
     )
   }
 
-  setToZero(pallet: Pallet): Observable<any>  {
-      const url = `${this.palletsUrl}/items('${pallet.id}')`;
-
-      const payload = {fields: {
-        In: 0,
-        Out: 0,
-        Quantity: 0
-      }};
-  
-      console.log(url, payload)
-      return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${pallet.id}')`, payload)
+  setToZero(pallet: Pallet): Observable<any> {
+    const shouldRun = 0;
+    const payload = {fields: {In: 0, Out: 0, Quantity: 0}};
+    return shouldRun ? this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${pallet.id}')`, payload) : of();
   }
 
-  resetPallets(): Observable<number> {
-    const date = '2022-03-28T03:58:43Z';//new Date('2021/12/08').toISOString();
-    const state = 'VIC'
-    const top = 2000;
+  setReference(pallet: Pallet): Observable<any>  {
+    const shouldRun = 1;
+    const payload = {fields: {Reference: 'updated'}};
+    return shouldRun ? this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${pallet.id}')`, payload) : of();
+  }
 
-    let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created,Pallet,In,Out,Quantity)&filter=fields/Branch eq '${state}' and fields/CustomerNumber ne null and fields/Created ge '${date}'&top=${top}`;
+  getAndSet(): Observable<number> {
+
+    const date = new Date('2022/07/01').toISOString();
+    const branch = 'VIC'
+    const top = 2000;
+    let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created)&filter=fields/Created ge '${date}' and fields/Branch eq '${branch}' and fields/CustomerNumber ne null'&top=${top}`;
     const a$: Observable<Pallet[]> = this.http.get(url).pipe(
-      map((res: {value: Pallet[]}) => res.value),
+      map((res: any) => res.value as Pallet[]),
       tap(_ => console.log(_.length))
     );
 
     const b$ = timer(1000, 2000);
     return combineLatest([a$, b$]).pipe(
-      switchMap(([a, b]) => this.setToZero(a[this.i])),
+      switchMap(([a, b]) => this.setReference(a[this.i])),
       tap(() => this.i += 1),
       map(_ => this.i)
     )
@@ -79,7 +78,7 @@ export class AutomateService {
     const url = `${this.palletTrackerUrl}/items?expand=fields(select=CustomerNumber,Created,Pallet,Out,In,Branch,Site)&filter=${filters}&top=2000`;
 
     return this.http.get(url).pipe(
-      map((res: {value: Pallet[]}) => res.value),
+      map((res: any) => res.value as Pallet[]),
       tap(_ => console.log(`Got ${_.length} items.`)),
       map(pallets => {
         const totals = {}
