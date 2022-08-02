@@ -11,11 +11,13 @@ export interface Delivery {
   fields: {
     id: string,
     Title: string,
+    Address: string,
     Branch: string,
     Customer: string,
     CustomerNumber: string,
-    CustomerId: string,
+    Notes: string,
     Site: string,
-    Sequence: number
+    Sequence: number,
+    Status: string
   }
 }

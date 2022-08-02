@@ -16,19 +16,21 @@ interface choice {choice: {choices: Array<any>}, name: string};
   styleUrls: ['./recycling-list.component.css']
 })
 export class RecyclingListComponent implements OnInit {
-  private _loadList: boolean;
-  public cages$: Observable<Cage[]>;
-  public binFilter = new FormControl('');
+  private _loadList!: boolean;
+  public cages$!: Observable<Cage[]>;
+  public binFilter = new FormControl<number | null>(null);
   public branchFilter = new FormControl('');
   public statusFilter = new FormControl('');
   public assetTypeFilter = new FormControl('');
   public loading = this.recyclingService.loading;
-  public weight: number;
-  public count: number;
-  public displayedColumns = ['fields/CageNumber', 'assetType', 'status', 'fields/Modified', 'weight'];
-  public sortSort: string;
-  public sortOrder: 'asc' | 'desc';
-  public choices: {Status: choice, AssetType: choice, Branch: choice};
+  public weight!: number;
+  public count!: number;
+  public displayedColumns: Array<string> = [];
+  public sortSort!: string;
+  public sortOrder!: 'asc' | 'desc';
+  public choices$: Observable<{Status: choice, AssetType: choice, Branch: choice}> | undefined;
+  public statusPicked!: boolean;
+  public placeholder = {AssetType: {choice: {choices: []}, name: ''}, Status: {choice: {choices: []}, name: ''}, Branch: {choice: {choices: []}, name: ''}}
 
   constructor(
     private el: ElementRef,
@@ -48,7 +50,7 @@ export class RecyclingListComponent implements OnInit {
     this.cages$ = this.route.queryParams.pipe(
       startWith({} as Params),
       switchMap((_: Params) => this.router.events.pipe(
-        startWith(new NavigationEnd(1, null, null)),
+        startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         map(() => _)
       )),
@@ -60,26 +62,26 @@ export class RecyclingListComponent implements OnInit {
       }),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
       tap((cages: Array<Cage>) => {
-        this.weight = cages.map(_ => _.fields.NetWeight).filter(_ => _).reduce((acc, val) => acc + +val, 0);
+        this.weight = cages.map(_ => _.fields?.NetWeight).filter(_ => _).reduce((acc, val) => acc + +val, 0);
         this.count = cages.map(() => 1).reduce((acc, val) => acc + val, 0);
       })
     )
 
     this.binFilter.valueChanges.pipe(
       debounceTime(200),
-      map(_ => _ > 0 ? _ : null),
+      map(_ => _ && _ > 0 ? _ : null),
       tap(_ => this.router.navigate([], { queryParams: {'bin': _}, queryParamsHandling: 'merge', replaceUrl: true}))
     ).subscribe();
   }
 
   getOptions(): void {
-    this.recyclingService.getColumns().pipe(
+    this.choices$ = this.recyclingService.getColumns().pipe(
       tap(_ => {
         if (!_) return;
-        _['Status']['choice']['choices'] = _['Status']['choice']['choices'].filter(c => c !== 'Complete');
-        this.choices = _;
+        _['Status']['choice']['choices'] = _['Status']['choice']['choices'].filter((c: string) => c !== 'Complete');
+        this.hideStatus(_.Status.choice.choices.includes(this.statusFilter.value));
       })
-    ).subscribe();
+    );
   }
 
   getFirstPage(_: Params): BehaviorSubject<Cage[]> {
@@ -119,7 +121,7 @@ export class RecyclingListComponent implements OnInit {
       this.binFilter.patchValue(params['bin']);
       filters['bin'] = params['bin'];
     } else {
-      if (this.binFilter.value) this.binFilter.patchValue('');
+      if (this.binFilter.value) this.binFilter.patchValue(null);
     }
   }
 
@@ -146,7 +148,8 @@ export class RecyclingListComponent implements OnInit {
     this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setStatus(status: MatSelectChange): void {
+  setStatus(status: MatSelectChange, choices: Array<string>): void {
+    this.hideStatus(choices.includes(status.value));
     this.router.navigate([], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
@@ -155,13 +158,18 @@ export class RecyclingListComponent implements OnInit {
   }
 
   clearBinFilter(): void {
-    this.binFilter.patchValue('');
+    this.binFilter.patchValue(null);
   }
 
   announceSortChange(e: Sort): void {
     const sort = e.direction ? e.active : null;
     const order = e.direction || null;
     this.router.navigate([], { queryParams: {sort, order}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  hideStatus(hide: boolean) {
+    const displayedColumns = ['fields/CageNumber', 'assetType', 'status', 'location', 'fields/Modified', 'weight', 'check'];
+    this.displayedColumns = hide ? displayedColumns.filter(_ => _ !== 'status') : displayedColumns;
   }
 
   trackByFn(index: number, item: Cage): string {

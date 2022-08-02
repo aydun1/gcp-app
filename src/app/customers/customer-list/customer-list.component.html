@@ -23,8 +23,8 @@
     <mat-table #table [dataSource]="customers" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
-        <mat-cell *matCellDef="let customer" [routerLink]="[customer.accountid]">
-          <a [routerLink]="[customer.accountid]" class="customer-link">{{customer.name}}</a>
+        <mat-cell *matCellDef="let customer" [routerLink]="[customer.accountnumber]">
+          <a [routerLink]="[customer.accountnumber]" class="customer-link">{{customer.name}}</a>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
       </ng-container>

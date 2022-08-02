@@ -17,14 +17,14 @@ export class CageWeightsComponent {
     this.grossWeight = value.fields.GrossWeight;
     this._cage = value;
   }
-  private _cage: Cage;
+  private _cage!: Cage;
 
   @Output() updated = new EventEmitter<boolean>();
 
-  public editCageWeight: boolean;
-  public cageWeight: number;
-  public editGrossWeight: boolean;
-  public grossWeight: number;
+  public editCageWeight!: boolean;
+  public cageWeight!: number;
+  public editGrossWeight!: boolean;
+  public grossWeight!: number;
 
   constructor(
     private recyclingService: RecyclingService

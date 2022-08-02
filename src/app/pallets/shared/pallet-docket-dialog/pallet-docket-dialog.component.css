@@ -1,0 +1,65 @@
+.mat-dialog-content {
+  display: flex;
+}
+
+.header {
+  display: flex;
+}
+
+.buttons {
+  align-items: center;
+  align-self: flex-start;
+  display: flex;
+  margin-left: auto;
+}
+
+.mat-spinner {
+  margin-right: 10px;
+}
+
+.sub-header {
+  display: none;
+}
+
+.signs {
+  display: flex;
+  margin-top: 60px;
+}
+
+.sender {
+  margin-right: 20px;
+}
+
+.list-container {
+  height: 368px;
+}
+
+@media print {
+  @page {
+    size: landscape
+  }
+
+  .docket {
+    position: fixed;
+    right: 0;
+    width: 500px;
+    height: 500px;
+  }
+  
+  .docket1 {
+    left: 40px;
+  }
+  
+  .docket2 {
+    right: 0;
+  }
+
+  .main-header {
+    display: none;
+  }
+
+  .sub-header {
+    display: flex;
+  }
+
+}

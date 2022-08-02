@@ -13,16 +13,23 @@
       <h2 class="name">{{ customer.name || 'Unnamed customer' }}</h2>
       <p class="number">{{ customer.accountnumber }}</p>
     </div>
-    <button mat-stroked-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{customer: customer}" [disabled]="!sites">
-      {{ site || 'All sites'}}
+    <button mat-stroked-button type="button" [matMenuTriggerFor]="sitesMenu" [matMenuTriggerData]="{customer: customer}" [disabled]="!sites">
+      {{ site || 'All sites' }}
+    </button>
+    <button mat-icon-button type="button" class="menu" [matMenuTriggerFor]="actionsMenu" [matMenuTriggerData]="{customer: customer}">
+      <mat-icon>more_vert</mat-icon>
     </button>
   </div>
   <div class="inner">
     <div class="cards">
+      <mat-divider></mat-divider>
       <div class="status-card">
-        <h3>
-          Pallets with customer
-        </h3>
+        <div class="section-heading">
+          <h3>
+            Pallets with customer
+          </h3>
+          <button type="button" mat-stroked-button (click)="openPalletHistory(customer)">History</button>
+        </div>
         <dl>
           <dt>Loscams</dt>
           <dd *ngIf="palletsOwing; else loadingDots">{{ palletsOwing.Loscam }}</dd>
@@ -32,10 +39,14 @@
           <dd *ngIf="palletsOwing; else loadingDots">{{ palletsOwing.Plain }}</dd>
         </dl>
       </div>
+      <mat-divider></mat-divider>
       <div class="status-card">
-        <h3>
-          Cages
-        </h3>
+        <div class="section-heading">
+          <h3>
+            Cages
+          </h3>
+          <button type="button" mat-stroked-button (click)="openCageHistory(customer)">History</button>
+        </div>
         <dl>
           <dt>Active</dt>
           <dd *ngIf="cages; else loadingDots">{{ cages.count }}</dd>
@@ -45,25 +56,50 @@
           <dd *ngIf="cages; else loadingDots">{{ cages.weight }} kg</dd>
         </dl>
       </div>
-    </div>
-    <div>
-      <gcp-big-button [target]="[]" (click)="openPalletDialog(customer)">Transfer Pallets</gcp-big-button>
-      <gcp-big-button [target]="[]" (click)="openRecyclingDialog(customer)">Manage Recycling</gcp-big-button>
+      <mat-divider></mat-divider>
+      <div class="status-card">
+        <div class="big-buttons">
+          <gcp-big-button [target]="[]" (click)="openPalletDialog(customer)">Transfer Pallets</gcp-big-button>
+          <gcp-big-button [target]="[]" (click)="openRecyclingDialog(customer)">Manage Recycling</gcp-big-button>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="status-card">
+        <div class="section-heading">
+          <h3>
+            Attachments
+          </h3>
+        </div>
+        <gcp-doc-upload [id]="customer.accountnumber" folder="debtors"></gcp-doc-upload>
+      </div>
     </div>
   </div>
 </div>
 
-<mat-menu #menu="matMenu" xPosition="before" >
+<mat-menu #sitesMenu="matMenu" xPosition="before">
   <ng-template matMenuContent let-customer="customer">
-    <button mat-menu-item (click)="setSite(customer, null)">
+    <button mat-menu-item (click)="setSite(null)">
       <span>All sites</span>
     </button>
-    <button mat-menu-item *ngFor="let site of sites" (click)="setSite(customer, site.fields.Title)">
+    <button mat-menu-item *ngFor="let site of sites" (click)="setSite(site.fields.Title)">
       <span>{{ site.fields.Title }}</span>
     </button>
     <button mat-menu-item (click)="openSiteDialog(customer)">
       <mat-icon>add</mat-icon>
       <span>Add/edit sites</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #actionsMenu="matMenu" xPosition="before">
+  <ng-template matMenuContent let-customer="customer">
+    <button type="button" mat-menu-item (click)="openRecyclingDocketDialog(customer)">
+      <mat-icon>receipt</mat-icon>
+      <span>Cage collection docket</span>
+    </button>
+    <button type="button" mat-menu-item (click)="requestCages()">
+      <mat-icon>flag</mat-icon>
+      <span>Request a new cage</span>
     </button>
   </ng-template>
 </mat-menu>
@@ -77,3 +113,5 @@
     <gcp-loading-dots></gcp-loading-dots>
   </dd>
 </ng-template>
+
+<router-outlet></router-outlet>

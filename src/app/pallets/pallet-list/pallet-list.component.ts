@@ -1,10 +1,13 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
-import { SharedService } from 'src/app/shared.service';
+
+import { SharedService } from '../../shared.service';
 import { Pallet } from '../shared/pallet';
+import { PalletDocketDialogComponent } from '../shared/pallet-docket-dialog/pallet-docket-dialog.component';
 import { PalletsService } from '../shared/pallets.service';
 
 @Component({
@@ -13,8 +16,8 @@ import { PalletsService } from '../shared/pallets.service';
   styleUrls: ['./pallet-list.component.css']
 })
 export class PalletListComponent implements OnInit {
-  private _loadList: boolean;
-  public pallets$: Observable<Pallet[]>;
+  private _loadList!: boolean;
+  public pallets$!: Observable<Pallet[]>;
   public branchFilter = new FormControl('');
   public palletFilter = new FormControl('');
   public nameFilter = new FormControl('');
@@ -29,6 +32,7 @@ export class PalletListComponent implements OnInit {
     private el: ElementRef,
     private route: ActivatedRoute,
     private router: Router,
+    private dialog: MatDialog,
     private palletsService: PalletsService,
     private sharedService: SharedService
   ) { }
@@ -45,7 +49,7 @@ export class PalletListComponent implements OnInit {
     this.pallets$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
-        startWith(new NavigationEnd(1, null, null)),
+        startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         map(() => _)
       )),
@@ -65,19 +69,19 @@ export class PalletListComponent implements OnInit {
 
     this.nameFilter.valueChanges.pipe(
       debounceTime(200),
-      map(_ => _.length > 0 ? _ : null),
+      map(_ => _ && _.length > 0 ? _ : null),
       tap(_ => this.router.navigate([], { queryParams: {'name': _}, queryParamsHandling: 'merge', replaceUrl: true}))
     ).subscribe();
   }
 
   getFirstPage(params: Params): Observable<Pallet[]> {
-    return this.palletsService.getFirstPage(params).pipe(
+    return this.palletsService.getFirstPage(params, true).pipe(
       map(_=>
         _.map(pallet =>  {
           const isSource = pallet.fields.From === this.branchFilter.value;
           pallet.fields['To'] = isSource ? pallet.fields.To : pallet.fields.From;
-          pallet.fields['In'] = pallet.fields.CustomerNumber ? +pallet.fields.In || null : isSource ? null : +pallet.fields.Quantity;
-          pallet.fields['Out'] = pallet.fields.CustomerNumber ? +pallet.fields.Out || null : isSource ? +pallet.fields.Quantity : null;
+          pallet.fields['In'] = pallet.fields.CustomerNumber ? +pallet.fields.In || 0 : isSource ? 0 : +pallet.fields.Quantity;
+          pallet.fields['Out'] = pallet.fields.CustomerNumber ? +pallet.fields.Out || 0 : isSource ? +pallet.fields.Quantity : 0;
           return pallet;
         })
       )
@@ -138,6 +142,12 @@ export class PalletListComponent implements OnInit {
 
   clearNameFilter(): void {
     this.nameFilter.patchValue('');
+  }
+
+  openRecyclingDocketDialog(id: string): void {
+    const data = {id};
+    const dialogRef = this.dialog.open(PalletDocketDialogComponent, {width: '856px', data, autoFocus: false});
+    dialogRef.afterClosed().subscribe();
   }
 
   trackByFn(index: number, item: Pallet): string {

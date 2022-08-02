@@ -1,0 +1,150 @@
+<div cdkScrollable class="scroller">
+  <div class="outer">
+    <h2>Loading schedule</h2>
+    <div class="options inner">
+      <div class="buttons">
+        <mat-form-field appearance="outline" class="branch">
+          <mat-label>Branch</mat-label>
+          <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
+            <mat-option *ngFor="let s of states" value="{{ s }}">{{ s }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="branch">
+          <mat-label>Status</mat-label>
+          <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event)">
+            <mat-option value="active">Active</mat-option>
+            <mat-option value="delivered">Delivered</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="branch">
+          <mat-label>View</mat-label>
+          <mat-select [formControl]="viewFilter" (selectionChange)="setView($event)">
+            <mat-option value="ungrouped">Ungrouped</mat-option>
+            <mat-option value="grouped">Grouped</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <a mat-raised-button color="primary" [disabled]="loading" [routerLink]="['new']" class="action">Add entry</a>
+    </div>
+
+    <div *ngIf="loadingSchedule$ | async as loadingSchedule" class="inner">
+      <div *ngFor="let s of loadingSchedule | groupBy:groups; let i = index">
+        <div *ngIf="s">
+          <h3>{{ groups[i] }}</h3>
+          <mat-table #table [dataSource]="s" [trackBy]="trackByFn">
+
+            <ng-container matColumnDef="reference">
+              <mat-header-cell *matHeaderCellDef> Ref </mat-header-cell>
+              <mat-cell *matCellDef="let delivery" [routerLink]="[delivery.id]">
+                <a [routerLink]="[delivery.id]" class="stocktake-link">#{{ delivery.id }}</a>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="loadingDate">
+              <mat-header-cell *matHeaderCellDef> Loading </mat-header-cell>
+              <mat-cell *matCellDef="let delivery">
+                <div class="loadDetails">
+                  <div>
+                    {{ delivery.fields.LoadingDate | date: 'EEEE' }}
+                  </div>
+                  <div>
+                    {{ delivery.fields.LoadingDate | date: 'd MMM yyyy' }}
+                  </div>
+                  <div>
+                    {{ delivery.fields.From }}
+                  </div>
+                </div>
+                <mat-icon class="mobile arrow">arrow_forward</mat-icon>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="arrivalDate">
+              <mat-header-cell *matHeaderCellDef> Arriving </mat-header-cell>
+              <mat-cell *matCellDef="let delivery">
+                <div class="loadDetails">
+                  <div>
+                    {{ delivery.fields.ArrivalDate | date: 'EEEE' }}
+                  </div>
+                  <div>
+                    {{ delivery.fields.ArrivalDate | date: 'd MMM yyyy' }}
+                  </div>
+                  <div>
+                    {{ delivery.fields.To }}
+                  </div>
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="transportCompany">
+              <mat-header-cell *matHeaderCellDef> Transport company / driver </mat-header-cell>
+              <mat-cell *matCellDef="let delivery">
+                <div class="coloured" [style.background]="delivery.fields.TransportCompany | stringColour">
+                  <div>{{ delivery.fields.TransportCompany }}</div>
+                  <div>{{ delivery.fields.Driver }}</div>
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="spaces">
+              <mat-header-cell *matHeaderCellDef> Spaces </mat-header-cell>
+              <mat-cell *matCellDef="let delivery">
+                <span>{{ delivery.fields.Spaces }}</span>
+                <span class="mobile"> spaces</span>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef>{{ groups[i] ? totals[groups[i]] : totals['total'] }}</mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+              <mat-cell *matCellDef="let delivery">
+                <div class="coloured" [style.background]="delivery.fields.Status | stringColour">
+                  {{ delivery.fields.Status }}
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="notes">
+              <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
+              <mat-cell *matCellDef="let delivery">{{ delivery.fields.Notes }}</mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="menu">
+              <mat-header-cell *matHeaderCellDef></mat-header-cell>
+              <mat-cell *matCellDef="let delivery">
+                <button mat-icon-button [matMenuTriggerData]="{delivery}" [matMenuTriggerFor]="menu" class="menu"><mat-icon>more_vert</mat-icon></button>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="loading">
+              <mat-footer-cell *matFooterCellDef>
+                <gcp-loading-row></gcp-loading-row>
+              </mat-footer-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag></mat-row>
+            <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loadingList$ | async) ? false : true"></mat-footer-row>
+            <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+          </mat-table>
+        </div>
+      </div>     
+    </div>
+  </div>
+</div>
+
+<mat-menu #menu="matMenu" xPosition="before">
+  <ng-template matMenuContent let-delivery="delivery">
+    <button type="button" *ngIf="delivery.fields.Status !== 'Delivered'" mat-menu-item (click)="markDelivered(delivery.id)" [disabled]="delivery.fields.To !== state">
+      <mat-icon>check</mat-icon>Mark as delivered
+    </button>
+  </ng-template>
+</mat-menu>
+
+<router-outlet></router-outlet>

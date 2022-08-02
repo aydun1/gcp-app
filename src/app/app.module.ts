@@ -14,15 +14,15 @@ import { BrowserCacheLocation, InteractionType, IPublicClientApplication, Public
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
-import { FailedComponent } from './failed/failed.component';
 import { SharedModule } from './shared/shared.module';
 import { LogoutComponent } from './logout/logout.component';
 import { AutomateService } from './shared/automate.service';
 import { environment } from '../environments/environment';
 import { Platform } from '@angular/cdk/platform';
+import { AuthGuard } from './auth-guard';
 
 class CustomDateAdapter extends NativeDateAdapter {
-  override parse(value: any): Date | null {
+  override parse(value: string): Date | null {
       const currentDate = new Date();
       let year: number = currentDate.getFullYear();
       let month: number = currentDate.getMonth();
@@ -54,27 +54,26 @@ function MSALInstanceFactory(): IPublicClientApplication {
       postLogoutRedirectUri: environment.redirectUri
     },
     cache: {
-      cacheLocation: BrowserCacheLocation.LocalStorage,
-      storeAuthStateInCookie: false,
+      cacheLocation: BrowserCacheLocation.LocalStorage
     }
   });
 }
 
 function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
-  protectedResourceMap.set('https://graph.microsoft.com/v1.0/sites', ['Sites.ReadWrite.All']);
-  protectedResourceMap.set('https://graph.microsoft.com/v1.0/', ['Sites.ReadWrite.All']);//$batch
-  protectedResourceMap.set('https://graph.microsoft.com/v1.0/me', ['user.read']);
+  protectedResourceMap.set(`${environment.endpoint}/sites`, ['Sites.ReadWrite.All']);
+  protectedResourceMap.set(`${environment.endpoint}/`, ['Sites.ReadWrite.All']);//$batch
+  protectedResourceMap.set(`${environment.endpoint}/me`, ['user.read']);
   protectedResourceMap.set('https://gardencityplastics.crm6.dynamics.com/api/data/v9.2', ['https://gardencityplastics.crm6.dynamics.com//user_impersonation']);
   return {
-    interactionType: InteractionType.Popup,
+    interactionType: InteractionType.Redirect,
     protectedResourceMap
   };
 }
 
 function MSALGuardConfigFactory(): MsalGuardConfiguration {
   return {
-    interactionType: InteractionType.Popup,
+    interactionType: InteractionType.Redirect,
     authRequest: {
       scopes: ['user.read', 'Sites.ReadWrite.All', 'https://gardencityplastics.crm6.dynamics.com//user_impersonation']
     },
@@ -86,7 +85,6 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
   declarations: [
     AppComponent,
     HomeComponent,
-    FailedComponent,
     LogoutComponent
   ],
   imports: [
@@ -94,10 +92,10 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
+    MatButtonModule,
+    MatIconModule,
     MatMenuModule,
     MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
     SharedModule,
     MatNativeDateModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
@@ -127,7 +125,8 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     },
     MsalService,
     MsalGuard,
-    MsalBroadcastService
+    MsalBroadcastService,
+    AuthGuard
   ],
   bootstrap: [AppComponent]
 })

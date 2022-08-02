@@ -3,58 +3,55 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, startWith, switchMap, take, tap } from 'rxjs';
 
-import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap } from 'rxjs';
-import { Customer } from '../../customers/shared/customer';
-import { Site } from '../../customers/shared/site';
+import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
+import { Customer } from '../../customers/shared/customer';
+import { CustomersService } from '../../customers/shared/customers.service';
+import { Site } from '../../customers/shared/site';
 import { Delivery } from './delivery';
+import { Run } from './run';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DeliveryService {
-  private _endpoint = 'https://graph.microsoft.com/v1.0';
-  private _siteUrl = 'sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4';
-  private _listUrl = 'lists/b8088299-ac55-4e30-9977-4b0b20947b84';
-  private _columns$ = new BehaviorSubject<any>(null);
-  private _deliveryListUrl = `${this._endpoint}/${this._siteUrl}/${this._listUrl}`;
-  private _loadingDeliveries: boolean;
-  private _nextPage: string;
+  private _runsUrl = 'lists/d1874c62-66bf-4ce0-b177-ff5833de9b20';
+  private _dropsUrl = 'lists/b8088299-ac55-4e30-9977-4b0b20947b84';
+  private _runsListUrl = `${environment.endpoint}/${environment.siteUrl}/${this._runsUrl}`;
+  private _deliveryListUrl = `${environment.endpoint}/${environment.siteUrl}/${this._dropsUrl}`;
+  private _loadingDeliveries!: boolean;
+  private _nextPage!: string;
   private _deliveriesSubject$ = new BehaviorSubject<Delivery[]>([]);
+  private _runsSubject$ = new BehaviorSubject<Delivery[]>([]);
 
-  public loading = new BehaviorSubject<boolean>(false);
+  public loading = new BehaviorSubject<boolean>(true);
 
   constructor(
     private http: HttpClient,
     private snackBar: MatSnackBar,
-    private shared: SharedService
+    private shared: SharedService,
+    private cutomersService: CustomersService
   ) { }
 
   private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
-    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,CustomerNumber,CustomerId,Customer)`;
-
+    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,Address,CustomerNumber,Customer,Status, Notes)`;
     const parsed = filterKeys.map(key => {
       switch (key) {
-        case 'from':
-          return `fields/From eq '${filters['from']}'`;
-        case 'to':
-          return `fields/To eq '${filters['to']}'`;
         case 'branch':
           return `fields/Branch eq '${filters['branch']}'`;
-        case 'status':
-          if (filters['status'] === 'Pending') return `(fields/Status eq 'Pending' or fields/Status eq 'Edited')`
-          return `fields/Status eq '${filters['status']}'`;
-        case 'type':
-            return `fields/Title eq null`;
         default:
           return '';
       }
     }).filter(_ => _);
-    if (filterKeys.includes('name')) {
-      const cleanName = this.shared.sanitiseName(filters['name']);
-      parsed.push(`(startswith(fields/CustomerNumber, '${cleanName}') or startswith(fields/Title, '${cleanName}'))`);
+    if (filterKeys.includes('run')) {
+      const cleanName = this.shared.sanitiseName(filters['run']);
+      parsed.push(`fields/Title eq '${cleanName}'`);
+    } else {
+      parsed.push(`fields/Title eq null`);
     }
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
     url += `&orderby=fields/Sequence asc&top=25`;
@@ -70,7 +67,7 @@ export class DeliveryService {
         this.loading.next(false);
         this._loadingDeliveries = false;
       }),
-      map((res: {value: Delivery[]}) => res.value),
+      map((res: any) => res.value),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         this.loading.next(false);
@@ -94,7 +91,7 @@ export class DeliveryService {
       map(_ => {
         const deliveries = _.map(delivery => delivery);
         const i = deliveries.findIndex(delivery => delivery.id === res.id);
-        if (i > -1) deliveries[i] = res
+        if (i > -1) deliveries[i] = res;
         else deliveries.push(res);
         this._deliveriesSubject$.next(deliveries);
         return res
@@ -121,20 +118,99 @@ export class DeliveryService {
     )
   }
 
-  getColumns(): any {
-    this._columns$.pipe(
-      take(1),
-      map(_ => {
-        if (_) return of(_);
-        return this.http.get(`${this._deliveryListUrl}/columns`).pipe(
-          map(_ => _['value']),
-          map(_ => _.reduce((a, v) => ({ ...a, [v.name]: v}), {})),
-          tap(_ => this._columns$.next(_))
-        );
+  private updateSequence(items: Array<{id: string, index: number}>): Observable<Delivery[]> {
+    const headers = {'Content-Type': 'application/json'};
+    const requests: Array<{}> = [];
+    let i = 1;
+    items.forEach(_ => {
+      let url = `${environment.siteUrl}/${this._dropsUrl}/items/${_['id']}`
+      const payload = {fields: {
+        Sequence: _['index'],
+      }};
+      requests.push({id: i += 1, method: 'PATCH', url, headers, body: payload});
+    })
+    return requests.length ? this.http.post(`${environment.endpoint}/$batch`, {requests}).pipe(
+      map((_: any) => _.responses.map((r: any) => r['body'])),
+      switchMap(_ => this.updateListMulti(_))
+    ) : of([] as Delivery[]);
+  }
+
+  private transferRunDeliveries(action: Observable<Object>, oldName: string, newName: string): Observable<any> {
+    const headers = {'Content-Type': 'application/json'};
+    return action.pipe(
+      switchMap(() => this.getDeliveriesByRun(oldName)),
+      switchMap(deliveries => {
+        const requests = [] as Array<{id: number, method: string, url: string, headers: any, body: any}>;
+        let i = 1;
+        deliveries.forEach(_ => {
+          let url = `${environment.siteUrl}/${this._dropsUrl}/items/${_['id']}`
+          const payload = {fields: {
+            Title: newName
+          }};
+          requests.push({id: i += 1, method: 'PATCH', url, headers, body: payload});
+        })
+        return requests.length ? this.http.post(`${environment.endpoint}/$batch`, {requests}) : of(1);
+      })
+    );
+  }
+
+  getRuns(branch: string): Observable<Run[]> {
+    const url = `${this._runsListUrl}/items?expand=fields(select=Title)&filter=fields/Branch eq '${branch}'`;
+    return this.http.get(url).pipe(
+      startWith(this._runsSubject$),
+      map((res: any) => res.value as Delivery[]),
+      distinctUntilChanged((prev, curr) => {
+        return prev.map(_ => _.fields.Title).join('') === curr.map(_ => _.fields.Title).join('')
       }),
-      switchMap(_ => _)
-    ).subscribe();
-    return this._columns$;
+      tap(_ => this._runsSubject$.next(_)),
+      catchError(err => {
+        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
+        return of([]);
+      })
+    );
+  }
+
+  addRun(run: string) {
+    const url = `${this._runsListUrl}/items`;
+    return this.shared.getBranch().pipe(
+      switchMap(_ => this.http.post<Run>(url, {fields: {Title: run, Branch: _}}))
+    );
+  }
+
+  deleteRun(runId: string, oldName: string): Observable<Object> {
+    const url = `${this._runsListUrl}/items('${runId}')`
+    const action = this.http.delete(url);
+    return this.transferRunDeliveries(action, oldName, '');
+  }
+
+  renameRun(runId: string, newName: string, oldName: string): Observable<Object> {
+    const payload = {fields: {
+      Title: newName,
+    }};
+    const action = this.http.patch(`${this._runsListUrl}/items('${runId}')`, payload);
+    return this.transferRunDeliveries(action, oldName, newName);
+  }
+
+  getDeliveriesByRun(runName: string): Observable<Delivery[]> {
+    let url = `${this._deliveryListUrl}/items?expand=fields(select=Notes)&filter=`;
+    const deliveries = this.shared.getBranch().pipe(
+      switchMap(branch => {
+        const filter2 = `fields/Title eq '${runName}'`;
+        const filter3 = `fields/Branch eq '${branch}'`;
+        url += [filter2, filter3].join(' and ');
+        return this.http.get(url) as Observable<{value: Delivery[]}>;
+      }),
+      map(_ => _.value)
+    );
+    return deliveries;
+  }
+
+  getDeliveriesByAccount(customerNumber: string, runName: string) {
+    const url = `${this._deliveryListUrl}/items?expand=fields(select=Notes)&filter=fields/CustomerNumber eq '${customerNumber}' and fields/Title eq '${runName}'`;
+    const runs = this.http.get(url) as Observable<{value: Delivery[]}>;
+    return runs.pipe(
+      map(_ => _.value[0])
+    );
   }
 
   getFirstPage(filters: Params): BehaviorSubject<Delivery[]> {
@@ -146,7 +222,7 @@ export class DeliveryService {
   }
 
   getNextPage(): void {
-    if (!this._nextPage || this._loadingDeliveries) return null;
+    if (!this._nextPage || this._loadingDeliveries) return;
     this._deliveriesSubject$.pipe(
       take(1),
       switchMap(acc => this.getDeliveries(this._nextPage, true).pipe(
@@ -155,20 +231,37 @@ export class DeliveryService {
     ).subscribe(_ => this._deliveriesSubject$.next(_));
   }
 
-  createDelivery(title: string, customer: Customer, site: Site, sequence: number): Observable<Delivery> {
+  createDelivery(title: string, customer: Customer, site: Site, address: string, notes: string, sequence: number): Observable<Delivery> {
     const fields = {
       Title: title,
       Customer: customer.name,
       CustomerNumber: customer.accountnumber,
-      CustomerId: customer.accountid,
       Sequence: sequence
     };
+    if (notes) fields['Notes'] = notes;
     if (site) fields['Site'] = site.fields.Title;
+    fields['Address'] = address ? address : site && site.fields.Address ? site.fields.Address : customer.address1_composite;
+
     return this.shared.getBranch().pipe(
       switchMap(_ => this.http.post<Delivery>(`${this._deliveryListUrl}/items`, {fields: {...fields, Branch: _}}).pipe(
         switchMap(_ => this.updateList(_))
       ))
     )
+  }
+
+  changeStatus(id: string, currentStatus: string): Observable<Delivery[]> {
+    const status = currentStatus === 'Complete' ? 'Active' : 'Complete';
+    const fields = {Status: status};
+    return this.http.patch<Delivery>(`${this._deliveryListUrl}/items('${id}')`, {fields}).pipe(
+      switchMap(_ => this.updateIndexesFrom(0))
+    );
+  }
+
+  updateDelivery(id: string, notes: string): Observable<Delivery[]> {
+    const fields = {Notes: notes};
+    return this.http.patch<Delivery>(`${this._deliveryListUrl}/items('${id}')`, {fields}).pipe(
+      switchMap(_ => this.updateIndexesFrom(0))
+    );
   }
 
   deleteDelivery(id: string): Observable<Delivery[]> {
@@ -193,22 +286,32 @@ export class DeliveryService {
     )
   }
 
-  private updateSequence(items: Array<{id: string, index: number}>): Observable<Delivery[]> {
-    const headers = {'Content-Type': 'application/json'};
-    const requests = [];
-    let i = 1;
-    items.forEach(_ => {
-      let url = `${this._siteUrl}/${this._listUrl}/items/${_['id']}`
-      const transferFrom = {fields: {
-        Sequence: _['index'],
-      }};
-      requests.push({id: i += 1, method: 'PATCH', url, headers, body: transferFrom});
-    })
-    return requests.length ? this.http.post(`${this._endpoint}/$batch`, {requests}).pipe(
-      map((_: {responses: Array<Delivery>}) => _.responses.map(r => r['body'])),
-      switchMap(_ => this.updateListMulti(_)),
-      tap(_ => console.log(_))
+  requestCageTransfer(runName: string, customerNumber: string, siteName: string, message: string) {
+    this.loading.next(true);
+    const run = this.getDeliveriesByAccount(customerNumber, runName);
+    const cust = this.cutomersService.getCustomer(customerNumber);
+    return combineLatest([run, cust]).pipe(
+      switchMap(([run, customer]) => {
+        const site = {fields: {Title: siteName}} as Site;
+        const address = '';
+        if (run) {
+          const notes = run.fields.Notes ? `${run.fields.Notes}<br>${message}` : message;
+          return this.updateDelivery(run.id, notes);
+         } else {
+          return this.createDelivery(runName, customer, site, address, message, 0);
+         }
+      }),
+      tap(_ =>this.snackBar.open('Added to run list', '', {duration: 3000})
+      )
+    )
+  }
 
-    ) : of([] as Delivery[]);
+  uniqueRunValidator(runs: Array<Run>): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!runs) return null;
+      const siteNames = runs.map(_ => _.fields.Title);
+      const exists = siteNames.includes(control.value);
+      return exists ? {forbiddenName: {value: control.value}} : null;
+    };
   }
 }

@@ -36,10 +36,6 @@ h2 {
   margin-left: auto;
 }
 
-.inner {
-  margin: 10px 10px;
-}
-
 .mat-column-notes {
   flex: 0 1 180px;
 }

@@ -4,18 +4,21 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'groupBy',
 })
 export class GroupByPipe implements PipeTransform {
-  transform(input: any, prop: Array<string>): Array<any> {
+  private extras = 'Other';
 
-    if (!Array.isArray(input)) return input;
+  transform(input: Array<any> | null, prop: Array<string>): Array<any> {
+    if (!Array.isArray(input)) return [];
+
     const a = input.reduce((result, item) => ({
-        ...result,
-        [item['fields']['Status'] === prop[0] ? prop[0] : item['fields']['Status'] === prop[1] ? prop[1] : 'Other']: [
-          ...(result[item['fields']['Status'] === prop[0] ? prop[0] : item['fields']['Status'] === prop[1] ? prop[1] : 'Other'] || []),
-          item,
-        ],
-      }),
-      {},
-    );
-    return [a[prop[0]], a[prop[1]], a['Other']];
+      ...result,
+      [prop.find(_ => _ === item['fields']['Status']) || this.extras]: [
+        ...(result[prop.find(_ => _ === item['fields']['Status']) || this.extras] || []),
+        item,
+      ]
+    }), {});
+
+    // const groupedKeyed = [...prop, this.extras].map(_ => {return {key: _, value: a[_]}});
+    const groupedNoKey = [...prop, this.extras].map(_ => a[_]);
+    return groupedNoKey;
   }
 }

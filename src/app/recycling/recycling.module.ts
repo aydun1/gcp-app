@@ -7,6 +7,7 @@ import { RecyclingService } from './shared/recycling.service';
 import { RecyclingReceiptsService } from './shared/recycling-receipts.service';
 import { RecyclingComponent } from './recycling.component';
 import { RecyclingDialogComponent } from './shared/recycling-dialog/recycling-dialog.component';
+import { RecyclingDocketDialogComponent } from './shared/recycling-docket-dialog/recycling-docket-dialog.component';
 import { RecyclingListComponent } from './recycling-list/recycling-list.component';
 import { RecyclingViewComponent } from './recycling-view/recycling-view.component';
 import { RecyclingNewComponent } from './recycling-new/recycling-new.component';
@@ -14,6 +15,7 @@ import { ActionButtonComponent } from './shared/action-button/action-button.comp
 import { BranchButtonComponent } from './shared/branch-button/branch-button.component';
 import { CageDetailsComponent } from './shared/cage-details/cage-details.component';
 import { CageWeightsComponent } from './shared/cage-weights/cage-weights.component';
+import { RecyclingCustomerListDialogComponent } from './shared/recycling-customer-list-dialog/recycling-customer-list-dialog.component';
 import { RecyclingReceiptListComponent } from './recycling-receipt-list/recycling-receipt-list.component';
 import { RecyclingReceiptNewComponent } from './recycling-receipt-new/recycling-receipt-new.component';
 import { SignaturePadModule } from '../shared/signature/signature-pad.module';
@@ -22,6 +24,7 @@ import { SignaturePadModule } from '../shared/signature/signature-pad.module';
   declarations: [
     RecyclingComponent,
     RecyclingDialogComponent,
+    RecyclingDocketDialogComponent,
     RecyclingListComponent,
     RecyclingViewComponent,
     RecyclingNewComponent,
@@ -29,6 +32,7 @@ import { SignaturePadModule } from '../shared/signature/signature-pad.module';
     BranchButtonComponent,
     CageDetailsComponent,
     CageWeightsComponent,
+    RecyclingCustomerListDialogComponent,
     RecyclingReceiptListComponent,
     RecyclingReceiptNewComponent
   ],

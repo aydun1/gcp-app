@@ -1,6 +1,6 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, of, switchMap, tap } from 'rxjs';
 
 import { NavigationService } from '../../navigation.service';
 import { PalletsReconciliationService } from '../shared/pallets-reconciliation.service';
@@ -14,7 +14,7 @@ import { Reconciliation } from '../shared/reconciliation';
 export class PalletReconciliationViewComponent implements OnInit {
   @HostBinding('class') class = 'app-component';
 
-  public stocktake$: Observable<Reconciliation>;
+  public stocktake$!: Observable<Reconciliation>;
 
   constructor(
     private route: ActivatedRoute,
@@ -24,11 +24,12 @@ export class PalletReconciliationViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.stocktake$ = this.route.paramMap.pipe(
-      switchMap(params => this.getReconciliation(params.get('id'))
-    ))
+      switchMap(params => this.getReconciliation(params.get('id')))
+    )
   }
 
-  getReconciliation(id: string): Observable<Reconciliation> {
+  getReconciliation(id: string | null): Observable<Reconciliation> {
+    if (!id) return of();
     return this.reconciliationService.getReconciliation(id);
   }
 

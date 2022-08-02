@@ -1,14 +1,16 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy, Renderer2 } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { Location } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { SwUpdate, VersionEvent } from '@angular/service-worker';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
-import { AuthenticationResult, InteractionStatus, PopupRequest, EventMessage, EventType, AccountInfo } from '@azure/msal-browser';
-import { filter, interval, map, Observable, Subject, takeUntil, withLatestFrom } from 'rxjs';
+import { InteractionStatus, EventMessage, EventType, AccountInfo, RedirectRequest } from '@azure/msal-browser';
+import { filter, interval, map, Observable, Subject, takeUntil, tap, withLatestFrom } from 'rxjs';
+import { authentication } from '@microsoft/teams-js';
 
 import { SharedService } from './shared.service';
+import { TeamsService } from './teams.service';
 import { AutomateService } from './shared/automate.service';
 
 @Component({
@@ -19,12 +21,13 @@ import { AutomateService } from './shared/automate.service';
 export class AppComponent implements OnInit, OnDestroy {
   private readonly _destroying$ = new Subject<void>();
   private checkInterval = 1000 * 60 * 60 * 6;  // 6 hours
-  public loginDisplay: boolean;
-  public accounts: AccountInfo[];
-  public photo$: Observable<SafeUrl>;
-  public mobileQuery: MediaQueryList;
-  public isMobile: boolean;
-  public appTitle: string;
+  public loginDisplay = false;
+  public accounts: AccountInfo[] = [];
+  public photo$!: Observable<SafeUrl>;
+  public isMobile = false;
+  public appTitle = '';
+  public checkedTeams = false;
+  public token: string | undefined;
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -33,36 +36,60 @@ export class AppComponent implements OnInit, OnDestroy {
     private authService: MsalService,
     private location: Location,
     private msalBroadcastService: MsalBroadcastService,
+    private renderer: Renderer2,
     private router: Router,
     private sharedService: SharedService,
     private observer: BreakpointObserver,
+    private teamsService: TeamsService,
     private automateService: AutomateService
   ) { }
 
   ngOnInit(): void {
-    //this.automateService.doThing();
+    // this.automateService.doThing()
+    this.authService.instance.handleRedirectPromise().then(authResult => {
+      const account = this.authService.instance.getActiveAccount();
+      if (!account) this.checkAndSetActiveAccount();
+    }).catch(err=> console.log(err));
     this.setLoginDisplay();
+    this.checkIfTeams();
     this.observer.observe(['(max-width: 600px)']).subscribe(_ => this.isMobile = _.matches);
     this.authService.instance.enableAccountStorageEvents();
     this.sharedService.getBranch().subscribe();
-    this.msalBroadcastService.msalSubject$.pipe(
-      filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED)
-    ).subscribe((result: EventMessage) => {
-      if (this.authService.instance.getAllAccounts().length === 0) {
-        this.router.navigate(['/']);
-      } else {
-        this.setLoginDisplay();
-      }
-    });
 
+    authentication.getAuthToken().then(
+      _ => this.token = _
+    ).catch(
+      _ => console.log(_)
+    )
+    
+    // Enables auto login/logout in other open windows/tabs
+    this.msalBroadcastService.msalSubject$.pipe(
+      filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED),
+      tap(() => {
+        if (this.authService.instance.getAllAccounts().length === 0) {
+          this.router.navigate(['/']);
+        } else {
+          this.setLoginDisplay();
+        }
+      })
+    ).subscribe();
+
+    this.msalBroadcastService.msalSubject$.pipe(
+      filter((msg: EventMessage) => msg.eventType === EventType.LOGIN_SUCCESS && msg.payload && msg.payload['account']),
+      tap((msg: EventMessage) => this.authService.instance.setActiveAccount(msg.payload ? msg.payload['account'] : null))
+    ).subscribe();
+
+    // Periodically check for software updates
     this.msalBroadcastService.inProgress$.pipe(
       filter((status: InteractionStatus) => status === InteractionStatus.None),
-      takeUntil(this._destroying$)
-    ).subscribe(() => {
-      this.setLoginDisplay();
-      this.checkAndSetActiveAccount();
-    });
+      takeUntil(this._destroying$),
+      tap(() => {
+        this.setLoginDisplay();
+        this.checkAndSetActiveAccount();
+      })
+    ).subscribe();
 
+    // Periodically check for software updates
     if (this.swUpdate.isEnabled) {
       withLatestFrom()
       this.swUpdate.versionUpdates.pipe(
@@ -72,14 +99,17 @@ export class AppComponent implements OnInit, OnDestroy {
       interval(this.checkInterval).subscribe(() => this.checkForUpdates());
     }
 
+    // Set the page title based on what is set in the router
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
       map(_ => {
         let child = this.activatedRoute.firstChild;
+        if (!child) return;
         while (child.firstChild) child = child.firstChild;
         return child.snapshot.data['title'];
-      })
-    ).subscribe((ttl: string) => this.sharedService.setTitle(ttl));
+      }),
+      tap((ttl: string) => this.sharedService.setTitle(ttl))
+    ).subscribe();
   }
 
   checkForUpdates(): void {
@@ -90,10 +120,18 @@ export class AppComponent implements OnInit, OnDestroy {
     );
   }
 
+  checkIfTeams() {
+    this.teamsService.isTeams.pipe(
+      tap(_ => {
+        if (_ !== undefined) this.checkedTeams = true;
+        if (_) this.renderer.addClass(document.body, 'teams');
+    }),
+    ).subscribe()
+  }
+
   setLoginDisplay(): void {
-    const accounts = this.authService.instance.getAllAccounts();
-    this.accounts = accounts;
-    this.loginDisplay = accounts.length > 0;
+    this.accounts = this.authService.instance.getAllAccounts();
+    this.loginDisplay = this.accounts.length > 0;
     if (!this.loginDisplay && this.location.path() === '/logout') this.router.navigate(['/']);
     if (this.loginDisplay) this.getPhoto();
   }
@@ -102,7 +140,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.photo$ = this.sharedService.getPhoto();
   }
 
-  checkAndSetActiveAccount(){
+  checkAndSetActiveAccount(): void {
     const activeAccount = this.authService.instance.getActiveAccount();
     const allAccounts = this.authService.instance.getAllAccounts();
     if (!activeAccount && allAccounts.length > 0) {
@@ -111,15 +149,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   login(): void {
-    if (this.msalGuardConfig.authRequest) {
-      this.authService.loginPopup({...this.msalGuardConfig.authRequest} as PopupRequest).subscribe(
-        (response: AuthenticationResult) =>
-          this.authService.instance.setActiveAccount(response.account)
-      );
+    if (this.msalGuardConfig.authRequest){
+      this.authService.ssoSilent({...this.msalGuardConfig.authRequest} as RedirectRequest);
     } else {
-      this.authService.loginPopup().subscribe((response: AuthenticationResult) =>
-        this.authService.instance.setActiveAccount(response.account)
-      );
+      this.authService.loginRedirect();
     }
   }
 
@@ -129,5 +162,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._destroying$.next(undefined);
+    this._destroying$.complete();
   }
 }

@@ -1,4 +1,4 @@
-:host {
+.scroller {
   display: block;
   height: 100%;
   overflow-y: scroll;
@@ -13,10 +13,6 @@ h2 {
   margin-left: 10px;
 }
 
-.mat-footer-row {
-  font-weight: bold;
-}
-
 .options {
   align-items: baseline;
   display: flex;
@@ -26,31 +22,24 @@ h2 {
   flex: 1;
 }
 
-.inner {
-  margin: 10px 10px;
-}
-
-.mat-table {
-  max-width: 100%;
-  border: solid 1px #ccc;
-  min-height: 60px;
-  display: block;
-  background: white;
-  border-radius: 4px;
-  overflow: hidden;
+.mat-form-field {
+  font-size: 14px;
+  margin-right: 10px;
+  width: 145px;
 }
 
 .mat-row {
-  padding: 20px 0;
-  border-bottom: solid 1px #ccc;
-  color: rgba(0, 0, 0, 0.87);
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  box-sizing: border-box;
   background: white;
-  font-size: 14px;
+  padding: 10px 0;
+  position: relative;
+}
+
+.mat-cell {
+  overflow: visible;
+}
+
+.mat-checkbox {
+  margin-left: 1px;
 }
 
 .cdk-drag-preview {
@@ -77,35 +66,185 @@ h2 {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-.mat-column-sequence {
+.mat-cell.mat-column-sequence {
   cursor: move;
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+.mat-column-site {
+  white-space: pre-wrap;
+}
+
+::ng-deep  .mat-checkbox-checked .mat-checkbox-background {
+  background-color: #ff4081;
+}
+
+.mat-column-sequence {
   flex: 0 1 20px;
   padding-right: 30px;
   justify-content: flex-end;
 }
 
-.mat-column-actions {
-  flex: 0 1 228px;
+.mat-column-customer {
+  flex: 1 1 200px;
 }
 
-.action-buttons>button {
+.mat-column-site, .mat-column-notes {
+  flex: 1 1 200px;
+}
+
+.mat-column-actions {
+  flex: 0 1 190px;
+}
+
+.mat-column-status {
+  flex: 0 0 30px;
+  padding-left: 11px;
+}
+
+.mat-column-menu {
+  flex: 0 0 40px;
+  padding-right: 10px;
+}
+
+.mat-column-actions > button {
   margin-right: 10px;
 }
 
-.action-buttons>button:last-child {
+.mat-column-actions > button:last-child {
   margin-right: 0;
 }
 
-.action-buttons {
+.mat-column-actions {
+  align-items: center;
   display: flex;
 }
 
+.drag {
+  color: #999;
+  left: 5px;
+  margin-bottom: 2px;
+  position: absolute;
+}
+
+@media (max-width: 1024px) {
+  .mat-column-actions {
+    flex: 0 1 110px;
+    overflow: visible;
+  }
+  
+  .mat-column-actions.mat-cell {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .mat-column-actions > button {
+    margin: 0 10px 5px 0;
+  }
+  
+  .mat-column-actions > button:last-child {
+    margin-right: 10px;
+  }
+
+  .mat-column-actions > button:last-child {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 800px) {
+  .mat-header-row {
+    display: none;
+  }
+
+  .mat-row {
+    display: grid;
+    gap: 5px;
+    grid-template-columns: 1fr 80px 120px 40px 40px;
+    grid-template-rows: 36px 30px 1fr;
+    padding: 10px;
+  }
+
+  .mat-cell.mat-column-sequence {
+    grid-row: 1;
+    justify-content: inherit;
+    padding-bottom: 0;
+    padding-top: 0;
+    padding-right: 0;
+  }
+
+  .mat-cell.mat-column-menu {
+    grid-row: 1;
+    max-width: 50px;
+    padding-right: 0;
+  }
+
+  .mat-cell.mat-column-status {
+    grid-row: 1;
+    max-width: 50px;
+
+  }
+
+  .mat-cell.mat-column-customer {
+    grid-column: 1 / 3;
+    grid-row: 2;
+  }
+
+  .mat-cell.mat-column-site {
+    grid-column: 1 / 3;
+    grid-row: 3;
+    height: 100%;
+    align-items: flex-start;
+  }
+
+  .mat-cell.mat-column-notes {
+    grid-column: 3 / 6;
+    grid-row: 2 / 4;
+  }
+
+  .mat-cell.mat-column-actions {
+    align-items: center;
+    flex-direction: inherit;
+    grid-column: 2 / 4;
+    grid-row: 1;
+    justify-content: right;
+  }
+
+  .mat-cell.mat-column-actions > button {
+    margin-bottom: 0;
+  }
+}
+
+
 @media print {
-  :host {
+  .scroller {
     overflow-y: auto;
   }
 
   .options {
     display: none;
+  }
+
+  .mat-table {
+    border: 0;
+  }
+
+  .mat-header-row {
+    display: flex;
+  }
+
+  .mat-column-sequence,
+  .mat-column-actions,
+  .mat-column-menu {
+    display: none;
+  }
+
+  .mat-header-cell.mat-column-customer {
+    margin-left: 10px;
+    margin-right: -10px;
+  }
+
+  .mat-row {
+    display: flex;
   }
 }

@@ -1,17 +1,14 @@
 a {
-  margin: 10px 0;
+  background: white;
+  border: 1px solid rgba(0,0,0,.12);
+  border-radius: 5px;
   color: inherit;
   cursor: pointer;
   display: block;
 }
 
-.home-card {
-  border: 1px solid rgba(0,0,0,.12);
-  border-radius: 4px;
-  background: white;
-}
-
 h2 {
+  line-height: 29px;
   text-align: center;
   margin: 40px 0;
 }

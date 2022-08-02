@@ -1,0 +1,71 @@
+gcp-loading-row {
+  align-items: center;
+  display: flex;
+  height: 56px;
+}
+
+.header {
+  display: flex;
+}
+
+.customer {
+  display: flex;
+  margin: 40px 0 20px 0;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  margin-right: 10px;
+  width: 145px;
+}
+
+.mat-footer-row {
+  font-weight: bold;
+}
+
+.mat-dialog-content {
+  height: 40vh;
+}
+
+.buttons {
+  align-items: center;
+  align-self: flex-start;
+  display: flex;
+  margin-left: auto;
+}
+
+.pallet-types {
+  margin-right: 10px;
+}
+
+.mat-table {
+  border: 0;
+}
+
+.mat-column-notes {
+  flex: 1 1 180px;
+}
+
+.mat-column-pallet, .mat-column-date {
+  flex: 0 1 115px;
+}
+
+.mat-column-out, .mat-column-in {
+  flex: 0 1 80px;
+}
+
+.mat-column-docket {
+  flex: 0 1 40px;
+}
+
+@media print {
+  .buttons {
+    display: none;
+  }
+ 
+  .mat-dialog-content {
+    height: auto;
+    max-height: none;
+  }
+
+}

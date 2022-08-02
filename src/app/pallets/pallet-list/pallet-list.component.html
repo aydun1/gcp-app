@@ -50,7 +50,7 @@
       <ng-container matColumnDef="docket">
         <mat-header-cell *matHeaderCellDef> Docket </mat-header-cell>
         <mat-cell *matCellDef="let pallet">
-          <a [routerLink]="[pallet.id]" *ngIf="pallet.fields.Title"><mat-icon>receipt</mat-icon></a>
+          <button mat-icon-button (click)="openRecyclingDocketDialog(pallet.id)" *ngIf="pallet.fields.Title" color="accent"><mat-icon>receipt</mat-icon></button>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>{{ totalOut - totalIn }}</mat-footer-cell>
       </ng-container>
