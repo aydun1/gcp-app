@@ -171,12 +171,14 @@ a {
 }
 
 .mat-row
-.dark-theme gcp-big-button > a {
+.dark-theme gcp-big-button > a,
+.dark-theme .note.load {
   background: white;
 }
 
 .dark-theme .mat-row,
-.dark-theme gcp-big-button > a {
+.dark-theme gcp-big-button > a,
+.dark-theme .note.load {
   background: #424242;
 }
 
