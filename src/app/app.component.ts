@@ -11,6 +11,7 @@ import { authentication } from '@microsoft/teams-js';
 
 import { SharedService } from './shared.service';
 import { TeamsService } from './teams.service';
+import { ThemingService } from './theming.service';
 
 @Component({
   selector: 'gcp-root',
@@ -39,10 +40,15 @@ export class AppComponent implements OnInit, OnDestroy {
     private router: Router,
     private sharedService: SharedService,
     private observer: BreakpointObserver,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
+    private themingService: ThemingService
   ) { }
 
   ngOnInit(): void {
+    this.themingService.theme.subscribe(_ => {
+      const darkClass = 'dark-theme';
+      _ ? this.renderer.addClass(document.body, darkClass) : this.renderer.removeClass(document.body, darkClass)
+    });
     this.authService.instance.handleRedirectPromise().then(authResult => {
       const account = this.authService.instance.getActiveAccount();
       if (!account) this.checkAndSetActiveAccount();

@@ -2,15 +2,26 @@
 
 @include mat.core();
 
+// Define a light theme
 $light-primary: mat.define-palette(mat.$green-palette, 700);
 $light-accent: mat.define-palette(mat.$blue-palette, A400, A100, A400);
-
 $light-theme: mat.define-light-theme((
  color: (
    primary: $light-primary,
    accent: $light-accent,
  )
 ));
+
+// Define a dark theme
+$dark-primary: mat.define-palette(mat.$pink-palette);
+$dark-accent: mat.define-palette(mat.$blue-palette, 200, A100, A400);
+$dark-theme: mat.define-dark-theme((
+ color: (
+   primary: $dark-primary,
+   accent: $dark-accent,
+ )
+));
+
 @include mat.core-theme($light-theme);
 @include mat.autocomplete-theme($light-theme);
 @include mat.button-theme($light-theme);
@@ -24,6 +35,7 @@ $light-theme: mat.define-light-theme((
 @include mat.form_field-theme($light-theme);
 @include mat.input-theme($light-theme);
 @include mat.menu-theme($light-theme);
+@include mat.option-theme($light-theme);
 @include mat.progress_spinner-theme($light-theme);
 @include mat.select-theme($light-theme);
 @include mat.sidenav-theme($light-theme);
@@ -31,6 +43,28 @@ $light-theme: mat.define-light-theme((
 @include mat.table-theme($light-theme);
 @include mat.toolbar-theme($light-theme);
 
+.dark-theme {
+  @include mat.core-color($dark-theme);
+  @include mat.autocomplete-color($dark-theme);
+  @include mat.button-color($dark-theme);
+  @include mat.button_toggle-color($dark-theme);
+  @include mat.card-color($dark-theme);
+  @include mat.checkbox-color($dark-theme);
+  @include mat.datepicker-color($dark-theme);
+  @include mat.dialog-color($dark-theme);
+  @include mat.divider-color($dark-theme);
+  @include mat.expansion-color($dark-theme);
+  @include mat.form_field-color($dark-theme);
+  @include mat.input-color($dark-theme);
+  @include mat.menu-color($dark-theme);
+  @include mat.option-color($dark-theme);
+  @include mat.progress_spinner-color($dark-theme);
+  @include mat.select-color($dark-theme);
+  @include mat.sidenav-color($dark-theme);
+  @include mat.snack_bar-color($dark-theme);
+  @include mat.table-color($dark-theme);
+  @include mat.toolbar-color($dark-theme);
+}
 
 html,
 body {
@@ -44,10 +78,11 @@ body {
 
 a {
   text-decoration: none;
+  color: mat.get-color-from-palette($light-accent);
 }
 
-a {
-  color: mat.get-color-from-palette($light-accent);
+.dark-theme a {
+  color: mat.get-color-from-palette($dark-accent);
 }
 
 .mat-cell:hover a {
@@ -76,7 +111,6 @@ a {
 }
 
 .app-component {
-  background: white;
   bottom: 0;
   left: 0;
   overflow-y: auto;
@@ -125,6 +159,30 @@ a {
 
 .teams gcp-root {
   top: 0;
+}
+
+.dark-theme .app-menu {
+  color: white;
+}
+
+.dark-theme .mat-table,
+.dark-theme gcp-big-button > a {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.mat-row
+.dark-theme gcp-big-button > a {
+  background: white;
+}
+
+.dark-theme .mat-row,
+.dark-theme gcp-big-button > a {
+  background: #424242;
+}
+
+.active {
+  background-color: rgba(180,180,180,0.4)!important;
+  border-left: 2px solid red;
 }
 
 @media (max-width: 800px) {

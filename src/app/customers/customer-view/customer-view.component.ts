@@ -25,7 +25,7 @@ import { RecyclingCustomerListDialogComponent } from '../../recycling/shared/rec
   styleUrls: ['./customer-view.component.css']
 })
 export class CustomerViewComponent implements OnInit, OnDestroy {
-  @HostBinding('class') class = 'app-component';
+  @HostBinding('class') class = 'app-component mat-app-background';
 
   private sitesSubject$ = new Subject<string>();
   private palletsSubject$ = new Subject<string>();

@@ -2,7 +2,7 @@
   <div for="file" class="image-upload-preview">
     <input #fileSelect class="file-select" multiple="multiple" type="file" (change)="fileChangeEvent($event)" placeholder="File">
     <label class="label" for="file">
-      <button mat-button type="button" class="drag-info" (click)="fileSelect.click()">Attach a document</button>
+      <button mat-stroked-button type="button" class="drag-info" (click)="fileSelect.click()">Attach a document</button>
     </label>
   </div>
 </div>

@@ -14,7 +14,7 @@ import { LoadingScheduleService } from '../shared/loading-schedule.service';
   styleUrls: ['./loading-schedule-view.component.css']
 })
 export class LoadingScheduleViewComponent implements OnInit {
-  @HostBinding('class') class = 'app-component';
+  @HostBinding('class') class = 'app-component mat-app-background';
 
   private scheduleSource$!: Subject<string | null>;
   public loadingScheduleEntry$!: Observable<any>;

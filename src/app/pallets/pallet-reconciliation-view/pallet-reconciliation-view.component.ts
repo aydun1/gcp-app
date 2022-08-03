@@ -1,6 +1,6 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, Observable, of, switchMap, tap } from 'rxjs';
+import { Observable, of, switchMap } from 'rxjs';
 
 import { NavigationService } from '../../navigation.service';
 import { PalletsReconciliationService } from '../shared/pallets-reconciliation.service';
@@ -12,7 +12,7 @@ import { Reconciliation } from '../shared/reconciliation';
   styleUrls: ['./pallet-reconciliation-view.component.css']
 })
 export class PalletReconciliationViewComponent implements OnInit {
-  @HostBinding('class') class = 'app-component';
+  @HostBinding('class') class = 'app-component mat-app-background';
 
   public stocktake$!: Observable<Reconciliation>;
 

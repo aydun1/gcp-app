@@ -77,11 +77,6 @@
   margin-left: 14px;
 }
 
-.active {
-  background-color: #f3f2f1;
-  border-left: 2px solid red;
-}
-
 .mat-list-base .mat-list-item.sub-item {
   height: 32px;
 }

@@ -1,5 +1,6 @@
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { Platform } from '@angular/cdk/platform';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,8 +18,8 @@ import { HomeComponent } from './home/home.component';
 import { SharedModule } from './shared/shared.module';
 import { LogoutComponent } from './logout/logout.component';
 import { environment } from '../environments/environment';
-import { Platform } from '@angular/cdk/platform';
 import { AuthGuard } from './auth-guard';
+import { ThemingService } from './theming.service';
 
 class CustomDateAdapter extends NativeDateAdapter {
   override parse(value: string): Date | null {
@@ -125,7 +126,8 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     MsalService,
     MsalGuard,
     MsalBroadcastService,
-    AuthGuard
+    AuthGuard,
+    ThemingService
   ],
   bootstrap: [AppComponent]
 })

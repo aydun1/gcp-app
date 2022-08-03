@@ -28,7 +28,7 @@ interface PalletRecForm {
   styleUrls: ['./pallet-reconciliation-new.component.css']
 })
 export class PalletReconciliationNewComponent implements OnInit {
-  @HostBinding('class') class = 'app-component';
+  @HostBinding('class') class = 'app-component mat-app-background';
 
   public palletRecForm!: FormGroup<PalletRecForm>;
   public adjBalance = 0;

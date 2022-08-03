@@ -12,7 +12,7 @@ import { Cage } from '../shared/cage';
   styleUrls: ['./recycling-view.component.css']
 })
 export class RecyclingViewComponent implements OnDestroy, OnInit {
-  @HostBinding('class') class = 'app-component';
+  @HostBinding('class') class = 'app-component mat-app-background';
 
   private cageSource$ = new BehaviorSubject<void>(undefined);
   public cage$!: Observable<Cage>;

@@ -21,7 +21,7 @@ interface CageForm {
   styleUrls: ['./recycling-new.component.css']
 })
 export class RecyclingNewComponent implements OnInit {
-  @HostBinding('class') class = 'app-component';
+  @HostBinding('class') class = 'app-component  mat-app-background';
   @ViewChild('cageNumberInput') cageNumber!: ElementRef;
   private state!: string;
   private assetType = new FormControl('', Validators.required);
