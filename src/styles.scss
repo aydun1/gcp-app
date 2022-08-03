@@ -177,7 +177,7 @@ a {
     height: 0px;
   }
 
-  .cdk-overlay-pane {
+  .printable {
     max-width: 100%!important;
     min-height: 100vh!important;
     width: 100%!important;
@@ -189,7 +189,8 @@ a {
   }
 
   .mat-dialog-container {
-    box-shadow: none;
+    border-radius: 0!important;
+    box-shadow: none!important;
     overflow-x: hidden!important;
     padding: 0!important;
   }
