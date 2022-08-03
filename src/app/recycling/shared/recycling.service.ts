@@ -345,9 +345,11 @@ export class RecyclingService {
     );
   }
 
-  addNewCage(cageNumber: number | string, branch: string, assetType: string, cageWeight: number | string): Observable<Cage> {
+  addNewCage(cageNumber: number | string | null | undefined, branch: string, assetType: string, cageWeight: number | string | null | undefined): Observable<Cage> {
     const url = this._cageTrackerUrl + `/items`;
-    const payload = {fields: {Status: 'Available', CageNumber: cageNumber, Branch: branch, AssetType: assetType, CageWeight: cageWeight}};
+    const payload = {fields: {Status: 'Available', Branch: branch, AssetType: assetType}};
+    if (cageNumber) payload['fields']['CageNumber'] = cageNumber;
+    if (cageWeight) payload['fields']['CageWeight'] = cageWeight;
     return this.http.post<Cage>(url, payload).pipe(
       switchMap(_ => this.updateList(_))
     );
