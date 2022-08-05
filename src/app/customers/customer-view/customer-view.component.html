@@ -65,12 +65,11 @@
       </div>
       <mat-divider></mat-divider>
       <div class="status-card">
-        <div class="section-heading">
-          <h3>
-            Attachments
-          </h3>
-        </div>
-        <gcp-docs [id]="customer.accountnumber" folder="debtors"></gcp-docs>
+        <gcp-docs [id]="customer.accountnumber" folder="debtors">
+          <div class="section-heading">
+            <h3>Attachments</h3>
+          </div>
+        </gcp-docs>
       </div>
     </div>
   </div>

@@ -67,4 +67,13 @@ export class DocListComponent implements OnInit {
   icon(mime: string): string {
     return this.docsService.icon(mime);
   }
+
+  fileChangeEvent(e: any): void {
+    const files = e.target.files;
+    const keys = Array.from(Array(files.length).keys());
+    for (let key in keys) {
+      const file = files[key];
+      this.docsService.uploadFile(this.id, this.folder, file);
+    }
+  }
 }

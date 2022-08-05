@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { DocsService } from '../docs.service';
 
@@ -7,16 +7,13 @@ import { DocsService } from '../docs.service';
   templateUrl: './doc-upload.component.html',
   styleUrls: ['./doc-upload.component.css']
 })
-export class DocUploadComponent implements OnInit {
+export class DocUploadComponent {
   @Input() id!: string;
   @Input() folder!: string;
 
   constructor(
     private docsService: DocsService
   ) { }
-
-  ngOnInit(): void {
-  }
 
   fileChangeEvent(e: any): void {
     const files = e.target.files;

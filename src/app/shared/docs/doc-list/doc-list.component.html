@@ -17,7 +17,7 @@
   <mat-spinner mat-list-icon diameter="48"></mat-spinner>
 </div>
 
-<div *ngIf="(idle | async) && docCount === 0" class="no-docs">
+<div *ngIf="(idle | async) && docCount === 0" class="no-docs" (click)="fileSelect.click()">
   <div>There's nothing here yet!</div>
 </div>
 
@@ -37,3 +37,5 @@
     </button>
   </ng-template>
 </mat-menu>
+
+<input #fileSelect class="file-select" multiple="multiple" type="file" (change)="fileChangeEvent($event)" placeholder="File">

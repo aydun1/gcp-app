@@ -1,16 +1,12 @@
-.drag-target {
-  bottom: 0;
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  right: 0;
-  top: 0;
+.header {
+  display: flex;
+  align-items: center;
 }
 
 .file-select {
   display: none;
 }
 
-.drag-info {
-  width: 100%;
+.label {
+  margin-left: auto;
 }

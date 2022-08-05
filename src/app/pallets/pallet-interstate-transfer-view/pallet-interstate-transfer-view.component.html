@@ -110,10 +110,11 @@
     </div>
   </mat-card>
   <mat-card class="inner">
-    <mat-card-header>
-      <mat-card-title>Attachments</mat-card-title>
-    </mat-card-header>
-    <gcp-docs [id]="transfer.summary.id" folder="transfers" (statusChanged)="markFileAttached(transfer.summary.id, $event)"></gcp-docs>
+    <gcp-docs [id]="transfer.summary.id" folder="transfers" (statusChanged)="markFileAttached(transfer.summary.id, $event)">
+      <mat-card-header>
+        <mat-card-title>Attachments</mat-card-title>
+      </mat-card-header>
+    </gcp-docs>
   </mat-card>
 </div>
 
