@@ -1,3 +1,35 @@
 .mat-list-base .mat-list-item .mat-list-icon {
   border-radius: 0;
 }
+
+.mat-list-base .mat-list-item .mat-list-icon {
+  border-radius: 0;
+}
+
+.mat-list-base .mat-list-item .mat-line {
+  margin-right: 34px;
+}
+
+.doc {
+  position: relative;
+}
+
+.loading-docs {
+  display: flex;
+  justify-content: center;
+  margin: 12px 0;
+}
+
+.no-docs {
+  align-items: center;
+  display: flex;
+  height: 72px;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.menu-toggle {
+  position: absolute;
+  right: 10px;
+  top: 16px;
+}
