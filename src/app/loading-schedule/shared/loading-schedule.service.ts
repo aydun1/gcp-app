@@ -113,7 +113,7 @@ export class LoadingScheduleService {
     );
   }
 
-  getTransportCompanies(branch: string) {
+  getTransportCompanies(branch: string): Observable<TransportCompany[]> {
     const url = `${this._transportCompaniesUrl}/items?expand=fields(select=Title,Drivers)&filter=fields/Branch eq '${branch}'`;
     return this.http.get(url).pipe(
       map((res: any) => res.value),
@@ -121,14 +121,14 @@ export class LoadingScheduleService {
     );
   }
 
-  addTransportCompany(id: string, drivers: string) {
+  addTransportCompany(id: string, drivers: string): Observable<TransportCompany> {
     const payload = {fields: {
       Drivers: drivers
     }};
     return this.http.post<TransportCompany>(`${this._transportCompaniesUrl}/items('${id}')`, payload);
   }
 
-  markDelivered(id: string) {
+  markDelivered(id: string): Observable<LoadingSchedule> {
     const payload = {fields: {
       Status: 'Delivered'
     }};
@@ -137,7 +137,7 @@ export class LoadingScheduleService {
     );
   }
 
-  updateTransportCompanyDrivers(id: string, drivers: string) {
+  updateTransportCompanyDrivers(id: string, drivers: string): Observable<TransportCompany> {
     const payload = {fields: {
       'Drivers': drivers
     }};
@@ -145,16 +145,18 @@ export class LoadingScheduleService {
   }
 
   createLoadingScheduleEntry(v: any, id: string | null, branch: string): Observable<LoadingSchedule> {
-    const drivers = v.transportCompany.fields?.Drivers || [];
-    const isNewDriver = !drivers.includes(v.driver) && v.driver !== '';
-    const isNewTransportCompany = v.transportCompany.fields ? false : true;
-    const transportCompany = isNewTransportCompany ? v.transportCompany : v.transportCompany.fields.Title;
+    const isNewTransportCompany = v.transportCompany && typeof v.transportCompany === 'string' ? true : false;
+    const drivers = v.transportCompany?.fields?.Drivers?.split('\n') || [];
+    const isNewDriver = v.transportCompany && v.driver && !drivers.includes(v.driver);
+    const transportCompany = v.transportCompany?.fields?.Title?.trim() || null;
+    const itemsUrl = `${this._transportCompaniesUrl}/items`;
+    if (isNewDriver) drivers.push(v.driver);
 
     const fields = {
       LoadingDate: v.loadingDate,
       ArrivalDate: v.arrivalDate,
       Spaces: v.spaces || null,
-      TransportCompany: transportCompany.trim(),
+      TransportCompany: transportCompany,
       Driver: v.driver,
       From: v.from,
       To: v.to,
@@ -162,34 +164,19 @@ export class LoadingScheduleService {
       Notes: v.notes
     };
 
-    let a: Observable<TransportCompany>;
-    if (transportCompany && isNewTransportCompany) {
-      const fields = {
-        Title: transportCompany,
-        Drivers: v.driver,
-        Branch: branch
-      };
-      a = this.http.post<TransportCompany>(`${this._transportCompaniesUrl}/items`, {fields});     
-    } else if (transportCompany && isNewDriver) {
-      const fields = {
-        Drivers: `${drivers}\n${v.driver}`.trim()
-      };
-      a = this.http.patch<TransportCompany>(`${this._transportCompaniesUrl}/items('${v.transportCompany.id}')`, {fields});
-    } else {
-      a = of({} as TransportCompany);
-    }
+    const a = isNewTransportCompany ?
+                this.http.post<TransportCompany>(itemsUrl, {fields: {Title: transportCompany, Drivers: drivers.join('\n'), Branch: branch}}) :
+              isNewDriver ? 
+                this.http.patch<TransportCompany>(`${itemsUrl}('${v.transportCompany.id}')`, {fields: {Drivers: drivers.join('\n')}}) :
+                of({} as TransportCompany);
 
     const b = id ?
-      this.http.patch<LoadingSchedule>(`${this._loadingScheduleUrl}/items('${id}')`, {fields}):
+      this.http.patch<LoadingSchedule>(`${this._loadingScheduleUrl}/items('${id}')`, {fields}) :
       this.http.post<LoadingSchedule>(`${this._loadingScheduleUrl}/items`, {fields});
 
-
     return a.pipe(
-      switchMap(() => 
-        b.pipe(
-          switchMap(_ => this.updateList(_)),
-        )
-      )
+      switchMap(() => b),
+      switchMap(_ => this.updateList(_))
     )
   }
 }
