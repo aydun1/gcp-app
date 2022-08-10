@@ -49,6 +49,10 @@
   width: 0;
 }
 
+.mat-column-checked {
+  flex: 0 0 40px;
+}
+
 .mat-column-fields-CageNumber {
   flex: 0 1 80px;
 }

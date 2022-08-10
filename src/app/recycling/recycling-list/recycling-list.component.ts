@@ -1,5 +1,6 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { SelectionModel } from '@angular/cdk/collections';
 import { MatSelectChange } from '@angular/material/select';
 import { Sort } from '@angular/material/sort';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
@@ -31,6 +32,7 @@ export class RecyclingListComponent implements OnInit {
   public choices$: Observable<{Status: choice, AssetType: choice, Branch: choice}> | undefined;
   public statusPicked!: boolean;
   public placeholder = {AssetType: {choice: {choices: []}, name: ''}, Status: {choice: {choices: []}, name: ''}, Branch: {choice: {choices: []}, name: ''}}
+  public selection = new SelectionModel<Cage>(true, []);
 
   constructor(
     private el: ElementRef,
@@ -59,6 +61,7 @@ export class RecyclingListComponent implements OnInit {
         this.parseParams(_);
         this.weight = 0;
         this.count = 0;
+        this.selection.clear();
       }),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
       tap((cages: Array<Cage>) => {
@@ -167,8 +170,8 @@ export class RecyclingListComponent implements OnInit {
     this.router.navigate([], { queryParams: {sort, order}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  hideStatus(hide: boolean) {
-    const displayedColumns = ['fields/CageNumber', 'assetType', 'status', 'location', 'fields/Modified', 'weight', 'check'];
+  hideStatus(hide: boolean): void {
+    const displayedColumns = ['checked', 'fields/CageNumber', 'assetType', 'status', 'location', 'fields/Modified', 'weight', 'check'];
     this.displayedColumns = hide ? displayedColumns.filter(_ => _ !== 'status') : displayedColumns;
   }
 
