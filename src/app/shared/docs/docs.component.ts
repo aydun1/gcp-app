@@ -1,4 +1,5 @@
-import { Component, Input, Output } from '@angular/core';
+import { Component, Input, OnInit, Output } from '@angular/core';
+
 import { DocsService } from './docs.service';
 
 @Component({
@@ -6,7 +7,7 @@ import { DocsService } from './docs.service';
   templateUrl: './docs.component.html',
   styleUrls: ['./docs.component.css']
 })
-export class DocsComponent {
+export class DocsComponent implements OnInit {
   @Input() id!: string;
   @Input() folder!: string;
   @Output() statusChanged = this.docsService.statusChanged;
