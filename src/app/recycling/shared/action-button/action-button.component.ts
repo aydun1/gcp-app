@@ -85,11 +85,11 @@ export class ActionButtonComponent implements OnInit {
     this.recyclingService.deliverToPolymer(id).subscribe(() => this.onComplete());
   }
 
-  markReadyForProcessing(id: string, cageNumber: number): void {
+  markReadyForProcessing(cage: Cage): void {
     this.loading.next(true);
-    const action = this.recyclingService.readyForProcessing(id);
+    const action = this.recyclingService.readyForProcessing(cage.id);
     const customerNumber = this.cage.fields.CustomerNumber;
-    const message = `Cage ${cageNumber} ready for delivery to local processing`;
+    const message = `Cage ${cage.fields.CageNumber} ready for delivery to local processing`;
     action.pipe(
       tap(() => this.addToRunList(customerNumber, message))
     ).subscribe(() => this.onComplete());
@@ -112,20 +112,20 @@ export class ActionButtonComponent implements OnInit {
     action.subscribe(() => this.onComplete());
   }
 
-  markReadyForPolymer(id: string, cageNumber: number): void {
+  markReadyForPolymer(cage: Cage): void {
     this.loading.next(true);
-    const action = this.recyclingService.readyForPolymer(id);
+    const action = this.recyclingService.readyForPolymer(cage.id);
     const customerNumber = '011866';
-    const message = `Cage ${cageNumber} ready for delivery to Polymer`;
+    const message = `Cage ${cage.fields.CageNumber} ready for delivery to Polymer`;
     action.pipe(
       tap(() => this.addToRunList(customerNumber, message))
     )
     .subscribe(() => this.onComplete());
   }
 
-  markAvailable(id: string, cageNumber: number, branch: string, assetType: string, cageWeight: number): void {
+  markAvailable(cage: Cage): void {
     this.loading.next(true);
-    this.recyclingService.markCageAvailable(id, cageNumber, branch, assetType, cageWeight).subscribe(_ => {
+    this.recyclingService.markCageAvailable(cage.id, cage.fields.CageNumber, cage.fields.Branch, cage.fields.AssetType, cage.fields.CageWeight).subscribe(_ => {
       if (this.router.url.startsWith('/recycling')) this.router.navigate(['recycling/cages', _[1]['id']], {replaceUrl: true});
       this.onComplete();
     });
