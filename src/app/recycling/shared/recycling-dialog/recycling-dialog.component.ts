@@ -53,7 +53,7 @@ export class RecyclingDialogComponent implements OnInit {
       site: new FormControl(this.site, requireSite ? [Validators.required] : [])
     });
     this.getCagesWithCustomer();
-    this.getAvailableCages(this.data.branch);
+    this.getAvailableCages(false);
   }
 
   getCagesWithCustomer(): void {
@@ -75,10 +75,9 @@ export class RecyclingDialogComponent implements OnInit {
     this.recyclingService.allocateToCustomer(id, this.data.customer.accountnumber, this.data.customer.name, site).subscribe(() => this.closeAssigningPage());
   }
 
-  getAvailableCages(branch: string): void {
+  getAvailableCages(all: boolean): void {
     this.loadingAvailableCages$.next(true);
-    this.data.branch = branch;
-    this.availableCages$ = this.recyclingService.getAvailableCages(this.data.branch).pipe(
+    this.availableCages$ = this.recyclingService.getAvailableCages(all ? '' : this.data.branch).pipe(
       tap(_ => this.loadingAvailableCages$.next(false))
     );
   }
