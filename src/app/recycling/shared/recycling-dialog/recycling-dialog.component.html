@@ -1,10 +1,10 @@
 <ng-container *ngIf="assigning">
   <div class="buttons">
-    <button mat-icon-button (click)="closeAssigningPage()"><mat-icon>arrow_back</mat-icon></button>
+    <button mat-icon-button (click)="closeAssigningPage()" type="button"><mat-icon>arrow_back</mat-icon></button>
     <h2 mat-dialog-title>Available cages</h2>
-    <button mat-stroked-button [matMenuTriggerFor]="menu" tabindex="-1" class="branch-picker">
-      {{ data.branch || 'All branches'}}
-    </button>
+    <mat-slide-toggle (change)="getAvailableCages($event.checked)" labelPosition="before" class="all-toggle">
+      Show all
+    </mat-slide-toggle>
   </div>
   <mat-dialog-content>
     <mat-accordion>
@@ -44,7 +44,7 @@
         <ng-container *ngIf="indexOfelement === 0" >
           <div class="buttons">
             <h3 class="section-title">Allocated cages</h3>
-            <button mat-raised-button color="primary" (click)="openAssigningPage()">Assign a cage</button>
+            <button mat-raised-button color="primary" (click)="openAssigningPage()" type="button">Assign a cage</button>
           </div>
           <p *ngIf="noAllocatedCages$ | async" class="note">
             No allocated cages
@@ -101,17 +101,9 @@
 
 <button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>
 
-<mat-menu #menu="matMenu" xPosition="before">
-  <ng-template matMenuContent>
-    <button mat-menu-item *ngFor="let branch of branches" (click)="getAvailableCages(branch)">
-      <span>{{ branch }}</span>
-    </button>
-  </ng-template>
-</mat-menu>
-
 <mat-menu #sitesMenu="matMenu" xPosition="before">
   <ng-template matMenuContent>
-    <button mat-menu-item *ngFor="let site of sites" (click)="setSite(site)">
+    <button mat-menu-item *ngFor="let site of sites" (click)="setSite(site)" type="button">
       <span>{{ site }}</span>
     </button>
   </ng-template>

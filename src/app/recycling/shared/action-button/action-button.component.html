@@ -6,7 +6,7 @@
 <button mat-raised-button type="button" color="primary" *ngIf="cage.statusId === 3 && cage.fields.Status !== 'Ready for delivery to local processing'" (click)="markWithPolymer(cage.id)" [disabled]="loading | async" class="action">Send to Polymer</button>
 <button mat-raised-button type="button" color="primary" *ngIf="cage.statusId === 4" (click)="collectFromProcessing(cage.id, cage.fields.AssetType)" [disabled]="loading | async" class="action">Return from local processing</button>
 <button mat-raised-button type="button" color="primary" *ngIf="cage.statusId === 5" (click)="collectFromPolymer(cage.id, cage.fields.AssetType)" [disabled]="loading | async" class="action">Return from Polymer</button>
-<button mat-raised-button type="button" color="primary" *ngIf="cage.statusId === 6" (click)="markAvailable(cage.id, cage.fields.CageNumber, cage.fields.Branch, cage.fields.AssetType, cage.fields.CageWeight)" [disabled]="loading | async" class="action">Set cage as available</button>
+<button mat-raised-button type="button" color="primary" *ngIf="cage.statusId === 6" (click)="markAvailable(cage)" [disabled]="loading | async" class="action">Set cage as available</button>
 <button mat-icon-button type="button" [matMenuTriggerFor]="menu" class="menu" *ngIf="!cage.statusId || cage.statusId < 7"><mat-icon>more_vert</mat-icon></button>
 <mat-menu #menu="matMenu" xPosition="before">
   <ng-template matMenuContent>
@@ -45,8 +45,8 @@
 </mat-menu>
 
 <mat-menu #readyMenu="matMenu">
-  <button type="button" mat-menu-item (click)="markReadyForPolymer(cage.id, cage.fields.CageNumber)">Polymer</button>
-  <button type="button" mat-menu-item (click)="markReadyForProcessing(cage.id, cage.fields.CageNumber)">Local</button>
+  <button type="button" mat-menu-item (click)="markReadyForPolymer(cage)">Polymer</button>
+  <button type="button" mat-menu-item (click)="markReadyForProcessing(cage)">Local</button>
 </mat-menu>
 
 <mat-menu #depotMenu="matMenu">
