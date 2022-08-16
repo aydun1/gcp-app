@@ -36,6 +36,24 @@
   margin-left: auto;
 }
 
+.multi-action {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cage-count {
+  display: flex;
+  align-items: center;
+  background: rgba(129, 129, 129, 0.2);
+  border-radius: 20px;
+  padding-left: 16px;
+}
+
+.actions {
+  margin-left: auto;
+}
+
 .customer {
   color: #979797;
   overflow: hidden;

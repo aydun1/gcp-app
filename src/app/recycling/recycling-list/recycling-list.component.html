@@ -38,7 +38,17 @@
         </button>
       </mat-form-field>
     </div>
-    <a mat-raised-button [routerLink]="['new']" color="primary" class="add-cage">Add New Cage</a>
+    <a *ngIf="selection.isEmpty()" mat-raised-button [routerLink]="['new']" color="primary" class="add-cage">Add New Cage</a>
+  </div>
+  <div *ngIf="selection.selected.length" class="inner multi-action">
+
+    <div class="cage-count mat-app-background">
+      <div>{{ selection.selected.length }} cages</div>
+      <button mat-icon-button (click)="selection.clear()" type="button" title="Clear selection">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <gcp-action-button [cages]="selection.selected" (updated)="updatedSelection()" class="actions"></gcp-action-button>  
   </div>
 
   <div class="status-header inner">{{ statusFilter.value }}</div>

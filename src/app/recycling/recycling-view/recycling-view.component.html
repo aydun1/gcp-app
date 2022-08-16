@@ -17,7 +17,7 @@
       <div *ngIf="!isCage" class="title">
         <h2>{{ cage.fields.AssetType }}</h2>
       </div>
-      <gcp-action-button [cage]="cage" (updated)="getCage()" (loading)="updating($event)" class="actions"></gcp-action-button>
+      <gcp-action-button [cages]="[cage]" (updated)="getCage()" (loading)="updating($event)" (dehired)="goBack()" class="actions"></gcp-action-button>
     </div>
     <mat-card>
       <mat-list>

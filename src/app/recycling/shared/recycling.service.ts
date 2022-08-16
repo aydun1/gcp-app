@@ -371,7 +371,7 @@ export class RecyclingService {
     return this.http.delete<Cage>(url).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err)),
       tap(() => this.snackBar.open("Cage successfully dehired", '', {duration: 3000})),
-      switchMap(() => this.updateList({id} as Cage)),
+      switchMap(() => this.updateList({id} as Cage))
     );
   }
 

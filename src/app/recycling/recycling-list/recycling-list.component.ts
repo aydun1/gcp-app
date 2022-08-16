@@ -164,6 +164,10 @@ export class RecyclingListComponent implements OnInit {
     this.binFilter.patchValue(null);
   }
 
+  updatedSelection() {
+    this.selection.clear();
+  }
+
   announceSortChange(e: Sort): void {
     const sort = e.direction ? e.active : null;
     const order = e.direction || null;

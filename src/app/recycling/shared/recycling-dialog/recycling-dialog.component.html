@@ -81,7 +81,7 @@
               <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> <span class="cage-type">{{ cage.fields.AssetTypeClean }}</span></mat-panel-title>
               <mat-panel-description>{{ cage.fields.Status }}</mat-panel-description>
             </mat-expansion-panel-header>
-            <gcp-action-button [cage]="cage" (updated)="getCagesWithCustomer()" class="actions"></gcp-action-button>
+            <gcp-action-button [cages]="[cage]" (updated)="getCagesWithCustomer()" class="actions"></gcp-action-button>
             <mat-list>
               <mat-list-item *ngIf="cage.fields.Site">
                 <mat-icon mat-list-icon>business</mat-icon>
