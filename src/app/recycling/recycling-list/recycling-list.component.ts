@@ -186,11 +186,11 @@ export class RecyclingListComponent implements OnInit {
     );
   }
 
-  toggleSelection(index: number, cages: Array<Cage>): void {
+  toggleSelection(index: number, cages: Array<Cage>, e: any): void {
     if (this.shiftHolding && this.lastClicked !== undefined) {
       const start = Math.min(index, this.lastClicked);
       const end = Math.max(index, this.lastClicked) + 1;
-      cages.slice(start, end).forEach(_ => this.selection.select(_));
+      cages.slice(start, end).forEach(_ => e.checked ? this.selection.select(_) : this.selection.deselect(_));
     } else {
       this.selection.toggle(cages[index]);
     }

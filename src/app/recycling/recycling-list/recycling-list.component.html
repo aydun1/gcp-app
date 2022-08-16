@@ -58,7 +58,7 @@
       <ng-container matColumnDef="checked">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
         <mat-cell *matCellDef="let cage; let i = index">
-          <mat-checkbox color="accent" (change)="toggleSelection(i, cages)"
+          <mat-checkbox color="accent" (change)="toggleSelection(i, cages, $event)"
           [checked]="selection.isSelected(cage)"></mat-checkbox>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>

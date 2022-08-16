@@ -118,13 +118,19 @@ export class ActionButtonComponent implements OnInit {
 
   markReadyForProcessing(cages: Array<Cage>): void {
     this.pickRun().afterClosed().pipe(
-      tap(() => this.loading.next(true)),
       switchMap(run => {
         if (!run) return of(1);
-        const tasks = cages.map(_ => this.deliveryService.requestCageTransfer(run, _.fields.CustomerNumber, _.fields.Site, `Cage ${_.fields.CageNumber} ready for delivery to local processing`).pipe(take(1)));
+        const chunks = cages.reduce((acc, cur) => {
+          const key = `${cur.fields.CustomerNumber}_${cur.fields.Site}`;
+          const curVal = acc[key] ? acc[key]['message'] : [];
+          const newVal = curVal.concat(`Cage ${cur.fields.CageNumber} ready for delivery to local processing`);
+          return {...acc, [key]: {message: newVal, site: cur.fields.Site, customerNumber: cur.fields.CustomerNumber}};
+        }, {});
+        const tasks = Object.keys(chunks).map(_ => this.deliveryService.requestCageTransfer(run, chunks[_].customerNumber, chunks[_].Site, chunks[_].message.join('<br>')).pipe(take(1)))
         return forkJoin(tasks);
       })
-    ).subscribe(() => this.onComplete());
+    ).subscribe();
+
     const tasks = cages.map(_ => this.recyclingService.readyForProcessing(_.id));
     forkJoin(tasks).subscribe(() => this.onComplete());
   }
@@ -147,20 +153,22 @@ export class ActionButtonComponent implements OnInit {
     forkJoin(tasks).subscribe(() => this.onComplete());
   }
 
-
-
-
-
   markReadyForPolymer(cages: Array<Cage>): void {
     const customerNumber = '011866';
     this.pickRun().afterClosed().pipe(
-      tap(() => this.loading.next(true)),
       switchMap(run => {
         if (!run) return of(1);
-        const tasks = cages.map(_ => this.deliveryService.requestCageTransfer(run, customerNumber, _.fields.Site, `Cage ${_.fields.CageNumber} ready for delivery to Polymer`).pipe(take(1)));
+        const chunks = cages.reduce((acc, cur) => {
+          const key = `${customerNumber}_${cur.fields.Site}`;
+          const curVal = acc[key] ? acc[key]['message'] : [];
+          const newVal = curVal.concat(`Cage ${cur.fields.CageNumber} ready for delivery to Polymer`);
+          return {...acc, [key]: {message: newVal, site: cur.fields.Site, customerNumber}};
+        }, {});
+        const tasks = Object.keys(chunks).map(_ => this.deliveryService.requestCageTransfer(run, chunks[_].customerNumber, chunks[_].Site, chunks[_].message.join('<br>')).pipe(take(1)));
         return forkJoin(tasks);
       })
-    ).subscribe(() => this.onComplete());
+    ).subscribe();
+
     const tasks = cages.map(_ => this.recyclingService.readyForPolymer(_.id));
     forkJoin(tasks).subscribe(() => this.onComplete());
   }
