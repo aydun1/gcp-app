@@ -1,5 +1,5 @@
-<div class="outer">
-  <div *ngIf="choices$ | async as choices"class="options inner">
+<div *ngIf="(cages$ | async) as cages"  class="outer">
+  <div *ngIf="selection.isEmpty() && (choices$ | async) as choices"class="options inner">
     <div class="buttons">
       <mat-form-field appearance="outline" class="branch">
         <mat-label>{{ choices.Branch.name }}</mat-label>
@@ -38,28 +38,27 @@
         </button>
       </mat-form-field>
     </div>
-    <a *ngIf="selection.isEmpty()" mat-raised-button [routerLink]="['new']" color="primary" class="add-cage">Add New Cage</a>
+    <a mat-raised-button [routerLink]="['new']" color="primary" class="add-cage">Add New Cage</a>
   </div>
-  <div *ngIf="selection.selected.length" class="inner multi-action">
-
+  <div *ngIf="!selection.isEmpty()" class="inner multi-action">
     <div class="cage-count mat-app-background">
       <div>{{ selection.selected.length }} cages</div>
       <button mat-icon-button (click)="selection.clear()" type="button" title="Clear selection">
         <mat-icon>close</mat-icon>
       </button>
     </div>
-    <gcp-action-button [cages]="selection.selected" (updated)="updatedSelection()" class="actions"></gcp-action-button>  
+    <gcp-action-button [cages]="selection.selected" class="actions"></gcp-action-button>  
   </div>
 
   <div class="status-header inner">{{ statusFilter.value }}</div>
 
-  <div *ngIf="(cages$ | async) as cages" class="inner">
+  <div class="inner">
     <mat-table #table [dataSource]="cages" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
 
       <ng-container matColumnDef="checked">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
-        <mat-cell *matCellDef="let cage">
-          <mat-checkbox color="accent" (change)="selection.toggle(cage)"
+        <mat-cell *matCellDef="let cage; let i = index">
+          <mat-checkbox color="accent" (change)="toggleSelection(i, cages)"
           [checked]="selection.isSelected(cage)"></mat-checkbox>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>

@@ -18,6 +18,8 @@ interface choice {choice: {choices: Array<any>}, name: string};
 })
 export class RecyclingListComponent implements OnInit {
   private _loadList!: boolean;
+  private lastClicked: number | undefined;
+  private shiftHolding = false;
   public cages$!: Observable<Cage[]>;
   public binFilter = new FormControl<number | null>(null);
   public branchFilter = new FormControl('');
@@ -47,6 +49,15 @@ export class RecyclingListComponent implements OnInit {
     if (bottomPosition >= -250) this.getNextPage();
   }
 
+  @HostListener('document:keydown.shift', ['$event'])
+  shiftDown(event: KeyboardEvent): void {
+    this.shiftHolding = true;
+  }
+  @HostListener('document:keyup.shift', ['$event'])
+  shiftUp(event: KeyboardEvent): void {
+    this.shiftHolding = false;
+  }
+
   ngOnInit(): void {
     this.getOptions();
     this.cages$ = this.route.queryParams.pipe(
@@ -65,6 +76,7 @@ export class RecyclingListComponent implements OnInit {
       }),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
       tap((cages: Array<Cage>) => {
+        this.updatedSelection(cages);
         this.weight = cages.map(_ => _.fields?.NetWeight).filter(_ => _).reduce((acc, val) => acc + +val, 0);
         this.count = cages.map(() => 1).reduce((acc, val) => acc + val, 0);
       })
@@ -164,8 +176,25 @@ export class RecyclingListComponent implements OnInit {
     this.binFilter.patchValue(null);
   }
 
-  updatedSelection() {
-    this.selection.clear();
+  updatedSelection(cages: Array<Cage>): void {
+    this.selection.selected.forEach(
+      selected => {
+        const match = cages.find(_ => _.id === selected.id);
+        this.selection.deselect(selected);
+        match ? this.selection.select(match) : this.selection.deselect(selected);
+      }
+    );
+  }
+
+  toggleSelection(index: number, cages: Array<Cage>): void {
+    if (this.shiftHolding && this.lastClicked !== undefined) {
+      const start = Math.min(index, this.lastClicked);
+      const end = Math.max(index, this.lastClicked) + 1;
+      cages.slice(start, end).forEach(_ => this.selection.select(_));
+    } else {
+      this.selection.toggle(cages[index]);
+    }
+    this.lastClicked = index;
   }
 
   announceSortChange(e: Sort): void {
