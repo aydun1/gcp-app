@@ -19,7 +19,6 @@ import { ThemingService } from './theming.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
-  private warehouseStaff = ['michael.johnson@gardencityplastics.com'];
   private readonly _destroying$ = new Subject<void>();
   private checkInterval = 1000 * 60 * 60 * 6;  // 6 hours
   public loginDisplay = false;
@@ -138,7 +137,8 @@ export class AppComponent implements OnInit, OnDestroy {
   setLoginDisplay(): void {
     this.accounts = this.authService.instance.getAllAccounts();
     this.loginDisplay = this.accounts.length > 0;
-    this.warehouse = this.warehouseStaff.includes(this.accounts[0].username)
+    this.sharedService.checkIfWarehouse(this.accounts);
+    this.warehouse = this.sharedService.isWarehouse;
     if (!this.loginDisplay && this.location.path() === '/logout') this.router.navigate(['/']);
     if (this.loginDisplay) this.getPhoto();
   }
