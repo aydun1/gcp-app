@@ -13,7 +13,7 @@
   <mat-sidenav-container>
     <mat-sidenav #snav [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile">
       <mat-nav-list>
-        <a mat-list-item routerLink="/customers" routerLinkActive="active"><mat-icon>groups</mat-icon><span class="menu-label">Customers</span></a>
+        <a *ngIf="!warehouse" mat-list-item routerLink="/customers" routerLinkActive="active"><mat-icon>groups</mat-icon><span class="menu-label">Customers</span></a>
         <a mat-list-item routerLink="/pallets" routerLinkActive="active"><mat-icon>view_list</mat-icon><span class="menu-label">Pallet Manager</span></a>
         <ng-container *ngIf="urlActive('/pallets')">
           <a mat-list-item routerLink="/pallets/history" routerLinkActive="active" class="sub-item"><span class="menu-label">Branch history</span></a>

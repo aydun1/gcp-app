@@ -19,6 +19,7 @@ import { ThemingService } from './theming.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
+  private warehouseStaff = ['michael.johnson@gardencityplastics.com'];
   private readonly _destroying$ = new Subject<void>();
   private checkInterval = 1000 * 60 * 60 * 6;  // 6 hours
   public loginDisplay = false;
@@ -28,6 +29,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public appTitle = '';
   public checkedTeams = false;
   public token: string | undefined;
+  public warehouse!: boolean;
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -45,6 +47,7 @@ export class AppComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    console.log(this.accounts)
     this.themingService.theme.subscribe(_ => {
       const darkClass = 'dark-theme';
       _ ? this.renderer.addClass(document.body, darkClass) : this.renderer.removeClass(document.body, darkClass)
@@ -135,6 +138,7 @@ export class AppComponent implements OnInit, OnDestroy {
   setLoginDisplay(): void {
     this.accounts = this.authService.instance.getAllAccounts();
     this.loginDisplay = this.accounts.length > 0;
+    this.warehouse = this.warehouseStaff.includes(this.accounts[0].username)
     if (!this.loginDisplay && this.location.path() === '/logout') this.router.navigate(['/']);
     if (this.loginDisplay) this.getPhoto();
   }
