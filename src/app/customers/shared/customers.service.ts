@@ -43,16 +43,18 @@ export class CustomersService {
       }
     }
     filterArray.push('accountnumber ne null');
-
+    console.log(filters)
     const palletFilter = []
-    if (filters['sort'] === 'new_pallets_loscam') palletFilter.push('new_pallets_loscam gt 0 or new_pallets_loscam lt 0');
-    else if (filters['sort'] === 'new_pallets_chep') palletFilter.push('new_pallets_chep gt 0 or new_pallets_chep lt 0');
-    else if (filters['sort'] === 'new_pallets_plain') palletFilter.push('new_pallets_plain gt 0 or new_pallets_plain lt 0');
-    else filterArray.push('statecode eq 0');
-    if (palletFilter.length > 0) filterArray.push(`(${palletFilter.join(' or ')})`);
+    const pallets = Array.isArray(filters['pallets']) ? filters['pallets'] : [filters['pallets']];
 
+    if (filters['sort'] === 'loscam' || pallets.includes('loscam')) palletFilter.push('new_pallets_loscam gt 0 or new_pallets_loscam lt 0');
+    if (filters['sort'] === 'chep' || pallets.includes('chep')) palletFilter.push('new_pallets_chep gt 0 or new_pallets_chep lt 0');
+    if (filters['sort'] === 'plain' || pallets.includes('plain')) palletFilter.push('new_pallets_plain gt 0 or new_pallets_plain lt 0');
+    if (palletFilter.length === 0) filterArray.push('statecode eq 0');
+    if (palletFilter.length > 0) filterArray.push(`(${palletFilter.join(' or ')})`);
+    const sort = ['loscam', 'chep', 'plain'].includes(filters['sort']) ? `new_pallets_${filters['sort']}` : filters['sort'] || 'name'
     url += `&$filter=${filterArray.join(' and ')}`;
-    url += `&$orderby=${filters['sort'] ? filters['sort'] : 'name'}`;
+    url += `&$orderby=${sort}`;
     url += ` ${filters['order'] ? filters['order'] : 'asc'}`;
     return url;
   }
