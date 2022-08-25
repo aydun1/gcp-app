@@ -7,6 +7,7 @@ import { Component, Input } from '@angular/core';
 })
 export class BigButtonComponent {
 
+  @Input() public icon!: string;
   @Input() public text!: string;
   @Input() public target!: Array<string>;
 

@@ -107,7 +107,7 @@ a {
 
 .home-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
   grid-gap: 1rem;
   margin: 20px;
 }
@@ -168,18 +168,18 @@ a {
 }
 
 .dark-theme .mat-table,
-.dark-theme gcp-big-button > a {
+.dark-theme gcp-big-button > .link {
   border-color: rgba(255, 255, 255, 0.12);
 }
 
-.mat-row
-gcp-big-button > a,
+.mat-row,
+gcp-big-button > .link,
 .note.load {
   background: white;
 }
 
 .dark-theme .mat-row,
-.dark-theme gcp-big-button > a,
+.dark-theme gcp-big-button > .link,
 .dark-theme .note.load {
   background: #424242;
 }

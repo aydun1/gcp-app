@@ -42,6 +42,7 @@ import { LetterheadComponent } from './letterhead/letterhead.component';
   imports: [
     CommonModule,
     RouterModule,
+    MatIconModule,
     MatRippleModule
   ],
   exports: [
