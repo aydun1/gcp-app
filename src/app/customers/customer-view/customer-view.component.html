@@ -31,12 +31,14 @@
           <button type="button" mat-stroked-button (click)="openPalletHistory(customer)">History</button>
         </div>
         <dl>
-          <dt>Loscams</dt>
-          <dd *ngIf="palletsOwing; else loadingDots">{{ palletsOwing.Loscam }}</dd>
-          <dt>Cheps</dt>
-          <dd *ngIf="palletsOwing; else loadingDots">{{ palletsOwing.Chep }}</dd>
-          <dt>Plains</dt>
-          <dd *ngIf="palletsOwing; else loadingDots">{{ palletsOwing.Plain }}</dd>
+          <ng-container *ngFor="let pallet of pallets">
+            <dt>{{pallet}}s</dt>
+            <dd *ngIf="palletsOwing; else loadingDots">
+              <span class="pallet-total">{{ palletsOwing[pallet]['total'] }} </span>
+              <span>&nbsp;</span>
+              <span *ngIf="palletsOwing[pallet]['states'].length > 1" class="pallet-summary"><span *ngFor="let branch of palletsOwing[pallet]['states']; let isLast=last">{{branch}}: {{palletsOwing[pallet]['stateCounts'][branch]}}<span *ngIf="!isLast">, </span></span></span>
+            </dd>
+          </ng-container>
         </dl>
       </div>
       <mat-divider></mat-divider>

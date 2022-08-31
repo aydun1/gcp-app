@@ -29,7 +29,7 @@
         <div mat-line>{{ docket.Pallet }} pallets delivered</div>
       </mat-list-item>
       <mat-list-item>
-        <div mat-line>{{ quantities ? quantities[docket.Pallet] : '...'}}</div>
+        <div mat-line>{{ quantities ? quantities[docket.Pallet]['total'] : '...'}}</div>
         <div mat-line>Total {{ docket.Pallet }} pallets owed</div>
       </mat-list-item>
     </mat-list>

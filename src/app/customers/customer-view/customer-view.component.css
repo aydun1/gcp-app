@@ -17,6 +17,16 @@
   min-height: 36px;
 }
 
+.pallet-total {
+  display: inline-block;
+  min-width: 20px;
+}
+
+.pallet-summary {
+  font-size: 12px;
+  font-weight: 500;
+}
+
 .section-heading > h3 {
   margin: 0;
 }

@@ -5,6 +5,13 @@ import { map, switchMap, tap } from 'rxjs';
 import { Pallet } from '../pallet';
 import { PalletsService } from '../pallets.service';
 
+interface PalletQuantity {stateCounts: Array<{name: string, count: number}>, states: Array<string>, total: number};
+interface PalletQuantities {
+  Loscam: PalletQuantity,
+  Chep: PalletQuantity,
+  Plain: PalletQuantity,
+};
+
 @Component({
   selector: 'gcp-pallet-docket-dialog',
   templateUrl: './pallet-docket-dialog.component.html',
@@ -13,7 +20,7 @@ import { PalletsService } from '../pallets.service';
 export class PalletDocketDialogComponent implements OnInit, OnDestroy {
 
   public transfer!: Pallet;
-  public quantities!: {Loscam: number, Chep: number, Plain: number};
+  public quantities!: PalletQuantities;
   public loading = true;
 
   constructor(
@@ -26,7 +33,7 @@ export class PalletDocketDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.renderer.addClass(document.body, 'print');
-
+    console.log(this.quantities)
     this.route.paramMap.pipe(
       map(params => this.data.id),
       switchMap(id => this.palletService.getPalletTransfer(id)),

@@ -19,6 +19,13 @@ import { RunPickerDialogComponent } from '../../runs/shared/run-picker-dialog/ru
 import { PalletCustomerListDialogComponent } from '../../pallets/shared/pallet-customer-list-dialog/pallet-customer-list-dialog.component';
 import { RecyclingCustomerListDialogComponent } from '../../recycling/shared/recycling-customer-list-dialog/recycling-customer-list-dialog.component';
 
+interface PalletQuantity {stateCounts: Array<{name: string, count: number}>, states: Array<string>, total: number};
+interface PalletQuantities {
+  Loscam: PalletQuantity,
+  Chep: PalletQuantity,
+  Plain: PalletQuantity,
+};
+
 @Component({
   selector: 'gcp-customer-view',
   templateUrl: './customer-view.component.html',
@@ -32,10 +39,11 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
   private cagesSubject$ = new Subject<string>();
   private customer!: Customer;
   private branch_!: string;
+  public pallets = ['Loscam', 'Chep', 'Plain']
   public customer$!: Observable<Customer>;
   public site!: string;
   public sites!: Array<Site>;
-  public palletsOwing!: {Loscam: number, Chep: number, Plain: number} | null;
+  public palletsOwing!: PalletQuantities | null;
   public loscams!: number;
   public cheps!: number;
   public plains!: number;
