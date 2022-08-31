@@ -52,8 +52,6 @@
         <dl>
           <dt>Active</dt>
           <dd *ngIf="cages; else loadingDots">{{ cages.count }}</dd>
-        </dl>
-        <dl>
           <dt>All time weight</dt>
           <dd *ngIf="cages; else loadingDots">{{ cages.weight }} kg</dd>
         </dl>
