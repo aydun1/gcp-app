@@ -15,6 +15,140 @@ export class AutomateService {
   private palletTrackerUrl = `${this.endpoint}/${this.palletsUrl}`;
   private i = 0;
 
+  private toUpdate: Array<Pallet> = [
+    {id: '908', date: '29/11/2021 16:36'},
+    {id: '1130', date: '29/11/2021 16:50'},
+    {id: '3140', date: '3/12/2021 12:32'},
+    {id: '3141', date: '3/12/2021 12:33'},
+    {id: '995', date: '29/11/2021 16:41'},
+    {id: '1291', date: '29/11/2021 16:52'},
+    {id: '987', date: '29/11/2021 16:41'},
+    {id: '1114', date: '29/11/2021 16:44'},
+    {id: '969', date: '29/11/2021 16:41'},
+    {id: '1107', date: '29/11/2021 16:44'},
+    {id: '1159', date: '29/11/2021 16:50'},
+    {id: '1280', date: '29/11/2021 16:51'},
+    {id: '1281', date: '29/11/2021 16:51'},
+    {id: '1048', date: '29/11/2021 16:43'},
+    {id: '1075', date: '29/11/2021 16:43'},
+    {id: '1074', date: '29/11/2021 16:43'},
+    {id: '1211', date: '29/11/2021 16:51'},
+    {id: '1212', date: '29/11/2021 16:51'},
+    {id: '1173', date: '29/11/2021 16:50'},
+    {id: '1188', date: '29/11/2021 16:50'},
+    {id: '1006', date: '29/11/2021 16:42'},
+    {id: '1312', date: '29/11/2021 16:52'},
+    {id: '1146', date: '29/11/2021 16:50'},
+    {id: '927', date: '29/11/2021 16:41'},
+    {id: '1195', date: '29/11/2021 16:50'},
+    {id: '1215', date: '29/11/2021 16:51'},
+    {id: '1176', date: '29/11/2021 16:50'},
+    {id: '985', date: '29/11/2021 16:41'},
+    {id: '1027', date: '29/11/2021 16:42'},
+    {id: '12335', date: '29/06/2022 13:46'},
+    {id: '12336', date: '29/06/2022 13:46'},
+    {id: '12337', date: '29/06/2022 13:46'},
+    {id: '12338', date: '29/06/2022 13:46'},
+    {id: '912', date: '29/11/2021 16:36'},
+    {id: '1272', date: '29/11/2021 16:51'},
+    {id: '1197', date: '29/11/2021 16:50'},
+    {id: '852', date: '29/11/2021 16:35'},
+    {id: '1227', date: '29/11/2021 16:51'},
+    {id: '1288', date: '29/11/2021 16:52'},
+    {id: '1217', date: '29/11/2021 16:51'},
+    {id: '1218', date: '29/11/2021 16:51'},
+    {id: '992', date: '29/11/2021 16:41'},
+    {id: '1065', date: '29/11/2021 16:43'},
+    {id: '998', date: '29/11/2021 16:42'},
+    {id: '1085', date: '29/11/2021 16:43'},
+    {id: '1044', date: '29/11/2021 16:43'},
+    {id: '970', date: '29/11/2021 16:41'},
+    {id: '949', date: '29/11/2021 16:41'},
+    {id: '1199', date: '29/11/2021 16:50'},
+    {id: '953', date: '29/11/2021 16:41'},
+    {id: '1293', date: '29/11/2021 16:52'},
+    {id: '1135', date: '29/11/2021 16:50'},
+    {id: '1031', date: '29/11/2021 16:42'},
+    {id: '3174', date: '3/12/2021 13:39'},
+    {id: '1319', date: '29/11/2021 16:52'},
+    {id: '1186', date: '29/11/2021 16:50'},
+    {id: '1077', date: '29/11/2021 16:43'},
+    {id: '1078', date: '29/11/2021 16:43'},
+    {id: '918', date: '29/11/2021 16:37'},
+    {id: '952', date: '29/11/2021 16:41'},
+    {id: '889', date: '29/11/2021 16:36'},
+    {id: '1283', date: '29/11/2021 16:51'},
+    {id: '1004', date: '29/11/2021 16:42'},
+    {id: '1140', date: '29/11/2021 16:50'},
+    {id: '1125', date: '29/11/2021 16:50'},
+    {id: '1282', date: '29/11/2021 16:51'},
+    {id: '1270', date: '29/11/2021 16:51'},
+    {id: '981', date: '29/11/2021 16:41'},
+    {id: '864', date: '29/11/2021 16:36'},
+    {id: '1101', date: '29/11/2021 16:43'},
+    {id: '3116', date: '3/12/2021 10:03'},
+    {id: '1310', date: '29/11/2021 16:52'},
+    {id: '1030', date: '29/11/2021 16:42'},
+    {id: '1144', date: '29/11/2021 16:50'},
+    {id: '1265', date: '29/11/2021 16:51'},
+    {id: '1184', date: '29/11/2021 16:50'},
+    {id: '1137', date: '29/11/2021 16:50'},
+    {id: '1286', date: '29/11/2021 16:52'},
+    {id: '1020', date: '29/11/2021 16:42'},
+    {id: '1325', date: '29/11/2021 16:52'},
+    {id: '1194', date: '29/11/2021 16:50'},
+    {id: '3171', date: '3/12/2021 13:36'},
+    {id: '1198', date: '29/11/2021 16:50'},
+    {id: '1273', date: '29/11/2021 16:51'},
+    {id: '910', date: '29/11/2021 16:36'},
+    {id: '1244', date: '29/11/2021 16:51'},
+    {id: '982', date: '29/11/2021 16:41'},
+    {id: '1264', date: '29/11/2021 16:51'},
+    {id: '1226', date: '29/11/2021 16:51'},
+    {id: '885', date: '29/11/2021 16:36'},
+    {id: '1011', date: '29/11/2021 16:42'},
+    {id: '1126', date: '29/11/2021 16:50'},
+    {id: '1202', date: '29/11/2021 16:51'},
+    {id: '960', date: '29/11/2021 16:41'},
+    {id: '1208', date: '29/11/2021 16:51'},
+    {id: '1116', date: '29/11/2021 16:44'},
+    {id: '1117', date: '29/11/2021 16:44'},
+    {id: '3362', date: '7/12/2021 15:55'},
+    {id: '3363', date: '7/12/2021 16:01'},
+    {id: '1225', date: '29/11/2021 16:51'},
+    {id: '1061', date: '29/11/2021 16:43'},
+    {id: '1032', date: '29/11/2021 16:42'},
+    {id: '1238', date: '29/11/2021 16:51'},
+    {id: '909', date: '29/11/2021 16:36'},
+    {id: '962', date: '29/11/2021 16:41'},
+    {id: '1210', date: '29/11/2021 16:51'},
+    {id: '1150', date: '29/11/2021 16:50'},
+    {id: '1016', date: '29/11/2021 16:42'},
+    {id: '1092', date: '29/11/2021 16:43'},
+    {id: '1237', date: '29/11/2021 16:51'},
+    {id: '1179', date: '29/11/2021 16:50'},
+    {id: '1180', date: '29/11/2021 16:50'},
+    {id: '929', date: '29/11/2021 16:41'},
+    {id: '933', date: '29/11/2021 16:41'},
+    {id: '1158', date: '29/11/2021 16:50'},
+    {id: '1209', date: '29/11/2021 16:51'},
+    {id: '979', date: '29/11/2021 16:41'},
+    {id: '980', date: '29/11/2021 16:41'},
+    {id: '888', date: '29/11/2021 16:36'},
+    {id: '1253', date: '29/11/2021 16:51'},
+    {id: '1138', date: '29/11/2021 16:50'},
+    {id: '1028', date: '29/11/2021 16:42'},
+    {id: '903', date: '29/11/2021 16:36'},
+    {id: '3303', date: '7/12/2021 9:58'},
+    {id: '3304', date: '7/12/2021 9:58'},
+    {id: '3305', date: '7/12/2021 10:00'},
+    {id: '1336', date: '29/11/2021 16:52'},
+    {id: '3112', date: '3/12/2021 9:59'},
+    {id: '1331', date: '29/11/2021 16:52'},
+    {id: '1330', date: '29/11/2021 16:52'},
+    {id: '1338', date: '29/11/2021 16:52'}
+  ] as Array<Pallet>;
+
   private month = 12;
   private year = 2021
   private branch = 'VIC';
@@ -47,21 +181,27 @@ export class AutomateService {
 
   setReference(pallet: Pallet): Observable<any>  {
     const shouldRun = 1;
-    const payload = {fields: {Reference: 'updated'}};
+
+    console.log(pallet)
+    const d = pallet.date;
+    const dd = d.split(' ')[0].split('/');
+    const ddd = new Date(`${dd[2]}/${dd[1]}/${dd[0]}`);
+    console.log(ddd);
+
+    const payload = {fields: {Reference: 'version375', Date: ddd.toISOString()}};
     return shouldRun ? this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${pallet.id}')`, payload) : of();
   }
 
   getAndSet(): Observable<number> {
-
     const date = new Date('2022/07/01').toISOString();
     const branch = 'VIC'
     const top = 2000;
-    let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created)&filter=fields/Created ge '${date}' and fields/Branch eq '${branch}' and fields/CustomerNumber ne null'&top=${top}`;
-    const a$: Observable<Pallet[]> = this.http.get(url).pipe(
-      map((res: any) => res.value as Pallet[]),
-      tap(_ => console.log(_.length))
-    );
-
+    //let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created)&filter=fields/Created ge '${date}' and fields/Branch eq '${branch}' and fields/CustomerNumber ne null'&top=${top}`;
+    //const a$: Observable<Pallet[]> = this.http.get(url).pipe(
+    //  ap((res: any) => res.value as Pallet[]),
+    //  tap(_ => console.log(_.length))
+    //);
+    const a$ = of(this.toUpdate)
     const b$ = timer(1000, 2000);
     return combineLatest([a$, b$]).pipe(
       switchMap(([a, b]) => this.setReference(a[this.i])),
@@ -167,3 +307,4 @@ export class AutomateService {
     return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${id}')`, payload);
   }
 }
+

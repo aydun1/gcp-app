@@ -1,5 +1,7 @@
 export interface Pallet {
   id: string,
+  Date: any,
+  date: string,
   lastModifiedDateTime: string | Date,
   lastModifiedBy: {
     user: {
@@ -26,6 +28,6 @@ export interface Pallet {
     Change?: number,
     Status: string,
     CustomerNumber: string,
-    Site: string
+    Site: string,
   }
 }
