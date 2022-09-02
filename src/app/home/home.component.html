@@ -1,7 +1,7 @@
 <div class="home-cards">
-  <gcp-big-button [target]="['customers']">Customers</gcp-big-button>
-  <gcp-big-button [target]="['pallets']">Pallet Manager</gcp-big-button>
-  <gcp-big-button [target]="['recycling']">Recycling Cages</gcp-big-button>
-  <gcp-big-button [target]="['runs']">Run list</gcp-big-button>
-  <gcp-big-button [target]="['loading-schedule']">Loading Schedule</gcp-big-button>
+  <gcp-big-button *ngIf="!warehouse" [target]="['customers']" icon="groups">Customers</gcp-big-button>
+  <gcp-big-button [target]="['pallets']" icon="view_list">Pallet Manager</gcp-big-button>
+  <gcp-big-button [target]="['recycling']" icon="recycling">Recycling Cages</gcp-big-button>
+  <gcp-big-button [target]="['runs']" icon="local_shipping">Run list</gcp-big-button>
+  <gcp-big-button [target]="['loading-schedule']" icon="departure_board">Loading Schedule</gcp-big-button>
 </div>

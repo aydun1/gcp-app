@@ -1,5 +1,5 @@
-<div class="outer">
-  <div *ngIf="choices$ | async as choices"class="options inner">
+<div *ngIf="(cages$ | async) as cages"  class="outer">
+  <div *ngIf="selection.isEmpty() && (choices$ | async) as choices"class="options inner">
     <div class="buttons">
       <mat-form-field appearance="outline" class="branch">
         <mat-label>{{ choices.Branch.name }}</mat-label>
@@ -40,11 +40,29 @@
     </div>
     <a mat-raised-button [routerLink]="['new']" color="primary" class="add-cage">Add New Cage</a>
   </div>
+  <div *ngIf="!selection.isEmpty()" class="inner multi-action">
+    <div class="cage-count mat-app-background">
+      <div>{{ selection.selected.length }} cages</div>
+      <button mat-icon-button (click)="selection.clear()" type="button" title="Clear selection">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <gcp-action-button [cages]="selection.selected" class="actions"></gcp-action-button>  
+  </div>
 
   <div class="status-header inner">{{ statusFilter.value }}</div>
 
-  <div *ngIf="(cages$ | async) as cages" class="inner">
+  <div class="inner">
     <mat-table #table [dataSource]="cages" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
+
+      <ng-container matColumnDef="checked">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let cage; let i = index">
+          <mat-checkbox color="accent" (change)="toggleSelection(i, cages, $event)"
+          [checked]="selection.isSelected(cage)"></mat-checkbox>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
 
       <ng-container matColumnDef="fields/CageNumber">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Number </mat-header-cell>

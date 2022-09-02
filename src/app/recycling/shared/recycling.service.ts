@@ -199,7 +199,7 @@ export class RecyclingService {
   }
 
   getActiveCustomerCages(custnmbr: string, site = '', includeReturned: boolean): Observable<Cage[]> {
-    const fields = ['AssetType', 'CageNumber', 'CageWeight', 'Created', 'CustomerNumber', 'Date1', 'Date2', 'Date3', 'Date4', 'GrossWeight', 'Modified', 'NetWeight', 'Site', 'Status', 'ToLocalProcessing'];
+    const fields = ['AssetType', 'CageNumber', 'CageWeight', 'Created', 'Branch', 'CustomerNumber', 'Date1', 'Date2', 'Date3', 'Date4', 'GrossWeight', 'Modified', 'NetWeight', 'Site', 'Status', 'ToLocalProcessing'];
     let url = this._cageTrackerUrl + `/items?expand=fields(select=${fields.join(',')})&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
     if (!includeReturned) url += ` and fields/Date2 eq null`;
     url += ` and fields/Status ne 'Complete'`;
@@ -345,9 +345,11 @@ export class RecyclingService {
     );
   }
 
-  addNewCage(cageNumber: number | string, branch: string, assetType: string, cageWeight: number | string): Observable<Cage> {
+  addNewCage(cageNumber: number | string | null | undefined, branch: string, assetType: string, cageWeight: number | string | null | undefined): Observable<Cage> {
     const url = this._cageTrackerUrl + `/items`;
-    const payload = {fields: {Status: 'Available', CageNumber: cageNumber, Branch: branch, AssetType: assetType, CageWeight: cageWeight}};
+    const payload = {fields: {Status: 'Available', Branch: branch, AssetType: assetType}};
+    if (cageNumber) payload['fields']['CageNumber'] = cageNumber;
+    if (cageWeight) payload['fields']['CageWeight'] = cageWeight;
     return this.http.post<Cage>(url, payload).pipe(
       switchMap(_ => this.updateList(_))
     );
@@ -369,7 +371,7 @@ export class RecyclingService {
     return this.http.delete<Cage>(url).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err)),
       tap(() => this.snackBar.open("Cage successfully dehired", '', {duration: 3000})),
-      switchMap(() => this.updateList({id} as Cage)),
+      switchMap(() => this.updateList({id} as Cage))
     );
   }
 

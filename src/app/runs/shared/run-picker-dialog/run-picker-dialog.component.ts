@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, switchMap, tap } from 'rxjs';
+
 import { SharedService } from '../../../shared.service';
 import { DeliveryService } from '../delivery.service';
 import { Run } from '../run';
@@ -13,6 +14,7 @@ import { Run } from '../run';
 export class RunPickerDialogComponent implements OnInit {
   public loading = true;
   public runs$!: Observable<Run[]>;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: {accountnumber: string, site: string, message: string},
     private dialogRef: MatDialogRef<RunPickerDialogComponent>,
@@ -27,13 +29,20 @@ export class RunPickerDialogComponent implements OnInit {
     )
   }
 
-  pickRun(run: string) {
-    this.deliveryService.requestCageTransfer(run, this.data.accountnumber, this.data.site, this.data.message).subscribe(_ => {
-      this.closeDialog();
-    });
+  pickRun(run: string): void {
+    if (this.data) {
+      this.deliveryService.requestCageTransfer(run, this.data.accountnumber, this.data.site, this.data.message).subscribe(_ => {
+        this.closeDialog(run);
+      })
+    } else {
+      this.closeDialog(run);
+    }
+
+
+
   }
 
-  closeDialog(): void {
-    this.dialogRef.close();
+  closeDialog(run?: string): void {
+    this.dialogRef.close(run);
   }
 }

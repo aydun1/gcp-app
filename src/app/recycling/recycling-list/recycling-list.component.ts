@@ -1,5 +1,6 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { SelectionModel } from '@angular/cdk/collections';
 import { MatSelectChange } from '@angular/material/select';
 import { Sort } from '@angular/material/sort';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
@@ -17,6 +18,8 @@ interface choice {choice: {choices: Array<any>}, name: string};
 })
 export class RecyclingListComponent implements OnInit {
   private _loadList!: boolean;
+  private lastClicked: number | undefined;
+  private shiftHolding = false;
   public cages$!: Observable<Cage[]>;
   public binFilter = new FormControl<number | null>(null);
   public branchFilter = new FormControl('');
@@ -31,6 +34,7 @@ export class RecyclingListComponent implements OnInit {
   public choices$: Observable<{Status: choice, AssetType: choice, Branch: choice}> | undefined;
   public statusPicked!: boolean;
   public placeholder = {AssetType: {choice: {choices: []}, name: ''}, Status: {choice: {choices: []}, name: ''}, Branch: {choice: {choices: []}, name: ''}}
+  public selection = new SelectionModel<Cage>(true, []);
 
   constructor(
     private el: ElementRef,
@@ -43,6 +47,15 @@ export class RecyclingListComponent implements OnInit {
   onScroll(e: Event): void {
     const bottomPosition = this.el.nativeElement.offsetHeight + this.el.nativeElement.scrollTop - this.el.nativeElement.scrollHeight;
     if (bottomPosition >= -250) this.getNextPage();
+  }
+
+  @HostListener('document:keydown.shift', ['$event'])
+  shiftDown(event: KeyboardEvent): void {
+    this.shiftHolding = true;
+  }
+  @HostListener('document:keyup.shift', ['$event'])
+  shiftUp(event: KeyboardEvent): void {
+    this.shiftHolding = false;
   }
 
   ngOnInit(): void {
@@ -59,9 +72,11 @@ export class RecyclingListComponent implements OnInit {
         this.parseParams(_);
         this.weight = 0;
         this.count = 0;
+        this.selection.clear();
       }),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
       tap((cages: Array<Cage>) => {
+        this.updatedSelection(cages);
         this.weight = cages.map(_ => _.fields?.NetWeight).filter(_ => _).reduce((acc, val) => acc + +val, 0);
         this.count = cages.map(() => 1).reduce((acc, val) => acc + val, 0);
       })
@@ -161,14 +176,35 @@ export class RecyclingListComponent implements OnInit {
     this.binFilter.patchValue(null);
   }
 
+  updatedSelection(cages: Array<Cage>): void {
+    this.selection.selected.forEach(
+      selected => {
+        const match = cages.find(_ => _.id === selected.id);
+        this.selection.deselect(selected);
+        match ? this.selection.select(match) : this.selection.deselect(selected);
+      }
+    );
+  }
+
+  toggleSelection(index: number, cages: Array<Cage>, e: any): void {
+    if (this.shiftHolding && this.lastClicked !== undefined) {
+      const start = Math.min(index, this.lastClicked);
+      const end = Math.max(index, this.lastClicked) + 1;
+      cages.slice(start, end).forEach(_ => e.checked ? this.selection.select(_) : this.selection.deselect(_));
+    } else {
+      this.selection.toggle(cages[index]);
+    }
+    this.lastClicked = index;
+  }
+
   announceSortChange(e: Sort): void {
     const sort = e.direction ? e.active : null;
     const order = e.direction || null;
     this.router.navigate([], { queryParams: {sort, order}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  hideStatus(hide: boolean) {
-    const displayedColumns = ['fields/CageNumber', 'assetType', 'status', 'location', 'fields/Modified', 'weight', 'check'];
+  hideStatus(hide: boolean): void {
+    const displayedColumns = ['checked', 'fields/CageNumber', 'assetType', 'status', 'location', 'fields/Modified', 'weight', 'check'];
     this.displayedColumns = hide ? displayedColumns.filter(_ => _ !== 'status') : displayedColumns;
   }
 

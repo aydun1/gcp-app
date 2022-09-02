@@ -22,12 +22,13 @@ type Territory = {
 export class CustomerListComponent implements OnInit {
   private loadList!: boolean;
   public nameFilter = new FormControl('');
+  public palletsFilter = new FormControl(['']);
   public territoryFilter = new FormControl('');
   public customers$!: Observable<Customer[]>;
   public territories$!: Observable<Territory[]>;
   public get territories(): Array<string> {return this.sharedService.territoryNames};
   public loading = this.customersService.loading;
-  public displayedColumns = ['name', 'accountnumber', 'new_pallets_loscam', 'new_pallets_chep', 'new_pallets_plain'];
+  public displayedColumns = ['name', 'accountnumber', 'loscam', 'chep', 'plain'];
   public sortSort!: string;
   public sortOrder!: 'asc' | 'desc';
   public loscams!: number;
@@ -99,20 +100,21 @@ export class CustomerListComponent implements OnInit {
 
   parseParams(params: Params): void {
     if (!params) return;
-    const filters = {};
     if ('territory' in params) {
       this.territoryFilter.patchValue(params['territory']);
-      filters['territory'] = params['territory'];
     } else {
       this.territoryFilter.patchValue('');
     }
+    if ('pallets' in params) {
+      const pallets = Array.isArray(params['pallets']) ? params['pallets'] : [params['pallets']];
+      this.palletsFilter.patchValue(pallets);
+    } 
     if ('sort' in params) {
       this.sortSort = params['sort'];
       this.sortOrder = params['order'];
     }
     if ('name' in params) {
       this.nameFilter.patchValue(params['name']);
-      filters['name'] = params['name'];
     } else {
       if (this.nameFilter.value) this.nameFilter.patchValue('');
     }
@@ -129,11 +131,16 @@ export class CustomerListComponent implements OnInit {
     const sameTerritory = prev['territory'] === curr['territory'];
     const sameSort = prev['sort'] === curr['sort'];
     const sameOrder = prev['order'] === curr['order'];
-    return this.loadList && sameName && sameTerritory && sameSort && sameOrder;
+    const samePallets = prev['pallets'] === curr['pallets'];
+    return this.loadList && sameName && sameTerritory && sameSort && sameOrder && samePallets;
   }
 
   setRegion(territory: MatSelectChange): void {
     this.router.navigate([], { queryParams: {territory: territory.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  setPallets(territory: MatSelectChange): void {
+    this.router.navigate([], { queryParams: {pallets: territory.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   clearNameFilter(): void {
@@ -141,7 +148,6 @@ export class CustomerListComponent implements OnInit {
   }
 
   announceSortChange(e: Sort) {
-    console.log(e)
     const sort = e.direction ? e.active : null;
     const order = e.direction || null;
     this.router.navigate([], { queryParams: {sort, order}, queryParamsHandling: 'merge', replaceUrl: true});

@@ -78,11 +78,11 @@
   </mat-card>
 
   <mat-card class="inner">
-    <mat-card-header>
-      <mat-card-title>Attachments</mat-card-title>
-    </mat-card-header>
-    <gcp-doc-upload [id]="loadingScheduleEntry.id" folder="loading-schedule">
-    </gcp-doc-upload>
+    <gcp-docs [id]="loadingScheduleEntry.id" folder="loading-schedule">
+      <mat-card-header>
+        <mat-card-title>Attachments</mat-card-title>
+      </mat-card-header>
+    </gcp-docs>
   </mat-card>
 </div>
 

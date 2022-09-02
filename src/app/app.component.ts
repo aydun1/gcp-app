@@ -11,6 +11,7 @@ import { authentication } from '@microsoft/teams-js';
 
 import { SharedService } from './shared.service';
 import { TeamsService } from './teams.service';
+import { ThemingService } from './theming.service';
 import { AutomateService } from './shared/automate.service';
 
 @Component({
@@ -28,6 +29,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public appTitle = '';
   public checkedTeams = false;
   public token: string | undefined;
+  public warehouse!: boolean;
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -41,10 +43,16 @@ export class AppComponent implements OnInit, OnDestroy {
     private sharedService: SharedService,
     private observer: BreakpointObserver,
     private teamsService: TeamsService,
+    private themingService: ThemingService,
     private automateService: AutomateService
   ) { }
 
   ngOnInit(): void {
+    console.log(this.accounts)
+    this.themingService.theme.subscribe(_ => {
+      const darkClass = 'dark-theme';
+      _ ? this.renderer.addClass(document.body, darkClass) : this.renderer.removeClass(document.body, darkClass)
+    });
     // this.automateService.getAndSet().subscribe();
     this.authService.instance.handleRedirectPromise().then(authResult => {
       const account = this.authService.instance.getActiveAccount();
@@ -132,6 +140,8 @@ export class AppComponent implements OnInit, OnDestroy {
   setLoginDisplay(): void {
     this.accounts = this.authService.instance.getAllAccounts();
     this.loginDisplay = this.accounts.length > 0;
+    this.sharedService.checkIfWarehouse(this.accounts);
+    this.warehouse = this.sharedService.isWarehouse;
     if (!this.loginDisplay && this.location.path() === '/logout') this.router.navigate(['/']);
     if (this.loginDisplay) this.getPhoto();
   }

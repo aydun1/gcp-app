@@ -9,11 +9,12 @@ import { SharedService } from '../../shared.service';
 import { Pallet } from './pallet';
 import { PalletTotals } from './pallet-totals';
 
+interface PalletQuantity {stateCounts: Array<{name: string, count: number}>, states: Array<string>, total: number};
 interface PalletQuantities {
-  Loscam: number,
-  Chep: number,
-  Plain: number
-}
+  Loscam: PalletQuantity,
+  Chep: PalletQuantity,
+  Plain: PalletQuantity,
+};
 
 @Injectable({
   providedIn: 'root'
@@ -298,10 +299,10 @@ export class PalletsService {
   }
 
   getCustomerPallets(custnmbr: string, pallet: string, site: string): Observable<Pallet[]> {
-    let url = this._palletTrackerUrl + `/items?expand=fields(select=Title,Created,Notes,Pallet,Out,In)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
+    let url = this._palletTrackerUrl + `/items?expand=fields(select=Title,Date,Notes,Pallet,Out,In)&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
     if (pallet) url += `and fields/Pallet eq '${pallet}'`;
     if (site) url += `and fields/Site eq '${this.shared.sanitiseName(site)}'`;
-    url += `&orderby=fields/Created desc`;
+    url += `&orderby=fields/Date desc`;
     return this.http.get(url).pipe(map(_ => _['value']));
   }
 
@@ -311,7 +312,7 @@ export class PalletsService {
     const eod = new Date(date.setHours(23,59,59,999)).toISOString();
 
     let url = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}/items?expand=fields(select=Owing)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/DateInt lt '${dateInt}'&top=2000`;
-    let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Created ge '${startOfMonth}' and fields/Created lt '${eod}' and fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null&top=2000`;
+    let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Date ge '${startOfMonth}' and fields/Date lt '${eod}' and fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null&top=2000`;
 
     const prevMonths: Observable<PalletTotals[]> = this.http.get(url).pipe(map(_ => _['value']));
     const currMonth: Observable<Pallet[]> = this.http.get(url2).pipe(map(_ => _['value']));
@@ -330,8 +331,8 @@ export class PalletsService {
     const startOfMonth = new Date(Date.UTC(date.getFullYear(), date.getUTCMonth(), 1)).toISOString();
     const dateInt = this.dateInt(date);
 
-    let url = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}/items?expand=fields(select=Title,Pallet,Owing)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt lt '${dateInt}'`;
-    let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=Title,Pallet,Out,In)&filter=fields/Created ge '${startOfMonth}' and fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
+    let url = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}/items?expand=fields(select=Title,Pallet,Owing,Branch)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt lt '${dateInt}'`;
+    let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=Title,Pallet,Out,In,Branch)&filter=fields/Date ge '${startOfMonth}' and fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
     if (site !== undefined) {
       const filter = 'and fields/Site eq ' + (site ? `'${this.shared.sanitiseName(site)}'` : 'null');
       url += filter;
@@ -342,10 +343,18 @@ export class PalletsService {
     const prevMonths: Observable<PalletTotals[]> = this.http.get(url).pipe(map(_ => _['value']));
 
     return combineLatest([prevMonths, currMonth]).pipe(
-      map(([pastMonths, thisMonth]) => ['Loscam', 'Chep', 'Plain'].reduce((acc,curr) => {
-        const count1 = pastMonths.filter(_ => _.fields.Pallet === curr).reduce((subtotal, qty) => subtotal + qty.fields.Owing, 0);
-        const count2 = thisMonth.filter(_ => _.fields.Pallet === curr).reduce((subtotal, qty) => subtotal + qty.fields.Out - qty.fields.In, 0);
-        acc[curr] = count1 + count2;
+      map(([pastMonths, currentMonth]) => ['Loscam', 'Chep', 'Plain'].reduce((acc, pallet) => {
+        const currentPallets = Object.values(currentMonth).filter(_ => _.fields.Pallet === pallet).map(_ => {return {branch: _.fields.Branch, pallets: _.fields.Out - _.fields.In }});
+        const pastPallets = Object.values(pastMonths).filter(_ => _.fields.Pallet === pallet).map(_ => {return {branch: _.fields.Branch, pallets: _.fields.Owing }});
+        console.log(pallet)
+        const totals: PalletQuantity = [...currentPallets, ...pastPallets].reduce((acc, qty) => {
+          const stateCounts = {...acc['stateCounts'], [qty.branch]: (acc['stateCounts'][qty.branch] || 0) + qty.pallets};
+          const total = acc['total'] + qty.pallets;
+          const states = (acc['states'].includes(qty.branch) ? acc['states'] : [...acc['states'], qty.branch]).sort();
+          return {stateCounts, total, states} as PalletQuantity;
+        }, {stateCounts: [], total: 0, states: [] as Array<string>} as  PalletQuantity);
+        console.log(totals);
+        acc[pallet] = totals;
         return acc;
       }, {} as PalletQuantities))
     )

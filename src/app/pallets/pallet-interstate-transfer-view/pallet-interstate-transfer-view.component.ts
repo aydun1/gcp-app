@@ -14,7 +14,7 @@ import { NavigationService } from '../../navigation.service';
   styleUrls: ['./pallet-interstate-transfer-view.component.css']
 })
 export class PalletInterstateTransferViewComponent implements OnInit {
-  @HostBinding('class') class = 'app-component';
+  @HostBinding('class') class = 'app-component mat-app-background';
 
   private transferSource$!: Subject<string | null>;
   public transfer$!: Observable<any>;

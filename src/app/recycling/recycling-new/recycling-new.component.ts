@@ -21,10 +21,9 @@ interface CageForm {
   styleUrls: ['./recycling-new.component.css']
 })
 export class RecyclingNewComponent implements OnInit {
-  @HostBinding('class') class = 'app-component';
+  @HostBinding('class') class = 'app-component  mat-app-background';
   @ViewChild('cageNumberInput') cageNumber!: ElementRef;
   private state!: string;
-  private assetType = new FormControl('', Validators.required);
   private defaultWeights = {
     'Cage - Folding (2.5m³)': '190',
     'Cage - Solid (2.5m³)': '170'
@@ -35,7 +34,7 @@ export class RecyclingNewComponent implements OnInit {
   public choices$!: BehaviorSubject<any>;
 
   public get isCage(): boolean {
-    return this.assetType.value?.startsWith('Cage') || false;
+    return this.cageForm.value.assetType?.startsWith('Cage') || false;
   }
 
   public get duplicateId(): string {
@@ -43,8 +42,6 @@ export class RecyclingNewComponent implements OnInit {
     return errors ? errors['id'] : '';
   }
 
-
-  
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -56,28 +53,24 @@ export class RecyclingNewComponent implements OnInit {
 
   ngOnInit(): void {
     this.getOptions();
-
-    this.shared.getBranch().subscribe(state => {
-      this.state = state;
-      if (this.cageForm) this.cageForm.patchValue({branch: state});
-    });
-
+    const assetType = new FormControl('', Validators.required);
     this.cageForm = this.fb.group({
-      assetType: new FormControl(this.assetType),
-      cageNumber: new FormControl({value:'', disabled: true}, [Validators.required, this.recyclingService.uniqueCageValidator(this.assetType)]),
-      cageWeight: new FormControl({value:'', disabled: true}, [Validators.required]),
-      branch: new FormControl({value: this.state, disabled: false}, [Validators.required])
+      assetType,
+      cageNumber: ['', Validators.required, this.recyclingService.uniqueCageValidator(assetType)],
+      cageWeight: ['', Validators.required],
+      branch: ['', Validators.required]
     });
- 
+    this.shared.getBranch().subscribe(branch => this.cageForm.patchValue({branch}));
     this.cageForm.get('assetType')?.valueChanges.subscribe(val => {
+      if (!val) return;
       // Require cage number and weight if asset is a cage
       const cageNumberControl = this.cageForm.get('cageNumber');
       const cageWeightControl = this.cageForm.get('cageWeight');
-      val?.startsWith('Cage') ? cageNumberControl?.enable() : cageNumberControl?.disable();
-      val?.startsWith('Cage') ? cageWeightControl?.enable() : cageWeightControl?.disable();
+      val.startsWith('Cage') ? cageNumberControl?.enable() : cageNumberControl?.disable();
+      val.startsWith('Cage') ? cageWeightControl?.enable() : cageWeightControl?.disable();
 
       // Set default cage weights
-      if (val) this.cageForm.get('cageWeight')?.patchValue(this.defaultWeights[val]);
+      this.cageForm.get('cageWeight')?.patchValue(this.defaultWeights[val]);
     });
   }
 
@@ -87,7 +80,7 @@ export class RecyclingNewComponent implements OnInit {
 
   addCage(): void {
     const d = this.cageForm.value;
-    if (this.cageForm.invalid || !d.cageNumber || !d.branch || !d.assetType || !d.cageWeight) {
+    if (this.cageForm.invalid || !d.branch || !d.assetType) {
       this.snackBar.open('Unable to add cage. Double check form values.', '', {duration: 3000});
       return;
     };

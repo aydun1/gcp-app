@@ -20,7 +20,7 @@ interface NewReceiptForm {
   styleUrls: ['./recycling-receipt-new.component.css']
 })
 export class RecyclingReceiptNewComponent implements OnInit {
-  @HostBinding('class') class = 'app-component';
+  @HostBinding('class') class = 'app-component mat-app-background';
 
   public newReceiptForm!: FormGroup<NewReceiptForm>;
   public loading!: boolean;

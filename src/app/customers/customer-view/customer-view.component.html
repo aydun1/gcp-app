@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <button mat-icon-button (click)="goBack()" class="mobile-button">
+  <button mat-icon-button (click)="goBack()" class="mobile-button" type="button">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <ng-container>
@@ -28,15 +28,17 @@
           <h3>
             Pallets with customer
           </h3>
-          <button type="button" mat-stroked-button (click)="openPalletHistory(customer)">History</button>
+          <button mat-stroked-button (click)="openPalletHistory(customer)" type="button">History</button>
         </div>
         <dl>
-          <dt>Loscams</dt>
-          <dd *ngIf="palletsOwing; else loadingDots">{{ palletsOwing.Loscam }}</dd>
-          <dt>Cheps</dt>
-          <dd *ngIf="palletsOwing; else loadingDots">{{ palletsOwing.Chep }}</dd>
-          <dt>Plains</dt>
-          <dd *ngIf="palletsOwing; else loadingDots">{{ palletsOwing.Plain }}</dd>
+          <ng-container *ngFor="let pallet of pallets">
+            <dt>{{pallet}}s</dt>
+            <dd *ngIf="palletsOwing; else loadingDots">
+              <span class="pallet-total">{{ palletsOwing[pallet]['total'] }}</span>
+              <span>&nbsp;</span>
+              <span *ngIf="palletsOwing[pallet]['states'].length > 1" class="pallet-summary"><span *ngFor="let branch of palletsOwing[pallet]['states']; let isLast=last">{{branch}}: {{palletsOwing[pallet]['stateCounts'][branch]}}<span *ngIf="!isLast">, </span></span></span>
+            </dd>
+          </ng-container>
         </dl>
       </div>
       <mat-divider></mat-divider>
@@ -45,13 +47,11 @@
           <h3>
             Cages
           </h3>
-          <button type="button" mat-stroked-button (click)="openCageHistory(customer)">History</button>
+          <button mat-stroked-button (click)="openCageHistory(customer)" type="button">History</button>
         </div>
         <dl>
           <dt>Active</dt>
           <dd *ngIf="cages; else loadingDots">{{ cages.count }}</dd>
-        </dl>
-        <dl>
           <dt>All time weight</dt>
           <dd *ngIf="cages; else loadingDots">{{ cages.weight }} kg</dd>
         </dl>
@@ -65,12 +65,11 @@
       </div>
       <mat-divider></mat-divider>
       <div class="status-card">
-        <div class="section-heading">
-          <h3>
-            Attachments
-          </h3>
-        </div>
-        <gcp-doc-upload [id]="customer.accountnumber" folder="debtors"></gcp-doc-upload>
+        <gcp-docs [id]="customer.accountnumber" folder="debtors">
+          <div class="section-heading">
+            <h3>Attachments</h3>
+          </div>
+        </gcp-docs>
       </div>
     </div>
   </div>
@@ -78,13 +77,13 @@
 
 <mat-menu #sitesMenu="matMenu" xPosition="before">
   <ng-template matMenuContent let-customer="customer">
-    <button mat-menu-item (click)="setSite(null)">
+    <button mat-menu-item (click)="setSite(null)" type="button">
       <span>All sites</span>
     </button>
-    <button mat-menu-item *ngFor="let site of sites" (click)="setSite(site.fields.Title)">
+    <button mat-menu-item *ngFor="let site of sites" (click)="setSite(site.fields.Title)" type="button">
       <span>{{ site.fields.Title }}</span>
     </button>
-    <button mat-menu-item (click)="openSiteDialog(customer)">
+    <button mat-menu-item (click)="openSiteDialog(customer)" type="button">
       <mat-icon>add</mat-icon>
       <span>Add/edit sites</span>
     </button>
@@ -93,11 +92,11 @@
 
 <mat-menu #actionsMenu="matMenu" xPosition="before">
   <ng-template matMenuContent let-customer="customer">
-    <button type="button" mat-menu-item (click)="openRecyclingDocketDialog(customer)">
+    <button mat-menu-item (click)="openRecyclingDocketDialog(customer)" type="button">
       <mat-icon>receipt</mat-icon>
       <span>Cage collection docket</span>
     </button>
-    <button type="button" mat-menu-item (click)="requestCages()">
+    <button mat-menu-item (click)="requestCages()" type="button">
       <mat-icon>flag</mat-icon>
       <span>Request a new cage</span>
     </button>

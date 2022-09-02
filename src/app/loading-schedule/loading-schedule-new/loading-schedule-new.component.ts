@@ -29,7 +29,7 @@ interface LoadingScheduleForm {
   styleUrls: ['./loading-schedule-new.component.css']
 })
 export class LoadingScheduleNewComponent implements OnInit {
-  @HostBinding('class') class = 'app-component';
+  @HostBinding('class') class = 'app-component mat-app-background';
 
   public transportCompanies$!: Observable<TransportCompany[] | null>;
   public loadingScheduleForm!: FormGroup<LoadingScheduleForm>;

@@ -1,17 +1,17 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { of, Subject, switchMap, tap } from 'rxjs';
+import { forkJoin, of, Subject, switchMap, take, tap } from 'rxjs';
 
 import { RecyclingService } from '../recycling.service';
 import { Cage } from '../cage';
 import { CustomerPickerDialogComponent } from '../../../customers/shared/customer-picker-dialog/customer-picker-dialog.component';
-import { NavigationService } from '../../../navigation.service';
 import { SharedService } from '../../../shared.service';
 import { CustomersService } from '../../../customers/shared/customers.service';
 import { Site } from '../../../customers/shared/site';
 import { CustomerSiteDialogComponent } from '../../../customers/shared/customer-site-dialog/customer-site-dialog.component';
 import { RunPickerDialogComponent } from '../../../runs/shared/run-picker-dialog/run-picker-dialog.component';
+import { DeliveryService } from '../../../runs/shared/delivery.service';
 
 @Component({
   selector: 'gcp-action-button',
@@ -21,42 +21,70 @@ import { RunPickerDialogComponent } from '../../../runs/shared/run-picker-dialog
 export class ActionButtonComponent implements OnInit {
 
   @Input()
-  get cage(): Cage { return this._cage; }
-  set cage(value: Cage) {
-    this._cage = value;
+  get cages(): Array<Cage> { return this._cages; }
+  set cages(value: Array<Cage>) {
+    this._cages = value;
     this.loading.next(false);
   }
-  private _cage!: Cage;
+  private _cages!: Array<Cage>;
 
   @Output() updated = new EventEmitter<boolean>();
+  @Output() loading = new EventEmitter<boolean>();
+  @Output() dehired = new EventEmitter<boolean>();
+  @Output() completed = new EventEmitter<boolean>();
 
   private depotsSubject$ = new Subject<string>();
-  @Output() loading = new EventEmitter<boolean>(false);
+
+  get statusId(): number | undefined {
+    const statuses = new Set(this.cages.map(_ => _.statusId));
+    const [first] = statuses;
+    return statuses.size === 1 ? first : undefined;
+  }
+
+  get hasComplete(): boolean | undefined {
+    return this.cages.filter(_ => _.statusId === 7).length > 0;
+  }
+
+  get status(): string | undefined {
+    const statuses = new Set(this.cages.map(_ => _?.fields.Status));
+    const [first] = statuses;
+    return statuses.size === 1 ? first : undefined;
+  }
+
+  get cageBranch(): string | undefined {
+    const statuses = new Set(this.cages.map(_ => _?.fields.Branch));
+    const [first] = statuses;
+    return statuses.size === 1 ? first : undefined;
+  }
+
   public dialogRef!: MatDialogRef<CustomerPickerDialogComponent, any>;
   public branches!: Array<string>;
   public depots!: Array<Site>;
+  public branch!: string;
 
   constructor(
     private dialog: MatDialog,
     private router: Router,
     private sharedService: SharedService,
-    private navService: NavigationService,
     private recyclingService: RecyclingService,
-    private cutomersService: CustomersService
+    private cutomersService: CustomersService,
+    private deliveryService: DeliveryService
   ) { }
 
   ngOnInit(): void {
     this.branches = this.sharedService.branches;
-
     this.depotsSubject$.pipe(
       switchMap(branch => this.cutomersService.getSites(branch)),
       tap(sites => this.depots = sites),
     ).subscribe();
-    this.depotsSubject$.next(this.cage.fields.Branch);
+    this.sharedService.getBranch().subscribe(_ => {
+      this.branch = _;
+      this.depotsSubject$.next(_);
+    });
   }
 
-  openSiteDialog(branch: String): void {
-    const customer = {accountnumber: branch};
+  openSiteDialog(): void {
+    const customer = {accountnumber: this.branch};
     const data = {customer, sites: this.depots};
     const dialogRef = this.dialog.open(CustomerSiteDialogComponent, {width: '600px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe(() => this.refreshDepots());
@@ -66,118 +94,155 @@ export class ActionButtonComponent implements OnInit {
     this.updated.next(true);
   }
 
-  refreshDepots(branch = ''): void {
-    this.depotsSubject$.next(branch || this.cage.fields.Branch);
+  refreshDepots(): void {
+    this.depotsSubject$.next(this.branch);
   }
 
-  markWithCustomer(id: string): void {
+  markWithCustomer(cages: Array<Cage>): void {
     this.loading.next(true);
-    this.recyclingService.deliverToCustomer(id).subscribe(() => this.onComplete());
+    const tasks = cages.map(_ => this.recyclingService.deliverToCustomer(_.id));
+    forkJoin(tasks).subscribe(() => this.onComplete());
   }
 
-  markAsCollected(id: string): void {
+  markAsCollected(cages: Array<Cage>): void {
     this.loading.next(true);
-    this.recyclingService.collectFromCustomer(id).subscribe(() => this.onComplete());
+    const tasks = cages.map(_ => this.recyclingService.collectFromCustomer(_.id));
+    forkJoin(tasks).subscribe(() => this.onComplete());
   }
 
-  markWithPolymer(id: string): void {
+  markWithPolymer(cages: Array<Cage>): void {
     this.loading.next(true);
-    this.recyclingService.deliverToPolymer(id).subscribe(() => this.onComplete());
+    const tasks = cages.map(_ => this.recyclingService.deliverToPolymer(_.id));
+    forkJoin(tasks).subscribe(() => this.onComplete());
   }
 
-  markReadyForProcessing(id: string, cageNumber: number): void {
-    this.loading.next(true);
-    const action = this.recyclingService.readyForProcessing(id);
-    const customerNumber = this.cage.fields.CustomerNumber;
-    const message = `Cage ${cageNumber} ready for delivery to local processing`;
-    action.pipe(
-      tap(() => this.addToRunList(customerNumber, message))
-    ).subscribe(() => this.onComplete());
+  markReadyForProcessing(cages: Array<Cage>): void {
+    this.pickRun().afterClosed().pipe(
+      switchMap(run => {
+        if (!run) return of(1);
+        const chunks = cages.reduce((acc, cur) => {
+          const key = `${cur.fields.CustomerNumber}_${cur.fields.Site}`;
+          const curVal = acc[key] ? acc[key]['message'] : [];
+          const newVal = curVal.concat(`Cage ${cur.fields.CageNumber} ready for delivery to local processing`);
+          return {...acc, [key]: {message: newVal, site: cur.fields.Site, customerNumber: cur.fields.CustomerNumber}};
+        }, {});
+        const tasks = Object.keys(chunks).map(_ => this.deliveryService.requestCageTransfer(run, chunks[_].customerNumber, chunks[_].Site, chunks[_].message.join('<br>')).pipe(take(1)))
+        return forkJoin(tasks);
+      })
+    ).subscribe();
+
+    const tasks = cages.map(_ => this.recyclingService.readyForProcessing(_.id));
+    forkJoin(tasks).subscribe(() => this.onComplete());
   }
 
-  markWithProcessing(id: string): void {
+  markWithProcessing(cages: Array<Cage>): void {
     this.loading.next(true);
-    this.recyclingService.deliverToProcessing(id).subscribe(() => this.onComplete());
+    const tasks = cages.map(_ => this.recyclingService.deliverToProcessing(_.id));
+    forkJoin(tasks).subscribe(() => this.onComplete());
   }
 
-  collectFromProcessing(id: string, assetType: string): void {
+  collectFromProcessing(cages: Array<Cage>): void {
     this.loading.next(true);
-    const action = assetType.startsWith('Cage') ? this.recyclingService.collectFromProcessing(id): this.recyclingService.collectAndComplete(id);
-    action.subscribe(() => this.onComplete());
+    const tasks = cages.map(_ => _.fields.AssetType.startsWith('Cage') ? this.recyclingService.collectFromProcessing(_.id): this.recyclingService.collectAndComplete(_.id));
+    forkJoin(tasks).subscribe(() => this.onComplete());
   }
 
-  collectFromPolymer(id: string, assetType: string): void {
+  collectFromPolymer(cages: Array<Cage>): void {
     this.loading.next(true);
-    const action = assetType.startsWith('Cage') ? this.recyclingService.collectFromPolymer(id): this.recyclingService.collectAndComplete(id);
-    action.subscribe(() => this.onComplete());
+    const tasks = cages.map(_ => _.fields.AssetType.startsWith('Cage') ? this.recyclingService.collectFromPolymer(_.id): this.recyclingService.collectAndComplete(_.id));
+    forkJoin(tasks).subscribe(() => this.onComplete());
   }
 
-  markReadyForPolymer(id: string, cageNumber: number): void {
-    this.loading.next(true);
-    const action = this.recyclingService.readyForPolymer(id);
+  markReadyForPolymer(cages: Array<Cage>): void {
     const customerNumber = '011866';
-    const message = `Cage ${cageNumber} ready for delivery to Polymer`;
-    action.pipe(
-      tap(() => this.addToRunList(customerNumber, message))
-    )
-    .subscribe(() => this.onComplete());
+    this.pickRun().afterClosed().pipe(
+      switchMap(run => {
+        if (!run) return of(1);
+        const chunks = cages.reduce((acc, cur) => {
+          const key = `${customerNumber}_${cur.fields.Site}`;
+          const curVal = acc[key] ? acc[key]['message'] : [];
+          const newVal = curVal.concat(`Cage ${cur.fields.CageNumber} ready for delivery to Polymer`);
+          return {...acc, [key]: {message: newVal, site: cur.fields.Site, customerNumber}};
+        }, {});
+        const tasks = Object.keys(chunks).map(_ => this.deliveryService.requestCageTransfer(run, chunks[_].customerNumber, chunks[_].Site, chunks[_].message.join('<br>')).pipe(take(1)));
+        return forkJoin(tasks);
+      })
+    ).subscribe();
+
+    const tasks = cages.map(_ => this.recyclingService.readyForPolymer(_.id));
+    forkJoin(tasks).subscribe(() => this.onComplete());
   }
 
-  markAvailable(id: string, cageNumber: number, branch: string, assetType: string, cageWeight: number): void {
+  markAvailable(cages: Array<Cage>): void {
     this.loading.next(true);
-    this.recyclingService.markCageAvailable(id, cageNumber, branch, assetType, cageWeight).subscribe(_ => {
-      if (this.router.url.startsWith('/recycling')) this.router.navigate(['recycling/cages', _[1]['id']], {replaceUrl: true});
+    const tasks = cages.map(_ => this.recyclingService.markCageAvailable(_.id, _.fields.CageNumber, _.fields.Branch, _.fields.AssetType, _.fields.CageWeight));
+    forkJoin(tasks).subscribe(_ => {
+      if (this.router.url === `/recycling/${_[0][0]['id']}`) this.router.navigate(['recycling/cages', _[0][1]['id']], {replaceUrl: true});
       this.onComplete();
     });
   }
 
-  dehire(id: string): void {
+  dehire(cages: Array<Cage>): void {
     this.loading.next(true);
-    this.recyclingService.dehireCage(id).subscribe(_ => {
-      this.navService.back();
+    const tasks = cages.map(_ => this.recyclingService.dehireCage(_.id));
+    forkJoin(tasks).subscribe(_ => {
+      this.dehired.next(true);
       this.loading.next(false);
-    });
-  }
-
-  setBranch(id: string, branch: string) {
-    this.loading.next(true);
-    this.recyclingService.setBranch(id, branch).subscribe(() => {
       this.onComplete();
-      this.refreshDepots(branch);
     });
   }
 
-  setDepot(id: string, depot: string) {
+  setBranch(cages: Array<Cage>, branch: string) {
     this.loading.next(true);
-    this.recyclingService.setDepot(id, depot).subscribe(() => this.onComplete());
+    const tasks = cages.map(_ => this.recyclingService.setBranch(_.id, branch));
+    forkJoin(tasks).subscribe(() => {
+      this.onComplete();
+      this.refreshDepots();
+    });
   }
 
-  openCustomerPicker(id: string): void {
+  setDepot(cages: Array<Cage>, depot: string) {
+    this.loading.next(true);
+    const tasks = cages.map(cage => this.recyclingService.setDepot(cage.id, depot));
+    forkJoin(tasks).subscribe(() => this.onComplete());
+  }
+
+  openCustomerPicker(cages: Array<Cage>): void {
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px'});
     dialogRef.afterClosed().pipe(
       tap(() => this.loading.next(true)),
-      switchMap(_ => _ ? this.recyclingService.allocateToCustomer(id, _.customer.accountnumber, _.customer.name, _.site) : of(1)),
+      switchMap(_ => {
+        if (!_) return of(1);
+        const tasks = cages.map(cage => this.recyclingService.allocateToCustomer(cage.id, _.customer.accountnumber, _.customer.name, _.site).pipe(take(1)));
+        return forkJoin(tasks);
+      })
     ).subscribe(() => this.onComplete());
   }
 
-  undo(id: string, status: string): void {
+  undo(cages: Array<Cage>): void {
     this.loading.next(true);
-    this.recyclingService.undo(id, status).subscribe(_ => this.onComplete());
+    const tasks = cages.map(cage => this.recyclingService.undo(cage.id, cage.fields.Status));
+    forkJoin(tasks).subscribe(_ => this.onComplete());
   }
 
-  reset(id: string): void {
+  reset(cages: Array<Cage>): void {
     this.loading.next(true);
-    this.recyclingService.resetCage(id).subscribe(_ => this.onComplete());
+    const tasks = cages.map(cage => this.recyclingService.resetCage(cage.id));
+    forkJoin(tasks).subscribe(_ => this.onComplete());
   }
 
-  readyForCollection(cageNumber: number) {
-    const customerNumber = this.cage.fields.CustomerNumber;
-    const message = `Cage ${cageNumber ? cageNumber + ' ' : ''}ready for collection`;
-    this.addToRunList(customerNumber, message);
+  readyForCollection(cages: Array<Cage>): void {
+    this.pickRun().afterClosed().pipe(
+      tap(() => this.loading.next(true)),
+      switchMap(run => {
+        if (!run) return of(1);
+        const tasks = cages.map(_ => this.deliveryService.requestCageTransfer(run, _.fields.CustomerNumber, _.fields.Site, `Cage ${_.fields.CageNumber ? _.fields.CageNumber + ' ' : ''}ready for collection`).pipe(take(1)));
+        return forkJoin(tasks);
+      })
+    ).subscribe(() => this.onComplete());
   }
 
-  addToRunList(accountnumber: string, message: string) {
-    const data = {accountnumber, site: this.cage.fields.Site, message};
-    return this.dialog.open(RunPickerDialogComponent, {width: '600px', data, autoFocus: false});
+  pickRun(): MatDialogRef<RunPickerDialogComponent, any> {
+    return this.dialog.open(RunPickerDialogComponent, {width: '600px', autoFocus: false});
   }
 }

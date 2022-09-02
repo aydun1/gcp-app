@@ -18,11 +18,13 @@ export class SharedService {
     'VIC': ['ACT', 'HEATH', 'MISC', 'NT', 'NZ', 'OTHER', 'PRIMARY', 'TAS', 'VIC', 'VICSALES'],
     'WA': ['WA']
   };
+  private warehouseStaff = ['michael.johnson@gardencityplastics.com'];
+  private _state$ = new BehaviorSubject<string>('');
+  private appTitle = this.titleService.getTitle();
   public branches = Object.keys(this.territories);
   public branch!: string;
   public territoryNames = this.branches.concat(['INT', 'NATIONAL']);
-  private _state$ = new BehaviorSubject<string>('');
-  private appTitle = this.titleService.getTitle();
+  public isWarehouse!: boolean;
 
   constructor(
     private http: HttpClient,
@@ -30,6 +32,10 @@ export class SharedService {
     private authService: MsalService,
     private titleService: Title
   ) { }
+
+  checkIfWarehouse(accounts: Array<any>) {
+    this.isWarehouse = this.warehouseStaff.includes(accounts[0].username);
+  }
 
   getPhoto(): Observable<SafeUrl> {
     const url = `${environment.endpoint}/me/photo/$value`;
@@ -56,6 +62,7 @@ export class SharedService {
     const activeAccount = this.authService.instance.getActiveAccount();
     return activeAccount?.name || '';
   }
+
 
   getAccount(): AccountInfo | null {
     const activeAccount = this.authService.instance.getActiveAccount();

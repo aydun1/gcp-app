@@ -1,48 +1,7 @@
-<div (dragover)="allowDrop($event)" (drop)="drop($event)">
-  <div for="file" class="image-upload-preview">
-    <input #fileSelect class="file-select" multiple="multiple" type="file" (change)="fileChangeEvent($event)" placeholder="File">
-    <label class="label" for="file">
-      <button mat-button type="button" class="drag-info" (click)="fileSelect.click()">Attach a document</button>
-    </label>
-  </div>
+<div class="header">
+  <ng-content></ng-content>
+  <input #fileSelect class="file-select" multiple="multiple" type="file" (change)="fileChangeEvent($event)" placeholder="File">
+  <label class="label" for="file">
+    <button mat-stroked-button type="button" (click)="fileSelect.click()">Attach a document</button>
+  </label>
 </div>
-
-<mat-nav-list>
-  <div class="doc" *ngFor="let doc of docs$ | async">
-    <a mat-list-item [href]="doc.webUrl" target="_blank">
-      <img *ngIf="doc.file" [src]="icon(doc.file.mimeType)" alt="File type icon" mat-list-icon>
-      <mat-spinner *ngIf="!doc.file" mat-list-icon diameter="24"></mat-spinner>
-      <div mat-line>{{ doc.name }}</div>
-      <div mat-line *ngIf="doc.createdBy else loading2">Uploaded by {{ doc.createdBy.user.displayName }} on {{ doc.createdDateTime | date: 'dd/MM/yyyy hh:mm a' }} </div>
-      <ng-template #loading2>
-        <div mat-line>{{ doc.percent || 0 }}% </div>
-      </ng-template>
-    </a>
-    <button mat-icon-button class="menu-toggle" type="button" [matMenuTriggerFor]="menu" [matMenuTriggerData]="{doc: doc}"><mat-icon>more_vert</mat-icon></button>
-  </div>
-</mat-nav-list>
-
-<div *ngIf="docCount === undefined" class="loading-docs">
-  <mat-spinner mat-list-icon diameter="48"></mat-spinner>
-</div>
-<div *ngIf="(idle | async) && docCount === 0" class="no-docs">
-  <div>There's nothing here yet!</div>
-</div>
-
-
-<mat-menu #menu="matMenu">
-  <ng-template matMenuContent let-doc="doc">
-    <button mat-menu-item (click)="downloadFile(doc.name, doc['@microsoft.graph.downloadUrl'])">
-      <mat-icon>download</mat-icon>
-      <span>Download</span>
-    </button>
-    <button mat-menu-item (click)="printFile(doc['@microsoft.graph.downloadUrl'])">
-      <mat-icon>print</mat-icon>
-      <span>Print</span>
-    </button>
-    <button mat-menu-item (click)="deleteFile(doc.name)">
-      <mat-icon>delete</mat-icon>
-      <span>Delete</span>
-    </button>
-  </ng-template>
-</mat-menu>

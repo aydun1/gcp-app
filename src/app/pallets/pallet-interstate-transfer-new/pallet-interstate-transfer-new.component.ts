@@ -25,7 +25,7 @@ interface PalletTransferForm {
   styleUrls: ['./pallet-interstate-transfer-new.component.css']
 })
 export class PalletInterstateTransferNewComponent implements OnInit {
-  @HostBinding('class') class = 'app-component';
+  @HostBinding('class') class = 'app-component mat-app-background';
 
   public palletTransferForm!: FormGroup<PalletTransferForm>;
   public states = this.sharedService.branches;

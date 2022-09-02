@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <button mat-icon-button (click)="goBack()" class="mobile-button">
+  <button mat-icon-button (click)="goBack()" class="mobile-button" type="button">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <ng-container>
@@ -95,7 +95,7 @@
       </mat-form-field>
     </mat-card>
     <div class="buttons">
-      <button mat-raised-button color="primary" [disabled]="loading">Confirm</button>
+      <button mat-raised-button color="primary" [disabled]="loading" type="submit">Confirm</button>
     </div>
   </form>
 </div>

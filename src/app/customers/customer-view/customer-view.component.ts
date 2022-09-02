@@ -19,23 +19,31 @@ import { RunPickerDialogComponent } from '../../runs/shared/run-picker-dialog/ru
 import { PalletCustomerListDialogComponent } from '../../pallets/shared/pallet-customer-list-dialog/pallet-customer-list-dialog.component';
 import { RecyclingCustomerListDialogComponent } from '../../recycling/shared/recycling-customer-list-dialog/recycling-customer-list-dialog.component';
 
+interface PalletQuantity {stateCounts: Array<{name: string, count: number}>, states: Array<string>, total: number};
+interface PalletQuantities {
+  Loscam: PalletQuantity,
+  Chep: PalletQuantity,
+  Plain: PalletQuantity,
+};
+
 @Component({
   selector: 'gcp-customer-view',
   templateUrl: './customer-view.component.html',
   styleUrls: ['./customer-view.component.css']
 })
 export class CustomerViewComponent implements OnInit, OnDestroy {
-  @HostBinding('class') class = 'app-component';
+  @HostBinding('class') class = 'app-component mat-app-background';
 
   private sitesSubject$ = new Subject<string>();
   private palletsSubject$ = new Subject<string>();
   private cagesSubject$ = new Subject<string>();
   private customer!: Customer;
   private branch_!: string;
+  public pallets = ['Loscam', 'Chep', 'Plain']
   public customer$!: Observable<Customer>;
   public site!: string;
   public sites!: Array<Site>;
-  public palletsOwing!: {Loscam: number, Chep: number, Plain: number} | null;
+  public palletsOwing!: PalletQuantities | null;
   public loscams!: number;
   public cheps!: number;
   public plains!: number;
@@ -173,19 +181,19 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
 
   openRecyclingDocketDialog(customer: Customer): void {
     const data = {customer, addresses: this.addresses, sites: this.sites, site: this.site};
-    const dialogRef = this.dialog.open(RecyclingDocketDialogComponent, {width: '800px', data, autoFocus: false});
+    const dialogRef = this.dialog.open(RecyclingDocketDialogComponent, {panelClass: 'printable', width: '800px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe();
   }
 
   openPalletHistory(customer: Customer): void {
     const data = {customer, addresses: this.addresses, site: this.site};
-    const dialogRef = this.dialog.open(PalletCustomerListDialogComponent, {width: '800px', data, autoFocus: false});
+    const dialogRef = this.dialog.open(PalletCustomerListDialogComponent, {panelClass: 'printable', width: '800px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe();
   }
 
   openCageHistory(customer: Customer): void {
     const data = {customer, addresses: this.addresses, site: this.site};
-    const dialogRef = this.dialog.open(RecyclingCustomerListDialogComponent, {width: '800px', data, autoFocus: false});
+    const dialogRef = this.dialog.open(RecyclingCustomerListDialogComponent, {panelClass: 'printable', width: '800px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe();
   }
 
