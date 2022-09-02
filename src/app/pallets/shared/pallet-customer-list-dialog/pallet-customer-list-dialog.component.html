@@ -22,7 +22,7 @@
       <ng-container matColumnDef="date">
         <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
         <mat-cell *matCellDef="let pallet">
-          {{ pallet.fields.Created | date: 'dd/MM/yyyy' }}
+          {{ pallet.fields.Date | date: 'dd/MM/yyyy' }}
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
       </ng-container>
