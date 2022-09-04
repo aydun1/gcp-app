@@ -162,45 +162,49 @@ export class PalletsService {
     return this.http.post(`${this._palletTrackerUrl}/items`, payload);
   }
 
-  siteTransfer(branch: string, custName: string, custNmbr: string, oldSite: string, newSite: string, pallets: PalletQuantities) {
+  siteTransfer(custName: string, custNmbr: string, oldSite: string, newSite: string, pallets: PalletQuantities) {
     const url = `${environment.siteUrl}/${this._palletListUrl}/items`;
     const headers = {'Content-Type': 'application/json'};
-    const transfers = Object.entries(pallets).filter(_ => _[1]);
+    const palletCounts = Object.entries(pallets).filter(_ => _[1].total > 0);
     const requests = [] as Array<{id: number, method: string, url: string, headers: any, body: any}>;
+    const date = new Date().toISOString();
     let i = 1;
+    palletCounts.forEach(palletCount => {
+      palletCount[1]['states'].forEach((branch: string) => {
+        const quantity = palletCount[1]['stateCounts'][branch];
+        const pallet = palletCount[0];
+        const transferFrom = {fields: {
+          Title: custName,
+          Branch: branch,
+          CustomerNumber: custNmbr,
+          Date: date,
+          From: quantity > 0 ? custNmbr : branch,
+          To: quantity < 0 ? custNmbr : branch,
+          In: quantity > 0 ? quantity : 0,
+          Out: quantity < 0 ? Math.abs(quantity) : 0,
+          Pallet: pallet,
+          Quantity: Math.abs(quantity),
+          Notes: 'Site transfer',
+        }};
+        if (oldSite) transferFrom['fields']['Site'] = oldSite;
+        requests.push({id: i += 1, method: 'POST', url, headers, body: transferFrom});
   
-    transfers.forEach(_ => {
-      const quantity = _[1];
-      const pallet = _[0];
-      const transferFrom = {fields: {
-        Title: custName,
-        Branch: branch,
-        CustomerNumber: custNmbr,
-        From: quantity > 0 ? custNmbr : branch,
-        To: quantity < 0 ? custNmbr : branch,
-        In: quantity > 0 ? quantity : 0,
-        Out: quantity < 0 ? Math.abs(quantity) : 0,
-        Pallet: pallet,
-        Quantity: Math.abs(quantity),
-        Notes: 'Site transfer'
-      }};
-      if (oldSite) transferFrom['fields']['Site'] = oldSite;
-      requests.push({id: i += 1, method: 'POST', url, headers, body: transferFrom});
-
-      const transferTo = {fields: {
-        Title: custName,
-        Branch: branch,
-        CustomerNumber: custNmbr,
-        From: quantity < 0 ? custNmbr : branch,
-        To: quantity > 0 ? custNmbr : branch,
-        In: quantity < 0 ? Math.abs(quantity) : 0,
-        Out: quantity > 0 ? quantity : 0,
-        Pallet: pallet,
-        Quantity: Math.abs(quantity),
-        Notes: 'Site transfer'
-      }};
-      if (newSite) transferTo['fields']['Site'] = newSite;
-      requests.push({id: i += 1, method: 'POST', url, headers, body: transferTo});
+        const transferTo = {fields: {
+          Title: custName,
+          Branch: branch,
+          CustomerNumber: custNmbr,
+          Date: date,
+          From: quantity < 0 ? custNmbr : branch,
+          To: quantity > 0 ? custNmbr : branch,
+          In: quantity < 0 ? Math.abs(quantity) : 0,
+          Out: quantity > 0 ? quantity : 0,
+          Pallet: pallet,
+          Quantity: Math.abs(quantity),
+          Notes: 'Site transfer'
+        }};
+        if (newSite) transferTo['fields']['Site'] = newSite;
+        requests.push({id: i += 1, method: 'POST', url, headers, body: transferTo});
+      })
     })
     return requests.length ? this.http.post(`${environment.endpoint}/$batch`, {requests}) : of(1);
   }
@@ -216,6 +220,7 @@ export class PalletsService {
       Loscam: +v.loscam,
       Chep: +v.chep,
       Plain: +v.plain,
+      Date: new Date().toISOString(),
       Reference: v.reference,
       Status: 'Pending',
       Notify: true
