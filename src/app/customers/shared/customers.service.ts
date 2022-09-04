@@ -165,7 +165,7 @@ export class CustomersService {
   private sitePalletTransfer(action: Observable<Object>, customer: Customer, oldName: string, newName: string): Observable<Object> {
     return action.pipe(
       switchMap(() => this.palletsService.getPalletsOwedByCustomer(customer.accountnumber, oldName)),
-      switchMap(pallets => this.palletsService.siteTransfer(this.shared.branch, customer.name, customer.accountnumber, oldName, newName, pallets))
+      switchMap(pallets => this.palletsService.siteTransfer(customer.name, customer.accountnumber, oldName, newName, pallets))
     );
   }
 }
