@@ -220,6 +220,7 @@ export class PalletsService {
       Loscam: +v.loscam,
       Chep: +v.chep,
       Plain: +v.plain,
+      Date: new Date().toISOString(),
       Reference: v.reference,
       Status: 'Pending',
       Notify: true
