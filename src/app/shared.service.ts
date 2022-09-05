@@ -70,7 +70,7 @@ export class SharedService {
   }
 
   sanitiseName(name: string): string {
-    return encodeURIComponent(name.trim().replace('\'', '\'\''));
+    return encodeURIComponent(name.trim().replace('\'', '\'\'').replace('%2F', '/'));
   }
 
   setTitle(pageTitle: string): void {
