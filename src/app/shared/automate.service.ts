@@ -55,9 +55,8 @@ export class AutomateService {
     const d = pallet['date'].split(' ');
     const dateBits = d[0].split('/').map((_: string) => parseInt(_));
     const timeBits = d[1].split(':').map((_: string) => parseInt(_));;
-    const ddd = new Date(dateBits[2], dateBits[1], dateBits[0], timeBits[0], timeBits[1]);
-    console.log(dateBits[2], dateBits[1], dateBits[0], timeBits[0], timeBits[1])
-    const payload = {fields: {Reference: 'version375', Date: ddd.toISOString()}};
+    const date = (new Date(dateBits[2], dateBits[1], dateBits[0], timeBits[0], timeBits[1])).toISOString();
+    const payload = {fields: {Date: date}};
     return shouldRun ? this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${pallet.id}')`, payload) : of();
   }
 
