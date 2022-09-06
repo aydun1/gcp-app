@@ -128,13 +128,13 @@ export class CustomersService {
     return this.http.get(url).pipe(map(_ => _['value']));
   }
 
-  renameSite(customer: Customer, siteId: string, newName: string, oldName: string, newAddress: string | null | undefined): Observable<Object> {
+  editSite(customer: Customer, siteId: string, newName: string, oldName: string, newAddress: string | null | undefined): Observable<Object> {
     const payload = {fields: {
       Title: newName,
       Address: newAddress
     }};
     const action = this.http.patch(`${this._sitesUrl}/items('${siteId}')`, payload);
-    return this.sitePalletTransfer(action, customer, oldName, newName);
+    return newName === oldName ? action : this.sitePalletTransfer(action, customer, oldName, newName);
   }
 
   addSite(customer: Customer, siteName: string, address: string | null | undefined): Observable<Object> {

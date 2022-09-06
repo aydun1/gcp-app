@@ -38,7 +38,7 @@ export class PalletsService {
 
   private createUrl(filters: Params, limit: boolean): string {
     const filterKeys = Object.keys(filters);
-    let url = `${this._palletTrackerUrl}/items?expand=fields(select=Created,Title,Pallet,In,Out,From,To,Quantity,Reference,Status,Notes,Attachment,Site,CustomerNumber)`;
+    let url = `${this._palletTrackerUrl}/items?expand=fields(select=Date,Title,Pallet,In,Out,From,To,Quantity,Reference,Status,Notes,Attachment,Site,CustomerNumber)`;
 
     const parsed = filterKeys.map(key => {
       switch (key) {
@@ -65,10 +65,10 @@ export class PalletsService {
     if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Cancelled'`);
     if (limit) {
       const earlier = new Date(new Date().getTime() - 1000*60*60*24*60).toISOString();
-      parsed.unshift(`fields/Created ge '${earlier}'`);
+      parsed.unshift(`fields/Date ge '${earlier}'`);
   };
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
-    url += `&orderby=fields/Created desc&top=25`;
+    url += `&orderby=fields/Date desc&top=25`;
     return url;
   }
 

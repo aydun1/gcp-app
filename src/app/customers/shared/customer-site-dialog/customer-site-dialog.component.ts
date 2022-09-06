@@ -58,11 +58,11 @@ export class CustomerSiteDialogComponent implements OnInit {
     this.finaliseAction(action, 'added new').subscribe(() => this.navigate(newName));
   }
 
-  renameSite(): void {
+  editSite(): void {
     const newName = this.siteForm.value['site'];
     const newAddress = this.siteForm.value['address'];
     if (this.siteForm.invalid || !newName) return;
-    const action = this.customerService.renameSite(this.data.customer, this.siteId, newName, this.oldName, newAddress);
+    const action = this.customerService.editSite(this.data.customer, this.siteId, newName, this.oldName, newAddress);
     this.finaliseAction(action, 'edited').subscribe(() => this.navigate(newName));
   }
 

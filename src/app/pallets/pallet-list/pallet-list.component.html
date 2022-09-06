@@ -18,10 +18,10 @@
       <mat-form-field appearance="outline" class="name-filter">
         <mat-label>Customer</mat-label>
         <input matInput [formControl]="nameFilter" type="text" autocomplete="off" placeholder="Type to search...">
-        <button *ngIf="!nameFilter.value" matSuffix mat-icon-button disabled>
+        <button *ngIf="!nameFilter.value" matSuffix mat-icon-button disabled type="button">
           <mat-icon>search</mat-icon>
         </button>
-        <button *ngIf="nameFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearNameFilter()">
+        <button *ngIf="nameFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearNameFilter()" type="button">
           <mat-icon>close</mat-icon>
         </button>
       </mat-form-field>
@@ -34,7 +34,7 @@
       <ng-container matColumnDef="date">
         <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
         <mat-cell *matCellDef="let pallet">
-          {{ pallet.fields.Created | date: 'dd/MM/yyyy' }}
+          {{ pallet.fields.Date | date: 'dd/MM/yyyy' }}
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
       </ng-container>
@@ -42,7 +42,7 @@
       <ng-container matColumnDef="notes">
         <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
         <mat-cell *matCellDef="let pallet">
-        {{ pallet.fields.Notes || pallet.fields.Reference || '-' }}
+        {{ (pallet.fields.Title ? pallet.fields.Notes : pallet.fields.Reference) || '-' }}
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
@@ -50,7 +50,7 @@
       <ng-container matColumnDef="docket">
         <mat-header-cell *matHeaderCellDef> Docket </mat-header-cell>
         <mat-cell *matCellDef="let pallet">
-          <button mat-icon-button (click)="openRecyclingDocketDialog(pallet.id)" *ngIf="pallet.fields.Title" color="accent"><mat-icon>receipt</mat-icon></button>
+          <button mat-icon-button (click)="openRecyclingDocketDialog(pallet.id)" *ngIf="pallet.fields.Title" color="accent" type="button"><mat-icon>receipt</mat-icon></button>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>{{ totalOut - totalIn }}</mat-footer-cell>
       </ng-container>
