@@ -51,12 +51,12 @@ export class AutomateService {
   setReference(pallet: Pallet): Observable<any>  {
     const shouldRun = 1;
     console.log(pallet)
-    //'29/11/2021 14:05'
     const d = pallet['date'].split(' ');
     const dateBits = d[0].split('/').map((_: string) => parseInt(_));
     const timeBits = d[1].split(':').map((_: string) => parseInt(_));;
-    const date = (new Date(dateBits[2], dateBits[1] - 1, dateBits[0], timeBits[0], timeBits[1])).toISOString();
-    const payload = {fields: {Date: date}};
+    const oldDate = (new Date(dateBits[2], dateBits[1] - 2, 15, timeBits[0], timeBits[1])).toISOString();
+    const newDate = (new Date(dateBits[2], dateBits[1] - 1, dateBits[0], timeBits[0], timeBits[1])).toISOString();
+    const payload = {fields: {Reference: null, OldDate: oldDate}};
     return shouldRun ? this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${pallet.id}')`, payload) : of();
   }
 
