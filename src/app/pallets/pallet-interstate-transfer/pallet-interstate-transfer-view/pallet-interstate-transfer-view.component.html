@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <button mat-icon-button (click)="goBack()" class="mobile-button">
+  <button mat-icon-button (click)="goBack()" class="mobile-button" type="button">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <ng-container>
@@ -12,15 +12,15 @@
     <h2>Transfer details</h2>
     <div *ngIf="!transfer.summary.cancelled" class="actions">
       <div *ngIf="(transport || sender) && !transfer.summary.transferred && !transfer.summary.cancelled" class="edit">
-        <button mat-raised-button *ngIf="!editQuantity" (click)="editQuantity = true">Edit transfer</button>
+        <button mat-raised-button *ngIf="!editQuantity" (click)="editQuantity = true" type="button">Edit transfer</button>
         <ng-container *ngIf="editQuantity">
-          <button mat-icon-button (click)="cancelEditQuantity(transfer.summary.reference, transfer.summary.loscam, transfer.summary.chep, transfer.summary.plain)" [disabled]="loading"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
-          <button mat-icon-button (click)="setQuantity(transfer.summary.id, transfer.summary.reference, transfer.summary.loscam, transfer.summary.chep, transfer.summary.plain)" [disabled]="loading"><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
+          <button mat-icon-button (click)="cancelEditQuantity(transfer.summary.reference, transfer.summary.loscam, transfer.summary.chep, transfer.summary.plain)" [disabled]="loading" type="button"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
+          <button mat-icon-button (click)="setQuantity(transfer.summary.id, transfer.summary.reference, transfer.summary.loscam, transfer.summary.chep, transfer.summary.plain)" [disabled]="loading" type="submit"><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
         </ng-container>
       </div>
-      <button *ngIf="(transport || sender) && !transfer.summary.transferred" mat-raised-button class="action" (click)="cancel(transfer.summary.id)" [disabled]="loading || editQuantity">Cancel transfer</button>
-      <button *ngIf="(transport || receiver) && !transfer.summary.approved" mat-raised-button class="action" color="primary" (click)="approve(transfer.summary.id)" [disabled]="loading || editQuantity">Approve</button>
-      <button *ngIf="(transport || sender) && transfer.summary.approved && !transfer.summary.transferred" mat-raised-button class="action" color="primary" (click)="transferp(transfer.summary.id)" [disabled]="loading || editQuantity">Mark as transferred</button>
+      <button *ngIf="(transport || sender) && !transfer.summary.transferred" mat-raised-button class="action" (click)="cancel(transfer.summary.id)" [disabled]="loading || editQuantity" type="button">Cancel transfer</button>
+      <button *ngIf="(transport || receiver) && !transfer.summary.approved" mat-raised-button class="action" color="primary" (click)="approve(transfer.summary.id)" [disabled]="loading || editQuantity" type="button">Approve</button>
+      <button *ngIf="(transport || sender) && transfer.summary.approved && !transfer.summary.transferred" mat-raised-button class="action" color="primary" (click)="transferp(transfer.summary.id)" [disabled]="loading || editQuantity" type="button">Mark as transferred</button>
     </div>
   </div>
   <mat-card class="inner">

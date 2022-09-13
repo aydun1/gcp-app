@@ -3,10 +3,10 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, combineLatest, tap, throwError } from 'rxjs';
 
-import { PalletsService } from '../shared/pallets.service';
-import { PalletsReconciliationService } from '../shared/pallets-reconciliation.service';
-import { SharedService } from '../../shared.service';
-import { NavigationService } from '../../navigation.service';
+import { PalletsService } from '../../shared/pallets.service';
+import { PalletsReconciliationService } from '../../shared/pallets-reconciliation.service';
+import { SharedService } from '../../../shared.service';
+import { NavigationService } from '../../../navigation.service';
 
 interface PalletRecForm {
   date: FormControl<Date | null>;

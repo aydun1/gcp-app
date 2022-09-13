@@ -4,9 +4,9 @@ import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
-import { SharedService } from '../../shared.service';
-import { PalletsReconciliationService } from '../shared/pallets-reconciliation.service';
-import { Reconciliation } from '../shared/reconciliation';
+import { SharedService } from '../../../shared.service';
+import { PalletsReconciliationService } from '../../shared/pallets-reconciliation.service';
+import { Reconciliation } from '../../shared/reconciliation';
 
 @Component({
   selector: 'gcp-pallet-reconciliation-list',

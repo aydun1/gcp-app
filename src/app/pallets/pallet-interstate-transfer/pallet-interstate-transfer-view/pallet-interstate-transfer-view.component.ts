@@ -4,9 +4,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, catchError, combineLatest, map, Observable, Subject, switchMap, tap, throwError } from 'rxjs';
 
-import { PalletsService } from '../shared/pallets.service';
-import { SharedService } from '../../shared.service';
-import { NavigationService } from '../../navigation.service';
+import { PalletsService } from '../../shared/pallets.service';
+import { SharedService } from '../../../shared.service';
+import { NavigationService } from '../../../navigation.service';
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer-view',
