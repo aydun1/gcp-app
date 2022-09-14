@@ -43,7 +43,6 @@ export class CustomersService {
       }
     }
     filterArray.push('accountnumber ne null');
-    console.log(filters)
     const palletFilter = []
     const pallets = Array.isArray(filters['pallets']) ? filters['pallets'] : [filters['pallets']];
 
