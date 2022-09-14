@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
-import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { BehaviorSubject, catchError, distinctUntilChanged, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
@@ -20,6 +21,7 @@ export class InterstateTransferListComponent implements OnInit {
   public toBranchFilter = new FormControl('');
   public interstateTransfers$!: Observable<FormGroup<any>>;
   public loading = false;
+  public creating = false;
   public displayedColumns = [ 'date', 'product', 'quantity', 'cost', 'transfer'];
   public totals!: object;
   public states = this.shared.branches;
@@ -34,7 +36,7 @@ export class InterstateTransferListComponent implements OnInit {
     return this.transferForm.get('lines') as FormArray;
   }
 
-  public get requestedQty(): number {
+  public get transferQty(): number {
     return this.lines.value.reduce((acc, cur) => acc + cur['toTransfer']
   , 0);
   }
@@ -43,6 +45,7 @@ export class InterstateTransferListComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
+    private snackBar: MatSnackBar,
     private shared: SharedService,
     private interstateTransfersService: InterstateTransfersService
   ) { }
@@ -79,6 +82,7 @@ export class InterstateTransferListComponent implements OnInit {
     lines.forEach(_ => 
       this.lines.push(this.fb.group({
         id: [_.Id],
+        poNumber: [_.PONumber],
         reqDate: [_.Date],
         itemDesc: [_.ItemDesc],
         itemNumber: [_.ItemNumber],
@@ -105,7 +109,6 @@ export class InterstateTransferListComponent implements OnInit {
       this.toBranchFilter.patchValue(params['to']);
       filters['to'] = params['to'];
     } else {
-      console.log(this.states[0])
       this.toBranchFilter.patchValue('');
     }
     if ('from' in params) {
@@ -137,8 +140,20 @@ export class InterstateTransferListComponent implements OnInit {
   }
 
   createTransfer() {
-    console.log(this.lines)
-    //this.interstateTransfersService.markDelivered(id).subscribe();
+    this.creating = true;
+    const formData = this.lines.value.filter(_ => _.toTransfer);
+    this.interstateTransfersService.createTransfer(this.fromBranchFilter.value, this.toBranchFilter.value, formData).pipe(
+      tap(() => {
+        this.lines.controls.forEach(_ => _.patchValue({toTransfer: null}));
+        this.snackBar.open('Successfully created interstate transfer.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
+        this.creating = false;
+      }),
+      catchError(err => {
+        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-warn']});
+        this.creating = false;
+        return of();
+      })
+    ).subscribe();
   }
 
   trackByFn(index: number, item: any): string {

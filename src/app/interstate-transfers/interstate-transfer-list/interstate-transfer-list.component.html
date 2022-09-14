@@ -17,7 +17,7 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <button mat-raised-button color="primary" type="submit">Save as transfer</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="transferQty === 0 || creating">Save as transfer</button>
       </div>
 
       <div *ngIf="interstateTransfers$ | async as t">
@@ -94,7 +94,7 @@
             </mat-cell>
             <mat-footer-cell *matFooterCellDef>
               <div class="loadDetails">
-                {{ requestedQty | number }}
+                {{ transferQty | number }}
               </div>
             </mat-footer-cell>
           </ng-container>
