@@ -30,10 +30,10 @@
       <mat-form-field appearance="outline" class="bin-filter">
         <mat-label>Cage number</mat-label>
         <input matInput [formControl]="binFilter" min="0" type="number" autocomplete="off" placeholder="Type to search...">
-        <button *ngIf="!binFilter.value" matSuffix mat-icon-button disabled>
+        <button *ngIf="!binFilter.value" matSuffix mat-icon-button disabled type="button">
           <mat-icon>search</mat-icon>
         </button>
-        <button *ngIf="binFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearBinFilter()">
+        <button *ngIf="binFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearBinFilter()" type="button">
           <mat-icon>close</mat-icon>
         </button>
       </mat-form-field>
@@ -50,7 +50,10 @@
     <gcp-action-button [cages]="selection.selected" class="actions"></gcp-action-button>  
   </div>
 
-  <div class="status-header inner">{{ statusFilter.value }}</div>
+  <div class="status-header inner">
+    <div><strong>Date:</strong> {{ date | date: 'dd/MM/yyyy' }}</div>
+    <div *ngIf="statusFilter.value"><strong>Status:</strong> {{ statusFilter.value }}</div>
+  </div>
 
   <div class="inner">
     <mat-table #table [dataSource]="cages" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
@@ -114,14 +117,6 @@
         <mat-header-cell *matHeaderCellDef> Location </mat-header-cell>
         <mat-cell *matCellDef="let cage">
           {{ cage.location }}
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="check">
-        <mat-header-cell *matHeaderCellDef></mat-header-cell>
-        <mat-cell *matCellDef="let cage">
-          <mat-checkbox color="accent"></mat-checkbox>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>

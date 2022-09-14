@@ -127,10 +127,10 @@
 
   .status-header {
     display: block;
-  }
-
-  .mat-column-check {
-    display: flex;
+    font-size: 14px;
+    position: absolute;
+    right: 0;
+    top: 28px;
   }
 
   .options {
