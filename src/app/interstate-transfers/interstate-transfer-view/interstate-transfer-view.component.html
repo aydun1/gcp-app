@@ -1,0 +1,42 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="goBack()" class="mobile-button" type="button">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <ng-container>
+    <div class="title">Requested items</div>
+  </ng-container>
+</mat-toolbar>
+
+<div class="outer">
+  <h2>Purchase order</h2>
+  <div class="options inner">
+    <div class="buttons">
+    </div>
+  </div>
+  <div class="inner">
+    <div class="line">
+      <div class="product-details">
+      </div>
+      <div>
+        Qty Ordered
+      </div>
+      <div class="product-sending">
+      </div>
+    </div>
+  </div>
+  <div *ngIf="interstateTransfer$ | async as s" class="inner">
+    <div *ngFor="let line of s.lines" class="line">
+      <div class="product-details">
+        <strong>{{ line.ItemNumber }}</strong>
+        <div>{{ line.ItemDesc }}</div>
+      </div>
+      <div>
+        {{ line.OrderQty }}
+      </div>
+      <div class="product-sending">
+        <input>
+      </div>
+    </div>
+  </div>
+</div>
+

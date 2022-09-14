@@ -114,15 +114,15 @@ export class LoadingScheduleListComponent implements OnInit {
   }
 
   setBranch(branch: MatSelectChange): void {
-    this.router.navigate(['loading-schedule'], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setStatus(status: MatSelectChange): void {
-    this.router.navigate(['loading-schedule'], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate([], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setView(view: MatSelectChange): void {
-    this.router.navigate(['loading-schedule'], { queryParams: {view: view.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate([], { queryParams: {view: view.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   markDelivered(id: string) {

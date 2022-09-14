@@ -96,7 +96,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Periodically check for software updates
     if (this.swUpdate.isEnabled) {
-      withLatestFrom()
+      withLatestFrom();
       this.swUpdate.versionUpdates.pipe(
         filter((evt: VersionEvent) => evt.type === 'VERSION_READY')
       ).subscribe(() => location.reload());

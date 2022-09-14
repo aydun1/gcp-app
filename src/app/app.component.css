@@ -26,7 +26,12 @@
 }
 
 .mat-sidenav {
-  width: 220px;
+  width: 240px;
+}
+
+.chevron {
+  position: absolute;
+  right: 8px;
 }
 
 .toolbar-spacer {

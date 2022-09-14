@@ -14,21 +14,26 @@
     <mat-sidenav #snav [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile">
       <mat-nav-list>
         <a *ngIf="!warehouse" mat-list-item routerLink="/customers" routerLinkActive="active"><mat-icon>groups</mat-icon><span class="menu-label">Customers</span></a>
-        <a mat-list-item routerLink="/pallets" routerLinkActive="active"><mat-icon>view_list</mat-icon><span class="menu-label">Pallet Manager</span></a>
+        <a mat-list-item routerLink="/pallets" routerLinkActive="active"><mat-icon>view_list</mat-icon><span class="menu-label">Pallets</span><mat-icon class="chevron">expand_more</mat-icon></a>
         <ng-container *ngIf="urlActive('/pallets')">
           <a mat-list-item routerLink="/pallets/history" routerLinkActive="active" class="sub-item"><span class="menu-label">Branch history</span></a>
           <a mat-list-item routerLink="/pallets/transfer" routerLinkActive="active" class="sub-item"><span class="menu-label">Interstate transfers</span></a>
           <a mat-list-item routerLink="/pallets/stocktake" routerLinkActive="active" class="sub-item"><span class="menu-label">Stocktake</span></a>
           <mat-divider></mat-divider>
         </ng-container>
-        <a mat-list-item routerLink="/recycling" routerLinkActive="active"><mat-icon>recycling</mat-icon><span class="menu-label">Recycling</span></a>
+        <a mat-list-item routerLink="/recycling" routerLinkActive="active"><mat-icon>recycling</mat-icon><span class="menu-label">Recycling</span><mat-icon class="chevron">expand_more</mat-icon></a>
         <ng-container *ngIf="urlActive('/recycling')">
           <a mat-list-item routerLink="/recycling/cages" routerLinkActive="active" class="sub-item"><span class="menu-label">Cage manager</span></a>
           <a mat-list-item routerLink="/recycling/receipts" routerLinkActive="active" class="sub-item"><span class="menu-label">Polymer receipts</span></a>
           <mat-divider></mat-divider>
         </ng-container>
-        <a mat-list-item routerLink="/runs" routerLinkActive="active"><mat-icon>local_shipping</mat-icon><span class="menu-label">Runs</span></a>
+        <a mat-list-item routerLink="/transfers" routerLinkActive="active"><mat-icon>trolley</mat-icon><span class="menu-label">Inventory</span><mat-icon class="chevron">expand_more</mat-icon></a>
+        <ng-container *ngIf="urlActive('/transfers')">
+          <a mat-list-item routerLink="/transfers/requested-items" routerLinkActive="active" class="sub-item"><span class="menu-label">Requested items</span></a>
+        </ng-container>
+
         <a mat-list-item routerLink="/loading-schedule" routerLinkActive="active"><mat-icon>departure_board</mat-icon><span class="menu-label">Loading schedule</span></a>
+        <a mat-list-item routerLink="/runs" routerLinkActive="active"><mat-icon>local_shipping</mat-icon><span class="menu-label">Runs</span></a>
       </mat-nav-list>
       <div class="token">{{ token }}</div>
     </mat-sidenav>

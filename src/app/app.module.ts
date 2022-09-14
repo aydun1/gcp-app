@@ -64,6 +64,8 @@ function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   protectedResourceMap.set(`${environment.endpoint}/sites`, ['Sites.ReadWrite.All']);
   protectedResourceMap.set(`${environment.endpoint}/`, ['Sites.ReadWrite.All']);//$batch
   protectedResourceMap.set(`${environment.endpoint}/me`, ['user.read']);
+  protectedResourceMap.set('http://localhost:3000/gp', ['api://117fb891-acba-4e2f-b60a-9f95fc0680ff/GCP.API.Access']);
+  protectedResourceMap.set('https://api.gardencityplastics.com/gp', ['api://117fb891-acba-4e2f-b60a-9f95fc0680ff/GCP.API.Access']);
   protectedResourceMap.set('https://gardencityplastics.crm6.dynamics.com/api/data/v9.2', ['https://gardencityplastics.crm6.dynamics.com//user_impersonation']);
   return {
     interactionType: InteractionType.Redirect,
