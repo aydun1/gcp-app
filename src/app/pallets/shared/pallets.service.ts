@@ -312,7 +312,7 @@ export class PalletsService {
   }
 
   getPalletsOwedToBranch(branch: string, pallet: string, date: Date): Observable<number> {
-    const startOfMonth = new Date(Date.UTC(date.getFullYear(), date.getUTCMonth(), 1)).toISOString();
+    const startOfMonth = `${date.getFullYear()}-${date.getMonth() + 1}-1`;
     const dateInt = this.dateInt(date);
     const eod = new Date(date.setHours(23,59,59,999)).toISOString();
 
@@ -333,9 +333,8 @@ export class PalletsService {
 
   getPalletsOwedByCustomer(custnmbr: string, site?: string | undefined): Observable<PalletQuantities> {
     const date = new Date();
-    const startOfMonth = new Date(Date.UTC(date.getFullYear(), date.getUTCMonth(), 1)).toISOString();
+    const startOfMonth = `${date.getFullYear()}-${date.getMonth() + 1}-1`;
     const dateInt = this.dateInt(date);
-
     let url = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}/items?expand=fields(select=Title,Pallet,Owing,Branch)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt lt '${dateInt}'`;
     let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=Title,Pallet,Out,In,Branch)&filter=fields/Date ge '${startOfMonth}' and fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
     if (site !== undefined) {
