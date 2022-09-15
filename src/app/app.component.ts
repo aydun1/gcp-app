@@ -46,7 +46,6 @@ export class AppComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.accounts)
     this.themingService.theme.subscribe(_ => {
       const darkClass = 'dark-theme';
       _ ? this.renderer.addClass(document.body, darkClass) : this.renderer.removeClass(document.body, darkClass)

@@ -7,6 +7,7 @@ import { InterstateTransfersService } from './shared/interstate-transfers.servic
 import { InterstateTransfersRoutingModule } from './interstate-transfers-routing.module';
 import { InterstateTransferListComponent } from './interstate-transfer-list/interstate-transfer-list.component';
 import { InterstateTransferViewComponent } from './interstate-transfer-view/interstate-transfer-view.component';
+import { PipeModule } from '../shared/pipes/pipe.module';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { InterstateTransferViewComponent } from './interstate-transfer-view/inte
   imports: [
     CommonModule,
     SharedModule,
+    PipeModule,
     InterstateTransfersRoutingModule
   ],
   providers: [

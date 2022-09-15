@@ -26,7 +26,6 @@
       </div>
       <a mat-raised-button color="primary" [disabled]="loading" [routerLink]="['new']" class="action">Add entry</a>
     </div>
-
     <div *ngIf="loadingSchedule$ | async as loadingSchedule" class="inner">
       <div *ngFor="let s of loadingSchedule | groupBy:groups; let i = index">
         <div *ngIf="s">

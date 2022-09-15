@@ -1,30 +1,37 @@
-<div>
-  <div class="outer">
-    <h2>Requested items</h2>
-    <form class="inner" [formGroup]="transferForm" (ngSubmit)="createTransfer()">
-      <div class="options">
-        <div class="buttons">
-          <mat-form-field appearance="outline" class="branch">
-            <mat-label>From</mat-label>
-            <mat-select [formControl]="fromBranchFilter">
-              <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field appearance="outline" class="branch">
-            <mat-label>To</mat-label>
-            <mat-select [formControl]="toBranchFilter" (selectionChange)="setToBranch($event)">
-              <mat-option *ngFor="let s of otherStates" [value]="s">{{ s }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-        <button mat-raised-button color="primary" type="submit" [disabled]="transferQty === 0 || creating">Save as transfer</button>
+<div class="outer">
+  <h2>Requested items</h2>
+  <form class="inner" [formGroup]="transferForm" (ngSubmit)="createTransfer()">
+    <div class="options">
+      <div class="buttons">
+        <mat-form-field appearance="outline" class="branch">
+          <mat-label>From</mat-label>
+          <mat-select [formControl]="fromBranchFilter" (selectionChange)="setFromBranch($event)">
+            <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="branch">
+          <mat-label>To</mat-label>
+          <mat-select [formControl]="toBranchFilter" (selectionChange)="setToBranch($event)">
+            <mat-option *ngFor="let s of otherStates" [value]="s">{{ s }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="branch">
+          <mat-label>View</mat-label>
+          <mat-select [formControl]="viewFilter" (selectionChange)="setView($event)">
+            <mat-option value="ungrouped">Ungrouped</mat-option>
+            <mat-option value="grouped">Grouped</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
-
-      <div *ngIf="interstateTransfers$ | async as t">
-        <mat-table #table [dataSource]="t.value['lines']" [trackBy]="trackByFn" formArrayName="lines">
+      <button mat-raised-button color="primary" type="submit" [disabled]="transferQty === 0 || creating">Save as transfer</button>
+    </div>
+    <div *ngIf="interstateTransfers$ | async as interstateTransfers">
+      <div *ngFor="let t of interstateTransfers.value['lines'] | groupByProperty:(viewFilter.value === 'grouped' ? 'poNumber' : '');trackBy: trackByGroupsFn">
+        <h3 *ngIf="t.key !== 'undefined'">{{ t.key }}</h3>
+        <mat-table #table [dataSource]="t.value" [trackBy]="trackByFn" formArrayName="lines">
           <ng-container matColumnDef="date">
             <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
-            <mat-cell *matCellDef="let line; let index = index" [formGroupName]="index">
+            <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
               {{ line['reqDate'] | date: 'd MMM yyyy' }}
             </mat-cell>
             <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
@@ -32,7 +39,7 @@
 
           <ng-container matColumnDef="product">
             <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
-            <mat-cell *matCellDef="let line; let index = index" [formGroupName]="index">
+            <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
               <div class="details">
                 <strong>
                   {{ line['itemNumber'] }}
@@ -51,14 +58,14 @@
                 Qty requested
               </div>
             </mat-header-cell>
-            <mat-cell *matCellDef="let line; let index = index" [formGroupName]="index">
+            <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
               <div class="loadDetails">
                 {{ line['orderQty'] | number }}
               </div>
             </mat-cell>
             <mat-footer-cell *matFooterCellDef>
               <div class="loadDetails">
-                {{ totalRequestedQty | number }}
+                {{ getTotalRequestedQty(t.value) | number }}
               </div>
             </mat-footer-cell>
           </ng-container>
@@ -69,14 +76,14 @@
                 Ext cost
               </div>
             </mat-header-cell>
-            <mat-cell *matCellDef="let line; let index = index" [formGroupName]="index">
+            <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
               <div class="loadDetails">
                 {{ line['extendedCost'] | currency }}
               </div>
             </mat-cell>
             <mat-footer-cell *matFooterCellDef>
               <div class="loadDetails">
-                {{ totalRequestedCost | currency }}
+                {{ getTotalRequestedCost(t.value) | currency }}
               </div>
             </mat-footer-cell>
           </ng-container>
@@ -87,14 +94,14 @@
                 Qty to transfer
               </div>
             </mat-header-cell>
-            <mat-cell *matCellDef="let line; let index = index" [formGroupName]="index">
+            <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
               <div class="loadDetails">
                 <input formControlName="toTransfer" class="transfer-input" type="number" placeholder="0" min="0">
               </div>
             </mat-cell>
             <mat-footer-cell *matFooterCellDef>
               <div class="loadDetails">
-                {{ transferQty | number }}
+                {{ getTotalToTransfer(t.value) | number }}
               </div>
             </mat-footer-cell>
           </ng-container>
@@ -110,24 +117,22 @@
               There are no items requested from {{ fromBranchFilter.value }} by {{ toBranchFilter.value }}.
             </mat-footer-cell>
           </ng-container>
-
           <ng-container matColumnDef="unpicked">
             <mat-footer-cell *matFooterCellDef>
               Pick a branch to see their requested items!
             </mat-footer-cell>
           </ng-container>
-
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-          <mat-row *matRowDef="let row; let i = index; columns: displayedColumns;" cdkDrag></mat-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
           <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="!loading"></mat-footer-row>
-          <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="!toBranchFilter.value ||loading || totalRequestedLines"></mat-footer-row>
+          <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="!toBranchFilter.value || loading || getTotalRequestedLines(t.value)"></mat-footer-row>
           <mat-footer-row *matFooterRowDef="['unpicked']" [class.hidden]="toBranchFilter.value"></mat-footer-row>
-
           <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
         </mat-table>
       </div>
-    </form>
-  </div>
+    </div>
+  </form>
 </div>
+
 
 <router-outlet></router-outlet>

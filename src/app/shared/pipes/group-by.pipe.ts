@@ -17,8 +17,6 @@ export class GroupByPipe implements PipeTransform {
       ]
     }), {});
 
-    // const groupedKeyed = [...prop, this.extras].map(_ => {return {key: _, value: a[_]}});
-    const groupedNoKey = [...prop, this.extras].map(_ => a[_]);
-    return groupedNoKey;
+    return [...prop, this.extras].map(_ => a[_]);
   }
 }

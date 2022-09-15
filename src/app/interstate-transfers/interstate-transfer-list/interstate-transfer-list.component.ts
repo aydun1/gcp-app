@@ -17,20 +17,21 @@ import { PurchaseOrderLine } from '../shared/purchase-order-line';
 export class InterstateTransferListComponent implements OnInit {
   private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
   private _loadList!: boolean;
-  public fromBranchFilter = new FormControl({value: '', disabled: true});
+  public fromBranchFilter = new FormControl({value: '', disabled: false});
   public toBranchFilter = new FormControl('');
+  public viewFilter = new FormControl('');
   public interstateTransfers$!: Observable<FormGroup<any>>;
   public loading = false;
   public creating = false;
   public displayedColumns = [ 'date', 'product', 'quantity', 'cost', 'transfer'];
   public totals!: object;
   public states = this.shared.branches;
-  public otherStates!: Array<string>;
   public ownState = '';
   public transferForm!: FormGroup;
-  public totalRequestedQty!: number;
-  public totalRequestedCost!: number;
-  public totalRequestedLines!: number;
+
+  public get otherStates(): Array<string> {
+    return this.states.filter(_ => _ !== this.fromBranchFilter.value);
+  }
 
   public get lines(): FormArray<FormGroup> {
     return this.transferForm.get('lines') as FormArray;
@@ -62,7 +63,6 @@ export class InterstateTransferListComponent implements OnInit {
       switchMap(params => state$.pipe(
         map(state => {
           this.ownState = state;
-          this.otherStates = this.states.filter(_ => _ !== state);
           return !params['from'] ? {...params, from: state} : {...params};
         })
       )),
@@ -75,12 +75,11 @@ export class InterstateTransferListComponent implements OnInit {
   }
 
   makeFormGroup(lines: Array<PurchaseOrderLine>) {
-    this.totalRequestedQty = lines.reduce((acc, cur) => acc + cur.OrderQty, 0);
-    this.totalRequestedCost = lines.reduce((acc, cur) => acc + cur.ExtdCost, 0);
-    this.totalRequestedLines = lines.reduce((acc, cur) => acc + 1, 0);
     this.lines.clear();
+    let i = -1;
     lines.forEach(_ => 
       this.lines.push(this.fb.group({
+        index: [i += 1],
         id: [_.Id],
         poNumber: [_.PONumber],
         reqDate: [_.Date],
@@ -117,6 +116,11 @@ export class InterstateTransferListComponent implements OnInit {
     } else {
       this.fromBranchFilter.patchValue(this.states[0]);
     }
+    if ('view' in params) {
+      this.viewFilter.patchValue(params['view']);
+    } else {
+      this.viewFilter.patchValue('ungrouped');
+    }
   }
 
   compareQueryStrings(prev: Params, curr: Params): boolean {
@@ -139,6 +143,10 @@ export class InterstateTransferListComponent implements OnInit {
     this.router.navigate([], { queryParams: {to: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
+  setView(view: MatSelectChange): void {
+    this.router.navigate([], { queryParams: {view: view.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
   createTransfer() {
     this.creating = true;
     const formData = this.lines.value.filter(_ => _.toTransfer);
@@ -154,6 +162,26 @@ export class InterstateTransferListComponent implements OnInit {
         return of();
       })
     ).subscribe();
+  }
+
+  getTotalRequestedCost(lines: Array<any>): number {
+    return lines.reduce((acc, cur) => acc + cur.extendedCost, 0);
+  }
+
+  getTotalRequestedQty(lines: Array<any>): number {
+    return lines.reduce((acc, cur) => acc + cur.orderQty, 0);
+  }
+
+  getTotalRequestedLines(lines: Array<any>): number {
+    return lines.reduce((acc, cur) => acc + 1, 0);
+  }
+
+  getTotalToTransfer(lines: Array<any>): number {
+    return lines.reduce((acc, cur) => acc + cur.toTransfer, 0);
+  }
+
+  trackByGroupsFn(index: number, item: any): string {
+    return item.key;
   }
 
   trackByFn(index: number, item: any): string {
