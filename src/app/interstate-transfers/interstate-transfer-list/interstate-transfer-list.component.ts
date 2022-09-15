@@ -87,6 +87,7 @@ export class InterstateTransferListComponent implements OnInit {
         itemNumber: [_.ItemNumber],
         orderQty: [_.OrderQty],
         extendedCost: [_.ExtdCost],
+        qtyOnHand: [_.QtyOnHand],
         toTransfer: []
       }))
     );
@@ -150,12 +151,17 @@ export class InterstateTransferListComponent implements OnInit {
   createTransfer() {
     this.creating = true;
     const formData = this.lines.value.filter(_ => _.toTransfer);
+    const subject = `PO lines fulfilled by ${this.fromBranchFilter.value}`;
+    let body = 'PO number\tItem number\tQty fulfilled\r\n'
+    body += formData.map(_ => `${_.poNumber}\t${_.itemNumber}\t${_.toTransfer}`).join('\r\n')
+
     this.interstateTransfersService.createTransfer(this.fromBranchFilter.value, this.toBranchFilter.value, formData).pipe(
       tap(() => {
         this.lines.controls.forEach(_ => _.patchValue({toTransfer: null}));
         this.snackBar.open('Successfully created interstate transfer.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
         this.creating = false;
       }),
+      switchMap(_ => this.shared.sendMail(subject, body)),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-warn']});
         this.creating = false;
@@ -164,8 +170,8 @@ export class InterstateTransferListComponent implements OnInit {
     ).subscribe();
   }
 
-  getTotalRequestedCost(lines: Array<any>): number {
-    return lines.reduce((acc, cur) => acc + cur.extendedCost, 0);
+  getTotalQtyOnHand(lines: Array<any>): number {
+    return lines.reduce((acc, cur) => acc + cur.qtyOnHand, 0);
   }
 
   getTotalRequestedQty(lines: Array<any>): number {

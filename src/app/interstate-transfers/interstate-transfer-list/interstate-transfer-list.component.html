@@ -73,17 +73,17 @@
           <ng-container matColumnDef="cost">
             <mat-header-cell *matHeaderCellDef>
               <div class="loadDetails">
-                Ext cost
+                Qty on hand
               </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
               <div class="loadDetails">
-                {{ line['extendedCost'] | currency }}
+                {{ line['qtyOnHand'] | number }}
               </div>
             </mat-cell>
             <mat-footer-cell *matFooterCellDef>
               <div class="loadDetails">
-                {{ getTotalRequestedCost(t.value) | currency }}
+                {{ getTotalQtyOnHand(t.value) | number }}
               </div>
             </mat-footer-cell>
           </ng-container>

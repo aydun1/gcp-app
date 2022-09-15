@@ -8,4 +8,5 @@ export interface PurchaseOrderLine {
   ItemDesc: string;
   ItemNumber: string;
   OrderQty: number;
+  QtyOnHand: number;
 };

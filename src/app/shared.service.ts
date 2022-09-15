@@ -34,7 +34,7 @@ export class SharedService {
   ) { }
 
   checkIfWarehouse(accounts: Array<any>) {
-    this.isWarehouse = this.warehouseStaff.includes(accounts[0].username);
+    this.isWarehouse = this.warehouseStaff.includes(accounts[0]?.username);
   }
 
   getPhoto(): Observable<SafeUrl> {
@@ -76,5 +76,28 @@ export class SharedService {
   setTitle(pageTitle: string): void {
     const title =  pageTitle ? `${pageTitle} - ${this.appTitle}` : this.appTitle;
     this.titleService.setTitle(title);
+  }
+
+  sendMail(subject: string, body: string): Observable<Object> {
+    const url = `${environment.endpoint}/me/sendMail`;
+    const payload  = {
+      'message': {
+        'subject': subject,
+        'body': {
+          'contentType': 'Text',
+          'content': body,
+        },
+        'toRecipients': [
+          {
+            'emailAddress': {
+              'address': 'aidan.obrien@gardencityplastics.com'
+            }
+          }
+        ],
+
+      },
+      'saveToSentItems': 'false'
+    }
+    return this.http.post(url, payload);
   }
 }
