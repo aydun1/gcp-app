@@ -15,10 +15,11 @@ import { Site } from './site';
   providedIn: 'root'
 })
 export class CustomersService {
-  private _url = 'https://gardencityplastics.crm6.dynamics.com/api/data/v9.2';
+  private _url = `${environment.gpEndpoint}/customers`;
   private _listUrl = 'lists/1e955039-1d2e-41f8-98a2-688319720410';
   private _sitesUrl = `${environment.endpoint}/${environment.siteUrl}/${this._listUrl}`;
-  private _nextPage!: string;
+  private _currentUrl!: string;
+  private _nextPage = 1;
   private _customersSubject$ = new BehaviorSubject<Customer[]>([]);
   private _loadingCustomers!: boolean;
   private _maxDebtorIdLength = 15;
@@ -32,29 +33,28 @@ export class CustomersService {
   ) { }
 
   private createUrl(filters: Params): string {
-    let url = `${this._url}/accounts?$select=name,accountnumber,address1_composite,new_pallets_loscam,new_pallets_chep,new_pallets_plain`;
+    let url = `${this._url}?`;
     const filterArray = [];
     if (filters['name']) filterArray.push(`(contains(name,'${this.shared.sanitiseName(filters['name'])}') or startswith(accountnumber,'${this.shared.sanitiseName(filters['name'])}'))`);
     if (filters['territory']) {
       if (filters['territory'] in this.shared.territories) {
-        filterArray.push('(' + this.shared.territories[filters['territory']].map((_: any) => `territoryid/name eq '${_}'`).join(' or ') + ')');
+        filterArray.push(this.shared.territories[filters['territory']].map((_: any) => `branch=${_}`).join(' or '));
       } else {
-        filterArray.push(`territoryid/name eq '${filters['territory']}'`);
+        filterArray.push(`branch=${filters['territory']}`);
       }
     }
     filterArray.push('accountnumber ne null');
     const palletFilter = []
     const pallets = Array.isArray(filters['pallets']) ? filters['pallets'] : [filters['pallets']];
 
-    if (filters['sort'] === 'loscam' || pallets.includes('loscam')) palletFilter.push('new_pallets_loscam gt 0 or new_pallets_loscam lt 0');
-    if (filters['sort'] === 'chep' || pallets.includes('chep')) palletFilter.push('new_pallets_chep gt 0 or new_pallets_chep lt 0');
-    if (filters['sort'] === 'plain' || pallets.includes('plain')) palletFilter.push('new_pallets_plain gt 0 or new_pallets_plain lt 0');
-    if (palletFilter.length === 0) filterArray.push('statecode eq 0');
-    if (palletFilter.length > 0) filterArray.push(`(${palletFilter.join(' or ')})`);
-    const sort = ['loscam', 'chep', 'plain'].includes(filters['sort']) ? `new_pallets_${filters['sort']}` : filters['sort'] || 'name'
-    url += `&$filter=${filterArray.join(' and ')}`;
-    url += `&$orderby=${sort}`;
-    url += ` ${filters['order'] ? filters['order'] : 'asc'}`;
+    if (filters['sort'] === 'loscam' || pallets.includes('loscam')) palletFilter.push('filter=loscam');
+    if (filters['sort'] === 'chep' || pallets.includes('chep')) palletFilter.push('filter=chep');
+    if (filters['sort'] === 'plain' || pallets.includes('plain')) palletFilter.push('filter=plain');
+    if (palletFilter.length === 0) filterArray.push('invalid=0');
+    if (palletFilter.length > 0) filterArray.push(`${palletFilter.join('&')}`);
+    url += `&${filterArray.join('&')}`;
+    url += `&orderby=${filters['sort'] || 'custName'}`;
+    url += `&order=${filters['order'] ? filters['order'] : 'asc'}`;
     return url;
   }
 
@@ -68,10 +68,10 @@ export class CustomersService {
   }
 
   getFirstPage(filters: Params): BehaviorSubject<Customer[]> {
-    this._nextPage = '';
+    this._nextPage = 1;
     this._loadingCustomers = false;
-    const url = this.createUrl(filters);
-    this.getCustomers(url).subscribe(_ => this._customersSubject$.next(_));
+    this._currentUrl = this.createUrl(filters);
+    this.getCustomers(this._currentUrl).subscribe(_ => this._customersSubject$.next(_));
     return this._customersSubject$;
   }
 
@@ -79,7 +79,7 @@ export class CustomersService {
     if (!this._nextPage || this._loadingCustomers) return;
     this._customersSubject$.pipe(
       take(1),
-      switchMap(acc => this.getCustomers(this._nextPage).pipe(
+      switchMap(acc => this.getCustomers(this._currentUrl).pipe(
         map(curr => [...acc, ...curr])
       ))
     ).subscribe(_ => this._customersSubject$.next(_))
@@ -88,13 +88,14 @@ export class CustomersService {
   getCustomers(url: string): Observable<Customer[]> {
     this._loadingCustomers = true;
     this.loading.next(true);
-    return this.http.get(url, {headers: {Prefer: 'odata.maxpagesize=25'}}).pipe(
+    return this.http.get(`${url}&page=${this._nextPage}`).pipe(
       tap(_ => {
-        this._nextPage = _['@odata.nextLink'];
+        this._nextPage += 1;
+        console.log(this._nextPage)
         this._loadingCustomers = false;
         this.loading.next(false);
       }),
-      map((_: any) => _.value as Customer[]),
+      map((_: any) => _.customers as Customer[]),
       catchError(error => {
         if (error.status === 403) alert('No access. Contact Aidan to have your account enabled to use this page.');
         if (error.error instanceof ErrorEvent) {
