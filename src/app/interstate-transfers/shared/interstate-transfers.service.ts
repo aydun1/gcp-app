@@ -22,17 +22,17 @@ export class InterstateTransfersService {
 
   getInterstateTransfers(from: string, to: string): Observable<PurchaseOrderLine[]> {
     console.log(from, to)
-    return this.http.get<PurchaseOrderLine[]>(`${environment.gpEndpoint}po?from=${from}&to=${to}`);
+    return this.http.get<PurchaseOrderLine[]>(`${environment.gpEndpoint}/po?from=${from}&to=${to}`);
   }
 
   createTransfer(fromSite: string | null, toSite: string | null, lines: any): Observable<Object> {
     if (!fromSite || !toSite) return of();
     const payload = {fromSite, toSite, lines}
-    return this.http.post(`${environment.gpEndpoint}po`, payload);
+    return this.http.post(`${environment.gpEndpoint}/po`, payload);
   }
 
   getPurchaseOrder(id: string): Observable<PurchaseOrder>  {
-    return this.http.get<PurchaseOrder>(`${environment.gpEndpoint}po/${id}`);
+    return this.http.get<PurchaseOrder>(`${environment.gpEndpoint}/po/${id}`);
   }
 
 }
