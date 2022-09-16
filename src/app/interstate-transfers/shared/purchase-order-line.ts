@@ -1,6 +1,7 @@
 export interface PurchaseOrderLine {
   Id: string;
   PONumber: string,
+  LineNumber: number,
   Date: string;
   ExtdCost: number;
   CancelledQty: number;

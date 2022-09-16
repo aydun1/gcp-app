@@ -23,7 +23,7 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <button mat-raised-button color="primary" type="submit" [disabled]="transferQty === 0 || creating">Save as transfer</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="0 && (transferQty === 0 || creating)">Save as transfer</button>
     </div>
     <div *ngIf="interstateTransfers$ | async as interstateTransfers">
       <div *ngFor="let t of interstateTransfers.value['lines'] | groupByProperty:(viewFilter.value === 'grouped' ? 'poNumber' : '');trackBy: trackByGroupsFn">

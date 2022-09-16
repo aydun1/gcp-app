@@ -82,12 +82,14 @@ export class InterstateTransferListComponent implements OnInit {
         index: [i += 1],
         id: [_.Id],
         poNumber: [_.PONumber],
+        lineNumber: [_.LineNumber],
         reqDate: [_.Date],
         itemDesc: [_.ItemDesc],
         itemNumber: [_.ItemNumber],
         orderQty: [_.OrderQty],
         extendedCost: [_.ExtdCost],
         qtyAvailable: [_.QtyAvailable],
+        cancelledQty: [_.CancelledQty],
         toTransfer: []
       }))
     );
@@ -157,8 +159,15 @@ export class InterstateTransferListComponent implements OnInit {
 
     this.interstateTransfersService.createTransfer(this.fromBranchFilter.value, this.toBranchFilter.value, formData).pipe(
       tap(() => {
-        this.lines.controls.forEach(_ => _.patchValue({toTransfer: null}));
         this.snackBar.open('Successfully created interstate transfer.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
+        this.router.navigate([], { queryParams: {v: 1}, queryParamsHandling: 'merge', replaceUrl: true});
+        this.lines.controls.forEach(_ => {
+          const orderQty = _.value['orderQty'];
+          const toTransfer = _.value['toTransfer'];
+          if (toTransfer > 0) {
+            _.patchValue({orderQty: orderQty - toTransfer, toTransfer: null})
+          }
+        });
         this.creating = false;
       }),
       switchMap(_ => this.shared.sendMail(subject, body)),
