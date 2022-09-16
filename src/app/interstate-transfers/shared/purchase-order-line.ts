@@ -9,4 +9,5 @@ export interface PurchaseOrderLine {
   ItemNumber: string;
   OrderQty: number;
   QtyOnHand: number;
+  QtyAvailable: number;
 };

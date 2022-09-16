@@ -87,7 +87,7 @@ export class InterstateTransferListComponent implements OnInit {
         itemNumber: [_.ItemNumber],
         orderQty: [_.OrderQty],
         extendedCost: [_.ExtdCost],
-        qtyOnHand: [_.QtyOnHand],
+        qtyAvailable: [_.QtyAvailable],
         toTransfer: []
       }))
     );
