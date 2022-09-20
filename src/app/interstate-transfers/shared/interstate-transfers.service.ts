@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, map, Observable, of } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { PurchaseOrder } from './purchase-order';
 import { PurchaseOrderLine } from './purchase-order-line';
+import { SuggestedItem } from './suggested-item';
 
 
 
@@ -21,8 +22,15 @@ export class InterstateTransfersService {
   ) { }
 
   getInterstateTransfers(from: string, to: string): Observable<PurchaseOrderLine[]> {
-    console.log(from, to)
-    return this.http.get<PurchaseOrderLine[]>(`${environment.gpEndpoint}/po?from=${from}&to=${to}`);
+    return this.http.get<{lines: PurchaseOrderLine[]}>(`${environment.gpEndpoint}/po?from=${from}&to=${to}`).pipe(
+      map(_ => _.lines)
+    );
+  }
+
+  getPanList(branch: string): Observable<SuggestedItem[]> {
+    return this.http.get<{lines: SuggestedItem[]}>(`${environment.gpEndpoint}/pan?branch=${branch}`).pipe(
+      map(_ => _.lines)
+    );;
   }
 
   createTransfer(fromSite: string | null, toSite: string | null, lines: any): Observable<Object> {

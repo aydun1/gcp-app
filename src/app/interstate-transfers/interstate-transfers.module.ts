@@ -8,16 +8,20 @@ import { InterstateTransfersRoutingModule } from './interstate-transfers-routing
 import { InterstateTransferListComponent } from './interstate-transfer-list/interstate-transfer-list.component';
 import { InterstateTransferViewComponent } from './interstate-transfer-view/interstate-transfer-view.component';
 import { PipeModule } from '../shared/pipes/pipe.module';
+import { InterstateTransferPanListComponent } from './interstate-transfer-pan-list/interstate-transfer-pan-list.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
     InterstateTransfersComponent,
     InterstateTransferListComponent,
-    InterstateTransferViewComponent
+    InterstateTransferViewComponent,
+    InterstateTransferPanListComponent
   ],
   imports: [
     CommonModule,
     SharedModule,
+    MatProgressSpinnerModule,
     PipeModule,
     InterstateTransfersRoutingModule
   ],

@@ -1,5 +1,7 @@
 <div class="home-cards">
   <gcp-big-button [target]="['requested-items']">Requested items</gcp-big-button>
+  <gcp-big-button *ngIf="isQld" [target]="['pan-list']">Pan list</gcp-big-button>
+
 </div>
 
 <router-outlet></router-outlet>
