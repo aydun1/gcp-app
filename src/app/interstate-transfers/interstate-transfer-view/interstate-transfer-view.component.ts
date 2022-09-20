@@ -1,10 +1,8 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { Observable, of, switchMap } from 'rxjs';
 import { NavigationService } from 'src/app/navigation.service';
 
-import { SharedService } from '../../shared.service';
 import { PurchaseOrder } from '../shared/purchase-order';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
 
