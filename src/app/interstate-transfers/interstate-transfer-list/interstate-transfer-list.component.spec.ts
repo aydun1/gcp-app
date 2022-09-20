@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LoadingScheduleListComponent } from './loading-schedule-list.component';
+import { InterstateTransferListComponent } from './interstate-transfer-list.component';
 
 describe('LoadingScheduleListComponent', () => {
-  let component: LoadingScheduleListComponent;
-  let fixture: ComponentFixture<LoadingScheduleListComponent>;
+  let component: InterstateTransferListComponent;
+  let fixture: ComponentFixture<InterstateTransferListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LoadingScheduleListComponent ]
+      declarations: [ InterstateTransferListComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LoadingScheduleListComponent);
+    fixture = TestBed.createComponent(InterstateTransferListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

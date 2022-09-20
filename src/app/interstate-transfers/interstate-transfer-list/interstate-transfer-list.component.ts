@@ -17,13 +17,13 @@ import { PurchaseOrderLine } from '../shared/purchase-order-line';
 export class InterstateTransferListComponent implements OnInit {
   private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
   private _loadList!: boolean;
-  public fromBranchFilter = new FormControl({value: '', disabled: false});
+  public fromBranchFilter = new FormControl({value: '', disabled: true});
   public toBranchFilter = new FormControl('');
   public viewFilter = new FormControl('');
   public interstateTransfers$!: Observable<FormGroup<any>>;
   public loading = false;
   public creating = false;
-  public displayedColumns = [ 'date', 'product', 'quantity', 'cost', 'transfer'];
+  public displayedColumns = [ 'date', 'product', 'available', 'quantity', 'transfer'];
   public totals!: object;
   public states = this.shared.branches;
   public ownState = '';
