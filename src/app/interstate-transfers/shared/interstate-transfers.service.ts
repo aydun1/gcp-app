@@ -30,7 +30,7 @@ export class InterstateTransfersService {
   getPanList(branch: string): Observable<SuggestedItem[]> {
     return this.http.get<{lines: SuggestedItem[]}>(`${environment.gpEndpoint}/pan?branch=${branch}`).pipe(
       map(_ => _.lines)
-    );;
+    );
   }
 
   createTransfer(fromSite: string | null, toSite: string | null, lines: any): Observable<Object> {
