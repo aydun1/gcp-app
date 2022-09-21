@@ -26,6 +26,13 @@ export class SharedService {
   public territoryNames = this.branches.concat(['INT', 'NATIONAL']);
   public isWarehouse!: boolean;
 
+  public emailMap = new Map<string, Array<string>>([
+    ['QLD', ['qld@gardencityplastics.com', 'megan.williams@gardencityplastics.com']],
+    ['NSW', ['nsw@gardencityplastics.com']],
+    ['SA', ['sa@gardencityplastics.com']]
+  ]);
+
+
   constructor(
     private http: HttpClient,
     private dom: DomSanitizer,
@@ -78,25 +85,20 @@ export class SharedService {
     this.titleService.setTitle(title);
   }
 
-  sendMail(subject: string, body: string): Observable<Object> {
+  sendMail(to: Array<string>, subject: string, body: string): Observable<Object> {
     const url = `${environment.endpoint}/me/sendMail`;
+    const cc = ['aidan.obrien@gardencityplastics.com'];
     const payload  = {
-      'message': {
-        'subject': subject,
-        'body': {
-          'contentType': 'Text',
-          'content': body,
+      message: {
+        subject: subject,
+        body: {
+          contentType: 'Text',
+          content: body,
         },
-        'toRecipients': [
-          {
-            'emailAddress': {
-              'address': 'aidan.obrien@gardencityplastics.com'
-            }
-          }
-        ],
-
+        toRecipients: to.map(_ => {return {emailAddress: {address: _}}}),
+        ccRecipients: cc.map(_ => {return {emailAddress: {address: _}}}),
       },
-      'saveToSentItems': 'false'
+      saveToSentItems: false
     }
     return this.http.post(url, payload);
   }
