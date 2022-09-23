@@ -18,6 +18,10 @@ h2 {
   margin-left: 10px;
 }
 
+.toggles {
+  display: none;
+}
+
 .mat-form-field {
   font-size: 14px;
   margin-right: 10px;
@@ -55,14 +59,8 @@ h2 {
   white-space: nowrap;
 }
 
-.mat-column-quantity {
+.mat-column-NSW, .mat-column-QLD, .mat-column-SA, .mat-column-VIC, .mat-column-WA, .mat-column-onHand, .mat-column-required, .mat-column-toFill {
   flex: 0 1 140px;
-  font-weight: bold;
-  text-align: right;
-}
-
-.mat-column-available {
-  flex: 0 0 140px;
   text-align: right;
 }
 
@@ -119,6 +117,10 @@ h2 {
 @media (max-width: 800px) {
   .mat-header-row {
     display: none;
+  }
+
+  .toggles {
+    display: block;
   }
 
   .mat-cell {

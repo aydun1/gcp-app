@@ -15,5 +15,9 @@ export interface SuggestedItem {
   QtyBackordered: number;
   QtyOnHand: number;
   QtyRequired: number;
-  VicOnHand: number;
+  OnHandNSW: number;
+  OnHandQLD: number;
+  OnHandSA: number;
+  OnHandVIC: number;
+  OnHandWA: number;
 };

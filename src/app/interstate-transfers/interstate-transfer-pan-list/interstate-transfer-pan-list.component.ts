@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -11,6 +11,7 @@ import { SuggestedItem } from '../shared/suggested-item';
 
 @Component({
   selector: 'gcp-interstate-pan-transfer-list',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './interstate-transfer-pan-list.component.html',
   styleUrls: ['./interstate-transfer-pan-list.component.css']
 })
@@ -22,14 +23,29 @@ export class InterstateTransferPanListComponent implements OnInit {
   public interstateTransfers$!: Observable<FormGroup<any>>;
   public loading = false;
   public creating = false;
-  public displayedColumns = [ 'date', 'product', 'available', 'quantity', 'toFill', 'transfer'];
+  public columns = [ 'date', 'product', 'category', 'NSW', 'QLD', 'SA', 'VIC', 'WA', 'onHand', 'required', 'toFill', 'transfer'];
+  public sourceBranches: Array<string> = [];
+  public categories: Array<string> = [];
   public totals!: object;
   public states = this.shared.branches;
   public ownState = '';
   public transferForm!: FormGroup;
+  public hideNoStockVic = false;
+  public hideNoStockNsw = false;
+  public hideNoStockQld = false;
+  public hideNoStockSa = false;
+  public hideNoStockWa = false;
 
+  public hideUnrequireds = false;
   public get otherStates(): Array<string> {
-    return this.states.filter(_ => _ !== this.branchFilter.value);
+    return this.states.filter(_ => _ !== this.branchFilter.value)
+  }
+
+  public get displayedColumns(): Array<string> {
+
+    const toRemove = (this.states.filter(_ => !this.sourceBranches.includes(_)))
+    console.log(toRemove)
+    return this.columns.filter(_ => _ !== this.branchFilter.value).filter(_ => !toRemove.includes(_));
   }
 
   public get lines(): FormArray<FormGroup> {
@@ -67,7 +83,7 @@ export class InterstateTransferPanListComponent implements OnInit {
       )),
       tap(_ => this.parseParams(_)),
       tap(_ => this.loading = true),
-      switchMap(_ => this._loadList ? this.getPurchaseOrders(_) : []),
+      switchMap(_ => this._loadList ? this.getSuggestedItems(_) : []),
       tap(_ => this._InterstateTransferSubject$.next(this.makeFormGroup(_))),
       switchMap(_ => this._InterstateTransferSubject$),
     )
@@ -85,7 +101,13 @@ export class InterstateTransferPanListComponent implements OnInit {
         bin: [_.Bin?.replace('QLD BIN', '')],
         palletQty: [_.PalletQty],
         packSize: [_.PackSize == _.PalletQty ? '-' : _.PackSize],
-        vicOnHand: [_.VicOnHand],
+        category: [_.Category],
+        vicOnHand: [_.OnHandVIC],
+        qldOnHand: [_.OnHandQLD],
+        saOnHand: [_.OnHandSA],
+        waOnHand: [_.OnHandWA],
+        nswOnHand: [_.OnHandNSW],
+        onHand: [_.QtyOnHand],
         qtyRequired: [Math.max(0, _.QtyRequired) || null],
         toFill: [_.Max ? _.QtyRequired + _.Max : null],
         toTransfer: []
@@ -95,9 +117,8 @@ export class InterstateTransferPanListComponent implements OnInit {
     return this.transferForm;
   }
   
-  getPurchaseOrders(params: Params): Observable<SuggestedItem[]> {
+  getSuggestedItems(params: Params): Observable<SuggestedItem[]> {
     const branch = params['branch'] || '';
-    console.log(branch);
     if (!branch) return of([]);
     return this.interstateTransfersService.getPanList(branch);
   }
@@ -153,9 +174,6 @@ export class InterstateTransferPanListComponent implements OnInit {
     return lines.reduce((acc, cur) => acc + cur.toTransfer, 0);
   }
 
-  trackByGroupsFn(index: number, item: any): string {
-    return item.key;
-  }
 
   trackByFn(index: number, item: any): string {
     return item.id;
