@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { BehaviorSubject, distinctUntilChanged, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, debounce, debounceTime, distinctUntilChanged, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
@@ -23,8 +22,7 @@ export class InterstateTransferPanListComponent implements OnInit {
   public interstateTransfers$!: Observable<FormGroup<any>>;
   public loading = false;
   public creating = false;
-  public columns = [ 'date', 'product', 'category', 'NSW', 'QLD', 'SA', 'VIC', 'WA', 'onHand', 'required', 'toFill', 'transfer'];
-  public sourceBranches: Array<string> = [];
+  public suppliers: Array<string> = [];
   public categories: Array<string> = [];
   public totals!: object;
   public states = this.shared.branches;
@@ -35,16 +33,25 @@ export class InterstateTransferPanListComponent implements OnInit {
   public hideNoStockQld = false;
   public hideNoStockSa = false;
   public hideNoStockWa = false;
-
   public hideUnrequireds = false;
+  public columns = [ 'bin', 'product', 'category', 'NSW', 'QLD', 'SA', 'VIC', 'WA', 'onHand', 'required', 'toFill', 'transfer'];
+  public categoryOptions = [
+    {value: 'M', name: 'Manufactured'},
+    {value: 'A', name: 'Allied'},
+    {value: 'H', name: 'Heatherton'},
+    {value: 'PM', name: 'Print Codes'},
+    {value: 'NA', name: 'Allied NSW'},
+    {value: 'QA', name: 'Allied QLD'},
+    {value: 'SA', name: 'Allied SA'},
+    {value: 'WA', name: 'Allied WA'}
+  ];
+
   public get otherStates(): Array<string> {
     return this.states.filter(_ => _ !== this.branchFilter.value)
   }
 
   public get displayedColumns(): Array<string> {
-
-    const toRemove = (this.states.filter(_ => !this.sourceBranches.includes(_)))
-    console.log(toRemove)
+    const toRemove = (this.states.filter(_ => !this.suppliers.includes(_)))
     return this.columns.filter(_ => _ !== this.branchFilter.value).filter(_ => !toRemove.includes(_));
   }
 
@@ -61,7 +68,6 @@ export class InterstateTransferPanListComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private snackBar: MatSnackBar,
     private shared: SharedService,
     private interstateTransfersService: InterstateTransfersService
   ) { }
@@ -89,11 +95,11 @@ export class InterstateTransferPanListComponent implements OnInit {
     )
   }
 
-  makeFormGroup(lines: Array<SuggestedItem>) {
+  makeFormGroup(lines: Array<SuggestedItem>): FormGroup<any> {
     this.lines.clear();
     let i = -1;
-    lines.forEach(_ => 
-      this.lines.push(this.fb.group({
+    lines.forEach(_ => {
+      const formGroup = this.fb.group({
         index: [i += 1],
         id: [_.Id],
         itemDesc: [_.ItemDesc],
@@ -110,9 +116,14 @@ export class InterstateTransferPanListComponent implements OnInit {
         onHand: [_.QtyOnHand],
         qtyRequired: [Math.max(0, _.QtyRequired) || null],
         toFill: [_.Max ? _.QtyRequired + _.Max : null],
-        toTransfer: []
-      }))
-    );
+        toTransfer: [_.ToTransfer]
+      });
+      formGroup.valueChanges.pipe(
+        debounceTime(1000),
+        tap(_ => this.updatePanList(_.itemNumber, _.toTransfer))
+      ).subscribe();
+      this.lines.push(formGroup);
+    });
     this.loading = false;
     return this.transferForm;
   }
@@ -120,10 +131,16 @@ export class InterstateTransferPanListComponent implements OnInit {
   getSuggestedItems(params: Params): Observable<SuggestedItem[]> {
     const branch = params['branch'] || '';
     if (!branch) return of([]);
-    return this.interstateTransfersService.getPanList(branch);
+    return this.interstateTransfersService.getPanListWithQuantities(branch, 'test');
+  }
+
+  updatePanList(itemNumber: string | null | undefined, quantity: number | null | undefined) {
+    if (!itemNumber) return;
+    this.interstateTransfersService.setRequestedQuantities(quantity, itemNumber, 'test').subscribe();
   }
 
   parseParams(params: Params): void {
+    const defaultCategories = ['M', 'A', 'H', 'PM'];
     if (!params) return;
     const filters: Params = {};
     if ('branch' in params) {
@@ -132,10 +149,17 @@ export class InterstateTransferPanListComponent implements OnInit {
     } else {
       this.branchFilter.patchValue(this.states[0]);
     }
-    if ('view' in params) {
-      this.viewFilter.patchValue(params['view']);
+    if ('categories' in params) {
+      const categories = Array.isArray(params['categories']) ? params['categories'] : [params['categories']];
+      this.categories = categories;
     } else {
-      this.viewFilter.patchValue('ungrouped');
+      this.categories = [...defaultCategories];
+    }
+    if ('suppliers' in params) {
+      const suppliers = Array.isArray(params['suppliers']) ? params['suppliers'] : [params['categories']];
+      this.suppliers = suppliers;
+    } else {
+      this.suppliers = [];
     }
   }
 
@@ -147,15 +171,21 @@ export class InterstateTransferPanListComponent implements OnInit {
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
     const sameBranch = prev['branch'] === curr['branch'];
-    return sameBranch && this._loadList;
+    const sameCategories = prev['categories'] === curr['categories'];
+    const sameSuppliers = prev['suppliers'] === curr['suppliers'];
+    return this._loadList && sameBranch;
   }
 
   setBranch(branch: MatSelectChange): void {
     this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setView(view: MatSelectChange): void {
-    this.router.navigate([], { queryParams: {view: view.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  setCategories(categories: MatSelectChange): void {
+    this.router.navigate([], { queryParams: {categories: categories.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  setSuppliers(suppliers: MatSelectChange): void {
+    this.router.navigate([], { queryParams: {suppliers: suppliers.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   getTotalQtyOnHand(lines: Array<any>): number {

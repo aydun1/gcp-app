@@ -50,8 +50,8 @@ h2 {
   text-align: center;
 }
 
-.mat-column-date {
-  flex: 0 0 100px;
+.mat-column-bin {
+  flex: 0 1 120px;
 }
 
 .mat-column-product {
@@ -59,8 +59,12 @@ h2 {
   white-space: nowrap;
 }
 
+.mat-column-category {
+  flex: 0 1 80px;
+}
+
 .mat-column-NSW, .mat-column-QLD, .mat-column-SA, .mat-column-VIC, .mat-column-WA, .mat-column-onHand, .mat-column-required, .mat-column-toFill {
-  flex: 0 1 140px;
+  flex: 0 1 100px;
   text-align: right;
 }
 
