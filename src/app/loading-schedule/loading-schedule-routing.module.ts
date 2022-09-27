@@ -25,7 +25,13 @@ const routes: Routes = [
       {
         path: ':id',
         data: {title: 'View entry'},
-        component: LoadingScheduleViewComponent
+        component: LoadingScheduleViewComponent,
+        children: [
+          {
+            path: 'edit',
+            component: LoadingScheduleNewComponent,
+          }
+        ]
       },
     ],
     canActivate: [MsalGuard]

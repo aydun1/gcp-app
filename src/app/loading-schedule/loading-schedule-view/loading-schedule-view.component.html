@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <button mat-icon-button (click)="goBack()" class="mobile-button">
+  <button mat-icon-button (click)="goBack()" class="mobile-button" type="button">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <ng-container>
@@ -12,11 +12,10 @@
     <h2>Loading schedule entry</h2>
     <div class="actions">
       <div class="edit">
-        <button mat-raised-button (click)="edit = true">Edit entry</button>
+        <a mat-raised-button [routerLink]="['edit']" type="button">Edit entry</a>
       </div>
     </div>
   </div>
-
 
   <mat-card class="inner">
     <mat-list>
@@ -86,7 +85,7 @@
   </mat-card>
 </div>
 
-<gcp-loading-schedule-new *ngIf="edit"></gcp-loading-schedule-new>
+<router-outlet></router-outlet>
 
 <ng-template #loadingPage>
   <gcp-loading-page></gcp-loading-page>

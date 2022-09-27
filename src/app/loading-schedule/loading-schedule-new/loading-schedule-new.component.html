@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <button mat-icon-button (click)="goBack()" class="mobile-button">
+  <button mat-icon-button (click)="goBack()" class="mobile-button" type="button">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <ng-container>
@@ -7,7 +7,7 @@
   </ng-container>
 </mat-toolbar>
 
-<div class="outer">
+<div *ngIf="!loadingData; else loadingPage" class="outer">
   <h2>{{ id ? 'Edit' : 'Add a new' }} loading schedule entry</h2>
   <form (ngSubmit)="onSubmit()" [formGroup]="loadingScheduleForm">
     <mat-card>
@@ -91,7 +91,11 @@
       </mat-form-field>
     </mat-card>
     <div class="buttons">
-      <button mat-raised-button type="submit" color="primary" [disabled]="loading">Confirm</button>
+      <button mat-raised-button color="primary" [disabled]="savingData" type="submit">Confirm</button>
     </div>
   </form>
 </div>
+
+<ng-template #loadingPage>
+  <gcp-loading-page></gcp-loading-page>
+</ng-template>
