@@ -44,8 +44,8 @@ export class PalletDialogComponent implements OnInit {
     this.siteNames = this.data.sites ? this.data.sites.map(_ => _.fields.Title) : [this.data.site].filter(_ => _);
     this.palletForm = this.fb.group({
       palletType: ['', Validators.required],
-      inQty: ['', Validators.required],
-      outQty: ['', Validators.required],
+      inQty: ['', [Validators.required, Validators.min(0), Validators.max(1000)]],
+      outQty: ['', [Validators.required, Validators.min(0), Validators.max(1000)]],
       site: [this.data.site, requireSite ? Validators.required : ''],
       date: [new Date(), Validators.required],
       notes: ['']
