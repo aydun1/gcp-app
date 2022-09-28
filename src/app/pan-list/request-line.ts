@@ -13,6 +13,7 @@ export interface RequestLine {
     Title: string;
     PanList: string;
     ItemNumber: string;
+    ItemDescription: string;
     Quantity: number;
   }
 }

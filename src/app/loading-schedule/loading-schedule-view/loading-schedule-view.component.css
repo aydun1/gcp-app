@@ -21,6 +21,12 @@
   margin-bottom: 20px;
 }
 
+.selector {
+  position:absolute;
+  right: 5px;
+  top: 5px
+}
+
 .status {
   font-size: 18px;
   position: absolute;

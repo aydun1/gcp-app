@@ -7,7 +7,7 @@
   </ng-container>
 </mat-toolbar>
 
-<div *ngIf="!loadingData; else loadingPage" class="outer">
+<div *ngIf="loadingData | async; else loadingPage" class="outer">
   <h2>{{ id ? 'Edit' : 'Add a new' }} loading schedule entry</h2>
   <form (ngSubmit)="onSubmit()" [formGroup]="loadingScheduleForm">
     <mat-card>

@@ -1,3 +1,12 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="goBack()" class="mobile-button" type="button">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <ng-container>
+    <div class="title">Edit pan list</div>
+  </ng-container>
+</mat-toolbar>
+
 <div class="outer">
   <h2>Requested items</h2>
   <form class="inner" [formGroup]="transferForm">
@@ -29,7 +38,7 @@
           <mat-slide-toggle class="top-toggle" [(ngModel)]="hideUnrequireds" [ngModelOptions]="{standalone: true}">Only show required items</mat-slide-toggle>  
         </div>
       </div>
-      <button mat-raised-button color="primary" type="submit" [disabled]="0 && (transferQty === 0 || creating)">Save draft</button>
+      <span *ngIf="saving | async">Saving</span>
     </div>
     <div *ngIf="loading" class="loading-spinner"><mat-spinner></mat-spinner></div>
 

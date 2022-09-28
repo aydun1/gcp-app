@@ -6,6 +6,7 @@ import { LoadingScheduleComponent } from './loading-schedule.component';
 import { LoadingScheduleListComponent } from './loading-schedule-list/loading-schedule-list.component';
 import { LoadingScheduleNewComponent } from './loading-schedule-new/loading-schedule-new.component';
 import { LoadingScheduleViewComponent } from './loading-schedule-view/loading-schedule-view.component';
+import { PanListComponent } from '../pan-list/pan-list.component';
 
 const routes: Routes = [
   {
@@ -30,6 +31,10 @@ const routes: Routes = [
           {
             path: 'edit',
             component: LoadingScheduleNewComponent,
+          },
+          {
+            path: 'panlist',
+            component: PanListComponent,
           }
         ]
       },

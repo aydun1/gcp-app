@@ -1,20 +1,26 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { BehaviorSubject, debounce, debounceTime, distinctUntilChanged, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import { NavigationService } from '../navigation.service';
 
-import { SharedService } from '../../shared.service';
-import { InterstateTransfersService } from '../shared/interstate-transfers.service';
-import { SuggestedItem } from '../shared/suggested-item';
+import { SharedService } from '../shared.service';
+import { PanListService } from './pan-list.service';
+import { SuggestedItem } from './suggested-item';
 
 @Component({
-  selector: 'gcp-interstate-pan-transfer-list',
+  selector: 'gcp-pan-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './interstate-transfer-pan-list.component.html',
-  styleUrls: ['./interstate-transfer-pan-list.component.css']
+  templateUrl: './pan-list.component.html',
+  styleUrls: ['./pan-list.component.css']
 })
-export class InterstateTransferPanListComponent implements OnInit {
+export class PanListComponent implements OnInit {
+  @HostBinding('class') class = 'app-component mat-app-background';
+
+  private scheduleId!: string;
+  private panId!: number;
+
   private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
   private _loadList!: boolean;
   public branchFilter = new FormControl({value: '', disabled: false});
@@ -34,6 +40,7 @@ export class InterstateTransferPanListComponent implements OnInit {
   public hideNoStockSa = false;
   public hideNoStockWa = false;
   public hideUnrequireds = false;
+  public saving = new Subject<boolean>();
   public columns = [ 'bin', 'product', 'category', 'NSW', 'QLD', 'SA', 'VIC', 'WA', 'onHand', 'required', 'toFill', 'transfer'];
   public categoryOptions = [
     {value: 'M', name: 'Manufactured'},
@@ -46,6 +53,7 @@ export class InterstateTransferPanListComponent implements OnInit {
     {value: 'WA', name: 'Allied WA'}
   ];
 
+  
   public get otherStates(): Array<string> {
     return this.states.filter(_ => _ !== this.branchFilter.value)
   }
@@ -69,10 +77,12 @@ export class InterstateTransferPanListComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private shared: SharedService,
-    private interstateTransfersService: InterstateTransfersService
+    private navService: NavigationService,
+    private panListService: PanListService
   ) { }
 
   ngOnInit(): void {
+    this.scheduleId = this.route.snapshot.paramMap.get('id') || '';
     const state$ = this.shared.getBranch();
     this.transferForm = this.fb.group({
       lines: this.fb.array([]),
@@ -120,7 +130,7 @@ export class InterstateTransferPanListComponent implements OnInit {
       });
       formGroup.valueChanges.pipe(
         debounceTime(1000),
-        tap(_ => this.updatePanList(_.itemNumber, _.toTransfer))
+        tap(_ => this.updatePanList(_.itemNumber, _.itemDesc, _.toTransfer))
       ).subscribe();
       this.lines.push(formGroup);
     });
@@ -131,18 +141,28 @@ export class InterstateTransferPanListComponent implements OnInit {
   getSuggestedItems(params: Params): Observable<SuggestedItem[]> {
     const branch = params['branch'] || '';
     if (!branch) return of([]);
-    return this.interstateTransfersService.getPanListWithQuantities(branch, 'test');
+    return this.panListService.getPanListWithQuantities(branch, this.scheduleId, this.panId);
   }
 
-  updatePanList(itemNumber: string | null | undefined, quantity: number | null | undefined) {
+  updatePanList(itemNumber: string | null | undefined, itemDescription: string | null | undefined, quantity: number | null | undefined) {
     if (!itemNumber) return;
-    this.interstateTransfersService.setRequestedQuantities(quantity, itemNumber, 'test').subscribe();
+    this.saving.next(true);
+    this.panListService.setRequestedQuantities(quantity, itemNumber, itemDescription, this.scheduleId, this.panId).then(() => {
+      this.saving.next(false);
+      this.panListService.getRequestedQuantities(this.scheduleId, this.panId)
+    });
   }
 
   parseParams(params: Params): void {
     const defaultCategories = ['M', 'A', 'H', 'PM'];
     if (!params) return;
     const filters: Params = {};
+    if ('pan' in params) {
+      this.panId = parseInt(params['pan']);
+      filters['pan'] = params['pan'];
+    } else {
+      this.panId = 0;
+    }
     if ('branch' in params) {
       this.branchFilter.patchValue(params['branch']);
       filters['branch'] = params['branch'];
@@ -207,6 +227,10 @@ export class InterstateTransferPanListComponent implements OnInit {
 
   trackByFn(index: number, item: any): string {
     return item.id;
+  }
+
+  goBack(): void {
+    this.navService.back();
   }
 
 }
