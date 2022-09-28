@@ -91,7 +91,6 @@ h2 {
 }
 
 .mat-column-transfer {
-  background: #a5a5a5;
   flex: 0 0 74px;
   padding-left: 24px;
 }
@@ -119,10 +118,6 @@ h2 {
 }
 
 @media (max-width: 800px) {
-  .mat-header-row {
-    display: none;
-  }
-
   .toggles {
     display: block;
   }
@@ -150,10 +145,6 @@ h2 {
     padding-bottom: 0;
     padding-top: 0;
     padding-right: 0;
-  }
-
-  .mat-footer-cell.mat-column-product {
-    display: none;
   }
 
   .mat-cell.mat-column-date {
