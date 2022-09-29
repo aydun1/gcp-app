@@ -8,8 +8,10 @@
         </mat-button-toggle-group>
       </div>
       <button mat-raised-button color="primary" type="button" [disabled]="!selectedPan" [routerLink]="['panlist']" [queryParams]="{pan: selectedPan}">Edit list</button>
+      <button mat-icon-button type="button" class="menu" [matMenuTriggerFor]="actionsMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>  
     </div>
-    <div *ngIf="loading" class="loading-spinner"><mat-spinner></mat-spinner></div>
 
     <div *ngIf="interstateTransfers$ | async as interstateTransfers">
       <mat-table #table [dataSource]="interstateTransfers.value['lines']" [trackBy]="trackByFn" formArrayName="lines">
@@ -74,8 +76,8 @@
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-        <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="!loading"></mat-footer-row>
-        <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="!selectedPan || loading || getTotalRequestedLines(interstateTransfers.value['lines'])"></mat-footer-row>
+        <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) === false"></mat-footer-row>
+        <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="!selectedPan || (loading | async) === true || getTotalRequestedLines(interstateTransfers.value['lines'])"></mat-footer-row>
         <mat-footer-row *matFooterRowDef="['unselected']" [class.hidden]="selectedPan"></mat-footer-row>
 
         <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
@@ -84,5 +86,10 @@
   </form>
 </div>
 
+<mat-menu #actionsMenu="matMenu">
+  <ng-template matMenuContent>
+    <button mat-menu-item type="button" [disabled]="!selectedPan" (click)="deleteItemsAndList()">Delete list</button>
+  </ng-template>
+</mat-menu>
 
 <router-outlet></router-outlet>

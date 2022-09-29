@@ -82,7 +82,7 @@
     <mat-card-header>
       <mat-card-title>Pan list</mat-card-title>
     </mat-card-header>
-    <gcp-pan-list-simple [scheduleId]="loadingScheduleEntry.id" [panLists]="loadingScheduleEntry.fields.PanListsArray" (addPanList)="addPanList(loadingScheduleEntry.id)"></gcp-pan-list-simple>
+    <gcp-pan-list-simple [scheduleId]="loadingScheduleEntry.id" [panLists]="loadingScheduleEntry.fields.PanListsArray" (addPanList)="addPanList(loadingScheduleEntry.id)" (deletePanList)="deletePanList(loadingScheduleEntry.id, $event)"></gcp-pan-list-simple>
   </mat-card>
 
   <mat-card class="inner">
@@ -94,7 +94,6 @@
   </mat-card>
 </div>
 
-<router-outlet></router-outlet>
 
 <ng-template #loadingPage>
   <gcp-loading-page></gcp-loading-page>

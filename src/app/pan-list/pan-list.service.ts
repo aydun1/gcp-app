@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, catchError, combineLatest, firstValueFrom, lastValueFrom, map, Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, forkJoin, lastValueFrom, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { RequestLine } from './request-line';
@@ -39,18 +39,38 @@ export class PanListService {
   }
 
   getRequestedQuantities(loadingScheduleId: string, panListId: number): Observable<RequestLine[]> {
-    console.log('Getting quantities');
+    this.loading.next(true);
+    this._requestedsSubject$.next([]);
     const url = `${this._panListLinesUrl}/items?expand=fields(select=ItemNumber,ItemDescription,Quantity)&filter=fields/Title eq '${loadingScheduleId}' and fields/PanList eq '${panListId}'&orderby=fields/ItemNumber asc`;
 
     const request = this.http.get<{value: RequestLine[]}>(url).pipe(
-      map(res => res.value.filter(_ => _.fields.Quantity > 0)),
+      map(res => {
+        this.loading.next(false);
+        return res.value.filter(_ => _.fields.Quantity > 0);
+      }),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
+        this.loading.next(false);
         return of([]);
       })
     );
     lastValueFrom(request).then(_ => this._requestedsSubject$.next(_));
     return this._requestedsSubject$;
+  }
+
+  deletePanList(loadingScheduleId: string, panListId: number): Promise<RequestLine[]> {
+    const url = `${this._panListLinesUrl}/items?expand=fields(select=ItemNumber,ItemDescription,Quantity)&filter=fields/Title eq '${loadingScheduleId}' and fields/PanList eq '${panListId}'&orderby=fields/ItemNumber asc`;
+    const request = this.http.get<{value: RequestLine[]}>(url).pipe(
+      startWith({value: []}),
+      map(res => res.value.filter(_ => _.fields.Quantity > 0)),
+      map(lines => lines.map(_ => this.http.patch<RequestLine>(`${this._panListLinesUrl}/items('${_.id}')`, {fields: {Quantity: 0}}))),
+      switchMap(_ => forkJoin(_).pipe(startWith([]))),
+      catchError(err => {
+        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
+        return of();
+      })
+    );
+    return lastValueFrom(request);
   }
 
   setRequestedQuantities(quantity: number | null | undefined, itemNumber: string, itemDescription: string | null | undefined, loadingScheduleId: string, panListId: number): Promise<RequestLine> {

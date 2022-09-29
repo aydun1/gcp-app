@@ -1,9 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
-import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { PanListService } from '../pan-list.service';
@@ -17,22 +16,15 @@ import { RequestLine } from '../request-line';
 export class PanListSimpleComponent implements OnInit {
   @Input() panLists!: Array<number[]>;
   @Output() addPanList = new EventEmitter<boolean>();
+  @Output() deletePanList = new EventEmitter<number>();
+
   @Input() scheduleId!: string;
-  @Input()
-  get panListId(): string { return this._panListId; }
-  set panListId(value: string) {
-    this._panListId = value;
-  }
-  private _panListId!: string;
 
   private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
   private _loadList!: boolean;
+  public loading = this.panListService.loading;
   public interstateTransfers$!: Observable<FormGroup<any>>;
-  public loading = false;
-  public creating = false;
   public totals!: object;
-  public states = this.shared.branches;
-  public ownState = '';
   public transferForm!: FormGroup;
   public columns = ['product', 'transfer'];
   public panList: number | null = null;
@@ -68,7 +60,6 @@ export class PanListSimpleComponent implements OnInit {
       startWith({}),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       tap(_ => this.parseParams(_)),
-      tap(_ => this.loading = true),
       switchMap(_ => this._loadList ? this.getRequestedQuantities(_) : []),
       tap(_ => this._InterstateTransferSubject$.next(this.makeFormGroup(_))),
       switchMap(_ => this._InterstateTransferSubject$),
@@ -86,14 +77,8 @@ export class PanListSimpleComponent implements OnInit {
         itemDescription: [_.fields.ItemDescription],
         toTransfer: new FormControl({value: _.fields.Quantity, disabled: false})
       });
-      formGroup.valueChanges.pipe(
-        debounceTime(1000),
-        tap(_ => this.updatePanList(_.itemNumber, _.itemDescription, _.toTransfer))
-      ).subscribe();
       this.lines.push(formGroup);
     });
-    this.loading = false;
-    console.log(this.transferForm)
     return this.transferForm;
   }
   
@@ -109,10 +94,10 @@ export class PanListSimpleComponent implements OnInit {
 
   parseParams(params: Params): void {
     if (!params) return;
-    const filters: Params = {};
     if ('pan' in params) {
       this.selectedPan = params['pan'];
-      filters['pan'] = params['pan'];
+    } else {
+      this.selectedPan = 0;
     }
   }
 
@@ -134,26 +119,6 @@ export class PanListSimpleComponent implements OnInit {
     this.router.navigate([], { queryParams: {pan: panId.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setBranch(branch: MatSelectChange): void {
-    this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
-  }
-
-  setCategories(categories: MatSelectChange): void {
-    this.router.navigate([], { queryParams: {categories: categories.value}, queryParamsHandling: 'merge', replaceUrl: true});
-  }
-
-  setSuppliers(suppliers: MatSelectChange): void {
-    this.router.navigate([], { queryParams: {suppliers: suppliers.value}, queryParamsHandling: 'merge', replaceUrl: true});
-  }
-
-  getTotalQtyOnHand(lines: Array<any>): number {
-    return lines.reduce((acc, cur) => acc + cur.qtyOnHand, 0);
-  }
-
-  getTotalRequiredQty(lines: Array<any>): number {
-    return lines.reduce((acc, cur) => acc + cur.qtyRequired, 0);
-  }
-
   getTotalRequestedLines(lines: Array<any>): number {
     return lines.reduce((acc, cur) => acc + 1, 0);
   }
@@ -162,6 +127,13 @@ export class PanListSimpleComponent implements OnInit {
     return lines.reduce((acc, cur) => acc + cur.toTransfer, 0);
   }
 
+  deleteItemsAndList() {
+    this.panListService.deletePanList(this.scheduleId, this.selectedPan).then(
+      () => {
+        this.deletePanList.next(this.selectedPan)
+      }
+    );
+  }
 
   trackByFn(index: number, item: any): string {
     return item.id;

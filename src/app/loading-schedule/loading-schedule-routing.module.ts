@@ -30,10 +30,12 @@ const routes: Routes = [
         children: [
           {
             path: 'edit',
+            data: {title: 'Edit entry'},
             component: LoadingScheduleNewComponent,
           },
           {
             path: 'panlist',
+            data: {title: 'Edit pan list'},
             component: PanListComponent,
           }
         ]

@@ -135,6 +135,18 @@ export class LoadingScheduleService {
     ));
   }
 
+  removePanList(id: string, panListId: number): Promise<LoadingSchedule> {
+    const url = `${this._loadingScheduleUrl}/items('${id}')`;
+    return lastValueFrom(this.getLoadingScheduleEntry(id).pipe(
+      switchMap(_ => {
+        const pans = _.fields.PanListsArray || [];
+        const fields = {PanLists: [...pans.filter(p => `${p[0]}` !== `${panListId}`)].join('\r\n')};
+        return this.http.patch<LoadingSchedule>(url, {fields});
+      }),
+      tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _))
+    ));
+  }
+
   getTransportCompanies(branch: string): Observable<TransportCompany[]> {
     const url = `${this._transportCompaniesUrl}/items?expand=fields(select=Title,Drivers)&filter=fields/Branch eq '${branch}'`;
     return this.http.get<{value: TransportCompany[]}>(url).pipe(

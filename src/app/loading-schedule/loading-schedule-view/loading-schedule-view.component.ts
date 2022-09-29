@@ -8,6 +8,7 @@ import { SharedService } from '../../shared.service';
 import { NavigationService } from '../../navigation.service';
 import { LoadingScheduleService } from '../shared/loading-schedule.service';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
+import { LoadingSchedule } from '../shared/loading-schedule';
 
 @Component({
   selector: 'gcp-loading-schedule-view',
@@ -36,7 +37,7 @@ export class LoadingScheduleViewComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     this.scheduleSource$ = new BehaviorSubject<string | null>(id);
     const loadingSchedule$ = this.scheduleSource$.pipe(
-      switchMap(_ => this.loadingScheduleService.getLoadingScheduleEntry(_))
+      switchMap(_ => this.loadingScheduleService.getLoadingScheduleEntry(_)),
     );
     this.loadingScheduleEntry$ = combineLatest([loadingSchedule$, this.sharedService.getBranch()]).pipe(
       map(_ => _[0]),
@@ -56,12 +57,19 @@ export class LoadingScheduleViewComponent implements OnInit {
     return throwError(() => new Error(message));
   }
 
-  addPanList(id: string) {
-    this.loadingScheduleService.addPanList(id).then(_ => {
-      this.fetchData(id);
-      const pla = _.fields.PanListsArray || [];
-      this.selectedPan = pla[pla.length  - 1][0] || '';
-    });
+  addPanList(id: string): void {
+    this.loadingScheduleService.addPanList(id).then(_ => this.goToPan(_, id));
+  }
+
+  deletePanList(id: string, panListId: number): void {
+    this.loadingScheduleService.removePanList(id, panListId).then(_ => this.goToPan(_, id));
+  }
+
+  goToPan(ls: LoadingSchedule, id: string): void {
+    this.fetchData(id);
+    const pla = ls.fields.PanListsArray || [];
+    const pan = pla?.length > 0 ? pla[pla.length  - 1][0] : null;
+    this.router.navigate([], { queryParams: {pan}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   fetchData(id: string) {
