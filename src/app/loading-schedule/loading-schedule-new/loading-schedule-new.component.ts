@@ -2,7 +2,7 @@ import { Component, HostBinding, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
-import { catchError, lastValueFrom, Observable, Subject, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, lastValueFrom, Observable, Subject, switchMap, tap, throwError } from 'rxjs';
 
 import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
@@ -31,7 +31,7 @@ interface LoadingScheduleForm {
 export class LoadingScheduleNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';
 
-  public loadingData = new Subject<boolean>();
+  public loadingData = new BehaviorSubject<boolean>(false);
   public savingData = false;
   public transportCompanies$!: Observable<TransportCompany[] | null>;
   public loadingScheduleForm!: FormGroup<LoadingScheduleForm>;
@@ -91,8 +91,6 @@ export class LoadingScheduleNewComponent implements OnInit {
       console.log(this.id);
       lastValueFrom(this.loadingScheduleService.getLoadingScheduleEntry(this.id)).then(
         _ => {
-          console.log(353535);
-
           const data = {};
           data['status'] = _.fields['Status'];
           data['arrivalDate'] = _.fields['ArrivalDate'];
@@ -131,7 +129,6 @@ export class LoadingScheduleNewComponent implements OnInit {
         return throwError(() => new Error(err));
       })
     ).subscribe();
-
   }
 
   getOptions(): void {
