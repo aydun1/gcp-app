@@ -8,7 +8,7 @@
 </mat-toolbar>
 
 <div class="outer">
-  <h2>Requested items</h2>
+  <h2>Required items</h2>
   <form class="inner" [formGroup]="transferForm">
     <div class="options">
       <div class="buttons">
@@ -30,6 +30,13 @@
           <mat-label>Categories</mat-label>
           <mat-select [(ngModel)]="categories" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setCategories($event)">
             <mat-option *ngFor="let c of categoryOptions" [value]="c.value">{{ c.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="pallet-filter">
+          <mat-label>From</mat-label>
+          <mat-select [(ngModel)]="chosenVendors" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setVendors($event)">
+            <mat-option *ngFor="let b of branchVendors" [value]="b.branch">{{ b.branch }}</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -209,12 +216,33 @@
         <ng-container matColumnDef="toFill">
           <mat-header-cell *matHeaderCellDef>
             <div class="loadDetails right">
-              Qty to fill
+              <div>
+                Qty to fill
+              </div>
+              <mat-slide-toggle class="example-margin" [(ngModel)]="hideNoMaxes" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
             </div>
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
             <div class="loadDetails right">
               {{ line['toFill'] | number }}
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="suggested">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="loadDetails right">
+              <div>
+                Suggested
+              </div>
+              <mat-slide-toggle class="example-margin" [(ngModel)]="hideUnsuggesteds" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            <div class="loadDetails right">
+              {{ line['suggested'] | number }}
             </div>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef>
@@ -251,11 +279,14 @@
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" [class.hidden]="
+        (vendorCodes.length > 0 && !vendorCodes.includes(row.vendor)) ||
         (row.vicOnHand <= 0 && hideNoStockVic) ||
         (row.nswOnHand <= 0 && hideNoStockNsw) ||
         (row.saOnHand <= 0 && hideNoStockSa) ||
         (row.waOnHand <= 0 && hideNoStockWa) ||
+        (row.suggested <= 0 && hideUnsuggesteds) ||
         (!row.qtyRequired && hideUnrequireds) ||
+        (!row.toFill && hideNoMaxes) ||
         (categories.length > 0 && !categories.includes(row.category))"></mat-row>
         <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="!loading"></mat-footer-row>
         <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(interstateTransfers.value['lines'])"></mat-footer-row>

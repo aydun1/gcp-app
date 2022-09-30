@@ -63,7 +63,7 @@ h2 {
   flex: 0 1 80px;
 }
 
-.mat-column-NSW, .mat-column-QLD, .mat-column-SA, .mat-column-VIC, .mat-column-WA, .mat-column-onHand, .mat-column-required, .mat-column-toFill {
+.mat-column-NSW, .mat-column-QLD, .mat-column-SA, .mat-column-VIC, .mat-column-WA, .mat-column-onHand, .mat-column-required, .mat-column-toFill, .mat-column-suggested {
   flex: 0 1 100px;
   text-align: right;
 }

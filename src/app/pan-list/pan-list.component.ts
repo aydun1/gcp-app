@@ -30,6 +30,7 @@ export class PanListComponent implements OnInit {
   public creating = false;
   public suppliers: Array<string> = [];
   public categories: Array<string> = [];
+  public chosenVendors: Array<string> = []
   public totals!: object;
   public states = this.shared.branches;
   public ownState = '';
@@ -40,8 +41,11 @@ export class PanListComponent implements OnInit {
   public hideNoStockSa = false;
   public hideNoStockWa = false;
   public hideUnrequireds = false;
+  public hideUnsuggesteds = false;
+  public hideNoMaxes = false;
+
   public saving = new Subject<boolean>();
-  public columns = [ 'bin', 'product', 'category', 'NSW', 'QLD', 'SA', 'VIC', 'WA', 'onHand', 'required', 'toFill', 'transfer'];
+  public columns = [ 'bin', 'product', 'category', 'NSW', 'QLD', 'SA', 'VIC', 'WA', 'onHand', 'required', 'suggested', 'toFill', 'transfer'];
   public categoryOptions = [
     {value: 'M', name: 'Manufactured'},
     {value: 'A', name: 'Allied'},
@@ -52,7 +56,13 @@ export class PanListComponent implements OnInit {
     {value: 'SA', name: 'Allied SA'},
     {value: 'WA', name: 'Allied WA'}
   ];
-
+  public branchVendors = [
+    {branch: 'NSW', vendors: ['100241', '300310', '404562', '502014']},
+    {branch: 'QLD', vendors: ['100086', '200001']},
+    {branch: 'SA', vendors: ['164403', '200387', '300299']},
+    //{branch: 'VIC', vendors: ['200113', '300365']},
+    {branch: 'WA', vendors: ['164802', '200231', '300298']}
+  ];
   
   public get otherStates(): Array<string> {
     return this.states.filter(_ => _ !== this.branchFilter.value)
@@ -65,6 +75,10 @@ export class PanListComponent implements OnInit {
 
   public get lines(): FormArray<FormGroup> {
     return this.transferForm.get('lines') as FormArray;
+  }
+
+  public get vendorCodes(): Array<string> {  
+    return this.chosenVendors.map(branch => this.branchVendors.find(_ => _.branch === branch)?.vendors || []).reduce((acc, cur) => [...acc, ...cur], []);
   }
 
   public get transferQty(): number {
@@ -109,6 +123,8 @@ export class PanListComponent implements OnInit {
     this.lines.clear();
     let i = -1;
     lines.forEach(_ => {
+      const toFill = (_.Max && _.QtyAvailable < _.Min) ? _.QtyRequired + _.Max : null;
+      const toFill2 = _.Max ? _.QtyRequired + _.Max : null;
       const formGroup = this.fb.group({
         index: [i += 1],
         id: [_.Id],
@@ -117,6 +133,7 @@ export class PanListComponent implements OnInit {
         bin: [_.Bin?.replace('QLD BIN', '')],
         palletQty: [_.PalletQty],
         packSize: [_.PackSize == _.PalletQty ? '-' : _.PackSize],
+        vendor: [_.Vendor],
         category: [_.Category],
         vicOnHand: [_.OnHandVIC],
         qldOnHand: [_.OnHandQLD],
@@ -125,6 +142,7 @@ export class PanListComponent implements OnInit {
         nswOnHand: [_.OnHandNSW],
         onHand: [_.QtyOnHand],
         qtyRequired: [Math.max(0, _.QtyRequired) || null],
+        suggested: [toFill || Math.max(0, _.QtyRequired) || null],
         toFill: [_.Max ? _.QtyRequired + _.Max : null],
         toTransfer: [_.ToTransfer]
       });
@@ -176,10 +194,16 @@ export class PanListComponent implements OnInit {
       this.categories = [...defaultCategories];
     }
     if ('suppliers' in params) {
-      const suppliers = Array.isArray(params['suppliers']) ? params['suppliers'] : [params['categories']];
+      const suppliers = Array.isArray(params['suppliers']) ? params['suppliers'] : [params['suppliers']];
       this.suppliers = suppliers;
     } else {
       this.suppliers = [];
+    }
+    if ('vendors' in params) {
+      const vendors = Array.isArray(params['vendors']) ? params['vendors'] : [params['vendors']];
+      this.chosenVendors = vendors;
+    } else {
+      this.chosenVendors = [];
     }
   }
 
@@ -202,6 +226,10 @@ export class PanListComponent implements OnInit {
 
   setCategories(categories: MatSelectChange): void {
     this.router.navigate([], { queryParams: {categories: categories.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  setVendors(vendors: MatSelectChange): void {
+    this.router.navigate([], { queryParams: {vendors: vendors.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setSuppliers(suppliers: MatSelectChange): void {
@@ -228,6 +256,13 @@ export class PanListComponent implements OnInit {
   trackByFn(index: number, item: any): string {
     return item.id;
   }
+
+
+
+
+
+
+
 
   goBack(): void {
     this.navService.back();
