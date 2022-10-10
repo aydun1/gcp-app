@@ -92,7 +92,7 @@ export class SharedService {
       message: {
         subject: subject,
         body: {
-          contentType: 'Text',
+          contentType: 'HTML',
           content: body,
         },
         toRecipients: to.map(_ => {return {emailAddress: {address: _}}}),

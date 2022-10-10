@@ -20,10 +20,11 @@ export class PanListService {
     private snackBar: MatSnackBar
   ) { }
 
-  getPanList(branch: string): Observable<SuggestedItem[]> {
-    return this.http.get<{lines: SuggestedItem[]}>(`${environment.gpEndpoint}/pan?branch=${branch}`).pipe(
+  getPanList(branch: string): Promise<SuggestedItem[]> {
+    const request = this.http.get<{lines: SuggestedItem[]}>(`${environment.gpEndpoint}/pan?branch=${branch}`).pipe(
       map(_ => _.lines)
     );
+    return lastValueFrom(request);
   }
 
   getPanListWithQuantities(branch: string, loadingScheduleId: string, panListId: number): Observable<SuggestedItem[]> {
@@ -34,6 +35,10 @@ export class PanListService {
           if (thisOne) thisOne['ToTransfer'] = q.fields.Quantity;
         });
         return a;
+      }),
+      catchError(err => {
+        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
+        return of([]);
       })
     )
   }
@@ -58,7 +63,7 @@ export class PanListService {
     return this._requestedsSubject$;
   }
 
-  deletePanList(loadingScheduleId: string, panListId: number): Promise<RequestLine[]> {
+  deletePanList(loadingScheduleId: string, panListId: string): Promise<any> {
     const url = `${this._panListLinesUrl}/items?expand=fields(select=ItemNumber,ItemDescription,Quantity)&filter=fields/Title eq '${loadingScheduleId}' and fields/PanList eq '${panListId}'&orderby=fields/ItemNumber asc`;
     const request = this.http.get<{value: RequestLine[]}>(url).pipe(
       startWith({value: []}),

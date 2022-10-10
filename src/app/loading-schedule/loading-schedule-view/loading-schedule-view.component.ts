@@ -7,7 +7,6 @@ import { BehaviorSubject, catchError, combineLatest, map, Observable, Subject, s
 import { SharedService } from '../../shared.service';
 import { NavigationService } from '../../navigation.service';
 import { LoadingScheduleService } from '../shared/loading-schedule.service';
-import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { LoadingSchedule } from '../shared/loading-schedule';
 
 @Component({
@@ -23,6 +22,7 @@ export class LoadingScheduleViewComponent implements OnInit {
   public loading = false;
   public edit = false;
   public selectedPan = '';
+  public date = new Date();
 
   constructor(
     private route: ActivatedRoute,
@@ -45,10 +45,6 @@ export class LoadingScheduleViewComponent implements OnInit {
     );
   }
 
-  setPan(panId: MatButtonToggleChange): void {
-    this.router.navigate([], { queryParams: {pan: panId.value}, queryParamsHandling: 'merge', replaceUrl: true});
-  }
-
   handleError(err: HttpErrorResponse, redirect = false): Observable<never> {
     const message = err.error?.error?.message || 'Unknown error';
     this.snackBar.open(message, '', {duration: 3000});
@@ -61,8 +57,17 @@ export class LoadingScheduleViewComponent implements OnInit {
     this.loadingScheduleService.addPanList(id).then(_ => this.goToPan(_, id));
   }
 
-  deletePanList(id: string, panListId: number): void {
-    this.loadingScheduleService.removePanList(id, panListId).then(_ => this.goToPan(_, id));
+  deletePanList(id: string, panListId: string): void {
+    this.loadingScheduleService.removePanList(id, panListId).then(_ => {
+      this.goToPan(_, id)
+    });
+  }
+
+  sendPanList(id: string, panListId: string): void {
+    this.loadingScheduleService.sendPanList(id, panListId).then(_ => {
+      this.fetchData(id);
+      this.snackBar.open('Pan list sent', '', {duration: 3000})
+    });
   }
 
   goToPan(ls: LoadingSchedule, id: string): void {

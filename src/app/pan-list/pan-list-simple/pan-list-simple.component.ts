@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { BehaviorSubject, distinctUntilChanged, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
@@ -14,9 +13,10 @@ import { RequestLine } from '../request-line';
   styleUrls: ['./pan-list-simple.component.css']
 })
 export class PanListSimpleComponent implements OnInit {
-  @Input() panLists!: Array<number[]>;
+  @Input() panLists!: Array<string[]>;
   @Output() addPanList = new EventEmitter<boolean>();
-  @Output() deletePanList = new EventEmitter<number>();
+  @Output() deletePanList = new EventEmitter<string>();
+  @Output() sendPanList = new EventEmitter<string>();
 
   @Input() scheduleId!: string;
 
@@ -28,7 +28,7 @@ export class PanListSimpleComponent implements OnInit {
   public transferForm!: FormGroup;
   public columns = ['product', 'transfer'];
   public panList: number | null = null;
-  public selectedPan!: number;
+  public selectedPanId!: string;
 
   public get displayedColumns(): Array<string> {
     return this.columns;
@@ -41,6 +41,12 @@ export class PanListSimpleComponent implements OnInit {
   public get transferQty(): number {
     return this.lines.value.reduce((acc, cur) => acc + cur['toTransfer']
   , 0);
+  }
+
+  get sent(): string {
+    if (!this.selectedPanId) return '';
+    const details = this.panLists.find(_ => _[0] === `${this.selectedPanId}`) || [];
+    return details && details[2] ? details[2] : '';
   }
 
   constructor(
@@ -87,21 +93,27 @@ export class PanListSimpleComponent implements OnInit {
     return this.panListService.getRequestedQuantities(this.scheduleId, params['pan']);
   }
 
-  updatePanList(itemNumber: string | null | undefined, itemDescription: string | null | undefined, quantity: number | null | undefined) {
+  updatePanList(itemNumber: string | null | undefined, itemDescription: string | null | undefined, quantity: number | null | undefined): void {
     if (!itemNumber) return;
     this.panListService.setRequestedQuantities(quantity, itemNumber, itemDescription, this.scheduleId, 1);
   }
 
   parseParams(params: Params): void {
-    if (!params) return;
     if ('pan' in params) {
-      this.selectedPan = params['pan'];
+      this.selectedPanId = params['pan'];
     } else {
-      this.selectedPan = 0;
+      this.selectedPanId = '0';
     }
   }
 
+  niceDate(date: string): string {
+    return new Date(date).toDateString();
+  }
+
   compareQueryStrings(prev: Params, curr: Params): boolean {
+    if (!prev['pan'] && !curr['pan'] && this.panLists) {
+      this.setPan(this.panLists[0][0]);
+    }
     if (this.route.children.length) {
       this._loadList = false;
     }
@@ -115,8 +127,8 @@ export class PanListSimpleComponent implements OnInit {
     return this._loadList && samePan;
   }
 
-  setPan(panId: MatButtonToggleChange): void {
-    this.router.navigate([], { queryParams: {pan: panId.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  setPan(panId: number | string): void {
+    this.router.navigate([], { queryParams: {pan: panId}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   getTotalRequestedLines(lines: Array<any>): number {
@@ -127,12 +139,14 @@ export class PanListSimpleComponent implements OnInit {
     return lines.reduce((acc, cur) => acc + cur.toTransfer, 0);
   }
 
-  deleteItemsAndList() {
-    this.panListService.deletePanList(this.scheduleId, this.selectedPan).then(
-      () => {
-        this.deletePanList.next(this.selectedPan)
-      }
+  deleteItemsAndList(): void {
+    this.panListService.deletePanList(this.scheduleId, this.selectedPanId).then(
+      () => this.deletePanList.next(this.selectedPanId)
     );
+  }
+
+  sendList(): void {
+    this.sendPanList.next(this.selectedPanId);
   }
 
   trackByFn(index: number, item: any): string {

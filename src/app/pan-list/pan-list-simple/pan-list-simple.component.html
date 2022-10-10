@@ -2,12 +2,19 @@
   <form class="inner" [formGroup]="transferForm">
     <div class="options">
       <div class="buttons">
-        <mat-button-toggle-group class="selector" name="fontStyle" aria-label="Font Style" [(ngModel)]="selectedPan" [ngModelOptions]="{standalone: true}" (change)="setPan($event)">
+        <mat-button-toggle-group class="selector" name="fontStyle" aria-label="Font Style" [(ngModel)]="selectedPanId" [ngModelOptions]="{standalone: true}" (change)="setPan($event.value)">
           <mat-button-toggle *ngFor="let pl of panLists" [value]="pl[0]">{{ pl[0] }}</mat-button-toggle>
           <mat-button-toggle (click)="addPanList.next(true)">+</mat-button-toggle>
         </mat-button-toggle-group>
       </div>
-      <button mat-raised-button color="primary" type="button" [disabled]="!selectedPan" [routerLink]="['panlist']" [queryParams]="{pan: selectedPan}">Edit list</button>
+      <span *ngIf="sent;else draft" class="pan-status">Sent ({{niceDate(sent)}})</span>
+      <ng-template #draft>
+        <span class="pan-status">
+          Draft
+        </span>
+      </ng-template>
+      <button *ngIf="!sent" mat-raised-button color="primary" type="button" [disabled]="!selectedPanId" (click)="sendList()">Send</button>
+      <button *ngIf="!sent" mat-button type="button" [disabled]="!selectedPanId" [routerLink]="['panlist']" [queryParams]="{pan: selectedPanId}" class="edit">Edit list</button>
       <button mat-icon-button type="button" class="menu" [matMenuTriggerFor]="actionsMenu">
         <mat-icon>more_vert</mat-icon>
       </button>  
@@ -77,8 +84,8 @@
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) === false"></mat-footer-row>
-        <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="!selectedPan || (loading | async) === true || getTotalRequestedLines(interstateTransfers.value['lines'])"></mat-footer-row>
-        <mat-footer-row *matFooterRowDef="['unselected']" [class.hidden]="selectedPan"></mat-footer-row>
+        <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="!selectedPanId || (loading | async) === true || getTotalRequestedLines(interstateTransfers.value['lines'])"></mat-footer-row>
+        <mat-footer-row *matFooterRowDef="['unselected']" [class.hidden]="selectedPanId"></mat-footer-row>
 
         <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
       </mat-table>
@@ -88,7 +95,8 @@
 
 <mat-menu #actionsMenu="matMenu">
   <ng-template matMenuContent>
-    <button mat-menu-item type="button" [disabled]="!selectedPan" (click)="deleteItemsAndList()">Delete list</button>
+    <button *ngIf="sent" mat-menu-item type="button" [disabled]="!selectedPanId" [routerLink]="['panlist']" [queryParams]="{pan: selectedPanId}">Edit list</button>
+    <button mat-menu-item type="button" [disabled]="!selectedPanId" (click)="deleteItemsAndList()">Delete list</button>
   </ng-template>
 </mat-menu>
 

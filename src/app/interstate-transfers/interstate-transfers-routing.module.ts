@@ -8,6 +8,7 @@ import { LoadingScheduleViewComponent } from '../loading-schedule/loading-schedu
 import { InterstateTransferViewComponent } from './interstate-transfer-view/interstate-transfer-view.component';
 import { InterstateTransferListComponent } from './interstate-transfer-list/interstate-transfer-list.component';
 import { PanListComponent } from '../pan-list/pan-list.component';
+import { InterstateTransferSuggestedListComponent } from './interstate-transfer-suggested-list/interstate-transfer-suggested-list.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,11 @@ const routes: Routes = [
         canActivate: [MsalGuard],
       }
     ]
+  },
+  {
+    path: 'suggested-items',
+    component: InterstateTransferSuggestedListComponent,
+    canActivate: [MsalGuard]
   },
   {
     path: 'pan-list',

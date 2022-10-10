@@ -9,6 +9,6 @@ export interface LoadingSchedule {
     Spaces: number,
     Status: string,
     PanLists: string,
-    PanListsArray?: Array<string>,
+    PanListsArray?: Array<string[]>,
   }
 }

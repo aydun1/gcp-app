@@ -1,15 +1,6 @@
-<mat-toolbar>
-  <button mat-icon-button (click)="goBack()" class="mobile-button" type="button">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <ng-container>
-    <div class="title">Edit pan list</div>
-  </ng-container>
-</mat-toolbar>
-
 <div class="outer">
-  <h2>Required items</h2>
-  <form class="inner" [formGroup]="transferForm">
+  <h2>Suggested items</h2>
+  <form class="inner" [formGroup]="transferForm" (ngSubmit)="submitForm()">
     <div class="options">
       <div class="buttons">
         <mat-form-field appearance="outline" class="branch">
@@ -20,20 +11,25 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="pallet-filter">
-          <mat-label>Show stock at</mat-label>
-          <mat-select [(ngModel)]="suppliers" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setSuppliers($event)">
-            <mat-option *ngFor="let s of otherStates" [value]="s">{{ s }}</mat-option>
+          <mat-label>Suppliers</mat-label>
+          <mat-select [(ngModel)]="chosenVendors" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setVendors($event)">
+            <mat-option *ngFor="let b of otherVendors" [value]="b.branch">{{ b.branch }}</mat-option>
           </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="pallet-filter">
-          <mat-label>Categories</mat-label>
-          <mat-select [(ngModel)]="categories" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setCategories($event)">
-            <mat-option *ngFor="let c of categoryOptions" [value]="c.value">{{ c.name }}</mat-option>
+          <mat-label>Show columns</mat-label>
+          <mat-select [(ngModel)]="chosenColumns" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setSuppliers($event)">
+            <mat-option *ngFor="let s of otherStates" [value]="s">{{ s }}</mat-option>
           </mat-select>
         </mat-form-field>
+
+        <div class="toggles">
+          <mat-slide-toggle class="top-toggle" [(ngModel)]="hideNoStockVic" [ngModelOptions]="{standalone: true}">Hide zero stocks</mat-slide-toggle>
+          <mat-slide-toggle class="top-toggle" [(ngModel)]="hideUnrequireds" [ngModelOptions]="{standalone: true}">Only show required items</mat-slide-toggle>  
+        </div>
       </div>
-      <div *ngIf="saving | async as s" class="autosave">Autosave: {{ s }}</div>
+      <span *ngIf="saving | async">Saving</span>
     </div>
     <div *ngIf="loading" class="loading-spinner"><mat-spinner></mat-spinner></div>
 
@@ -63,17 +59,6 @@
             </div>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="category">
-          <mat-header-cell *matHeaderCellDef> Cat </mat-header-cell>
-          <mat-cell *matCellDef="let line">
-            <div class="loadDetails">
-              {{ line['category'] }}
-            </div>
-          </mat-cell>
-          <mat-footer-cell *matFooterCellDef>
-          </mat-footer-cell>
         </ng-container>
 
         <ng-container matColumnDef="required">
@@ -240,7 +225,7 @@
         <ng-container matColumnDef="transfer">
           <mat-header-cell *matHeaderCellDef>
             <div class="loadDetails">
-              Send 
+              Request 
             </div>
           </mat-header-cell>
           <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
@@ -274,8 +259,7 @@
         (row.waOnHand <= 0 && hideNoStockWa) ||
         (row.suggested <= 0 && hideUnsuggesteds) ||
         (!row.qtyRequired && hideUnrequireds) ||
-        (!row.toFill && hideNoMaxes) ||
-        (categories.length > 0 && !categories.includes(row.category))"></mat-row>
+        (!row.toFill && hideNoMaxes)"></mat-row>
         <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="!loading"></mat-footer-row>
         <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(interstateTransfers.value['lines'])"></mat-footer-row>
         <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>

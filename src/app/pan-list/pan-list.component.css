@@ -10,16 +10,12 @@
   min-width: 80px;
 }
 
-.mobile {
-  display: none;
+.autosave {
+  font-size: 14px;
 }
 
 h2 {
   margin-left: 10px;
-}
-
-.toggles {
-  display: none;
 }
 
 .mat-form-field {
@@ -106,7 +102,7 @@ h2 {
   font-family: inherit;
   font-size: inherit;
   padding: 6px 6px;
-  width: 60px;
+  width: 100%;
 }
 
 .details {
@@ -119,8 +115,25 @@ h2 {
 }
 
 @media (max-width: 800px) {
-  .mat-header-row {
+
+  .mat-row {
+    position: relative;
+  }
+
+  .mat-header-cell.mat-column-bin {
     display: none;
+  }
+
+  .mat-header-cell.mat-column-product {
+    display: none;
+  }
+
+  .mat-header-cell.mat-column-transfer {
+    display: none;
+  }
+
+  .loadDetails {
+    margin-right: 0;
   }
 
   .toggles {
@@ -135,52 +148,79 @@ h2 {
     padding-left: 0;
   }
 
-  .mat-row {
+  .mat-row, .mat-header-row {
     display: grid;
     gap: 5px;
-    grid-template-columns: 1fr 80px 80px 160px;
-    grid-template-rows: 40px 44px;
-    padding: 10px 0 0 10px;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
+    grid-template-rows: 51px 44px;
+    padding: 10px;
   }
 
+  .mat-header-row {
+    grid-template-rows: 38px;
+    padding: 10px;
+  }
+
+
   .mat-cell.mat-column-product {
-    grid-column: 1 / 5;
+    grid-column: 1/4;
     grid-row: 1;
     justify-content: inherit;
-    padding-bottom: 0;
-    padding-top: 0;
-    padding-right: 0;
+  }
+
+  .mat-cell.mat-column-bin {
+    display: none;
   }
 
   .mat-footer-cell.mat-column-product {
     display: none;
   }
 
-  .mat-cell.mat-column-date {
-    grid-column: 1;
+  .mat-cell.mat-column-VIC,
+  .mat-cell.mat-column-NSW,
+  .mat-cell.mat-column-QLD,
+  .mat-cell.mat-column-SA,
+  .mat-cell.mat-column-WA {
     grid-row: 2;
+    justify-content: inherit;
+  }
+
+  .mat-cell.mat-column-suggested {
+    grid-row: 2;
+    justify-content: inherit;
+  }
+
+  .mat-cell.mat-column-required {
+    grid-row: 2;
+    justify-content: inherit;
+  }
+
+  .mat-cell.mat-column-onHand {
+    grid-row: 2;
+    justify-content: inherit;
+  }
+
+  .mat-cell.mat-column-toFill {
+    grid-row: 2;
+    justify-content: inherit;
   }
 
   .mat-cell.mat-column-available {
-    grid-column: 2;
     grid-row: 2;
     justify-content: inherit;
   }
 
   .mat-cell.mat-column-transfer {
-    grid-column: 4;
-    grid-row: 2;
-    justify-content: inherit;
-    margin-left: 36px;
+    position: absolute;
+    background: none;
+    right: 0;
+    top: 10px;
+    width: 80px;
   }
 
   .mat-cell.mat-column-quantity {
-    grid-column: 3;
     grid-row: 2;
   }
 
-  .mat-cell.mat-column-notes {
-    grid-column: 1 / 5;
-    grid-row: 4;
-  }
 }

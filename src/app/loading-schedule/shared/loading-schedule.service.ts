@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
 import { BehaviorSubject, lastValueFrom, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
+import { SharedService } from '../../shared.service';
 import { environment } from '../../../environments/environment';
 import { LoadingSchedule } from './loading-schedule';
 import { TransportCompany } from './transport-company';
@@ -24,6 +25,7 @@ export class LoadingScheduleService {
 
   constructor(
     private http: HttpClient,
+    private shared: SharedService
   ) { }
 
   private createUrl(filters: Params): string {
@@ -135,7 +137,7 @@ export class LoadingScheduleService {
     ));
   }
 
-  removePanList(id: string, panListId: number): Promise<LoadingSchedule> {
+  removePanList(id: string, panListId: string): Promise<LoadingSchedule> {
     const url = `${this._loadingScheduleUrl}/items('${id}')`;
     return lastValueFrom(this.getLoadingScheduleEntry(id).pipe(
       switchMap(_ => {
@@ -144,6 +146,27 @@ export class LoadingScheduleService {
         return this.http.patch<LoadingSchedule>(url, {fields});
       }),
       tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _))
+    ));
+  }
+
+  sendPanList(id: string, panListId: string): Promise<any> {
+    const url = `${this._loadingScheduleUrl}/items('${id}')`;
+    const date = new Date();
+    const result = date.toLocaleDateString('en-CA');
+    return lastValueFrom(this.getLoadingScheduleEntry(id).pipe(
+      switchMap(_ => {
+        const toUpdate = _.fields.PanListsArray?.find(p => `${p[0]}` === `${panListId}`) || [];
+        toUpdate[2] = result;
+        const fields = {PanLists: _.fields.PanListsArray?.join('\r\n')};
+        return this.http.patch<LoadingSchedule>(url, {fields});
+      }),
+      tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _)),
+      switchMap(_ => {
+        const subject = `New pan list`;
+        let body = `Click <a href="${environment.redirectUri}/loading-schedule/${id}?pan=${panListId}">here</a> to view`
+        const to = ['aidan.obrien@gardencityplastics.com'];
+        return this.shared.sendMail(to, subject, body);
+      })      
     ));
   }
 

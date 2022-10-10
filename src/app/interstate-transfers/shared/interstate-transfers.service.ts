@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, map, Observable, of } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, lastValueFrom } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { PurchaseOrder } from './purchase-order';
@@ -29,6 +29,12 @@ export class InterstateTransfersService {
     if (!fromSite || !toSite) return of();
     const payload = {fromSite, toSite, lines}
     return this.http.post(`${environment.gpEndpoint}/po`, payload);
+  }
+
+  createInTransitTransfer(fromSite: string | null, toSite: string | null, lines: any): Promise<Object> {
+    const payload = {fromSite, toSite, lines}
+    const request = this.http.post(`${environment.gpEndpoint}/itt`, payload);
+    return lastValueFrom(request)
   }
 
   getPurchaseOrder(id: string): Observable<PurchaseOrder>  {

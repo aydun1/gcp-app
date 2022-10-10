@@ -8,6 +8,7 @@ import { InterstateTransfersService } from './shared/interstate-transfers.servic
 import { InterstateTransfersRoutingModule } from './interstate-transfers-routing.module';
 import { InterstateTransferListComponent } from './interstate-transfer-list/interstate-transfer-list.component';
 import { InterstateTransferViewComponent } from './interstate-transfer-view/interstate-transfer-view.component';
+import { InterstateTransferSuggestedListComponent } from './interstate-transfer-suggested-list/interstate-transfer-suggested-list.component';
 import { PipeModule } from '../shared/pipes/pipe.module';
 import { PanListModule } from '../pan-list/pan-list.module';
 
@@ -15,7 +16,8 @@ import { PanListModule } from '../pan-list/pan-list.module';
   declarations: [
     InterstateTransfersComponent,
     InterstateTransferListComponent,
-    InterstateTransferViewComponent
+    InterstateTransferViewComponent,
+    InterstateTransferSuggestedListComponent
   ],
   imports: [
     CommonModule,
