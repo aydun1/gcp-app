@@ -45,7 +45,7 @@ export class PanListSimpleComponent implements OnInit {
 
   get sent(): string {
     if (!this.selectedPanId) return '';
-    const details = this.panLists.find(_ => _[0] === `${this.selectedPanId}`) || [];
+    const details = this.panLists?.find(_ => _[0] === `${this.selectedPanId}`) || [];
     return details && details[2] ? details[2] : '';
   }
 
