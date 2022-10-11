@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <button mat-icon-button (click)="goBack()" class="mobile-button">
+  <button mat-icon-button (click)="goBack()" class="mobile-button" type="button">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <ng-container>
@@ -8,18 +8,34 @@
 </mat-toolbar>
 
 <div class="content" *ngIf="loadingScheduleEntry$ | async as loadingScheduleEntry; else loadingPage">
-  <div class="header">
-    <h2>Loading schedule entry</h2>
-    <div class="actions">
-      <div class="edit">
-        <button mat-raised-button (click)="edit = true">Edit entry</button>
+
+
+  <div class="print-header">
+    <gcp-letterhead>Dispatch Report</gcp-letterhead>
+    <div class="print-details">
+      <div>
+        <strong>Date: </strong>
+        <span>{{ date | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <div>
+        <strong>For site: </strong>
+        <span>{{ loadingScheduleEntry.fields.To }}</span>
       </div>
     </div>
   </div>
 
+  <div class="header screen-header">
+    <h2>Loading schedule entry</h2>
+    <div class="actions">
+      <div class="edit">
+        <a mat-raised-button [routerLink]="['edit']" type="button">Edit entry</a>
+      </div>
+    </div>
+  </div>
 
-  <mat-card class="inner">
+  <mat-card class="inner details-card">
     <mat-list>
+      <h3 matSubheader>Details</h3>
       <mat-list-item>
         <mat-icon mat-list-icon>business</mat-icon>
         <div mat-line>{{ loadingScheduleEntry.fields.TransportCompany }}</div>
@@ -69,15 +85,23 @@
           <div mat-line>Arriving on</div>
         </mat-list-item>
       </mat-list>
-      <div class="status">
-        <div class="approved">
-          <span>{{ loadingScheduleEntry.fields.Status }}</span>
-        </div>
+    </div>
+
+    <div class="status">
+      <div class="approved">
+        <span>{{ loadingScheduleEntry.fields.Status }}</span>
       </div>
     </div>
   </mat-card>
 
-  <mat-card class="inner">
+  <mat-card class="inner pan-list">
+    <mat-card-header>
+      <mat-card-title>Pan list</mat-card-title>
+    </mat-card-header>
+    <gcp-pan-list-simple [scheduleId]="loadingScheduleEntry.id" [panLists]="loadingScheduleEntry.fields.PanListsArray" (addPanList)="addPanList(loadingScheduleEntry.id)" (deletePanList)="deletePanList(loadingScheduleEntry.id, $event)" (sendPanList)="sendPanList(loadingScheduleEntry.id, $event)"></gcp-pan-list-simple>
+  </mat-card>
+
+  <mat-card class="inner attachments">
     <gcp-docs [id]="loadingScheduleEntry.id" folder="loading-schedule">
       <mat-card-header>
         <mat-card-title>Attachments</mat-card-title>
@@ -85,8 +109,6 @@
     </gcp-docs>
   </mat-card>
 </div>
-
-<gcp-loading-schedule-new *ngIf="edit"></gcp-loading-schedule-new>
 
 <ng-template #loadingPage>
   <gcp-loading-page></gcp-loading-page>

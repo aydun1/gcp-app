@@ -8,5 +8,7 @@ export interface LoadingSchedule {
     NetWeight: number,
     Spaces: number,
     Status: string,
+    PanLists: string,
+    PanListsArray?: Array<string[]>,
   }
 }

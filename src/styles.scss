@@ -133,7 +133,7 @@ a {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .mat-header-row {
@@ -198,6 +198,11 @@ gcp-big-button > .link,
 @media print {
   @page {
     size: portrait;
+  }
+
+  * {
+    border-color: gray !important;
+    color: black !important;
   }
 
   .inner {

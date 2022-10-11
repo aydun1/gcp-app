@@ -6,6 +6,7 @@ import { LoadingScheduleComponent } from './loading-schedule.component';
 import { LoadingScheduleListComponent } from './loading-schedule-list/loading-schedule-list.component';
 import { LoadingScheduleNewComponent } from './loading-schedule-new/loading-schedule-new.component';
 import { LoadingScheduleViewComponent } from './loading-schedule-view/loading-schedule-view.component';
+import { PanListComponent } from '../pan-list/pan-list.component';
 
 const routes: Routes = [
   {
@@ -25,7 +26,19 @@ const routes: Routes = [
       {
         path: ':id',
         data: {title: 'View entry'},
-        component: LoadingScheduleViewComponent
+        component: LoadingScheduleViewComponent,
+        children: [
+          {
+            path: 'edit',
+            data: {title: 'Edit entry'},
+            component: LoadingScheduleNewComponent,
+          },
+          {
+            path: 'panlist',
+            data: {title: 'Edit pan list'},
+            component: PanListComponent,
+          }
+        ]
       },
     ],
     canActivate: [MsalGuard]

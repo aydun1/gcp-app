@@ -89,7 +89,7 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     LogoutComponent
   ],
   imports: [
-    BrowserModule.withServerTransition({ appId: 'serverApp' }),
+    BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,

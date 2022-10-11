@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { SharedService } from '../shared.service';
 
 @Component({
   selector: 'gcp-interstate-transfers',
@@ -6,7 +7,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./interstate-transfers.component.css']
 })
 export class InterstateTransfersComponent {
-
-  constructor() { }
+  public isQld = false;
+  constructor(
+    private shared: SharedService
+  ) {
+    this.isQld = this.shared.branch === 'QLD';
+  }
 
 }

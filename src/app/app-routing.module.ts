@@ -19,13 +19,12 @@ const routes: Routes = [
   { path: 'pallets', canActivate: [MsalGuard], loadChildren: () => import('./pallets/pallets.module').then(m => m.PalletsModule) },
   { path: 'runs', canActivate: [MsalGuard], loadChildren: () => import('./runs/runs.module').then(m => m.RunsModule) },
   { path: 'transfers', canActivate: [MsalGuard], loadChildren: () => import('./interstate-transfers/interstate-transfers.module').then(m => m.InterstateTransfersModule) },
-  { path: 'loading-schedule', canActivate: [MsalGuard], loadChildren: () => import('./loading-schedule/loading-schedule.module').then(m => m.LoadingScheduleModule) }
-
+  { path: 'loading-schedule', canActivate: [MsalGuard], loadChildren: () => import('./loading-schedule/loading-schedule.module').then(m => m.LoadingScheduleModule) },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
-    initialNavigation: 'enabledBlocking'
+    paramsInheritanceStrategy: 'always'
 })],
   exports: [RouterModule]
 })

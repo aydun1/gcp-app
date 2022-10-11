@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
-import { BehaviorSubject, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, lastValueFrom, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
+import { SharedService } from '../../shared.service';
 import { environment } from '../../../environments/environment';
 import { LoadingSchedule } from './loading-schedule';
 import { TransportCompany } from './transport-company';
@@ -24,6 +25,7 @@ export class LoadingScheduleService {
 
   constructor(
     private http: HttpClient,
+    private shared: SharedService
   ) { }
 
   private createUrl(filters: Params): string {
@@ -73,6 +75,14 @@ export class LoadingScheduleService {
     );
   }
 
+  private parseMultiLine(key: string, arrayKey: string, data: any) {
+    const arrayData = data['fields'][key]?.split(/[\r\n]+/);
+    data['fields'][arrayKey] = arrayData?.map((_: string) => {
+      const data = _?.split(',');
+      return data.length === 1 ? data[0] : data;
+    });
+  }
+
   getFirstPage(filters: Params): BehaviorSubject<LoadingSchedule[]> {
     this._nextPage = '';
     this._loadingLoadingSchedule = false;
@@ -110,38 +120,74 @@ export class LoadingScheduleService {
   getLoadingScheduleEntry(id: string | null): Observable<LoadingSchedule> {
     const url = `${this._loadingScheduleUrl}/items('${id}')`;
     return this.http.get<LoadingSchedule>(url).pipe(
+      tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _))
     );
+  }
+
+  addPanList(id: string): Promise<LoadingSchedule> {
+    const url = `${this._loadingScheduleUrl}/items('${id}')`;
+    return lastValueFrom(this.getLoadingScheduleEntry(id).pipe(
+      switchMap(_ => {
+        const pans = _.fields.PanListsArray || [];
+        const newId = pans.length > 0 ? parseInt(pans[pans.length - 1][0]) + 1 : 1;
+        const fields = {PanLists: [...pans, `${newId},`].join('\r\n')};
+        return this.http.patch<LoadingSchedule>(url, {fields});
+      }),
+      tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _))
+    ));
+  }
+
+  removePanList(id: string, panListId: string): Promise<LoadingSchedule> {
+    const url = `${this._loadingScheduleUrl}/items('${id}')`;
+    return lastValueFrom(this.getLoadingScheduleEntry(id).pipe(
+      switchMap(_ => {
+        const pans = _.fields.PanListsArray || [];
+        const fields = {PanLists: [...pans.filter(p => `${p[0]}` !== `${panListId}`)].join('\r\n')};
+        return this.http.patch<LoadingSchedule>(url, {fields});
+      }),
+      tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _))
+    ));
+  }
+
+  sendPanList(id: string, panListId: string): Promise<any> {
+    const url = `${this._loadingScheduleUrl}/items('${id}')`;
+    const date = new Date();
+    const result = date.toLocaleDateString('en-CA');
+    return lastValueFrom(this.getLoadingScheduleEntry(id).pipe(
+      switchMap(_ => {
+        const toUpdate = _.fields.PanListsArray?.find(p => `${p[0]}` === `${panListId}`) || [];
+        toUpdate[2] = result;
+        const fields = {PanLists: _.fields.PanListsArray?.join('\r\n')};
+        return this.http.patch<LoadingSchedule>(url, {fields});
+      }),
+      tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _)),
+      switchMap(_ => {
+        const subject = `New pan list`;
+        let body = `Click <a href="${environment.redirectUri}/loading-schedule/${id}?pan=${panListId}">here</a> to view`
+        const to = ['aidan.obrien@gardencityplastics.com'];
+        return this.shared.sendMail(to, subject, body);
+      })      
+    ));
   }
 
   getTransportCompanies(branch: string): Observable<TransportCompany[]> {
     const url = `${this._transportCompaniesUrl}/items?expand=fields(select=Title,Drivers)&filter=fields/Branch eq '${branch}'`;
-    return this.http.get(url).pipe(
-      map((res: any) => res.value),
-      tap(_ => _.forEach((_: any) => _['fields']['DriversArray'] = _['fields']['Drivers']?.split(/[\r\n]+/)))
+    return this.http.get<{value: TransportCompany[]}>(url).pipe(
+      map(res => res.value),
+      tap(_ => _.forEach(_ =>  this.parseMultiLine('Drivers', 'DriversArray', _)))
     );
   }
 
   addTransportCompany(id: string, drivers: string): Observable<TransportCompany> {
-    const payload = {fields: {
-      Drivers: drivers
-    }};
-    return this.http.post<TransportCompany>(`${this._transportCompaniesUrl}/items('${id}')`, payload);
+    const fields = {Drivers: drivers};
+    return this.http.post<TransportCompany>(`${this._transportCompaniesUrl}/items('${id}')`, {fields});
   }
 
   markDelivered(id: string): Observable<LoadingSchedule> {
-    const payload = {fields: {
-      Status: 'Delivered'
-    }};
-    return this.http.patch<LoadingSchedule>(`${this._loadingScheduleUrl}/items('${id}')`, payload).pipe(
+    const fields = {Status: 'Delivered'};
+    return this.http.patch<LoadingSchedule>(`${this._loadingScheduleUrl}/items('${id}')`, {fields}).pipe(
       switchMap(_ => this.updateList(_)),
     );
-  }
-
-  updateTransportCompanyDrivers(id: string, drivers: string): Observable<TransportCompany> {
-    const payload = {fields: {
-      'Drivers': drivers
-    }};
-    return this.http.patch<TransportCompany>(`${this._transportCompaniesUrl}/items('${id}')`, payload);
   }
 
   createLoadingScheduleEntry(v: any, id: string | null, branch: string): Observable<LoadingSchedule> {

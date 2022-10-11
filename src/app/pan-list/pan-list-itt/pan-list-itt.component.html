@@ -1,0 +1,272 @@
+<div class="outer">
+  <h2>Suggested items</h2>
+  <form class="inner" [formGroup]="transferForm" (ngSubmit)="submitForm()">
+    <div class="options">
+      <div class="buttons">
+        <mat-form-field appearance="outline" class="branch">
+          <mat-label>Branch</mat-label>
+          <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
+            <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="pallet-filter">
+          <mat-label>Suppliers</mat-label>
+          <mat-select [(ngModel)]="chosenVendors" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setVendors($event)">
+            <mat-option *ngFor="let b of otherVendors" [value]="b.branch">{{ b.branch }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="pallet-filter">
+          <mat-label>Show columns</mat-label>
+          <mat-select [(ngModel)]="chosenColumns" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setSuppliers($event)">
+            <mat-option *ngFor="let s of otherStates" [value]="s">{{ s }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="toggles">
+          <mat-slide-toggle class="top-toggle" [(ngModel)]="hideNoStockVic" [ngModelOptions]="{standalone: true}">Hide zero stocks</mat-slide-toggle>
+          <mat-slide-toggle class="top-toggle" [(ngModel)]="hideUnrequireds" [ngModelOptions]="{standalone: true}">Only show required items</mat-slide-toggle>  
+        </div>
+      </div>
+      <span *ngIf="saving | async">Saving</span>
+    </div>
+    <div *ngIf="loading" class="loading-spinner"><mat-spinner></mat-spinner></div>
+
+    <div *ngIf="interstateTransfers$ | async as interstateTransfers">
+      <mat-table #table [dataSource]="interstateTransfers.value['lines']" [trackBy]="trackByFn" formArrayName="lines">
+        <ng-container matColumnDef="bin">
+          <mat-header-cell *matHeaderCellDef> Bin </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            {{ line['bin'] }}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="product">
+          <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            <div class="details">
+              <strong>
+                {{ line['itemNumber'] }}
+              </strong>
+              <div class="description">
+                {{ line['itemDesc'] }}
+              </div>
+              <div class="description">
+                {{ line['packSize'] || '-' }} | {{ line['palletQty'] || '-' }}
+              </div>
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="required">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="loadDetails right">
+              <div>
+                Qty required
+              </div>
+              <mat-slide-toggle class="example-margin" [(ngModel)]="hideUnrequireds" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            <div class="loadDetails right">
+              {{ line['qtyRequired'] | number }}
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="QLD">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="loadDetails right">
+              <div>
+                QLD
+              </div>
+              <mat-slide-toggle [(ngModel)]="hideNoStockQld" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            <div class="loadDetails right">
+              {{ line['qldOnHand'] | number }}
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="SA">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="loadDetails right">
+              <div>
+                SA
+              </div>
+              <mat-slide-toggle [(ngModel)]="hideNoStockSa" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            <div class="loadDetails right">
+              {{ line['saOnHand'] | number }}
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="VIC">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="loadDetails right">
+              <div>
+                VIC
+              </div>
+              <mat-slide-toggle [(ngModel)]="hideNoStockVic" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            <div class="loadDetails right">
+              {{ line['vicOnHand'] | number }}
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="NSW">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="loadDetails right">
+              <div>
+                NSW
+              </div>
+              <mat-slide-toggle [(ngModel)]="hideNoStockNsw" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            <div class="loadDetails right">
+              {{ line['nswOnHand'] | number }}
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="WA">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="loadDetails right">
+              <div>
+                WA
+              </div>
+              <mat-slide-toggle [(ngModel)]="hideNoStockWa" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            <div class="loadDetails right">
+              {{ line['waOnHand'] | number }}
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="onHand">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="loadDetails right">
+              <div>
+                On hand
+              </div>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            <div class="loadDetails right">
+              {{ line['onHand'] | number }}
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="toFill">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="loadDetails right">
+              <div>
+                Qty to fill
+              </div>
+              <mat-slide-toggle class="example-margin" [(ngModel)]="hideNoMaxes" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            <div class="loadDetails right">
+              {{ line['toFill'] | number }}
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="suggested">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="loadDetails right">
+              <div>
+                Suggested
+              </div>
+              <mat-slide-toggle class="example-margin" [(ngModel)]="hideUnsuggesteds" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            <div class="loadDetails right">
+              {{ line['suggested'] | number }}
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="transfer">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="loadDetails">
+              Request 
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
+            <input formControlName="toTransfer" class="transfer-input" type="number" placeholder="0" min="0">
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+            <div class="transferTotal">
+              {{ getTotalToTransfer(interstateTransfers.value['lines']) | number }}
+            </div>
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="loading">
+          <mat-footer-cell *matFooterCellDef>
+            <gcp-loading-row></gcp-loading-row>
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="empty">
+          <mat-footer-cell *matFooterCellDef>
+            Nothing to show here.
+          </mat-footer-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" [class.hidden]="
+        (vendorCodes.length > 0 && !vendorCodes.includes(row.vendor)) ||
+        (row.vicOnHand <= 0 && hideNoStockVic) ||
+        (row.nswOnHand <= 0 && hideNoStockNsw) ||
+        (row.saOnHand <= 0 && hideNoStockSa) ||
+        (row.waOnHand <= 0 && hideNoStockWa) ||
+        (row.suggested <= 0 && hideUnsuggesteds) ||
+        (!row.qtyRequired && hideUnrequireds) ||
+        (!row.toFill && hideNoMaxes)"></mat-row>
+        <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="!loading"></mat-footer-row>
+        <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(interstateTransfers.value['lines'])"></mat-footer-row>
+        <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+      </mat-table>
+    </div>
+  </form>
+</div>
+
+
+<router-outlet></router-outlet>

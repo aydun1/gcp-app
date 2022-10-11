@@ -17,13 +17,13 @@ import { PurchaseOrderLine } from '../shared/purchase-order-line';
 export class InterstateTransferListComponent implements OnInit {
   private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
   private _loadList!: boolean;
-  public fromBranchFilter = new FormControl({value: '', disabled: false});
+  public fromBranchFilter = new FormControl({value: '', disabled: true});
   public toBranchFilter = new FormControl('');
   public viewFilter = new FormControl('');
   public interstateTransfers$!: Observable<FormGroup<any>>;
   public loading = false;
   public creating = false;
-  public displayedColumns = [ 'date', 'product', 'quantity', 'cost', 'transfer'];
+  public displayedColumns = [ 'date', 'product', 'available', 'quantity', 'transfer'];
   public totals!: object;
   public states = this.shared.branches;
   public ownState = '';
@@ -82,12 +82,14 @@ export class InterstateTransferListComponent implements OnInit {
         index: [i += 1],
         id: [_.Id],
         poNumber: [_.PONumber],
+        lineNumber: [_.LineNumber],
         reqDate: [_.Date],
         itemDesc: [_.ItemDesc],
         itemNumber: [_.ItemNumber],
         orderQty: [_.OrderQty],
         extendedCost: [_.ExtdCost],
         qtyAvailable: [_.QtyAvailable],
+        cancelledQty: [_.CancelledQty],
         toTransfer: []
       }))
     );
@@ -154,14 +156,21 @@ export class InterstateTransferListComponent implements OnInit {
     const subject = `PO lines fulfilled by ${this.fromBranchFilter.value}`;
     let body = 'PO number\tItem number\tQty fulfilled\r\n'
     body += formData.map(_ => `${_.poNumber}\t${_.itemNumber}\t${_.toTransfer}`).join('\r\n')
-
+    const to = this.shared.emailMap.get(this.toBranchFilter.value || '') || [];
     this.interstateTransfersService.createTransfer(this.fromBranchFilter.value, this.toBranchFilter.value, formData).pipe(
       tap(() => {
-        this.lines.controls.forEach(_ => _.patchValue({toTransfer: null}));
         this.snackBar.open('Successfully created interstate transfer.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
+        this.router.navigate([], { queryParams: {v: 1}, queryParamsHandling: 'merge', replaceUrl: true});
+        this.lines.controls.forEach(_ => {
+          const orderQty = _.value['orderQty'];
+          const toTransfer = _.value['toTransfer'];
+          if (toTransfer > 0) {
+            _.patchValue({orderQty: orderQty - toTransfer, toTransfer: null})
+          }
+        });
         this.creating = false;
       }),
-      switchMap(_ => this.shared.sendMail(subject, body)),
+      switchMap(_ => this.shared.sendMail(to, subject, body)),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-warn']});
         this.creating = false;

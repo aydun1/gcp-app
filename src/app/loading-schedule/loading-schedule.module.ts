@@ -9,6 +9,7 @@ import { LoadingScheduleListComponent } from './loading-schedule-list/loading-sc
 import { LoadingScheduleNewComponent } from './loading-schedule-new/loading-schedule-new.component';
 import { LoadingScheduleViewComponent } from './loading-schedule-view/loading-schedule-view.component';
 import { PipeModule } from '../shared/pipes/pipe.module';
+import { PanListModule } from '../pan-list/pan-list.module';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { PipeModule } from '../shared/pipes/pipe.module';
     CommonModule,
     SharedModule,
     PipeModule,
-    LoadingScheduleRoutingModule
+    LoadingScheduleRoutingModule,
+    PanListModule
   ],
   providers: [
     LoadingScheduleService

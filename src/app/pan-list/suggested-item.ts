@@ -1,0 +1,27 @@
+export interface SuggestedItem {
+  Bin: string;
+  Category: string;
+  Id: number;
+  InTransit: number;
+  ItemDesc: string;
+  ItemNumber: string;
+  Location: string;
+  Vendor: number;
+  Max: number;
+  Min: number;
+  OrderPointQty: number;
+  PackSize: number;
+  PalletQty: number;
+  QtyAllocated: number;
+  QtyAllocatedByDate: number;
+  QtyAvailable: number;
+  QtyBackordered: number;
+  QtyOnHand: number;
+  QtyRequired: number;
+  OnHandNSW: number;
+  OnHandQLD: number;
+  OnHandSA: number;
+  OnHandVIC: number;
+  OnHandWA: number;
+  ToTransfer?: number;
+};
