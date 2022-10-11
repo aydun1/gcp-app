@@ -95,7 +95,6 @@
 
 <mat-menu #actionsMenu="matMenu">
   <ng-template matMenuContent>
-    <button *ngIf="sent" mat-menu-item type="button" [disabled]="!selectedPanId" [routerLink]="['panlist']" [queryParams]="{pan: selectedPanId}">Edit list</button>
     <button mat-menu-item type="button" [disabled]="!selectedPanId" (click)="deleteItemsAndList()">Delete list</button>
   </ng-template>
 </mat-menu>

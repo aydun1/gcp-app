@@ -264,6 +264,10 @@ export class PanListComponent implements OnInit {
     return lines.reduce((acc, cur) => acc + cur.toTransfer, 0);
   }
 
+  getTotalPalletCount(lines: Array<any>): number {
+    return lines.reduce((acc, cur) => acc + (cur.palletQty && cur.palletQty !== 5000 ? cur.toTransfer / cur.palletQty : 0), 0);
+
+  }
 
   trackByFn(index: number, item: any): string {
     return item.id;

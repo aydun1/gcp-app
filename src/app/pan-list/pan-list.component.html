@@ -54,7 +54,7 @@
               <strong>
                 {{ line['itemNumber'] }}
               </strong>
-              <div class="description">
+              <div class="description" [title]="line['itemDesc']">
                 {{ line['itemDesc'] }}
               </div>
               <div class="description">
@@ -240,15 +240,21 @@
         <ng-container matColumnDef="transfer">
           <mat-header-cell *matHeaderCellDef>
             <div class="loadDetails">
-              Send 
+              Send (pallets)
             </div>
           </mat-header-cell>
           <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
             <input formControlName="toTransfer" class="transfer-input" type="number" placeholder="0" min="0">
+            <div class="pallet-count">
+              <span *ngIf="line['palletQty'] && line['palletQty'] !== 5000">({{ (line['toTransfer'] / line['palletQty']) | number: '1.0-1' }})</span>
+            </div>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef>
             <div class="transferTotal">
               {{ getTotalToTransfer(interstateTransfers.value['lines']) | number }}
+            </div>
+            <div class="transferTotal">
+              ({{ getTotalPalletCount(interstateTransfers.value['lines']) | number: '1.0-1' }})
             </div>
           </mat-footer-cell>
         </ng-container>

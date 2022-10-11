@@ -88,8 +88,13 @@ h2 {
 
 .mat-column-transfer {
   background: #a5a5a5;
-  flex: 0 0 74px;
+  flex: 0 0 100px;
   padding-left: 24px;
+}
+
+.pallet-count {
+  width: 50px;
+  margin-left: 5px;
 }
 
 .mat-column-menu {
