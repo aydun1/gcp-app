@@ -170,7 +170,7 @@ export class InterstateTransferListComponent implements OnInit {
         });
         this.creating = false;
       }),
-      switchMap(_ => this.shared.sendMail(to, subject, body)),
+      switchMap(_ => this.shared.sendMail(to, subject, body, 'Text')),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-warn']});
         this.creating = false;

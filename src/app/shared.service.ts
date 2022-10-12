@@ -85,14 +85,14 @@ export class SharedService {
     this.titleService.setTitle(title);
   }
 
-  sendMail(to: Array<string>, subject: string, body: string): Observable<Object> {
+  sendMail(to: Array<string>, subject: string, body: string, contentType: 'Text' | 'HTML'): Observable<Object> {
     const url = `${environment.endpoint}/me/sendMail`;
     const cc = ['aidan.obrien@gardencityplastics.com'];
     const payload  = {
       message: {
         subject: subject,
         body: {
-          contentType: 'HTML',
+          contentType: contentType,
           content: body,
         },
         toRecipients: to.map(_ => {return {emailAddress: {address: _}}}),

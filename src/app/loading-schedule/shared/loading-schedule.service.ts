@@ -165,7 +165,7 @@ export class LoadingScheduleService {
         const subject = `New pan list`;
         let body = `Click <a href="${environment.redirectUri}/loading-schedule/${id}?pan=${panListId}">here</a> to view`
         const to = ['aidan.obrien@gardencityplastics.com'];
-        return this.shared.sendMail(to, subject, body);
+        return this.shared.sendMail(to, subject, body, 'HTML');
       })      
     ));
   }
