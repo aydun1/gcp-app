@@ -32,29 +32,29 @@
     <mat-table #table [dataSource]="customers" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
-        <mat-cell *matCellDef="let customer" [routerLink]="['/customers', customer.accountnumber]">
-          <a [routerLink]="['/customers', customer.accountnumber]" class="customer-link">{{customer.name}}</a>
+        <mat-cell *matCellDef="let customer" [routerLink]="['/customers', customer.custNmbr]">
+          <a [routerLink]="['/customers', customer.custNmbr]" class="customer-link">{{customer.name}}</a>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
       </ng-container>
       <ng-container matColumnDef="loscam">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Loscams </mat-header-cell>
-        <mat-cell *matCellDef="let customer"> {{customer.new_pallets_loscam || 0}} </mat-cell>
+        <mat-cell *matCellDef="let customer"> {{customer.loscam || 0}} </mat-cell>
         <mat-footer-cell *matFooterCellDef>{{ loscams }}</mat-footer-cell>
       </ng-container>
       <ng-container matColumnDef="chep">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Cheps </mat-header-cell>
-        <mat-cell *matCellDef="let customer"> {{customer.new_pallets_chep || 0}} </mat-cell>
+        <mat-cell *matCellDef="let customer"> {{customer.chep || 0}} </mat-cell>
         <mat-footer-cell *matFooterCellDef>{{ cheps }}</mat-footer-cell>
       </ng-container>
       <ng-container matColumnDef="plain">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Plains </mat-header-cell>
-        <mat-cell *matCellDef="let customer"> {{customer.new_pallets_plain || 0}} </mat-cell>
+        <mat-cell *matCellDef="let customer"> {{customer.plain || 0}} </mat-cell>
         <mat-footer-cell *matFooterCellDef>{{ plains }}</mat-footer-cell>
       </ng-container>
       <ng-container matColumnDef="accountnumber">
         <mat-header-cell *matHeaderCellDef> Account number </mat-header-cell>
-        <mat-cell *matCellDef="let customer"> {{customer.accountnumber}} </mat-cell>
+        <mat-cell *matCellDef="let customer"> {{customer.custNmbr}} </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
       <ng-container matColumnDef="loading">

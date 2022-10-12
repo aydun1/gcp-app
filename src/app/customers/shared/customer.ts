@@ -1,9 +1,8 @@
 export interface Customer {
-  accountid: string,
-  accountnumber: string,
+  custNmbr: string,
   name: string,
   address1_composite: string,
-  new_pallets_chep: number,
-  new_pallets_loscam: number,
-  new_pallets_plain: number,
+  chep: number,
+  loscam: number,
+  plain: number,
 }

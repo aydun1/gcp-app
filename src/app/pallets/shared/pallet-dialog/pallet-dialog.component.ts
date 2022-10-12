@@ -60,7 +60,7 @@ export class PalletDialogComponent implements OnInit {
       this.loading = false;
       return;
     }
-    const payload = {...this.palletForm.value, customer: this.data.customer.accountnumber, branch: this._state, customerName: this.data.customer.name};
+    const payload = {...this.palletForm.value, customer: this.data.customer.custNmbr, branch: this._state, customerName: this.data.customer.name};
     this.palletsService.customerPalletTransfer(payload).pipe(
       tap(_ => {
         this.dialogRef.close();

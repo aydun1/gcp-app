@@ -49,7 +49,7 @@ export class PalletCustomerListDialogComponent implements OnInit, OnDestroy {
     this.loading$.next(true);
     const pallet = this.palletType || '';
     const site = this.data.site || '';
-    this.pallets$ = this.palletsService.getCustomerPallets(this.data.customer.accountnumber, pallet, site).pipe(
+    this.pallets$ = this.palletsService.getCustomerPallets(this.data.customer.custNmbr, pallet, site).pipe(
       tap(() => {
         this.loading$.next(false);
         this.totalIn = 0;
@@ -58,8 +58,8 @@ export class PalletCustomerListDialogComponent implements OnInit, OnDestroy {
       map(_=>
         _.map(pallet =>  {
           const isSource = pallet.fields.From === this.branchFilter.value;
-          pallet.fields['In'] = this.data.customer.accountnumber ? +pallet.fields.In || 0 : isSource ? 0 : +pallet.fields.Quantity;
-          pallet.fields['Out'] = this.data.customer.accountnumber ? +pallet.fields.Out || 0 : isSource ? +pallet.fields.Quantity : 0;
+          pallet.fields['In'] = this.data.customer.custNmbr ? +pallet.fields.In || 0 : isSource ? 0 : +pallet.fields.Quantity;
+          pallet.fields['Out'] = this.data.customer.custNmbr ? +pallet.fields.Out || 0 : isSource ? +pallet.fields.Quantity : 0;
           pallet.fields['Change'] = pallet.fields['Out'] - pallet.fields['In'];
           this.totalIn += pallet.fields['In'];
           this.totalOut += pallet.fields['Out'];

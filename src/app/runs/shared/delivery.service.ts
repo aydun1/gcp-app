@@ -235,7 +235,7 @@ export class DeliveryService {
     const fields = {
       Title: title,
       Customer: customer.name,
-      CustomerNumber: customer.accountnumber,
+      CustomerNumber: customer.custNmbr,
       Sequence: sequence
     };
     if (notes) fields['Notes'] = notes;

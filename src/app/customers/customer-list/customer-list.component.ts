@@ -68,9 +68,9 @@ export class CustomerListComponent implements OnInit {
       }),
       switchMap(_ => this.loadList ? this.getFirstPage(_) : []),
       tap(customers => {
-        this.loscams = customers.map(_ => _.new_pallets_loscam).filter(_ => _).reduce((acc, val) => acc + val, 0);
-        this.cheps = customers.map(_ => _.new_pallets_chep).filter(_ => _).reduce((acc, val) => acc + val, 0);
-        this.plains = customers.map(_ => _.new_pallets_plain).filter(_ => _).reduce((acc, val) => acc + val, 0);
+        this.loscams = customers.map(_ => _.loscam).filter(_ => _).reduce((acc, val) => acc + val, 0);
+        this.cheps = customers.map(_ => _.chep).filter(_ => _).reduce((acc, val) => acc + val, 0);
+        this.plains = customers.map(_ => _.plain).filter(_ => _).reduce((acc, val) => acc + val, 0);
       }),
 
     )
@@ -154,6 +154,6 @@ export class CustomerListComponent implements OnInit {
   }
 
   trackByFn(index: number, item: Customer): string {
-    return item.accountnumber;
+    return item.custNmbr;
   }
 }
