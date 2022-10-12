@@ -23,7 +23,7 @@
               </mat-select>
             </mat-form-field>
             <div class="actions">
-              <button mat-raised-button type="submit" color="primary" (click)="assignToCustomer(cage.id)">Assign to {{ data.customer.name || data.customer.accountnumber }}</button>
+              <button mat-raised-button type="submit" color="primary" (click)="assignToCustomer(cage.id)">Assign to {{ data.customer.name ||data.customer.custNmbr }}</button>
             </div>
           </form>
       </mat-expansion-panel>

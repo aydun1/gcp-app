@@ -58,7 +58,7 @@ export class RecyclingDialogComponent implements OnInit {
 
   getCagesWithCustomer(): void {
     this.loadingCages$.next(true);
-    this.recyclingService.getActiveCustomerCages(this.data.customer.accountnumber, this.site, true).subscribe(
+    this.recyclingService.getActiveCustomerCages(this.data.customer.custNmbr, this.site, true).subscribe(
       _ => {
         this.noAllocatedCages$.next(_.filter(c => c['statusId'] === this.allocated).length === 0);
         this.noDeliveredCages$.next(_.filter(c => c['statusId'] === this.delivered).length === 0);
@@ -72,7 +72,7 @@ export class RecyclingDialogComponent implements OnInit {
   assignToCustomer(id: string): void {
     if (this.allocatorForm.invalid) return;
     const site = this.allocatorForm.value.site;
-    this.recyclingService.allocateToCustomer(id, this.data.customer.accountnumber, this.data.customer.name, site).subscribe(() => this.closeAssigningPage());
+    this.recyclingService.allocateToCustomer(id, this.data.customer.custNmbr, this.data.customer.name, site).subscribe(() => this.closeAssigningPage());
   }
 
   getAvailableCages(all: boolean): void {

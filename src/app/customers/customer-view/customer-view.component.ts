@@ -135,27 +135,27 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
 
   getAddresses(): void {
     if (!this.customer) return;
-    this.cutomersService.getAddresses(this.customer.accountnumber).subscribe(_ => this.addresses = _);
+    this.cutomersService.getAddresses(this.customer.custNmbr).subscribe(_ => this.addresses = _);
   }
 
   refreshSites(): void {
     if (!this.customer) return;
-    this.sitesSubject$.next(this.customer.accountnumber);
+    this.sitesSubject$.next(this.customer.custNmbr);
   }
 
   refreshPallets(): void {
     if (!this.customer) return;
-    this.palletsSubject$.next(this.customer.accountnumber);
+    this.palletsSubject$.next(this.customer.custNmbr);
   }
 
   refreshCages(): void {
     if (!this.customer) return;
-    this.cagesSubject$.next(this.customer.accountnumber);
+    this.cagesSubject$.next(this.customer.custNmbr);
   }
 
   requestCages(): void {
     const message = 'Cage requested for delivery';
-    const data = {accountnumber: this.customer.accountnumber, site: this.site, message};
+    const data = {accountnumber: this.customer.custNmbr, site: this.site, message};
     this.dialog.open(RunPickerDialogComponent, {width: '600px', data, autoFocus: false});
   }
 

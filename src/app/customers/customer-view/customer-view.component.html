@@ -11,7 +11,7 @@
   <div class="top-buttons">
     <div class="details">
       <h2 class="name">{{ customer.name || 'Unnamed customer' }}</h2>
-      <p class="number">{{ customer.accountnumber }}</p>
+      <p class="number">{{ customer.custNmbr }}</p>
     </div>
     <button mat-stroked-button type="button" [matMenuTriggerFor]="sitesMenu" [matMenuTriggerData]="{customer: customer}" [disabled]="!sites">
       {{ site || 'All sites' }}
@@ -65,7 +65,7 @@
       </div>
       <mat-divider></mat-divider>
       <div class="status-card">
-        <gcp-docs [id]="customer.accountnumber" folder="debtors">
+        <gcp-docs [id]="customer.custNmbr" folder="debtors">
           <div class="section-heading">
             <h3>Attachments</h3>
           </div>

@@ -35,25 +35,24 @@ export class CustomersService {
   private createUrl(filters: Params): string {
     let url = `${this._url}?`;
     const filterArray = [];
-    if (filters['name']) filterArray.push(`(contains(name,'${this.shared.sanitiseName(filters['name'])}') or startswith(accountnumber,'${this.shared.sanitiseName(filters['name'])}'))`);
+    if (filters['name']) filterArray.push(`search=${this.shared.sanitiseName(filters['name'])}`);
     if (filters['territory']) {
       if (filters['territory'] in this.shared.territories) {
-        filterArray.push(this.shared.territories[filters['territory']].map((_: any) => `branch=${_}`).join(' or '));
+        this.shared.territories[filters['territory']].forEach((_: string) => filterArray.push(`branch=${_}`));
       } else {
         filterArray.push(`branch=${filters['territory']}`);
       }
     }
-    filterArray.push('accountnumber ne null');
     const palletFilter = []
     const pallets = Array.isArray(filters['pallets']) ? filters['pallets'] : [filters['pallets']];
 
     if (filters['sort'] === 'loscam' || pallets.includes('loscam')) palletFilter.push('filter=loscam');
     if (filters['sort'] === 'chep' || pallets.includes('chep')) palletFilter.push('filter=chep');
     if (filters['sort'] === 'plain' || pallets.includes('plain')) palletFilter.push('filter=plain');
-    if (palletFilter.length === 0) filterArray.push('invalid=0');
+    if (palletFilter.length === 0) filterArray.push('inactive=0');
     if (palletFilter.length > 0) filterArray.push(`${palletFilter.join('&')}`);
     url += `&${filterArray.join('&')}`;
-    url += `&orderby=${filters['sort'] || 'custName'}`;
+    url += `&orderby=${filters['sort'] || 'name'}`;
     url += `&order=${filters['order'] ? filters['order'] : 'asc'}`;
     return url;
   }
@@ -139,7 +138,7 @@ export class CustomersService {
 
   addSite(customer: Customer, siteName: string, address: string | null | undefined): Observable<Object> {
     const payload = {fields: {
-      Customer: customer.accountnumber,
+      Customer: customer.custNmbr,
       Title: siteName,
       Address: address
     }};
@@ -164,8 +163,8 @@ export class CustomersService {
 
   private sitePalletTransfer(action: Observable<Object>, customer: Customer, oldName: string, newName: string): Observable<Object> {
     return action.pipe(
-      switchMap(() => this.palletsService.getPalletsOwedByCustomer(customer.accountnumber, oldName)),
-      switchMap(pallets => this.palletsService.siteTransfer(customer.name, customer.accountnumber, oldName, newName, pallets))
+      switchMap(() => this.palletsService.getPalletsOwedByCustomer(customer.custNmbr, oldName)),
+      switchMap(pallets => this.palletsService.siteTransfer(customer.name, customer.custNmbr, oldName, newName, pallets))
     );
   }
 }

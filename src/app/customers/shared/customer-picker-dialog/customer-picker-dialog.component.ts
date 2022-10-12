@@ -75,7 +75,7 @@ export class CustomerPickerDialogComponent implements OnInit {
       this.loadingAddresses = true;
       addField?.disable();
     };
-    this.addresses$ = this.customersService.getAddresses(customer.accountnumber).pipe(
+    this.addresses$ = this.customersService.getAddresses(customer.custNmbr).pipe(
       tap(_ => {
         this.loadingAddresses = false;
         addField?.enable();
@@ -85,7 +85,7 @@ export class CustomerPickerDialogComponent implements OnInit {
 
   getSites(customer: Customer): void {
     this.loadingSites = true;
-    this.sites$ = this.customersService.getSites(customer.accountnumber).pipe(
+    this.sites$ = this.customersService.getSites(customer.custNmbr).pipe(
       tap(_ => {
         this.customerForm.patchValue({site: _.length > 0 ? _[0] : null});
         this.loadingSites = false;

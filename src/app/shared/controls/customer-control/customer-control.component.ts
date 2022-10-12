@@ -161,7 +161,7 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
   }
 
   customerDisplayFn(customer: Customer): string {
-    return customer ? (customer.name ? customer.name + ' ' : '') + '(' + customer.accountnumber + ')' : '';
+    return customer ? (customer.name ? customer.name + ' ' : '') + '(' + customer.custNmbr + ')' : '';
   }
 
   writeValue(customer: Customer | null): void {

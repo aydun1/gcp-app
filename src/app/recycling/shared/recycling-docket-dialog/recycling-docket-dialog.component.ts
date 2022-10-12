@@ -48,7 +48,7 @@ export class RecyclingDocketDialogComponent implements OnDestroy, OnInit {
 
   getCages(site: string): Observable<Cage[]> {
     this.cageTypes = {solid: [], folding: [], other: 0};
-    return this.recyclingService.getActiveCustomerCages(this.data.customer.accountnumber, site, false).pipe(
+    return this.recyclingService.getActiveCustomerCages(this.data.customer.custNmbr, site, false).pipe(
       tap(_ => _.forEach(cage => {
         if (cage.fields.AssetTypeClean === 'Solid cage') this.cageTypes.solid.push(cage.fields.CageNumber);
         else if (cage.fields.AssetTypeClean === 'Folding cage') this.cageTypes.folding.push(cage.fields.CageNumber);
