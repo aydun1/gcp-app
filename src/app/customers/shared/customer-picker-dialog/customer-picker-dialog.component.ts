@@ -58,7 +58,7 @@ export class CustomerPickerDialogComponent implements OnInit {
     });
     this.customerForm.get('address')?.valueChanges.subscribe(_ => {
       if (_) {
-        const lastLine = [_.city, _.stateorprovince, _.postalcode];
+        const lastLine = [_.city, _.state, _.postcode];
         this.address = [_.line1, _.line2, _.line3, lastLine.join(' ')].filter(_ => _).join('\r\n');
       } else {
         this.address = '';

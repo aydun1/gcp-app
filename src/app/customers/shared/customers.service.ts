@@ -58,12 +58,8 @@ export class CustomersService {
   }
 
   getCustomer(id: string): Observable<Customer> {
-    const isAccountNumber = id.length <= this._maxDebtorIdLength;
-    let url = `${this._url}/accounts`;
-    url = isAccountNumber ?
-    `${url}?$select=name,accountnumber,address1_composite&$filter=accountnumber eq '${this.shared.sanitiseName(id)}'` :
-    `${url}(${id})?$select=name,accountnumber,address1_composite`;
-    return this.http.get(url).pipe(map(_ => isAccountNumber ? _['value'][0] : _)) as Observable<Customer>;
+    let url = `${this._url}/${this.shared.sanitiseName(id)}`;
+    return this.http.get(url).pipe(map(_ => _['customer'])) as Observable<Customer>;
   }
 
   getFirstPage(filters: Params): BehaviorSubject<Customer[]> {
@@ -109,11 +105,8 @@ export class CustomersService {
 
   getAddresses(customer: string | null): Observable<Address[]> {
     if (!customer) return of([]);
-    let url = `${this._url}/customeraddresses?$select=name,addressnumber,addresstypecode,primarycontactname,line1,line2,line3,city,stateorprovince,postalcode`;
-    url = customer.length <= this._maxDebtorIdLength ?
-    `${url}&$filter=parentid_account/accountnumber eq '${this.shared.sanitiseName(customer)}'` :
-    `${url}&$filter=_parentid_value eq '${customer}'`;
-    return this.http.get(url).pipe(map(_ => _['value'].filter((_: Address) => _.name)));
+    let url = `${this._url}/${this.shared.sanitiseName(customer)}/addresses`;
+    return this.http.get(url).pipe(map(_ => _['addresses']));
   }
 
   getRegions(): Observable<Object> {
