@@ -27,7 +27,7 @@ export class PanListITTComponent implements OnInit {
 
   private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
   private _loadList!: boolean;
-  public branchFilter = new FormControl({value: '', disabled: false});
+  public branchFilter = new FormControl({value: '', disabled: true});
   public viewFilter = new FormControl('');
   public interstateTransfers$!: Observable<FormGroup<any>>;
   public loading = false;
