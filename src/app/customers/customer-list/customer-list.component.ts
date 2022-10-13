@@ -28,7 +28,7 @@ export class CustomerListComponent implements OnInit {
   public territories$!: Observable<Territory[]>;
   public get territories(): Array<string> {return this.sharedService.territoryNames};
   public loading = this.customersService.loading;
-  public displayedColumns = ['name', 'accountnumber', 'loscam', 'chep', 'plain'];
+  public displayedColumns = ['name', 'custNmbr', 'loscam', 'chep', 'plain'];
   public sortSort!: string;
   public sortOrder!: 'asc' | 'desc';
   public loscams!: number;

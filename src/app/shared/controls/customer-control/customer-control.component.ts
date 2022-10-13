@@ -155,7 +155,7 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
 
   customerPickedValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const unselected = control.value?.accountnumber;
+      const unselected = control.value?.custNmbr;
       return unselected ? {forbiddenName: {value: control.value}} : null;
     };
   }
