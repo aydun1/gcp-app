@@ -9,12 +9,13 @@ import { InterstateTransferViewComponent } from './interstate-transfer-view/inte
 import { InterstateTransferListComponent } from './interstate-transfer-list/interstate-transfer-list.component';
 import { PanListComponent } from '../pan-list/pan-list.component';
 import { InterstateTransferSuggestedListComponent } from './interstate-transfer-suggested-list/interstate-transfer-suggested-list.component';
+import { InterstateTransfersComponent } from './interstate-transfers.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'requested-items',
-    pathMatch: 'full'
+    component: InterstateTransfersComponent,
+    canActivate: [MsalGuard],
   },
   {
     path: 'requested-items',
