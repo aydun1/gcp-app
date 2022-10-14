@@ -1,6 +1,6 @@
 {
-  "name": "Pallet Management System",
-  "short_name": "PMS",
+  "name": "Inventory Management System",
+  "short_name": "IMS",
   "theme_color": "#309962",
   "background_color": "#fafafa",
   "display": "standalone",
