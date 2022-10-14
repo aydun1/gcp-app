@@ -22,7 +22,7 @@ export class CustomersService {
   private _nextPage = 1;
   private _customersSubject$ = new BehaviorSubject<Customer[]>([]);
   private _loadingCustomers!: boolean;
-  private _maxDebtorIdLength = 15;
+  private pageSize = 50;
 
   public loading = new BehaviorSubject<boolean>(false);
 
@@ -86,12 +86,14 @@ export class CustomersService {
     return this.http.get(`${url}&page=${this._nextPage}`).pipe(
       tap(_ => {
         this._nextPage += 1;
-        console.log(this._nextPage)
+        if (_['customers'].length < this.pageSize) this._nextPage = 0;
         this._loadingCustomers = false;
         this.loading.next(false);
       }),
       map((_: any) => _.customers as Customer[]),
       catchError(error => {
+        this._loadingCustomers = false;
+        this.loading.next(false);
         if (error.status === 403) alert('No access. Contact Aidan to have your account enabled to use this page.');
         if (error.error instanceof ErrorEvent) {
             console.log(`Error: ${error.error.message}`);
