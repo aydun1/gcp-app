@@ -51,7 +51,7 @@ export class InterstateTransferSuggestedListComponent implements OnInit {
     return this.interstateTransfersService.getInterstateTransfers(from, to);
   }
 
-  createTransfer() {
+  createTransfer(): void {
     this.creating = true;
     if (!this.activeLines || this.activeLines.length === 0 || !this.ownState || !this.fromState) return;
     const lines = this.activeLines.filter((_: any) => _.toTransfer);
@@ -63,7 +63,7 @@ export class InterstateTransferSuggestedListComponent implements OnInit {
       this.snackBar.open('Successfully created ITT.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
       this.router.navigate(['..']);
       this.creating = false;
-      //switchMap(_ => this.shared.sendMail(to, subject, body)),
+      this.shared.sendMail(to, subject, body, 'Text');
     }).catch(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-warn']});
         this.creating = false;

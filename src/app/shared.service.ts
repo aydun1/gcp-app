@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { DomSanitizer, SafeUrl, Title } from '@angular/platform-browser';
 import { MsalService } from '@azure/msal-angular';
 import { AccountInfo } from '@azure/msal-browser';
-import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, lastValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 
 import { environment } from '../environments/environment';
 
@@ -29,7 +29,8 @@ export class SharedService {
   public emailMap = new Map<string, Array<string>>([
     ['QLD', ['qld@gardencityplastics.com', 'megan.williams@gardencityplastics.com']],
     ['NSW', ['nsw@gardencityplastics.com', 'karen.korsch@gardencityplastics.com']],
-    ['SA', ['sa@gardencityplastics.com']]
+    ['SA', ['sa@gardencityplastics.com']],
+    ['WA', ['wa@gardencityplastics.com']]
   ]);
 
 
@@ -85,7 +86,7 @@ export class SharedService {
     this.titleService.setTitle(title);
   }
 
-  sendMail(to: Array<string>, subject: string, body: string, contentType: 'Text' | 'HTML'): Observable<Object> {
+  sendMail(to: Array<string>, subject: string, body: string, contentType: 'Text' | 'HTML'): Promise<Object> {
     const url = `${environment.endpoint}/me/sendMail`;
     const cc = ['aidan.obrien@gardencityplastics.com'];
     const payload  = {
@@ -100,6 +101,6 @@ export class SharedService {
       },
       saveToSentItems: false
     }
-    return this.http.post(url, payload);
+    return lastValueFrom(this.http.post(url, payload));
   }
 }
