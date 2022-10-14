@@ -93,15 +93,10 @@ export class PanListSimpleComponent implements OnInit {
     return this.panListService.getRequestedQuantities(this.scheduleId, params['pan']);
   }
 
-  updatePanList(itemNumber: string | null | undefined, itemDescription: string | null | undefined, quantity: number | null | undefined): void {
-    if (!itemNumber) return;
-    this.panListService.setRequestedQuantities(quantity, itemNumber, itemDescription, this.scheduleId, 1);
-  }
-
   parseParams(params: Params): void {
     if ('pan' in params) {
       this.selectedPanId = params['pan'];
-    } else {
+    } else if (this.panLists?.length > 0) {
       this.selectedPanId = '0';
     }
   }

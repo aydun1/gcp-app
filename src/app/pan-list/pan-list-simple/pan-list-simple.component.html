@@ -13,8 +13,8 @@
           Draft
         </span>
       </ng-template>
-      <button *ngIf="!sent" mat-raised-button color="primary" type="button" [disabled]="!selectedPanId" (click)="sendList()">Send</button>
-      <button *ngIf="!sent" mat-button type="button" [disabled]="!selectedPanId" [routerLink]="['panlist']" [queryParams]="{pan: selectedPanId}" class="edit">Edit list</button>
+      <button *ngIf="!sent && selectedPanId" mat-raised-button color="primary" type="button" (click)="sendList()">Send</button>
+      <button *ngIf="!sent && selectedPanId" mat-button type="button" [routerLink]="['panlist']" [queryParams]="{pan: selectedPanId}" class="edit">Edit list</button>
       <button mat-icon-button type="button" class="menu" [matMenuTriggerFor]="actionsMenu">
         <mat-icon>more_vert</mat-icon>
       </button>  
