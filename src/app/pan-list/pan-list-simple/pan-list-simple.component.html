@@ -7,14 +7,16 @@
           <mat-button-toggle (click)="addPanList.next(true)">+</mat-button-toggle>
         </mat-button-toggle-group>
       </div>
-      <span *ngIf="sent;else draft" class="pan-status">Sent ({{niceDate(sent)}})</span>
+      <div *ngIf="selectedPanId && panLists;">
+        <span *ngIf="sent;else draft" class="pan-status">Sent ({{niceDate(sent)}})</span>
+      </div>
       <ng-template #draft>
         <span class="pan-status">
           Draft
         </span>
       </ng-template>
-      <button *ngIf="!sent && selectedPanId" mat-raised-button color="primary" type="button" (click)="sendList()">Send</button>
-      <button *ngIf="!sent && selectedPanId" mat-button type="button" [routerLink]="['panlist']" [queryParams]="{pan: selectedPanId}" class="edit">Edit list</button>
+      <button *ngIf="!sent && selectedPanId && panLists" mat-raised-button color="primary" type="button" (click)="sendList()">Send</button>
+      <button *ngIf="!sent && selectedPanId && panLists" mat-button type="button" [routerLink]="['panlist']" [queryParams]="{pan: selectedPanId}" class="edit">Edit list</button>
       <button mat-icon-button type="button" class="menu" [matMenuTriggerFor]="actionsMenu">
         <mat-icon>more_vert</mat-icon>
       </button>  
@@ -95,7 +97,7 @@
 
 <mat-menu #actionsMenu="matMenu">
   <ng-template matMenuContent>
-    <button mat-menu-item type="button" [disabled]="!selectedPanId" (click)="deleteItemsAndList()">Delete list</button>
+    <button mat-menu-item type="button" [disabled]="!selectedPanId && panLists" (click)="deleteItemsAndList()">Delete list</button>
   </ng-template>
 </mat-menu>
 

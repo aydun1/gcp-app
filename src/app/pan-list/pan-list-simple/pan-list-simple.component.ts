@@ -3,7 +3,6 @@ import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { BehaviorSubject, distinctUntilChanged, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
-import { SharedService } from '../../shared.service';
 import { PanListService } from '../pan-list.service';
 import { RequestLine } from '../request-line';
 
@@ -53,7 +52,6 @@ export class PanListSimpleComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private shared: SharedService,
     private panListService: PanListService
   ) { }
 
@@ -96,7 +94,7 @@ export class PanListSimpleComponent implements OnInit {
   parseParams(params: Params): void {
     if ('pan' in params) {
       this.selectedPanId = params['pan'];
-    } else if (this.panLists?.length > 0) {
+    } else {
       this.selectedPanId = '0';
     }
   }

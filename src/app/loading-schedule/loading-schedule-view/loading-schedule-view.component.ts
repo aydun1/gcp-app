@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, catchError, combineLatest, map, Observable, Subject, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { NavigationService } from '../../navigation.service';
@@ -17,7 +17,7 @@ import { LoadingSchedule } from '../shared/loading-schedule';
 export class LoadingScheduleViewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';
 
-  private scheduleSource$!: Subject<string | null>;
+  private scheduleSource$ = new BehaviorSubject<string | LoadingSchedule | null>(null);
   public loadingScheduleEntry$!: Observable<any>;
   public loading = false;
   public edit = false;
@@ -35,12 +35,15 @@ export class LoadingScheduleViewComponent implements OnInit {
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
-    this.scheduleSource$ = new BehaviorSubject<string | null>(id);
+    this.scheduleSource$.next(id);
     const loadingSchedule$ = this.scheduleSource$.pipe(
-      switchMap(_ => this.loadingScheduleService.getLoadingScheduleEntry(_)),
+      switchMap(_ => 
+        typeof _ === 'string' ? this.loadingScheduleService.getLoadingScheduleEntry(_) : of(_)
+      )
     );
     this.loadingScheduleEntry$ = combineLatest([loadingSchedule$, this.sharedService.getBranch()]).pipe(
       map(_ => _[0]),
+      tap(_ => this.goToPanList(_)),
       catchError((err: HttpErrorResponse) => this.handleError(err, true))
     );
   }
@@ -54,13 +57,15 @@ export class LoadingScheduleViewComponent implements OnInit {
   }
 
   addPanList(id: string): void {
-    this.loadingScheduleService.addPanList(id).then(_ => this.goToPan(_, id));
+    this.loadingScheduleService.addPanList(id).then(_ => 
+      this.scheduleSource$.next(_)
+    );
   }
 
   deletePanList(id: string, panListId: string): void {
-    this.loadingScheduleService.removePanList(id, panListId).then(_ => {
-      this.goToPan(_, id)
-    });
+    this.loadingScheduleService.removePanList(id, panListId).then(_ => 
+      this.scheduleSource$.next(_)
+    );
   }
 
   sendPanList(id: string, panListId: string): void {
@@ -70,14 +75,14 @@ export class LoadingScheduleViewComponent implements OnInit {
     });
   }
 
-  goToPan(ls: LoadingSchedule, id: string): void {
-    this.fetchData(id);
+  goToPanList(ls: LoadingSchedule | null): void {
+    if (!ls) return;
     const pla = ls.fields.PanListsArray || [];
     const pan = pla?.length > 0 ? pla[pla.length  - 1][0] : null;
     this.router.navigate([], { queryParams: {pan}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  fetchData(id: string) {
+  fetchData(id: string): void {
     this.scheduleSource$.next(id);
   }
 
