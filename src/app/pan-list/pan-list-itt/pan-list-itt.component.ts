@@ -1,12 +1,14 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
+import { MatTable } from '@angular/material/table';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
-import { NavigationService } from '../../navigation.service';
+import { debounceTime, distinctUntilChanged, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
+import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
 import { PanListService } from '../pan-list.service';
+import { RequestLine } from '../request-line';
 import { SuggestedItem } from '../suggested-item';
 
 @Component({
@@ -17,23 +19,31 @@ import { SuggestedItem } from '../suggested-item';
 })
 export class PanListITTComponent implements OnInit {
 
+  @ViewChild(MatTable) _matTable!:MatTable<any>;
+
   @Input() autosave!: boolean;
+  @Input() defaultCategories: Array<string> = [];
+  @Input() defaultColumns: Array<string> = [];
+  @Input() showSuppliers: boolean = true;
+  @Input() estimatePallets: boolean = false;
+
   @Output() saveClicked: EventEmitter<FormGroup> = new EventEmitter();
   @Output() lineCount: EventEmitter<number> = new EventEmitter();
   @Output() activeLines: EventEmitter<any[]> = new EventEmitter();
 
-  private scheduleId!: string;
-  private panId!: number;
-
-  private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
+  private _scheduleId!: string;
+  private _panId!: number;
   private _loadList!: boolean;
+
+  public itemSearch = new FormControl('');
   public branchFilter = new FormControl({value: '', disabled: true});
   public viewFilter = new FormControl('');
-  public interstateTransfers$!: Observable<FormGroup<any>>;
+  public interstateTransfers$!: Observable<boolean>;
   public loading = false;
   public creating = false;
   public chosenColumns: Array<string> = [];
-  public chosenVendors: Array<string> = []
+  public chosenVendors: Array<string> = [];
+  public categories: Array<string> = [];
   public totals!: object;
   public states = this.shared.branches;
   public ownState = '';
@@ -46,14 +56,23 @@ export class PanListITTComponent implements OnInit {
   public hideUnrequireds = false;
   public hideUnsuggesteds = false;
   public hideNoMaxes = false;
-
-  public saving = new Subject<boolean>();
+  public saving = new Subject<string>();
   public columns = [ 'bin', 'product', 'NSW', 'QLD', 'SA', 'VIC', 'WA', 'onHand', 'required', 'suggested', 'toFill', 'transfer'];
-
+  public categoryOptions = [
+    {value: 'M', name: 'Manufactured'},
+    {value: 'A', name: 'Allied'},
+    {value: 'H', name: 'Heatherton'},
+    {value: 'PM', name: 'Print Codes'},
+    {value: 'NA', name: 'Allied NSW'},
+    {value: 'QA', name: 'Allied QLD'},
+    {value: 'SA', name: 'Allied SA'},
+    {value: 'WA', name: 'Allied WA'}
+  ];
   public branchVendors = [
     {branch: 'NSW', vendors: ['100241', '300310', '404562', '502014']},
     {branch: 'QLD', vendors: ['100086', '200001']},
     {branch: 'SA', vendors: ['164403', '200387', '300299']},
+    //{branch: 'VIC', vendors: ['200113', '300365']},
     {branch: 'WA', vendors: ['164802', '200231', '300298']}
   ];
   
@@ -89,11 +108,19 @@ export class PanListITTComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.scheduleId = this.route.snapshot.paramMap.get('id') || '';
+    this.saving.next('saved');
+    this._scheduleId = this.route.snapshot.paramMap.get('id') || '';
     const state$ = this.shared.getBranch();
     this.transferForm = this.fb.group({
       lines: this.fb.array([]),
     });
+
+    this.transferForm.valueChanges.pipe(
+      tap(_ => {
+        this.activeLines.emit(_['lines'].filter((l: any) => l.toTransfer > 0));
+        this.lineCount.emit(this.getLinesToTransfer(_['lines']));
+      })
+    ).subscribe();
 
     this.interstateTransfers$ = this.route.queryParams.pipe(
       startWith({}),
@@ -106,82 +133,105 @@ export class PanListITTComponent implements OnInit {
       )),
       tap(_ => this.parseParams(_)),
       tap(_ => this.loading = true),
-      switchMap(_ => this._loadList ? this.getSuggestedItems(_) : []),
-      tap(_ => this._InterstateTransferSubject$.next(this.makeFormGroup(_))),
-      switchMap(_ => this._InterstateTransferSubject$),
-    )
+      switchMap(_ => this._loadList ? this.getSuggestedItems(_) : of([] as Array<SuggestedItem>)),
+      tap(_ => {
+        this.lines.clear();
+        _.forEach(line => this.makeFormGroup(line, false));
+        this.addExtraLine();
+        this.loading = false;
+      }),
+      map(_ => true)
+    );
   }
 
-  makeFormGroup(lines: Array<SuggestedItem>): FormGroup<any> {
-    this.lines.clear();
-    let i = -1;
-    lines.forEach(_ => {
-      const toFill = (_.Max && _.QtyAvailable < _.Min) ? _.QtyRequired + _.Max : null;
-      const toFill2 = _.Max ? _.QtyRequired + _.Max : null;
-      const formGroup = this.fb.group({
-        index: [i += 1],
-        id: [_.Id],
-        itemDesc: [_.ItemDesc],
-        itemNumber: [_.ItemNumber],
-        bin: [_.Bin?.replace('QLD BIN', '')],
-        palletQty: [_.PalletQty],
-        packSize: [_.PackSize == _.PalletQty ? '-' : _.PackSize],
-        vendor: [_.Vendor],
-        vicOnHand: [_.OnHandVIC],
-        qldOnHand: [_.OnHandQLD],
-        saOnHand: [_.OnHandSA],
-        waOnHand: [_.OnHandWA],
-        nswOnHand: [_.OnHandNSW],
-        onHand: [_.QtyOnHand],
-        qtyRequired: [Math.max(0, _.QtyRequired) || null],
-        suggested: [toFill || Math.max(0, _.QtyRequired) || null],
-        toFill: [_.Max ? _.QtyRequired + _.Max : null],
-        toTransfer: [_.ToTransfer]
-      });
-      formGroup.valueChanges.pipe(
-        debounceTime(1000),
-        tap(_ => this.updatePanList(_.itemNumber, _.itemDesc, _.toTransfer))
-      ).subscribe();
-      this.lines.push(formGroup);
-    });
-    this.loading = false;
+  addExtraLine(): void {
+    const line = {ItemNmbr: 'UNSET'} as SuggestedItem;
+    this.makeFormGroup(line, true);
+    this._matTable?.renderRows();
+  }
 
+  formMapper(_: SuggestedItem): any {
+    const toFill = (_.Max && _.QtyAvailable < _.Min) ? _.QtyRequired + _.Max : null;
+    return {
+      id: _.Id,
+      itemDesc: _.ItemDesc,
+      itemNumber: _.ItemNmbr,
+      bin: _.Bin?.replace('QLD BIN', ''),
+      palletQty: _.PalletQty,
+      packSize: _.PackSize == _.PalletQty ? '-' : _.PackSize,
+      vendor: _.Vendor,
+      category: _.Category,
+      vicOnHand: _.OnHandVIC,
+      qldOnHand: _.OnHandQLD,
+      saOnHand: _.OnHandSA,
+      waOnHand: _.OnHandWA,
+      nswOnHand: _.OnHandNSW,
+      onHand: _.QtyOnHand,
+      qtyRequired: Math.max(0, _.QtyRequired) || null,
+      suggested: toFill || Math.max(0, _.QtyRequired) || null,
+      toFill: _.Max ? _.QtyRequired + _.Max : null,
+      itemPicker: null
+    };
+  }
 
-    this.transferForm.valueChanges.pipe(
-      tap(_ => {
-        this.activeLines.emit(_['lines'].filter((l: any) => l.toTransfer > 0));
-        this.lineCount.emit(this.getLinesToTransfer(_['lines']));
+  makeFormGroup(line: SuggestedItem, custom: boolean): void {
+    const toFill2 = line.Max ? line.QtyRequired + line.Max : null;
+    const origToTransfer =  new FormControl<number | null>(line.ToTransfer || null);
+    const toTransfer = new FormControl<number | null>(line.ToTransfer || null);
+        const itemPicker = new FormControl<SuggestedItem | null>(null);
+    const f = this.formMapper(line);
+    const formGroup = this.fb.group({...f, toTransfer, origToTransfer, itemPicker, custom});
+
+    itemPicker.valueChanges.pipe(
+      tap(q => {
+        if (!q) return;
+        formGroup.patchValue(this.formMapper(q));
+        this.updatePanList(formGroup.value['itemNumber'] as string, formGroup.value['itemDesc'] as string, formGroup.value['toTransfer'] as number)
+        this.addExtraLine();
       })
     ).subscribe();
 
+    toTransfer.valueChanges.pipe(
+      tap(() => this.saving.next('saving')),
+      debounceTime(1000),
+      distinctUntilChanged((b, a) => {
+        this.saving.next('saved')
+        const unchanged = a === formGroup.value['origToTransfer'];
+        return unchanged;
+      }),
+      tap(() => this.saving.next('saving')),
+      tap(_ => this.updatePanList(formGroup.value['itemNumber'] as string, formGroup.value['itemDesc'] as string, _).then(() => {
+        formGroup.patchValue({origToTransfer: _});
+        this.saving.next('saved');
+      }).catch(e =>  {
+        formGroup.patchValue({toTransfer: formGroup.value['origToTransfer']});
+        this.saving.next('error');
+      }))
+    ).subscribe();
 
-
-    return this.transferForm;
+    this.lines.push(formGroup);
   }
   
   getSuggestedItems(params: Params): Observable<SuggestedItem[]> {
     const branch = params['branch'] || '';
     if (!branch) return of([]);
-    return this.panListService.getPanListWithQuantities(branch, this.scheduleId, this.panId);
+    return this.panListService.getPanListWithQuantities(branch, this._scheduleId, this._panId);
   }
 
-  updatePanList(itemNumber: string | null | undefined, itemDescription: string | null | undefined, quantity: number | null | undefined) {
-    if (!itemNumber || !this.autosave) return;
-    this.saving.next(true);
-    this.panListService.setRequestedQuantities(quantity, itemNumber, itemDescription, this.scheduleId, this.panId).then(() => {
-      this.saving.next(false);
-      this.panListService.getRequestedQuantities(this.scheduleId, this.panId)
-    });
+  updatePanList(itemNumber: string | null | undefined, itemDescription: string | null | undefined, quantity: number | null | undefined): Promise<RequestLine> {
+    if (!itemNumber || !this.autosave) return new Promise(_ => _);
+    return this.panListService.setRequestedQuantities(quantity, itemNumber, itemDescription, this._scheduleId, this._panId);
   }
 
   parseParams(params: Params): void {
     if (!params) return;
+    this.lines.clear();
     const filters: Params = {};
     if ('pan' in params) {
-      this.panId = parseInt(params['pan']);
+      this._panId = parseInt(params['pan']);
       filters['pan'] = params['pan'];
     } else {
-      this.panId = 0;
+      this._panId = 0;
     }
     if ('branch' in params) {
       this.branchFilter.patchValue(params['branch']);
@@ -189,11 +239,17 @@ export class PanListITTComponent implements OnInit {
     } else {
       this.branchFilter.patchValue(this.states[0]);
     }
+    if ('categories' in params) {
+      const categories = Array.isArray(params['categories']) ? params['categories'] : [params['categories']];
+      this.categories = categories;
+    } else {
+      this.categories = [...this.defaultCategories];
+    }
     if ('columns' in params) {
       const chosenColumns = Array.isArray(params['columns']) ? params['columns'] : [params['columns']];
       this.chosenColumns = chosenColumns;
     } else {
-      this.chosenColumns = [];
+      this.chosenColumns = [...this.defaultColumns];
     }
     if ('vendors' in params) {
       const vendors = Array.isArray(params['vendors']) ? params['vendors'] : [params['vendors']];
@@ -211,12 +267,17 @@ export class PanListITTComponent implements OnInit {
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
     const sameBranch = prev['branch'] === curr['branch'];
+    const sameCategories = prev['categories'] === curr['categories'];
     const sameColumns = prev['columns'] === curr['columns'];
-    return this._loadList && sameBranch && sameColumns;
+    return this._loadList && sameBranch;
   }
 
   setBranch(branch: MatSelectChange): void {
     this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  setCategories(categories: MatSelectChange): void {
+    this.router.navigate([], { queryParams: {categories: categories.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setVendors(vendors: MatSelectChange): void {
@@ -235,8 +296,9 @@ export class PanListITTComponent implements OnInit {
     return lines.reduce((acc, cur) => acc + cur.qtyRequired, 0);
   }
 
-  getTotalRequestedLines(lines: Array<any>): number {
-    const l: Array<any> = this.transferForm.value['lines'];
+  getTotalRequestedLines(lines: Array<any> | undefined): number {
+    if (!lines) return 0;
+    const l: Array<any> = lines;
     return l.reduce((acc, cur) => acc + 1, 0);
   }
 
@@ -245,10 +307,14 @@ export class PanListITTComponent implements OnInit {
   }
 
   getTotalToTransfer(lines: Array<any>): number {
-    return lines.reduce((acc, cur) => acc + cur.toTransfer, 0);
+    return lines?.reduce((acc, cur) => acc + cur.value.toTransfer, 0);
   }
 
-  submitForm() {
+  getTotalPalletCount(lines: Array<any>): number {
+    return lines.reduce((acc, cur) => acc + (cur.value.palletQty && cur.value.palletQty !== 5000 ? cur.value.toTransfer / cur.value.palletQty : 0), 0);
+  }
+
+  submitForm(): void {
     this.saveClicked.emit(this.transferForm);
   }
 

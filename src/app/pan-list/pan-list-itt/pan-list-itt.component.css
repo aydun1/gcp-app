@@ -18,6 +18,10 @@ h2 {
   margin-left: 10px;
 }
 
+.autosave {
+  font-size: 14px;
+}
+
 .toggles {
   display: none;
 }
@@ -26,6 +30,10 @@ h2 {
   font-size: 14px;
   margin-right: 10px;
   width: 145px;
+}
+
+.search-form {
+  width: calc(100% - 10px);
 }
 
 .mat-footer-row {
@@ -86,9 +94,14 @@ h2 {
   text-align: right;
 }
 
+.pallet-count {
+  width: 50px;
+  margin-left: 5px;
+}
+
 .mat-column-transfer {
   background: #a5a5a5;
-  flex: 0 0 74px;
+  flex: 0 0 100px;
   padding-left: 24px;
 }
 
@@ -101,8 +114,8 @@ h2 {
   border-radius: 4px;
   font-family: inherit;
   font-size: inherit;
-  padding: 6px 6px;
-  width: 60px;
+  padding: 6px;
+  width: 100%;
 }
 
 .details {

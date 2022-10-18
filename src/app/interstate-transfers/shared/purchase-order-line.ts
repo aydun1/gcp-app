@@ -7,7 +7,7 @@ export interface PurchaseOrderLine {
   CancelledQty: number;
   ExtendedCost: number;
   ItemDesc: string;
-  ItemNumber: string;
+  ItemNmbr: string;
   OrderQty: number;
   QtyOnHand: number;
   QtyAvailable: number;

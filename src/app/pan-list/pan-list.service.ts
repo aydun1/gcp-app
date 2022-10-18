@@ -31,7 +31,7 @@ export class PanListService {
     return combineLatest([this.getPanList(branch), this.getRequestedQuantities(loadingScheduleId, panListId)]).pipe(
       map(([a, b]) => {
         b.forEach(q => {
-          const thisOne = a.find(_ => _.ItemNumber === q.fields.ItemNumber);
+          const thisOne = a.find(_ => _.ItemNmbr === q.fields.ItemNumber);
           if (thisOne) thisOne['ToTransfer'] = q.fields.Quantity;
         });
         return a;
@@ -41,6 +41,13 @@ export class PanListService {
         return of([]);
       })
     )
+  }
+
+  searchItems(branch: string | undefined, searchTerm: string | undefined): Promise<SuggestedItem[]> {
+    const request = this.http.get<{lines: SuggestedItem[]}>(`${environment.gpEndpoint}/inventory?branch=${branch}&search=${searchTerm}`).pipe(
+      map(_ => _.lines)
+    );
+    return lastValueFrom(request);
   }
 
   getRequestedQuantities(loadingScheduleId: string, panListId: number): Observable<RequestLine[]> {

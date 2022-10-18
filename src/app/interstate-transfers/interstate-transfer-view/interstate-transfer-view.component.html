@@ -27,7 +27,7 @@
   <div *ngIf="interstateTransfer$ | async as s" class="inner">
     <div *ngFor="let line of s.lines" class="line">
       <div class="product-details">
-        <strong>{{ line.ItemNumber }}</strong>
+        <strong>{{ line.ItemNmbr }}</strong>
         <div>{{ line.ItemDesc }}</div>
       </div>
       <div>

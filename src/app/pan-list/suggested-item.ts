@@ -4,7 +4,7 @@ export interface SuggestedItem {
   Id: number;
   InTransit: number;
   ItemDesc: string;
-  ItemNumber: string;
+  ItemNmbr: string;
   Location: string;
   Vendor: number;
   Max: number;

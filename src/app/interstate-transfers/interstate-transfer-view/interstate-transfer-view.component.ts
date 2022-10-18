@@ -1,10 +1,10 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of, switchMap } from 'rxjs';
-import { NavigationService } from 'src/app/navigation.service';
 
 import { PurchaseOrder } from '../shared/purchase-order';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
+import { NavigationService } from '../../navigation.service';
 
 @Component({
   selector: 'gcp-interstate-transfer-view',

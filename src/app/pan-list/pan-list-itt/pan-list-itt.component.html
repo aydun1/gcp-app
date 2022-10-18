@@ -10,10 +10,17 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="pallet-filter">
+        <mat-form-field *ngIf="showSuppliers" appearance="outline" class="pallet-filter">
           <mat-label>Suppliers</mat-label>
           <mat-select [(ngModel)]="chosenVendors" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setVendors($event)">
             <mat-option *ngFor="let b of otherVendors" [value]="b.branch">{{ b.branch }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="pallet-filter">
+          <mat-label>Categories</mat-label>
+          <mat-select [(ngModel)]="categories" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setCategories($event)">
+            <mat-option *ngFor="let c of categoryOptions" [value]="c.value">{{ c.name }}</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -29,32 +36,38 @@
           <mat-slide-toggle class="top-toggle" [(ngModel)]="hideUnrequireds" [ngModelOptions]="{standalone: true}">Only show required items</mat-slide-toggle>  
         </div>
       </div>
-      <span *ngIf="saving | async">Saving</span>
+      <div *ngIf="autosave && (saving | async) as s" class="autosave">Autosave: {{ s }}</div>
     </div>
     <div *ngIf="loading" class="loading-spinner"><mat-spinner></mat-spinner></div>
 
-    <div *ngIf="interstateTransfers$ | async as interstateTransfers">
-      <mat-table #table [dataSource]="interstateTransfers.value['lines']" [trackBy]="trackByFn" formArrayName="lines">
+    <div *ngIf="interstateTransfers$ | async">
+      <mat-table #table [dataSource]="lines.controls" [trackBy]="trackByFn" formArrayName="lines">
         <ng-container matColumnDef="bin">
           <mat-header-cell *matHeaderCellDef> Bin </mat-header-cell>
           <mat-cell *matCellDef="let line">
-            {{ line['bin'] }}
+            {{ line.value['bin'] }}
           </mat-cell>
           <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
         </ng-container>
 
         <ng-container matColumnDef="product">
           <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
-          <mat-cell *matCellDef="let line">
-            <div class="details">
+          <mat-cell *matCellDef="let line; let index = index" [formGroupName]="index">
+            <ng-container *ngIf="line.value['itemNumber'] === 'UNSET'">
+              <mat-form-field class="search-form">
+                <mat-label>Search by item number</mat-label>
+                <gcp-item-control formControlName="itemPicker" [territory]="ownState"></gcp-item-control>
+              </mat-form-field>
+            </ng-container>
+            <div *ngIf="line.value['itemNumber'] !== 'UNSET'" class="details">
               <strong>
-                {{ line['itemNumber'] }}
+                {{ line.value['itemNumber'] }}
               </strong>
               <div class="description">
-                {{ line['itemDesc'] }}
+                {{ line.value['itemDesc'] }}
               </div>
               <div class="description">
-                {{ line['packSize'] || '-' }} | {{ line['palletQty'] || '-' }}
+                {{ line.value['packSize'] || '-' }} | {{ line.value['palletQty'] || '-' }}
               </div>
             </div>
           </mat-cell>
@@ -72,7 +85,7 @@
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
             <div class="loadDetails right">
-              {{ line['qtyRequired'] | number }}
+              {{ line.value['qtyRequired'] | number }}
             </div>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef>
@@ -90,7 +103,7 @@
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
             <div class="loadDetails right">
-              {{ line['qldOnHand'] | number }}
+              {{ line.value['qldOnHand'] | number }}
             </div>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef>
@@ -108,7 +121,7 @@
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
             <div class="loadDetails right">
-              {{ line['saOnHand'] | number }}
+              {{ line.value['saOnHand'] | number }}
             </div>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef>
@@ -126,7 +139,7 @@
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
             <div class="loadDetails right">
-              {{ line['vicOnHand'] | number }}
+              {{ line.value['vicOnHand'] | number }}
             </div>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef>
@@ -144,7 +157,7 @@
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
             <div class="loadDetails right">
-              {{ line['nswOnHand'] | number }}
+              {{ line.value['nswOnHand'] | number }}
             </div>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef>
@@ -162,7 +175,7 @@
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
             <div class="loadDetails right">
-              {{ line['waOnHand'] | number }}
+              {{ line.value['waOnHand'] | number }}
             </div>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef>
@@ -179,7 +192,7 @@
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
             <div class="loadDetails right">
-              {{ line['onHand'] | number }}
+              {{ line.value['onHand'] | number }}
             </div>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef>
@@ -197,7 +210,7 @@
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
             <div class="loadDetails right">
-              {{ line['toFill'] | number }}
+              {{ line.value['toFill'] | number }}
             </div>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef>
@@ -215,7 +228,7 @@
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
             <div class="loadDetails right">
-              {{ line['suggested'] | number }}
+              {{ line.value['suggested'] | number }}
             </div>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef>
@@ -228,12 +241,18 @@
               Request 
             </div>
           </mat-header-cell>
-          <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
+          <mat-cell *matCellDef="let line; let index = index" [formGroupName]="index">
             <input formControlName="toTransfer" class="transfer-input" type="number" placeholder="0" min="0">
+            <div *ngIf="estimatePallets" class="pallet-count">
+              <span *ngIf="line.value['palletQty'] && line.value['palletQty'] !== 5000">({{ (line.value['toTransfer'] / line.value['palletQty']) | number: '1.0-1' }})</span>
+            </div>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef>
             <div class="transferTotal">
-              {{ getTotalToTransfer(interstateTransfers.value['lines']) | number }}
+              {{ getTotalToTransfer(lines.controls) | number }}
+            </div>
+            <div class="transferTotal">
+              ({{ getTotalPalletCount(lines.controls) | number: '1.0-1' }})
             </div>
           </mat-footer-cell>
         </ng-container>
@@ -252,21 +271,20 @@
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" [class.hidden]="
-        (vendorCodes.length > 0 && !vendorCodes.includes(row.vendor)) ||
-        (row.vicOnHand <= 0 && hideNoStockVic) ||
-        (row.nswOnHand <= 0 && hideNoStockNsw) ||
-        (row.saOnHand <= 0 && hideNoStockSa) ||
-        (row.waOnHand <= 0 && hideNoStockWa) ||
-        (row.suggested <= 0 && hideUnsuggesteds) ||
-        (!row.qtyRequired && hideUnrequireds) ||
-        (!row.toFill && hideNoMaxes)"></mat-row>
+        !row.value.custom &&
+        ((vendorCodes.length > 0 && !vendorCodes.includes(row.value['vendor'])) ||
+        (categories.length > 0 && !categories.includes(row.value['category'])) ||
+        (row.value['vicOnHand'] <= 0 && hideNoStockVic) ||
+        (row.value['nswOnHand'] <= 0 && hideNoStockNsw) ||
+        (row.value['saOnHand'] <= 0 && hideNoStockSa) ||
+        (row.value['waOnHand'] <= 0 && hideNoStockWa) ||
+        (row.value['suggested'] <= 0 && hideUnsuggesteds) ||
+        (!row.value['qtyRequired'] && hideUnrequireds) ||
+        (!row.value['toFill'] && hideNoMaxes))"></mat-row>
         <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="!loading"></mat-footer-row>
-        <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(interstateTransfers.value['lines'])"></mat-footer-row>
+        <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(lines.controls)"></mat-footer-row>
         <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
       </mat-table>
     </div>
   </form>
 </div>
-
-
-<router-outlet></router-outlet>

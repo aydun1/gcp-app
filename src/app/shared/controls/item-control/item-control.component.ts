@@ -4,9 +4,8 @@ import { Component, ElementRef, HostBinding, Input, OnDestroy, OnInit, Optional,
 import { ControlValueAccessor, NgControl, FormControl, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject, switchMap, tap } from 'rxjs';
-import { PanListService } from 'src/app/pan-list/pan-list.service';
 
-import { CustomersService } from '../../../customers/shared/customers.service';
+import { PanListService } from '../../../pan-list/pan-list.service';
 import { SuggestedItem } from '../../../pan-list/suggested-item';
 
 @Component({
