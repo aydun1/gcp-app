@@ -1,13 +1,13 @@
 import { Component, HostBinding } from '@angular/core';
 
-import { NavigationService } from '../navigation.service';
+import { NavigationService } from '../../navigation.service';
 
 @Component({
-  selector: 'gcp-pan-list',
-  templateUrl: './pan-list.component.html',
-  styleUrls: ['./pan-list.component.css']
+  selector: 'gcp-loading-schedule-pan',
+  templateUrl: './loading-schedule-pan.component.html',
+  styleUrls: ['./loading-schedule-pan.component.css']
 })
-export class PanListComponent {
+export class LoadingSchedulePanComponent {
   @HostBinding('class') class = 'app-component mat-app-background';
 
   constructor(

@@ -6,7 +6,7 @@ import { LoadingScheduleComponent } from './loading-schedule.component';
 import { LoadingScheduleListComponent } from './loading-schedule-list/loading-schedule-list.component';
 import { LoadingScheduleNewComponent } from './loading-schedule-new/loading-schedule-new.component';
 import { LoadingScheduleViewComponent } from './loading-schedule-view/loading-schedule-view.component';
-import { PanListComponent } from '../pan-list/pan-list.component';
+import { LoadingSchedulePanComponent } from './loading-schedule-pan/loading-schedule-pan.component';
 
 const routes: Routes = [
   {
@@ -36,7 +36,7 @@ const routes: Routes = [
           {
             path: 'panlist',
             data: {title: 'Edit pan list'},
-            component: PanListComponent,
+            component: LoadingSchedulePanComponent,
           }
         ]
       },

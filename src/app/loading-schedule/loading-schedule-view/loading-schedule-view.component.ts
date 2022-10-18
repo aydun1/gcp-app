@@ -19,9 +19,6 @@ export class LoadingScheduleViewComponent implements OnInit {
 
   private scheduleSource$ = new BehaviorSubject<string | LoadingSchedule | null>(null);
   public loadingScheduleEntry$!: Observable<any>;
-  public loading = false;
-  public edit = false;
-  public selectedPan = '';
   public date = new Date();
 
   constructor(
@@ -51,7 +48,6 @@ export class LoadingScheduleViewComponent implements OnInit {
   handleError(err: HttpErrorResponse, redirect = false): Observable<never> {
     const message = err.error?.error?.message || 'Unknown error';
     this.snackBar.open(message, '', {duration: 3000});
-    this.loading = false;
     if (redirect) this.navService.back();
     return throwError(() => new Error(message));
   }

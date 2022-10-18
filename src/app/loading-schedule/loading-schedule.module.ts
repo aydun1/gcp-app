@@ -8,6 +8,7 @@ import { LoadingScheduleService } from './shared/loading-schedule.service';
 import { LoadingScheduleListComponent } from './loading-schedule-list/loading-schedule-list.component';
 import { LoadingScheduleNewComponent } from './loading-schedule-new/loading-schedule-new.component';
 import { LoadingScheduleViewComponent } from './loading-schedule-view/loading-schedule-view.component';
+import { LoadingSchedulePanComponent } from './loading-schedule-pan/loading-schedule-pan.component';
 import { PipeModule } from '../shared/pipes/pipe.module';
 import { PanListModule } from '../pan-list/pan-list.module';
 
@@ -16,7 +17,8 @@ import { PanListModule } from '../pan-list/pan-list.module';
     LoadingScheduleComponent,
     LoadingScheduleListComponent,
     LoadingScheduleNewComponent,
-    LoadingScheduleViewComponent
+    LoadingScheduleViewComponent,
+    LoadingSchedulePanComponent
   ],
   imports: [
     CommonModule,
