@@ -12,12 +12,12 @@ import { RequestLine } from '../request-line';
 import { SuggestedItem } from '../suggested-item';
 
 @Component({
-  selector: 'gcp-pan-list-itt',
+  selector: 'gcp-pan-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './pan-list-itt.component.html',
-  styleUrls: ['./pan-list-itt.component.css']
+  templateUrl: './pan-list.component.html',
+  styleUrls: ['./pan-list.component.css']
 })
-export class PanListITTComponent implements OnInit {
+export class PanListComponent implements OnInit {
 
   @ViewChild(MatTable) _matTable!:MatTable<any>;
 

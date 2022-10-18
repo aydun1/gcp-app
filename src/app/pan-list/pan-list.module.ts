@@ -6,11 +6,11 @@ import { SharedModule } from '../shared/shared.module';
 import { PanListService } from './pan-list.service';
 import { PipeModule } from '../shared/pipes/pipe.module';
 import { PanListSimpleComponent } from './pan-list-simple/pan-list-simple.component';
-import { PanListITTComponent } from './pan-list-itt/pan-list-itt.component';
+import { PanListComponent } from './pan-list/pan-list.component';
 
 @NgModule({
   declarations: [
-    PanListITTComponent,
+    PanListComponent,
     PanListSimpleComponent
   ],
   imports: [
@@ -20,7 +20,7 @@ import { PanListITTComponent } from './pan-list-itt/pan-list-itt.component';
     PipeModule
   ],
   exports: [
-    PanListITTComponent,
+    PanListComponent,
     PanListSimpleComponent
   ],
   providers: [

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PanListITTComponent } from './pan-list-itt.component';
+import { PanListComponent } from './pan-list.component';
 
 describe('PanListITTComponent', () => {
-  let component: PanListITTComponent;
-  let fixture: ComponentFixture<PanListITTComponent>;
+  let component: PanListComponent;
+  let fixture: ComponentFixture<PanListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PanListITTComponent ]
+      declarations: [ PanListComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PanListITTComponent);
+    fixture = TestBed.createComponent(PanListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

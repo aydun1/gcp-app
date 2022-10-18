@@ -1,5 +1,5 @@
 <form (ngSubmit)="createTransfer()">
-  <gcp-pan-list-itt [autosave]="false" (activeLines)="activeLines=$event" (lineCount)="lineCount=$event"></gcp-pan-list-itt>
+  <gcp-pan-list [autosave]="false" (activeLines)="activeLines=$event" (lineCount)="lineCount=$event"></gcp-pan-list>
   <div class="buttons mat-app-background">
     Requesting {{ lineCount || 0 }} lines from
     <mat-form-field floatLabel="never">
