@@ -61,7 +61,7 @@ export class PanListService {
     const request = this.http.get<{value: RequestLine[]}>(url).pipe(
       map(res => {
         this.loading.next(false);
-        return res.value.filter(_ => _.fields.Quantity > 0);
+        return res.value.filter(_ => _.fields.Quantity > 0 || _.fields.Notes);
       }),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
