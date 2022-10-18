@@ -30,11 +30,6 @@
             <mat-option *ngFor="let s of otherStates" [value]="s">{{ s }}</mat-option>
           </mat-select>
         </mat-form-field>
-
-        <div class="toggles">
-          <mat-slide-toggle class="top-toggle" [(ngModel)]="hideNoStockVic" [ngModelOptions]="{standalone: true}">Hide zero stocks</mat-slide-toggle>
-          <mat-slide-toggle class="top-toggle" [(ngModel)]="hideUnrequireds" [ngModelOptions]="{standalone: true}">Only show required items</mat-slide-toggle>  
-        </div>
       </div>
       <div *ngIf="autosave && (saving | async) as s" class="autosave">Autosave: {{ s }}</div>
     </div>
