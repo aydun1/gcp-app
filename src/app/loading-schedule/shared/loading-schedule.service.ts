@@ -161,12 +161,13 @@ export class LoadingScheduleService {
         return this.http.patch<LoadingSchedule>(url, {fields});
       }),
       tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _)),
+      switchMap(_ => this.markPanSent(id)),
       switchMap(_ => {
         const subject = `New pan list`;
         let body = `Click <a href="${environment.redirectUri}/loading-schedule/${id}?pan=${panListId}">here</a> to view`
         const to = ['aidan.obrien@gardencityplastics.com'];
         return this.shared.sendMail(to, subject, body, 'HTML');
-      })      
+      })
     ));
   }
 
@@ -181,6 +182,13 @@ export class LoadingScheduleService {
   addTransportCompany(id: string, drivers: string): Observable<TransportCompany> {
     const fields = {Drivers: drivers};
     return this.http.post<TransportCompany>(`${this._transportCompaniesUrl}/items('${id}')`, {fields});
+  }
+
+  markPanSent(id: string): Observable<LoadingSchedule> {
+    const fields = {Status: 'Pan list sent'};
+    return this.http.patch<LoadingSchedule>(`${this._loadingScheduleUrl}/items('${id}')`, {fields}).pipe(
+      switchMap(_ => this.updateList(_))
+    );
   }
 
   markDelivered(id: string): Observable<LoadingSchedule> {
@@ -212,7 +220,7 @@ export class LoadingScheduleService {
 
     const a = isNewTransportCompany ?
                 this.http.post<TransportCompany>(itemsUrl, {fields: {Title: transportCompany, Drivers: drivers.join('\n'), Branch: branch}}) :
-              isNewDriver ? 
+              isNewDriver ?
                 this.http.patch<TransportCompany>(`${itemsUrl}('${v.transportCompany.id}')`, {fields: {Drivers: drivers.join('\n')}}) :
                 of({} as TransportCompany);
 
