@@ -32,7 +32,10 @@ export class PanListService {
       map(([a, b]) => {
         b.forEach(q => {
           const thisOne = a.find(_ => _.ItemNmbr === q.fields.ItemNumber);
-          if (thisOne) thisOne['ToTransfer'] = q.fields.Quantity;
+          if (thisOne) {
+            thisOne['Notes'] = q.fields.Notes;
+            thisOne['ToTransfer'] = q.fields.Quantity;
+          }
         });
         return a;
       }),
@@ -53,7 +56,7 @@ export class PanListService {
   getRequestedQuantities(loadingScheduleId: string, panListId: number): Observable<RequestLine[]> {
     this.loading.next(true);
     this._requestedsSubject$.next([]);
-    const url = `${this._panListLinesUrl}/items?expand=fields(select=ItemNumber,ItemDescription,Quantity)&filter=fields/Title eq '${loadingScheduleId}' and fields/PanList eq '${panListId}'&orderby=fields/ItemNumber asc`;
+    const url = `${this._panListLinesUrl}/items?expand=fields(select=ItemNumber,ItemDescription,Quantity, Notes)&filter=fields/Title eq '${loadingScheduleId}' and fields/PanList eq '${panListId}'&orderby=fields/ItemNumber asc`;
 
     const request = this.http.get<{value: RequestLine[]}>(url).pipe(
       map(res => {
@@ -70,12 +73,16 @@ export class PanListService {
     return this._requestedsSubject$;
   }
 
-  updateQuantitiesSubject(quantity: number | null | undefined, itemNumber: string, itemDescription: string | null | undefined): void {
+  updateQuantitiesSubject(quantity: number | null | undefined, notes: string | null | undefined, itemNumber: string, itemDescription: string | null | undefined): void {
     firstValueFrom(this._requestedsSubject$).then(lines => {
       const match = lines.find(_ => _.fields.ItemNumber === itemNumber);
-      if (match) match.fields.Quantity = quantity || 0;
-      if (!match) lines.push({fields: {ItemNumber: itemNumber, ItemDescription: itemDescription, Quantity: quantity || 0}} as RequestLine);
-      this._requestedsSubject$.next(lines.filter(_ => _.fields.Quantity > 0));
+      if (match) {
+        match.fields.Notes = notes || '';
+        match.fields.Quantity = quantity || 0;
+      } else {
+        lines.push({fields: {ItemNumber: itemNumber, ItemDescription: itemDescription, Quantity: quantity || 0, Notes: notes || ''}} as RequestLine);
+      }
+      this._requestedsSubject$.next(lines.filter(_ => _.fields.Quantity > 0 || _.fields.Notes));
     });
   }
 
@@ -94,7 +101,7 @@ export class PanListService {
     return lastValueFrom(request);
   }
 
-  setRequestedQuantities(quantity: number | null | undefined, itemNumber: string, itemDescription: string | null | undefined, loadingScheduleId: string, panListId: number): Promise<RequestLine> {
+  setRequestedQuantities(quantity: number | null | undefined, notes: string| null | undefined, itemNumber: string, itemDescription: string | null | undefined, loadingScheduleId: string, panListId: number): Promise<RequestLine> {
     const url = `${this._panListLinesUrl}/items?expand=fields(select=Title)&filter=fields/Title eq '${loadingScheduleId}' and fields/PanList eq '${panListId}' and fields/ItemNumber eq '${itemNumber}'`;
     let query: Observable<RequestLine>;
     const req = this.http.get(url).pipe(
@@ -102,14 +109,14 @@ export class PanListService {
         const matches = res.value as RequestLine[];
         if (matches.length > 0) {
           const id = matches[0].id;
-          const fields = {Quantity: quantity};
+          const fields = {Quantity: quantity, Notes: notes};
           query = this.http.patch<RequestLine>(`${this._panListLinesUrl}/items('${id}')`, {fields});   
         } else {
-          const fields = {ItemNumber: itemNumber, ItemDescription: itemDescription, Quantity: quantity, Title: loadingScheduleId, PanList: panListId}
+          const fields = {ItemNumber: itemNumber, ItemDescription: itemDescription, Quantity: quantity, Notes: notes, Title: loadingScheduleId, PanList: panListId}
           query = this.http.post<RequestLine>(`${this._panListLinesUrl}/items`, {fields});
         }
         return query.pipe(
-          tap(_ => this.updateQuantitiesSubject(quantity, itemNumber, itemDescription))
+          tap(_ => this.updateQuantitiesSubject(quantity, notes, itemNumber, itemDescription))
         );
       }),
       catchError(err => {

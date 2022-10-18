@@ -43,10 +43,6 @@ h2 {
   flex: 1;
 }
 
-.alert{
-  text-align: center;
-}
-
 .mat-column-bin {
   flex: 0 1 120px;
 }
@@ -56,8 +52,13 @@ h2 {
   white-space: nowrap;
 }
 
-.mat-column-category {
-  flex: 0 1 80px;
+.mat-column-notes {
+  flex: 1 1 125px;
+}
+
+.mat-column-transfer {
+  flex: 0 0 74px;
+  padding-left: 24px;
 }
 
 .loadDetails {
@@ -79,11 +80,6 @@ h2 {
 
 .right {
   text-align: right;
-}
-
-.mat-column-transfer {
-  flex: 0 0 74px;
-  padding-left: 24px;
 }
 
 .details {
@@ -154,5 +150,9 @@ h2 {
 
   .mat-row {
     display: flex;
+  }
+
+  .mat-cell.mat-column-transfer {
+    margin-left: 0;
   }
 }

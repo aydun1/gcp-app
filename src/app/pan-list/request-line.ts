@@ -14,6 +14,7 @@ export interface RequestLine {
     PanList: string;
     ItemNumber: string;
     ItemDescription: string;
+    Notes: string;
     Quantity: number;
   }
 }

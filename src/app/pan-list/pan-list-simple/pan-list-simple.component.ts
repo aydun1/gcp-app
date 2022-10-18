@@ -25,7 +25,7 @@ export class PanListSimpleComponent implements OnInit {
   public interstateTransfers$!: Observable<FormGroup<any>>;
   public totals!: object;
   public transferForm!: FormGroup;
-  public columns = ['product', 'transfer'];
+  public columns = ['product', 'notes', 'transfer'];
   public panList: number | null = null;
   public selectedPanId!: string;
 
@@ -79,7 +79,8 @@ export class PanListSimpleComponent implements OnInit {
         id: [_.id],
         itemNumber: [_.fields.ItemNumber],
         itemDescription: [_.fields.ItemDescription],
-        toTransfer: new FormControl({value: _.fields.Quantity, disabled: false})
+        toTransfer: new FormControl({value: _.fields.Quantity, disabled: false}),
+        notes: [_.fields.Notes]
       });
       this.lines.push(formGroup);
     });

@@ -25,6 +25,7 @@ export class PanListComponent implements OnInit {
   @Input() defaultCategories: Array<string> = [];
   @Input() defaultColumns: Array<string> = [];
   @Input() showSuppliers: boolean = true;
+  @Input() showNotes: boolean = false;
   @Input() estimatePallets: boolean = false;
 
   @Output() saveClicked: EventEmitter<FormGroup> = new EventEmitter();
@@ -57,7 +58,7 @@ export class PanListComponent implements OnInit {
   public hideUnsuggesteds = false;
   public hideNoMaxes = false;
   public saving = new Subject<string>();
-  public columns = [ 'bin', 'product', 'NSW', 'QLD', 'SA', 'VIC', 'WA', 'onHand', 'required', 'suggested', 'toFill', 'transfer'];
+  public columns = [ 'bin', 'product', 'NSW', 'QLD', 'SA', 'VIC', 'WA', 'onHand', 'required', 'suggested', 'toFill', 'transfer', 'notes'];
   public categoryOptions = [
     {value: 'M', name: 'Manufactured'},
     {value: 'A', name: 'Allied'},
@@ -108,6 +109,7 @@ export class PanListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    if (!this.showNotes) this.columns = this.columns.filter(_ => _ !== 'notes');
     this.saving.next('saved');
     this._scheduleId = this.route.snapshot.paramMap.get('id') || '';
     const state$ = this.shared.getBranch();
@@ -178,33 +180,36 @@ export class PanListComponent implements OnInit {
     const toFill2 = line.Max ? line.QtyRequired + line.Max : null;
     const origToTransfer =  new FormControl<number | null>(line.ToTransfer || null);
     const toTransfer = new FormControl<number | null>(line.ToTransfer || null);
-        const itemPicker = new FormControl<SuggestedItem | null>(null);
+    const notes = new FormControl<string | null>(line.Notes || null);
+    const origNotes = new FormControl<string | null>(line.Notes || null);
+    const itemPicker = new FormControl<SuggestedItem | null>(null);
     const f = this.formMapper(line);
-    const formGroup = this.fb.group({...f, toTransfer, origToTransfer, itemPicker, custom});
+    const formGroup = this.fb.group({...f, toTransfer, origToTransfer, itemPicker, notes, origNotes, custom});
 
     itemPicker.valueChanges.pipe(
       tap(q => {
         if (!q) return;
         formGroup.patchValue(this.formMapper(q));
-        this.updatePanList(formGroup.value['itemNumber'] as string, formGroup.value['itemDesc'] as string, formGroup.value['toTransfer'] as number)
+        this.updatePanList(formGroup.value['itemNumber'] as string, formGroup.value['itemDesc'] as string, formGroup.value['toTransfer'] as number, formGroup.value['notes'] as string);
         this.addExtraLine();
       })
     ).subscribe();
 
-    toTransfer.valueChanges.pipe(
+    formGroup.valueChanges.pipe(
       tap(() => this.saving.next('saving')),
       debounceTime(1000),
-      distinctUntilChanged((b, a) => {
+      distinctUntilChanged((a_old, a_new) => {
         this.saving.next('saved')
-        const unchanged = a === formGroup.value['origToTransfer'];
-        return unchanged;
+        const unchangedNotes = a_new['notes'] === formGroup.value['origNotes'];
+        const unchangedQty = a_new['toTransfer'] === formGroup.value['origToTransfer'];
+        return unchangedNotes && unchangedQty;
       }),
       tap(() => this.saving.next('saving')),
-      tap(_ => this.updatePanList(formGroup.value['itemNumber'] as string, formGroup.value['itemDesc'] as string, _).then(() => {
-        formGroup.patchValue({origToTransfer: _});
+      tap(_ => this.updatePanList(formGroup.value['itemNumber'] as string, formGroup.value['itemDesc'] as string, _['toTransfer'] as number, _['notes'] as string).then(() => {
+        formGroup.patchValue({origToTransfer: _['toTransfer'], origNotes: _['notes']});
         this.saving.next('saved');
       }).catch(e =>  {
-        formGroup.patchValue({toTransfer: formGroup.value['origToTransfer']});
+        formGroup.patchValue({toTransfer: formGroup.value['origToTransfer'], notes: formGroup.value['origNotes']});
         this.saving.next('error');
       }))
     ).subscribe();
@@ -218,9 +223,9 @@ export class PanListComponent implements OnInit {
     return this.panListService.getPanListWithQuantities(branch, this._scheduleId, this._panId);
   }
 
-  updatePanList(itemNumber: string | null | undefined, itemDescription: string | null | undefined, quantity: number | null | undefined): Promise<RequestLine> {
+  updatePanList(itemNumber: string | null | undefined, itemDescription: string | null | undefined, quantity: number | null | undefined, notes: string | null | undefined): Promise<RequestLine> {
     if (!itemNumber || !this.autosave) return new Promise(_ => _);
-    return this.panListService.setRequestedQuantities(quantity, itemNumber, itemDescription, this._scheduleId, this._panId);
+    return this.panListService.setRequestedQuantities(quantity, notes, itemNumber, itemDescription, this._scheduleId, this._panId);
   }
 
   parseParams(params: Params): void {

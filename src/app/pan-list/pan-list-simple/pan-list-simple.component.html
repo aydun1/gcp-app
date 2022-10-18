@@ -47,6 +47,18 @@
           <mat-footer-cell *matFooterCellDef></mat-footer-cell>
         </ng-container>
 
+        <ng-container matColumnDef="notes">
+          <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            <div class="notes">
+              <div class="notes">
+                {{ line['notes'] }}
+              </div>
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
         <ng-container matColumnDef="transfer">
           <mat-header-cell *matHeaderCellDef>
             <div class="loadDetails right">

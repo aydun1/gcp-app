@@ -252,6 +252,19 @@
           </mat-footer-cell>
         </ng-container>
 
+        <ng-container matColumnDef="notes">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="loadDetails">
+              Notes 
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let line; let index = index" [formGroupName]="index">
+            <input formControlName="notes" class="transfer-input" type="text">
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+          </mat-footer-cell>
+        </ng-container>
+
         <ng-container matColumnDef="loading">
           <mat-footer-cell *matFooterCellDef>
             <gcp-loading-row></gcp-loading-row>

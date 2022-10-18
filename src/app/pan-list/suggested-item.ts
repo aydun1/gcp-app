@@ -23,5 +23,6 @@ export interface SuggestedItem {
   OnHandSA: number;
   OnHandVIC: number;
   OnHandWA: number;
+  Notes: string;
   ToTransfer?: number;
 };
