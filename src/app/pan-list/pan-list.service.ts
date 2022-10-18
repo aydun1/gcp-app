@@ -87,11 +87,11 @@ export class PanListService {
   }
 
   deletePanList(loadingScheduleId: string, panListId: string): Promise<any> {
-    const url = `${this._panListLinesUrl}/items?expand=fields(select=ItemNumber,ItemDescription,Quantity)&filter=fields/Title eq '${loadingScheduleId}' and fields/PanList eq '${panListId}'&orderby=fields/ItemNumber asc`;
+    const url = `${this._panListLinesUrl}/items?expand=fields(select=ItemNumber,ItemDescription,Quantity,Notes)&filter=fields/Title eq '${loadingScheduleId}' and fields/PanList eq '${panListId}'&orderby=fields/ItemNumber asc`;
     const request = this.http.get<{value: RequestLine[]}>(url).pipe(
       startWith({value: []}),
-      map(res => res.value.filter(_ => _.fields.Quantity > 0)),
-      map(lines => lines.map(_ => this.http.patch<RequestLine>(`${this._panListLinesUrl}/items('${_.id}')`, {fields: {Quantity: 0}}))),
+      map(res => res.value.filter(_ => _.fields.Quantity > 0 || _.fields.Notes)),
+      map(lines => lines.map(_ => this.http.patch<RequestLine>(`${this._panListLinesUrl}/items('${_.id}')`, {fields: {Quantity: 0, Notes: ''}}))),
       switchMap(_ => forkJoin(_).pipe(startWith([]))),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
