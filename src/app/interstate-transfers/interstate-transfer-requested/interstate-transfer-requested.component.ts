@@ -17,7 +17,8 @@ import { PurchaseOrderLine } from '../shared/purchase-order-line';
 export class InterstateTransferRequestedComponent implements OnInit {
   private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
   private _loadList!: boolean;
-  public fromBranchFilter = new FormControl({value: '', disabled: true});
+  public ownState = this.shared.branch;
+  public fromBranchFilter = new FormControl({value: this.ownState, disabled: true});
   public toBranchFilter = new FormControl('');
   public viewFilter = new FormControl('');
   public interstateTransfers$!: Observable<FormGroup<any>>;
@@ -26,10 +27,9 @@ export class InterstateTransferRequestedComponent implements OnInit {
   public displayedColumns = [ 'date', 'product', 'available', 'quantity', 'transfer'];
   public totals!: object;
   public states = this.shared.branches;
-  public ownState = '';
   public transferForm!: FormGroup;
 
-  public get otherStates(): Array<string> {
+  public get otherBranches(): Array<string> {
     return this.states.filter(_ => _ !== this.fromBranchFilter.value);
   }
 
