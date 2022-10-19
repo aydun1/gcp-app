@@ -154,8 +154,8 @@ export class InterstateTransferListComponent implements OnInit {
     this.creating = true;
     const formData = this.lines.value.filter(_ => _.toTransfer);
     const subject = `PO lines fulfilled by ${this.fromBranchFilter.value}`;
-    let body = 'PO number\tItem number\tQty fulfilled\r\n'
-    body += formData.map(_ => `${_.poNumber}\t${_.itemNumber}\t${_.toTransfer}`).join('\r\n')
+    const rows = formData.map(_ => `<tr><td>${_.poNumber}</td><td>${_.itemNumber}</td><td>${_.toTransfer}</td></tr>`).join('');
+    const body = `<table><tr><th>PO number</th><th>Item number</th><th>tQty fulfilled</th></tr>${rows}</table>`;
     const to = this.shared.emailMap.get(this.toBranchFilter.value || '') || [];
     this.interstateTransfersService.createTransfer(this.fromBranchFilter.value, this.toBranchFilter.value, formData).pipe(
       tap(() => {
@@ -170,7 +170,7 @@ export class InterstateTransferListComponent implements OnInit {
         });
         this.creating = false;
       }),
-      switchMap(_ => this.shared.sendMail(to, subject, body, 'Text')),
+      switchMap(_ => this.shared.sendMail(to, subject, body, 'HTML')),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-warn']});
         this.creating = false;
