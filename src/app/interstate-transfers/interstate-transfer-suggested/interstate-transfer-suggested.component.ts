@@ -7,11 +7,11 @@ import { SharedService } from '../../shared.service';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
 
 @Component({
-  selector: 'gcp-interstate-transfer-suggested-list',
-  templateUrl: './interstate-transfer-suggested-list.component.html',
-  styleUrls: ['./interstate-transfer-suggested-list.component.css']
+  selector: 'gcp-interstate-transfer-suggested',
+  templateUrl: './interstate-transfer-suggested.component.html',
+  styleUrls: ['./interstate-transfer-suggested.component.css']
 })
-export class InterstateTransferSuggestedListComponent implements OnInit {
+export class InterstateTransferSuggestedComponent implements OnInit {
   private _ownState!: string;
   private _states = this.shared.branches;
 

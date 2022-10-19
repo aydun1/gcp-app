@@ -10,11 +10,11 @@ import { InterstateTransfersService } from '../shared/interstate-transfers.servi
 import { PurchaseOrderLine } from '../shared/purchase-order-line';
 
 @Component({
-  selector: 'gcp-interstate-transfer-list',
-  templateUrl: './interstate-transfer-list.component.html',
-  styleUrls: ['./interstate-transfer-list.component.css']
+  selector: 'gcp-interstate-transfer-requested',
+  templateUrl: './interstate-transfer-requested.component.html',
+  styleUrls: ['./interstate-transfer-requested.component.css']
 })
-export class InterstateTransferListComponent implements OnInit {
+export class InterstateTransferRequestedComponent implements OnInit {
   private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
   private _loadList!: boolean;
   public fromBranchFilter = new FormControl({value: '', disabled: true});
