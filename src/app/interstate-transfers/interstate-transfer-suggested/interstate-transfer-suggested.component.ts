@@ -43,8 +43,7 @@ export class InterstateTransferSuggestedComponent implements OnInit {
     const subject = `Items requested by ${this._ownState}`;
     const rows = lines.map(_ => `<tr><td>${_.itemNumber}</td><td>${_.toTransfer}</td></tr>`).join('');
     const body = `<table><tr><th>Item number</th><th>Qty Requested</th></tr>${rows}</table>`;
-    const to = ['aidan.obrien@gardencityplastics.com']
-    // const to = this.shared.emailMap.get(this.fromState || '') || [];
+    const to = this.shared.emailMap.get(this.fromState || '') || [];
     this.interstateTransfersService.createInTransitTransfer(this.fromState, this._ownState, lines).then(_ => {
       this.snackBar.open('Successfully created ITT.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
       this.router.navigate(['transfers']);
