@@ -214,8 +214,7 @@ export class PanListComponent implements OnInit {
         this.saving.next('error');
       }))
     ).subscribe();
-
-    this.lines.push(formGroup);
+    if (f.qtyRequired > 0 || f.suggested > 0 || f.toFill > 0 || custom) this.lines.push(formGroup);
   }
   
   getSuggestedItems(params: Params): Observable<SuggestedItem[]> {
