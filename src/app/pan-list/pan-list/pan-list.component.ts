@@ -27,7 +27,8 @@ export class PanListComponent implements OnInit {
   @Input() showSuppliers: boolean = true;
   @Input() showNotes: boolean = false;
   @Input() estimatePallets: boolean = false;
-
+  @Input() min = 'MinOrderQty';
+  @Input() max = 'MaxOrderQty';
   @Output() saveClicked: EventEmitter<FormGroup> = new EventEmitter();
   @Output() lineCount: EventEmitter<number> = new EventEmitter();
   @Output() activeLines: EventEmitter<any[]> = new EventEmitter();
@@ -153,9 +154,7 @@ export class PanListComponent implements OnInit {
   }
 
   formMapper(_: SuggestedItem): any {
-    const min = 'MinOrderQty';
-    const max = 'MaxOrderQty';
-    const toFill = (_[max] && _['QtyAvailable'] < _[min]) ? _['QtyRequired'] + _[max] : null;
+    const toFill = (_[this.max] && _['QtyAvailable'] < _[this.min]) ? _['QtyRequired'] + _[this.max] : null;
     return {
       id: _.Id,
       itemDesc: _.ItemDesc,
@@ -173,7 +172,7 @@ export class PanListComponent implements OnInit {
       onHand: _.QtyOnHand,
       qtyRequired: Math.max(0, _.QtyRequired) || null,
       suggested: toFill || Math.max(0, _.QtyRequired) || null,
-      toFill: _[max] ? _.QtyRequired + _[max] : null,
+      toFill: _[this.max] ? _.QtyRequired + _[this.max] : null,
       itemPicker: null
     };
   }
