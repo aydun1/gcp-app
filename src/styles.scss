@@ -43,6 +43,7 @@ $dark-theme: mat.define-dark-theme((
 @include mat.snack_bar-theme($light-theme);
 @include mat.table-theme($light-theme);
 @include mat.toolbar-theme($light-theme);
+@include mat.tooltip-theme($light-theme);
 
 .dark-theme {
   @include mat.core-color($dark-theme);
@@ -66,6 +67,7 @@ $dark-theme: mat.define-dark-theme((
   @include mat.snack_bar-color($dark-theme);
   @include mat.table-color($dark-theme);
   @include mat.toolbar-color($dark-theme);
+  @include mat.tooltip-color($dark-theme);
 }
 
 html,

@@ -273,6 +273,10 @@ export class PanListComponent implements OnInit {
     return this._loadList && sameBranch;
   }
 
+  getTransactions(itemNmbr: string): Promise<string> {
+    return this.shared.getTransactions(this.ownState, itemNmbr).then(_ => 'eeytsdyh').catch(_ => '');
+  }
+
   setBranch(branch: MatSelectChange): void {
     this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }

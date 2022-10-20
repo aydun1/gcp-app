@@ -31,10 +31,21 @@ export class InterstateTransfersService {
     return this.http.post(`${environment.gpEndpoint}/po`, payload);
   }
 
-  createInTransitTransfer(fromSite: string | null, toSite: string | null, lines: any): Promise<Object> {
-    const payload = {fromSite, toSite, lines}
+  createId(branch: string): string {
+    const d = new Date();
+    const yy = d.getFullYear().toString().substring(2);
+    const mm = (d.getMonth() + 1).toString().padStart(2, '0');
+    const dd = d.getDate().toString().padStart(2, '0');
+    const h = d.getHours().toString().padStart(2, '0');
+    const m = d.getMinutes().toString().padStart(2, '0');
+    const s = d.getSeconds().toString().padStart(2, '0').substring(0, 1);
+    return `ITT${branch[0]}${yy}${mm}${dd}${h}${m}${s}`;
+  }
+
+  createInTransitTransfer(fromSite: string | null, toSite: string | null, lines: any, id: string): Promise<Object> {
+    const payload = {fromSite, toSite, lines, id};
     const request = this.http.post(`${environment.gpEndpoint}/itt`, payload);
-    return lastValueFrom(request)
+    return lastValueFrom(request);
   }
 
   getPurchaseOrder(id: string): Observable<PurchaseOrder>  {

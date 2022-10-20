@@ -47,12 +47,15 @@ export class PanListService {
   }
 
   searchItems(branch: string | undefined, searchTerm: string | undefined): Promise<SuggestedItem[]> {
-    const request = this.http.get<{lines: SuggestedItem[]}>(`${environment.gpEndpoint}/inventory?branch=${branch}&search=${searchTerm}`).pipe(
+    const s = searchTerm?.trim();
+    const request = s ? this.http.get<{lines: SuggestedItem[]}>(`${environment.gpEndpoint}/inventory?branch=${branch}&search=${s}`).pipe(
       map(_ => _.lines)
-    );
+    ) : of([]);
     return lastValueFrom(request).catch(
-      e => {console.log(e)
-      return []}
+      e => {
+        console.log(e);
+        return [];
+      }
     );
   }
 

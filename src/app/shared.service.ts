@@ -73,6 +73,10 @@ export class SharedService {
     return activeAccount?.name || '';
   }
 
+  getOwnEmail(): string {
+    const activeAccount = this.authService.instance.getActiveAccount();
+    return activeAccount?.username || '';
+  }
 
   getAccount(): AccountInfo | null {
     const activeAccount = this.authService.instance.getActiveAccount();
@@ -88,9 +92,21 @@ export class SharedService {
     this.titleService.setTitle(title);
   }
 
+  getTransactions(branch: string | undefined, itemNmbr: string | undefined): Promise<string[]> {
+    const request = this.http.get<{invoices: any[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/history?branch=${branch}`).pipe(
+      map(_ => _.invoices)
+    );
+    return lastValueFrom(request).catch(
+      e => {
+        console.log(e);
+        return [];
+      }
+    );
+  }
+
   sendMail(to: Array<string>, subject: string, body: string, contentType: 'Text' | 'HTML'): Promise<Object> {
     const url = `${environment.endpoint}/me/sendMail`;
-    const cc = ['aidan.obrien@gardencityplastics.com'];
+    const cc = ['aidan.obrien@gardencityplastics.com', this.getOwnEmail()];
     const payload  = {
       message: {
         subject: subject,

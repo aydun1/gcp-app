@@ -50,7 +50,7 @@
               <strong>
                 {{ line.value['itemNumber'] }}
               </strong>
-              <div class="description">
+              <div class="description" [title]="line.value['itemDesc']">
                 {{ line.value['itemDesc'] }}
               </div>
               <div class="description">
