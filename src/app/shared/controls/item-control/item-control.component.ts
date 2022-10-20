@@ -30,6 +30,7 @@ export class ItemControlComponent implements ControlValueAccessor, MatFormFieldC
   public filteredOptions!: Observable<SuggestedItem[]>;  
   public isDisabled = false;
   public myControl = new FormControl<SuggestedItem | null>(null, this.itemPickedValidator);
+  public loading = false;
 
   onChange = (_: any) => {};
   onTouched = () => {};
@@ -109,10 +110,14 @@ export class ItemControlComponent implements ControlValueAccessor, MatFormFieldC
 
   ngOnInit(): void {
     this.filteredOptions = combineLatest([this.myControl.valueChanges, this._territory$]).pipe(
-      tap(([value, branch]) => {if (!value) {this.item = {} as SuggestedItem; this.addItem();}}),
+      tap(([value, branch]) => {
+        if (!value) {this.item = {} as SuggestedItem; this.addItem();}
+        this.loading = true;
+      }),
       debounceTime(200),
       map(([value, branch]) => [typeof value === 'string' ? value : value?.ItemNmbr, branch]),
-      switchMap(([searchTerm, branch]) => this.panListService.searchItems(branch, searchTerm))
+      switchMap(([searchTerm, branch]) => this.panListService.searchItems(branch, searchTerm)),
+      tap(() => this.loading = false)
     );
   }
 

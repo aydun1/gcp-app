@@ -12,8 +12,8 @@ import { SuggestedItem } from './suggested-item';
 })
 export class PanListService {
   private _panListLinesUrl = `${environment.endpoint}/${environment.siteUrl}/lists/663d6c19-6869-494f-9759-3583d2f72fea`;
-  public loading = new BehaviorSubject<boolean>(false);
   private _requestedsSubject$ = new BehaviorSubject<RequestLine[]>([]);
+  public loading = new BehaviorSubject<boolean>(false);
 
   constructor(
     private http: HttpClient,
@@ -50,7 +50,10 @@ export class PanListService {
     const request = this.http.get<{lines: SuggestedItem[]}>(`${environment.gpEndpoint}/inventory?branch=${branch}&search=${searchTerm}`).pipe(
       map(_ => _.lines)
     );
-    return lastValueFrom(request);
+    return lastValueFrom(request).catch(
+      e => {console.log(e)
+      return []}
+    );
   }
 
   getRequestedQuantities(loadingScheduleId: string, panListId: number): Observable<RequestLine[]> {

@@ -33,9 +33,7 @@
       </div>
       <div *ngIf="autosave && (saving | async) as s" class="autosave">Autosave: {{ s }}</div>
     </div>
-    <div *ngIf="loading" class="loading-spinner"><mat-spinner></mat-spinner></div>
-
-    <div *ngIf="interstateTransfers$ | async">
+    <div>
       <mat-table #table [dataSource]="lines.controls" [trackBy]="trackByFn" formArrayName="lines">
         <ng-container matColumnDef="bin">
           <mat-header-cell *matHeaderCellDef> Bin </mat-header-cell>
@@ -47,14 +45,8 @@
 
         <ng-container matColumnDef="product">
           <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
-          <mat-cell *matCellDef="let line; let index = index" [formGroupName]="index">
-            <ng-container *ngIf="line.value['itemNumber'] === 'UNSET'">
-              <mat-form-field class="search-form">
-                <mat-label>Search by item number</mat-label>
-                <gcp-item-control formControlName="itemPicker" [territory]="ownState"></gcp-item-control>
-              </mat-form-field>
-            </ng-container>
-            <div *ngIf="line.value['itemNumber'] !== 'UNSET'" class="details">
+          <mat-cell *matCellDef="let line" [formGroup]="line">
+            <div class="details">
               <strong>
                 {{ line.value['itemNumber'] }}
               </strong>
@@ -236,7 +228,7 @@
               Request 
             </div>
           </mat-header-cell>
-          <mat-cell *matCellDef="let line; let index = index" [formGroupName]="index">
+          <mat-cell *matCellDef="let line" [formGroup]="line">
             <input formControlName="toTransfer" class="transfer-input" type="number" placeholder="0" min="0">
             <div *ngIf="estimatePallets" class="pallet-count">
               <span *ngIf="line.value['palletQty'] && line.value['palletQty'] !== 5000">({{ (line.value['toTransfer'] / line.value['palletQty']) | number: '1.0-1' }})</span>
@@ -258,11 +250,20 @@
               Notes 
             </div>
           </mat-header-cell>
-          <mat-cell *matCellDef="let line; let index = index" [formGroupName]="index">
+          <mat-cell *matCellDef="let line" [formGroup]="line">
             <input formControlName="notes" class="transfer-input" type="text">
           </mat-cell>
           <mat-footer-cell *matFooterCellDef>
           </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="another">
+          <mat-header-cell *matHeaderCellDef>
+            <mat-form-field class="search-form">
+              <mat-label>Add another item...</mat-label>
+              <gcp-item-control [formControl]="itemSearch" [territory]="ownState"></gcp-item-control>
+            </mat-form-field>
+          </mat-header-cell>
         </ng-container>
 
         <ng-container matColumnDef="loading">
@@ -278,6 +279,7 @@
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-footer-row *matHeaderRowDef="['another']"></mat-footer-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" [class.hidden]="
         !row.value.custom &&
         ((vendorCodes.length > 0 && !vendorCodes.includes(row.value['vendor'])) ||

@@ -12,6 +12,7 @@ import { environment } from '../environments/environment';
 })
 export class SharedService {
   public territories = {
+    'HEA': ['HEA'],
     'NSW': ['NSW', 'NSWSALES'],
     'QLD': ['QLD'],
     'SA': ['SA'],
@@ -33,6 +34,7 @@ export class SharedService {
     ['WA', ['wa@gardencityplastics.com']]
   ]);
 
+  public mpa = ['esther.wong@gardencityplastics.com'];
 
   constructor(
     private http: HttpClient,

@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { MatTable } from '@angular/material/table';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, firstValueFrom, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
@@ -13,7 +13,6 @@ import { SuggestedItem } from '../suggested-item';
 
 @Component({
   selector: 'gcp-pan-list',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './pan-list.component.html',
   styleUrls: ['./pan-list.component.css']
 })
@@ -37,10 +36,9 @@ export class PanListComponent implements OnInit {
   private _panId!: number;
   private _loadList!: boolean;
 
-  public itemSearch = new FormControl('');
+  public itemSearch = new FormControl<SuggestedItem | null>(null);
   public branchFilter = new FormControl({value: '', disabled: true});
   public viewFilter = new FormControl('');
-  public interstateTransfers$!: Observable<boolean>;
   public loading = false;
   public creating = false;
   public chosenColumns: Array<string> = [];
@@ -125,7 +123,7 @@ export class PanListComponent implements OnInit {
       })
     ).subscribe();
 
-    this.interstateTransfers$ = this.route.queryParams.pipe(
+    this.route.queryParams.pipe(
       startWith({}),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       switchMap(params => state$.pipe(
@@ -137,20 +135,29 @@ export class PanListComponent implements OnInit {
       tap(_ => this.parseParams(_)),
       tap(_ => this.loading = true),
       switchMap(_ => this._loadList ? this.getSuggestedItems(_) : of([] as Array<SuggestedItem>)),
+      map(_ => _.map(line => this.makeFormGroup(line, false))),
       tap(_ => {
-        this.lines.clear();
-        _.forEach(line => this.makeFormGroup(line, false));
-        this.addExtraLine();
         this.loading = false;
+        _.forEach(l => this.lines.push(l))
+        this._matTable?.renderRows();
       }),
       map(_ => true)
-    );
+    ).subscribe();
+
+    this.itemSearch.valueChanges.pipe(
+      tap(q => {
+        if (!q) return;
+        const newItem = this.makeFormGroup(q, true);
+        this.lines.insert(0, newItem);
+        this._matTable?.renderRows();
+        this.itemSearch.reset();
+      })
+    ).subscribe();
   }
 
-  addExtraLine(): void {
+  extraLine(): FormGroup<any> {
     const line = {ItemNmbr: 'UNSET'} as SuggestedItem;
-    this.makeFormGroup(line, true);
-    this._matTable?.renderRows();
+    return this.makeFormGroup(line, true);
   }
 
   formMapper(_: SuggestedItem): any {
@@ -177,24 +184,13 @@ export class PanListComponent implements OnInit {
     };
   }
 
-  makeFormGroup(line: SuggestedItem, custom: boolean): void {
-    const toFill2 = line.Max ? line.QtyRequired + line.Max : null;
+  makeFormGroup(line: SuggestedItem, custom: boolean): FormGroup {
     const origToTransfer =  new FormControl<number | null>(line.ToTransfer || null);
     const toTransfer = new FormControl<number | null>(line.ToTransfer || null);
     const notes = new FormControl<string | null>(line.Notes || null);
     const origNotes = new FormControl<string | null>(line.Notes || null);
-    const itemPicker = new FormControl<SuggestedItem | null>(null);
     const f = this.formMapper(line);
-    const formGroup = this.fb.group({...f, toTransfer, origToTransfer, itemPicker, notes, origNotes, custom});
-
-    itemPicker.valueChanges.pipe(
-      tap(q => {
-        if (!q) return;
-        formGroup.patchValue(this.formMapper(q));
-        this.updatePanList(formGroup.value['itemNumber'] as string, formGroup.value['itemDesc'] as string, formGroup.value['toTransfer'] as number, formGroup.value['notes'] as string);
-        this.addExtraLine();
-      })
-    ).subscribe();
+    const formGroup = this.fb.group({...f, toTransfer, origToTransfer, notes, origNotes, custom});
 
     formGroup.valueChanges.pipe(
       tap(() => this.saving.next('saving')),
@@ -214,9 +210,9 @@ export class PanListComponent implements OnInit {
         this.saving.next('error');
       }))
     ).subscribe();
-    if (f.qtyRequired > 0 || f.suggested > 0 || f.toFill > 0 || custom) this.lines.push(formGroup);
+    return formGroup;
   }
-  
+
   getSuggestedItems(params: Params): Observable<SuggestedItem[]> {
     const branch = params['branch'] || '';
     if (!branch) return of([]);
