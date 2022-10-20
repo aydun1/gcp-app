@@ -29,7 +29,7 @@ export class SharedService {
 
   public emailMap = new Map<string, Array<string>>([
     ['QLD', ['qld@gardencityplastics.com', 'megan.williams@gardencityplastics.com']],
-    ['NSW', ['nsw@gardencityplastics.com', 'karen.korsch@gardencityplastics.com']],
+    ['NSW', ['nsw@gardencityplastics.com']],
     ['SA', ['sa@gardencityplastics.com']],
     ['WA', ['wa@gardencityplastics.com']]
   ]);
