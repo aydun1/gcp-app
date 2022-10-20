@@ -138,7 +138,7 @@ export class PanListComponent implements OnInit {
       map(_ => _.map(line => this.makeFormGroup(line, false))),
       tap(_ => {
         this.loading = false;
-        _.forEach(l => this.lines.push(l))
+        _.filter(_ => _.value['qtyRequired'] > 0 || _.value['toFill'] > 0 || _.value['suggested'] > 0).forEach(l => this.lines.push(l))
         this._matTable?.renderRows();
       }),
       map(_ => true)

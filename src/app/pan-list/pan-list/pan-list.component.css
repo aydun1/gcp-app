@@ -32,6 +32,10 @@ h2 {
   width: calc(100% - 10px);
 }
 
+.mat-row {
+  align-items: stretch;
+}
+
 .mat-footer-row {
   border-top-width: 1px;
   border-top-color: rgba(0, 0, 0, 0.12);
