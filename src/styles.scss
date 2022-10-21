@@ -80,12 +80,12 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-a {
+a, .link {
   text-decoration: none;
   color: mat.get-color-from-palette($light-accent);
 }
 
-.dark-theme a {
+.dark-theme a, .dark-theme .link {
   color: mat.get-color-from-palette($dark-accent);
 }
 

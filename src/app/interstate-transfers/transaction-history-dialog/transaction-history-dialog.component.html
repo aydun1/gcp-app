@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Past invoices</h2>
+<mat-dialog-content>
+  <div *ngFor="let h of locationHistory | async; last as last" class="update">
+    <div class="row">
+        <div class="date">{{ h.date | date: 'd MMM yyyy' }}</div>
+        <div class="invoice-number">{{ h.sopNmbr }}</div>
+        <div class="customer">{{ h.customer }}</div>
+        <div class="quantity">{{ h.quantity | number }}</div>
+    </div>
+    <mat-divider *ngIf="!last"></mat-divider>
+  </div>
+</mat-dialog-content>

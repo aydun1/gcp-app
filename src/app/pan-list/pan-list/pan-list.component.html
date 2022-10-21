@@ -45,9 +45,9 @@
 
         <ng-container matColumnDef="product">
           <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
-          <mat-cell *matCellDef="let line" [formGroup]="line">
+          <mat-cell *matCellDef="let line" [formGroup]="line" (click)="openDialog(line.value['itemNumber'])" class="opener">
             <div class="details">
-              <strong>
+              <strong class="link">
                 {{ line.value['itemNumber'] }}
               </strong>
               <div class="description" [title]="line.value['itemDesc']">

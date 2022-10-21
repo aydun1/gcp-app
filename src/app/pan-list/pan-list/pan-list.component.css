@@ -3,6 +3,10 @@
   max-width: 1024px;
 }
 
+.opener {
+  cursor: pointer;
+}
+
 .coloured {
   border-radius: 10px;
   color: white;

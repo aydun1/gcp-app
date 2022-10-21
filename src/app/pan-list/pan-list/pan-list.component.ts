@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { MatTable } from '@angular/material/table';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, firstValueFrom, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import { TransactionHistoryDialogComponent } from 'src/app/interstate-transfers/transaction-history-dialog/transaction-history-dialog.component';
 
 import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
@@ -13,6 +15,7 @@ import { SuggestedItem } from '../suggested-item';
 
 @Component({
   selector: 'gcp-pan-list',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './pan-list.component.html',
   styleUrls: ['./pan-list.component.css']
 })
@@ -99,6 +102,7 @@ export class PanListComponent implements OnInit {
   }
 
   constructor(
+    private dialog: MatDialog,
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
@@ -271,6 +275,14 @@ export class PanListComponent implements OnInit {
     const sameCategories = prev['categories'] === curr['categories'];
     const sameColumns = prev['columns'] === curr['columns'];
     return this._loadList && sameBranch;
+  }
+
+  openDialog(itemNmbr: string) {
+    const dialogRef = this.dialog.open(TransactionHistoryDialogComponent, {
+      autoFocus: false,
+      width: '800px',
+      data: {itemNmbr, branch: this.ownState}
+    });
   }
 
   getTransactions(itemNmbr: string): Promise<string> {
