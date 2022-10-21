@@ -142,6 +142,7 @@ export class PanListComponent implements OnInit {
       map(_ => _.map(line => this.makeFormGroup(line, false))),
       tap(_ => {
         this.loading = false;
+        this.lines.clear();
         _.filter(_ => _.value['qtyRequired'] > 0 || _.value['toFill'] > 0 || _.value['suggested'] > 0).forEach(l => this.lines.push(l))
         this._matTable?.renderRows();
       }),
@@ -233,7 +234,6 @@ export class PanListComponent implements OnInit {
 
   parseParams(params: Params): void {
     if (!params) return;
-    this.lines.clear();
     const filters: Params = {};
     if ('pan' in params) {
       this._panId = parseInt(params['pan']);
@@ -275,8 +275,6 @@ export class PanListComponent implements OnInit {
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
     const sameBranch = prev['branch'] === curr['branch'];
-    const sameCategories = prev['categories'] === curr['categories'];
-    const sameColumns = prev['columns'] === curr['columns'];
     return this._loadList && sameBranch;
   }
 

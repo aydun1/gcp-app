@@ -108,9 +108,6 @@ export class PanListSimpleComponent implements OnInit {
     if (!prev['pan'] && !curr['pan'] && this.panLists) {
       this.setPan(this.panLists[0][0]);
     }
-    if (this.route.children.length) {
-      this._loadList = false;
-    }
     if (!this._loadList) {
       this._loadList = true;
       return false;

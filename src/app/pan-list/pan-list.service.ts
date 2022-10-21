@@ -63,7 +63,6 @@ export class PanListService {
     this.loading.next(true);
     this._requestedsSubject$.next([]);
     const url = `${this._panListLinesUrl}/items?expand=fields(select=ItemNumber,ItemDescription,Quantity, Notes)&filter=fields/Title eq '${loadingScheduleId}' and fields/PanList eq '${panListId}'&orderby=fields/ItemNumber asc`;
-
     const request = this.http.get<{value: RequestLine[]}>(url).pipe(
       map(res => {
         this.loading.next(false);
