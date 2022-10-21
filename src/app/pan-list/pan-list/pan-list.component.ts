@@ -60,7 +60,7 @@ export class PanListComponent implements OnInit {
   public hideUnsuggesteds = false;
   public hideNoMaxes = false;
   public saving = new Subject<string>();
-  public columns = [ 'bin', 'product', 'NSW', 'QLD', 'SA', 'VIC', 'WA', 'onHand', 'required', 'suggested', 'toFill', 'transfer', 'notes'];
+  public columns = [ 'bin', 'product', 'NSW', 'QLD', 'SA', 'VIC', 'WA', 'allocated', 'onHand', 'required', 'suggested', 'toFill', 'transfer', 'notes'];
   public categoryOptions = [
     {value: 'M', name: 'Manufactured'},
     {value: 'A', name: 'Allied'},
@@ -85,7 +85,7 @@ export class PanListComponent implements OnInit {
 
   public get otherStates(): Array<string> {
     const states = this.states.filter(_ => _ !== this.branchFilter.value)
-    return [...states, 'required', 'toFill'];
+    return [...states, 'allocated', 'required', 'toFill'];
   }
 
   public get displayedColumns(): Array<string> {
@@ -166,6 +166,7 @@ export class PanListComponent implements OnInit {
 
   formMapper(_: SuggestedItem): any {
     const toFill = (_[this.max] && _['QtyAvailable'] < _[this.min]) ? _['QtyRequired'] + _[this.max] : null;
+    const qtyAllocated = (_.QtyAllocated +  _.QtyBackordered) || null;
     return {
       id: _.Id,
       itemDesc: _.ItemDesc,
@@ -181,6 +182,8 @@ export class PanListComponent implements OnInit {
       waOnHand: _.OnHandWA,
       nswOnHand: _.OnHandNSW,
       onHand: _.QtyOnHand,
+      qtyAllocated,
+      underStocked: qtyAllocated && qtyAllocated > _.QtyOnHand,
       qtyRequired: Math.max(0, _.QtyRequired) || null,
       suggested: toFill || Math.max(0, _.QtyRequired) || null,
       toFill: _[this.max] ? _.QtyRequired + _[this.max] : null,
@@ -301,8 +304,8 @@ export class PanListComponent implements OnInit {
     this.router.navigate([], { queryParams: {vendors: vendors.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  setSuppliers(suppliers: MatSelectChange): void {
-    this.router.navigate([], { queryParams: {suppliers: suppliers.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  setColumns(columns: MatSelectChange): void {
+    this.router.navigate([], { queryParams: {columns: columns.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   getTotalQtyOnHand(lines: Array<any>): number {

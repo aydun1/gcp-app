@@ -71,9 +71,22 @@ h2 {
   white-space: nowrap;
 }
 
-.mat-column-NSW, .mat-column-QLD, .mat-column-SA, .mat-column-VIC, .mat-column-WA, .mat-column-onHand, .mat-column-required, .mat-column-toFill, .mat-column-suggested {
+.mat-column-NSW,
+.mat-column-QLD,
+.mat-column-SA,
+.mat-column-VIC,
+.mat-column-WA,
+.mat-column-onHand,
+.mat-column-allocated,
+.mat-column-required,
+.mat-column-toFill,
+.mat-column-suggested {
   flex: 0 1 100px;
   text-align: right;
+}
+
+.understocked {
+  color: red;
 }
 
 .loadDetails {
@@ -187,6 +200,7 @@ h2 {
   .mat-cell.mat-column-SA,
   .mat-cell.mat-column-WA,
   .mat-cell.mat-column-onHand,
+  .mat-cell.mat-column-allocated,
   .mat-cell.mat-column-required,
   .mat-cell.mat-column-suggested,
   .mat-cell.mat-column-toFill {

@@ -26,7 +26,7 @@
 
         <mat-form-field appearance="outline" class="pallet-filter">
           <mat-label>Show columns</mat-label>
-          <mat-select [(ngModel)]="chosenColumns" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setSuppliers($event)">
+          <mat-select [(ngModel)]="chosenColumns" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setColumns($event)">
             <mat-option *ngFor="let s of otherStates" [value]="s">{{ s }}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -61,11 +61,28 @@
           <mat-footer-cell *matFooterCellDef></mat-footer-cell>
         </ng-container>
 
+        <ng-container matColumnDef="allocated">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="loadDetails right">
+              <div>
+                Allocated
+              </div>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            <div class="loadDetails right">
+              {{ line.value['qtyAllocated'] | number }}
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+          </mat-footer-cell>
+        </ng-container>
+
         <ng-container matColumnDef="required">
           <mat-header-cell *matHeaderCellDef>
             <div class="loadDetails right">
               <div>
-                Qty required
+                Required
               </div>
               <mat-slide-toggle class="example-margin" [(ngModel)]="hideUnrequireds" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
             </div>
@@ -172,13 +189,11 @@
         <ng-container matColumnDef="onHand">
           <mat-header-cell *matHeaderCellDef>
             <div class="loadDetails right">
-              <div>
-                On hand
-              </div>
+              <div>On hand</div>
             </div>
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
-            <div class="loadDetails right">
+            <div class="loadDetails right" [ngClass]="{ understocked: line.value['underStocked'] }">
               {{ line.value['onHand'] | number }}
             </div>
           </mat-cell>
@@ -190,7 +205,7 @@
           <mat-header-cell *matHeaderCellDef>
             <div class="loadDetails right">
               <div>
-                Qty to fill
+                To fill
               </div>
               <mat-slide-toggle class="example-margin" [(ngModel)]="hideNoMaxes" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
             </div>
