@@ -14,7 +14,7 @@
       <div class="quantity">{{ h.quantity | number }}</div>
     </div>
     <div *ngIf="h.notes" class="notes">
-      <strong>Note:</strong> {{ h.notes }}
+      {{ h.notes }}
     </div>
     <mat-divider *ngIf="!last"></mat-divider>
   </div>
