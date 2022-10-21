@@ -82,8 +82,7 @@ input {
 
   .print-details {
     margin: 0 10px;
-    margin-top: 32px;
-    width: 128px;
+    margin-top: 16px;
   }
 
   .header, .attachments, .mat-card-title {

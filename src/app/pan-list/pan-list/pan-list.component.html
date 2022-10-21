@@ -63,14 +63,14 @@
 
         <ng-container matColumnDef="allocated">
           <mat-header-cell *matHeaderCellDef>
-            <div class="loadDetails right">
+            <div class="load-details right">
               <div>
                 Allocated
               </div>
             </div>
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
-            <div class="loadDetails right">
+            <div class="load-details right">
               {{ line.value['qtyAllocated'] | number }}
             </div>
           </mat-cell>
@@ -80,7 +80,7 @@
 
         <ng-container matColumnDef="required">
           <mat-header-cell *matHeaderCellDef>
-            <div class="loadDetails right">
+            <div class="load-details right">
               <div>
                 Required
               </div>
@@ -88,7 +88,7 @@
             </div>
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
-            <div class="loadDetails right">
+            <div class="load-details right">
               {{ line.value['qtyRequired'] | number }}
             </div>
           </mat-cell>
@@ -98,7 +98,7 @@
 
         <ng-container matColumnDef="QLD">
           <mat-header-cell *matHeaderCellDef>
-            <div class="loadDetails right">
+            <div class="load-details right">
               <div>
                 QLD
               </div>
@@ -106,7 +106,7 @@
             </div>
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
-            <div class="loadDetails right">
+            <div class="load-details right">
               {{ line.value['qldOnHand'] | number }}
             </div>
           </mat-cell>
@@ -116,7 +116,7 @@
 
         <ng-container matColumnDef="SA">
           <mat-header-cell *matHeaderCellDef>
-            <div class="loadDetails right">
+            <div class="load-details right">
               <div>
                 SA
               </div>
@@ -124,7 +124,7 @@
             </div>
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
-            <div class="loadDetails right">
+            <div class="load-details right">
               {{ line.value['saOnHand'] | number }}
             </div>
           </mat-cell>
@@ -134,7 +134,7 @@
 
         <ng-container matColumnDef="VIC">
           <mat-header-cell *matHeaderCellDef>
-            <div class="loadDetails right">
+            <div class="load-details right">
               <div>
                 VIC
               </div>
@@ -142,7 +142,7 @@
             </div>
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
-            <div class="loadDetails right">
+            <div class="load-details right">
               {{ line.value['vicOnHand'] | number }}
             </div>
           </mat-cell>
@@ -152,7 +152,7 @@
 
         <ng-container matColumnDef="NSW">
           <mat-header-cell *matHeaderCellDef>
-            <div class="loadDetails right">
+            <div class="load-details right">
               <div>
                 NSW
               </div>
@@ -160,7 +160,7 @@
             </div>
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
-            <div class="loadDetails right">
+            <div class="load-details right">
               {{ line.value['nswOnHand'] | number }}
             </div>
           </mat-cell>
@@ -170,7 +170,7 @@
 
         <ng-container matColumnDef="WA">
           <mat-header-cell *matHeaderCellDef>
-            <div class="loadDetails right">
+            <div class="load-details right">
               <div>
                 WA
               </div>
@@ -178,7 +178,7 @@
             </div>
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
-            <div class="loadDetails right">
+            <div class="load-details right">
               {{ line.value['waOnHand'] | number }}
             </div>
           </mat-cell>
@@ -188,12 +188,12 @@
 
         <ng-container matColumnDef="onHand">
           <mat-header-cell *matHeaderCellDef>
-            <div class="loadDetails right">
+            <div class="load-details right">
               <div>On hand</div>
             </div>
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
-            <div class="loadDetails right" [ngClass]="{ understocked: line.value['underStocked'] }">
+            <div class="load-details right" [ngClass]="{ understocked: line.value['underStocked'] }">
               {{ line.value['onHand'] | number }}
             </div>
           </mat-cell>
@@ -203,7 +203,7 @@
 
         <ng-container matColumnDef="toFill">
           <mat-header-cell *matHeaderCellDef>
-            <div class="loadDetails right">
+            <div class="load-details right">
               <div>
                 To fill
               </div>
@@ -211,7 +211,7 @@
             </div>
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
-            <div class="loadDetails right">
+            <div class="load-details right">
               {{ line.value['toFill'] | number }}
             </div>
           </mat-cell>
@@ -221,7 +221,7 @@
 
         <ng-container matColumnDef="suggested">
           <mat-header-cell *matHeaderCellDef>
-            <div class="loadDetails right">
+            <div class="load-details right">
               <div>
                 Suggested
               </div>
@@ -229,7 +229,7 @@
             </div>
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
-            <div class="loadDetails right">
+            <div class="load-details right">
               {{ line.value['suggested'] | number }}
             </div>
           </mat-cell>
@@ -239,7 +239,7 @@
 
         <ng-container matColumnDef="transfer">
           <mat-header-cell *matHeaderCellDef>
-            <div class="loadDetails">
+            <div class="load-details">
               Request 
             </div>
           </mat-header-cell>
@@ -261,7 +261,7 @@
 
         <ng-container matColumnDef="notes">
           <mat-header-cell *matHeaderCellDef>
-            <div class="loadDetails">
+            <div class="load-details">
               Notes 
             </div>
           </mat-header-cell>

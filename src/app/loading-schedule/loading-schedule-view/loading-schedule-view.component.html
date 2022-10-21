@@ -19,8 +19,17 @@
         <strong>For site: </strong>
         <span>{{ loadingScheduleEntry.fields.To }}</span>
       </div>
+      <div>
+        <strong>Transport: </strong>
+        <span>{{ loadingScheduleEntry.fields.TransportCompany }}</span>
+      </div>
+      <div *ngIf="loadingScheduleEntry.fields.Driver">
+        <strong>Driver: </strong>
+        <span>{{ loadingScheduleEntry.fields.Driver }}</span>
+      </div>
     </div>
   </div>
+
 
   <div class="header screen-header">
     <h2>Loading schedule entry</h2>

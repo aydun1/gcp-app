@@ -61,17 +61,17 @@
 
         <ng-container matColumnDef="transfer">
           <mat-header-cell *matHeaderCellDef>
-            <div class="loadDetails right">
+            <div class="load-details right">
               Requested 
             </div>
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
-            <div class="loadDetails right">
+            <div class="load-details right">
               {{ line['toTransfer'] | number }}
             </div>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef>
-            <div class="loadDetails transferTotal right">
+            <div class="load-details transferTotal right">
               {{ getTotalToTransfer(interstateTransfers.value['lines']) | number }}
             </div>
           </mat-footer-cell>
