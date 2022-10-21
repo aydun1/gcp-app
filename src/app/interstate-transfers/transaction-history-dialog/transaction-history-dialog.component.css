@@ -1,5 +1,15 @@
+.header {
+  font-weight: bold;
+}
+
 .row {
+  align-items: center;
   display: flex;
+  margin: 5px 0;
+}
+
+.notes {
+  margin: 5px 0;
 }
 
 .date {

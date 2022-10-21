@@ -93,7 +93,7 @@ export class SharedService {
   }
 
   getTransactions(branch: string | undefined, itemNmbr: string | undefined): Promise<any[]> {
-    const request = this.http.get<{invoices: any[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/history?branch=${branch}`).pipe(
+    const request = this.http.get<{invoices: any[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/current?branch=${branch}`).pipe(
       map(_ => _.invoices)
     );
     return lastValueFrom(request).catch(
