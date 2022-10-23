@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { MatTable } from '@angular/material/table';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
 import { TransactionHistoryDialogComponent } from 'src/app/interstate-transfers/transaction-history-dialog/transaction-history-dialog.component';
 
 import { NavigationService } from '../../navigation.service';
@@ -202,21 +202,24 @@ export class PanListComponent implements OnInit {
 
     formGroup.valueChanges.pipe(
       tap(() => this.saving.next('saving')),
-      debounceTime(1000),
+      debounceTime(500),
       distinctUntilChanged((a_old, a_new) => {
-        this.saving.next('saved')
-        const unchangedNotes = a_new['notes'] === formGroup.value['origNotes'];
-        const unchangedQty = a_new['toTransfer'] === formGroup.value['origToTransfer'];
+        this.saving.next('saved');
+        const unchangedNotes = a_new['notes'] === a_old['notes'];
+        const unchangedQty = a_new['toTransfer'] === a_old['toTransfer'];
         return unchangedNotes && unchangedQty;
       }),
       tap(() => this.saving.next('saving')),
-      tap(_ => this.updatePanList(formGroup.value['itemNumber'] as string, formGroup.value['itemDesc'] as string, _['toTransfer'] as number, _['notes'] as string).then(() => {
-        formGroup.patchValue({origToTransfer: _['toTransfer'], origNotes: _['notes']});
+      switchMap(_ => this.updatePanList(_)),
+      tap(_ => {
+        formGroup.patchValue({origToTransfer: _.fields['Quantity'], origNotes: _.fields['Notes']});
         this.saving.next('saved');
-      }).catch(e =>  {
+      }),
+      catchError(e => {
         formGroup.patchValue({toTransfer: formGroup.value['origToTransfer'], notes: formGroup.value['origNotes']});
         this.saving.next('error');
-      }))
+        return of();
+      })
     ).subscribe();
     return formGroup;
   }
@@ -227,8 +230,12 @@ export class PanListComponent implements OnInit {
     return this.panListService.getPanListWithQuantities(branch, this._scheduleId, this._panId);
   }
 
-  updatePanList(itemNumber: string | null | undefined, itemDescription: string | null | undefined, quantity: number | null | undefined, notes: string | null | undefined): Promise<RequestLine> {
-    if (!itemNumber || !this.autosave) return new Promise(_ => _);
+  updatePanList(formGroup: any): Observable<RequestLine> {
+    const itemNumber = formGroup['itemNumber'] as string;
+    const itemDescription = formGroup['itemDesc'] as string
+    const quantity = formGroup['toTransfer'] as number;
+    const notes = formGroup['notes'] as string;
+    if (!itemNumber || !this.autosave) return of();
     return this.panListService.setRequestedQuantities(quantity, notes, itemNumber, itemDescription, this._scheduleId, this._panId);
   }
 

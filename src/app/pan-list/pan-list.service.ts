@@ -28,7 +28,7 @@ export class PanListService {
   }
 
   getPanListWithQuantities(branch: string, loadingScheduleId: string, panListId: number): Observable<SuggestedItem[]> {
-    return combineLatest([this.getPanList(branch), this.getRequestedQuantities(loadingScheduleId, panListId)]).pipe(
+    return combineLatest([this.getPanList(branch), this.getRequestedQuantitiesOnce(loadingScheduleId, panListId)]).pipe(
       map(([a, b]) => {
         b.forEach(q => {
           const thisOne = a.find(_ => _.ItemNmbr === q.fields.ItemNumber);
@@ -59,11 +59,10 @@ export class PanListService {
     );
   }
 
-  getRequestedQuantities(loadingScheduleId: string, panListId: number): Observable<RequestLine[]> {
+  getRequestedQuantitiesOnce(loadingScheduleId: string, panListId: number): Observable<RequestLine[]> {
     this.loading.next(true);
-    this._requestedsSubject$.next([]);
     const url = `${this._panListLinesUrl}/items?expand=fields(select=ItemNumber,ItemDescription,Quantity, Notes)&filter=fields/Title eq '${loadingScheduleId}' and fields/PanList eq '${panListId}'&orderby=fields/ItemNumber asc`;
-    const request = this.http.get<{value: RequestLine[]}>(url).pipe(
+    return this.http.get<{value: RequestLine[]}>(url).pipe(
       map(res => {
         this.loading.next(false);
         return res.value.filter(_ => _.fields.Quantity > 0 || _.fields.Notes);
@@ -74,6 +73,11 @@ export class PanListService {
         return of([]);
       })
     );
+  }
+
+  getRequestedQuantities(loadingScheduleId: string, panListId: number): Observable<RequestLine[]> {
+    this._requestedsSubject$.next([]);
+    const request = this.getRequestedQuantitiesOnce(loadingScheduleId, panListId);
     lastValueFrom(request).then(_ => this._requestedsSubject$.next(_));
     return this._requestedsSubject$;
   }
@@ -106,10 +110,10 @@ export class PanListService {
     return lastValueFrom(request);
   }
 
-  setRequestedQuantities(quantity: number | null | undefined, notes: string| null | undefined, itemNumber: string, itemDescription: string | null | undefined, loadingScheduleId: string, panListId: number): Promise<RequestLine> {
+  setRequestedQuantities(quantity: number | null | undefined, notes: string| null | undefined, itemNumber: string, itemDescription: string | null | undefined, loadingScheduleId: string, panListId: number): Observable<RequestLine> {
     const url = `${this._panListLinesUrl}/items?expand=fields(select=Title)&filter=fields/Title eq '${loadingScheduleId}' and fields/PanList eq '${panListId}' and fields/ItemNumber eq '${itemNumber}'`;
     let query: Observable<RequestLine>;
-    const req = this.http.get(url).pipe(
+    return this.http.get(url).pipe(
       switchMap((res: any) => {
         const matches = res.value as RequestLine[];
         if (matches.length > 0) {
@@ -129,7 +133,6 @@ export class PanListService {
         return of();
       })
     );
-    return lastValueFrom(req);
   }
 
 
