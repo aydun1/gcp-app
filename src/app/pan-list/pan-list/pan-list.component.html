@@ -212,7 +212,7 @@
           </mat-header-cell>
           <mat-cell *matCellDef="let line">
             <div class="load-details right" [ngClass]="{ understocked: line.value['underStocked'] }">
-              {{ line.value['onHand'] | number }}
+              {{ line.value['qtyOnHand'] | number }}
             </div>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef>
