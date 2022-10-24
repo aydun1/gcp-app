@@ -28,13 +28,21 @@ export class SharedService {
   public isWarehouse!: boolean;
 
   public emailMap = new Map<string, Array<string>>([
+    ['HEA', ['esther.wong@gardencityplastics.com']],
     ['QLD', ['qld@gardencityplastics.com', 'megan.williams@gardencityplastics.com']],
     ['NSW', ['nsw@gardencityplastics.com']],
     ['SA', ['sa@gardencityplastics.com']],
     ['WA', ['wa@gardencityplastics.com']]
   ]);
 
-  public mpa = ['esther.wong@gardencityplastics.com'];
+  public officesMap = new Map<string, string>([
+    ['Stapylton', 'QLD'],
+    ['Heatherton','HEA'],
+    ['Somersby', 'NSW'],
+    ['Wingfield', 'SA'],
+    ['Dandenong South', 'VIC'],
+    ['Forrestfield', 'WA']
+  ]);
 
   constructor(
     private http: HttpClient,
@@ -56,10 +64,10 @@ export class SharedService {
   }
 
   getBranch(): Observable<string> {
-    const url = `${environment.endpoint}/me/state`;
+    const url = `${environment.endpoint}/me/officeLocation`;
     return this._state$.pipe(
       switchMap(cur => cur ? of(cur) : this.http.get(url).pipe(
-        map(_ => _['value'] ? _['value'] : 'NA'),
+        map(_ => _['value'] ? this.officesMap.get(_['value']) || 'NA' : 'NA'),
         tap(_ => {
           this.branch = _;
           this._state$.next(_);

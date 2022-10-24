@@ -23,6 +23,7 @@ export class PanListComponent implements OnInit {
 
   @ViewChild(MatTable) _matTable!:MatTable<any>;
 
+  @Input() suggestions = true;
   @Input() autosave!: boolean;
   @Input() defaultCategories: Array<string> = [];
   @Input() defaultColumns: Array<string> = [];
@@ -51,6 +52,7 @@ export class PanListComponent implements OnInit {
   public states = this.shared.branches;
   public ownState = '';
   public transferForm!: FormGroup;
+  public hideNoStockHea = false;
   public hideNoStockVic = false;
   public hideNoStockNsw = false;
   public hideNoStockQld = false;
@@ -60,7 +62,7 @@ export class PanListComponent implements OnInit {
   public hideUnsuggesteds = false;
   public hideNoMaxes = false;
   public saving = new Subject<string>();
-  public columns = [ 'bin', 'product', 'allocated', 'onHand', 'NSW', 'QLD', 'SA', 'VIC', 'WA', 'required', 'suggested', 'toFill', 'transfer', 'notes'];
+  public columns = [ 'bin', 'product', 'allocated', 'onHand', 'HEA', 'NSW', 'QLD', 'SA', 'VIC', 'WA', 'required', 'suggested', 'toFill', 'transfer', 'notes'];
   public categoryOptions = [
     {value: 'M', name: 'Manufactured'},
     {value: 'A', name: 'Allied'},
@@ -138,7 +140,7 @@ export class PanListComponent implements OnInit {
       )),
       tap(_ => this.parseParams(_)),
       tap(_ => this.loading = true),
-      switchMap(_ => this._loadList ? this.getSuggestedItems(_) : of([] as Array<SuggestedItem>)),
+      switchMap(_ => this._loadList && this.suggestions ? this.getSuggestedItems(_) : of([] as Array<SuggestedItem>)),
       map(_ => _.map(line => this.makeFormGroup(line, false))),
       tap(_ => {
         this.loading = false;
@@ -178,6 +180,7 @@ export class PanListComponent implements OnInit {
       vendor: _.Vendor,
       category: _.Category,
       vicOnHand: _.OnHandVIC,
+      heaOnHand: _.OnHandHEA,
       qldOnHand: _.OnHandQLD,
       saOnHand: _.OnHandSA,
       waOnHand: _.OnHandWA,

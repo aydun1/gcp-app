@@ -10,21 +10,21 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field *ngIf="showSuppliers" appearance="outline" class="pallet-filter">
+        <mat-form-field *ngIf="showSuppliers" appearance="outline">
           <mat-label>Suppliers</mat-label>
           <mat-select [(ngModel)]="chosenVendors" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setVendors($event)">
             <mat-option *ngFor="let b of otherVendors" [value]="b.branch">{{ b.branch }}</mat-option>
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="pallet-filter">
+        <mat-form-field appearance="outline">
           <mat-label>Categories</mat-label>
           <mat-select [(ngModel)]="categories" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setCategories($event)">
             <mat-option *ngFor="let c of categoryOptions" [value]="c.value">{{ c.name }}</mat-option>
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="pallet-filter">
+        <mat-form-field appearance="outline">
           <mat-label>Show columns</mat-label>
           <mat-select [(ngModel)]="chosenColumns" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setColumns($event)">
             <mat-option *ngFor="let s of otherStates" [value]="s">{{ s }}</mat-option>
@@ -126,6 +126,24 @@
           <mat-cell *matCellDef="let line">
             <div class="load-details right">
               {{ line.value['saOnHand'] | number }}
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="HEA">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="load-details right">
+              <div>
+                HEA
+              </div>
+              <mat-slide-toggle [(ngModel)]="hideNoStockHea" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            <div class="load-details right">
+              {{ line.value['heaOnHand'] | number }}
             </div>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef>
@@ -275,7 +293,7 @@
         <ng-container matColumnDef="another">
           <mat-header-cell *matHeaderCellDef>
             <mat-form-field class="search-form">
-              <mat-label>Add another item...</mat-label>
+              <mat-label>Add an item...</mat-label>
               <gcp-item-control [formControl]="itemSearch" [territory]="ownState"></gcp-item-control>
             </mat-form-field>
           </mat-header-cell>
@@ -299,6 +317,7 @@
         !row.value.custom &&
         ((vendorCodes.length > 0 && !vendorCodes.includes(row.value['vendor'])) ||
         (categories.length > 0 && !categories.includes(row.value['category'])) ||
+        (row.value['heaOnHand'] <= 0 && hideNoStockHea) ||
         (row.value['vicOnHand'] <= 0 && hideNoStockVic) ||
         (row.value['nswOnHand'] <= 0 && hideNoStockNsw) ||
         (row.value['saOnHand'] <= 0 && hideNoStockSa) ||

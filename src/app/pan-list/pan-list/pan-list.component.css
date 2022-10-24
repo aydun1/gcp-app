@@ -71,6 +71,7 @@ h2 {
   white-space: nowrap;
 }
 
+.mat-column-HEA,
 .mat-column-NSW,
 .mat-column-QLD,
 .mat-column-SA,
@@ -194,6 +195,7 @@ h2 {
     display: none;
   }
 
+  .mat-cell.mat-column-HEA,
   .mat-cell.mat-column-VIC,
   .mat-cell.mat-column-NSW,
   .mat-cell.mat-column-QLD,

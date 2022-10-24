@@ -1,0 +1,30 @@
+.buttons {
+  border-top: 1px solid #7a7a7a96;
+  padding: 0 10px;
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: baseline;
+}
+
+.mat-form-field {
+  width: 100px;
+}
+
+.to {
+  margin-left: 10px;
+}
+
+.save-button {
+  margin-left: auto;
+}
+
+.mat-form-field {
+  margin-left: 10px;
+}
+
+@media print {
+  .buttons {
+    display: none;
+  }
+}
