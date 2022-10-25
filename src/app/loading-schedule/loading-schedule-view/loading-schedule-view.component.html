@@ -12,8 +12,8 @@
     <gcp-letterhead>Dispatch Report</gcp-letterhead>
     <div class="print-details">
       <div>
-        <strong>Date: </strong>
-        <span>{{ date | date:'dd/MM/yyyy' }}</span>
+        <strong>Loading date: </strong>
+        <span>{{ loadingScheduleEntry.fields.LoadingDate | date:'dd/MM/yyyy' }}</span>
       </div>
       <div>
         <strong>For site: </strong>
@@ -26,6 +26,10 @@
       <div *ngIf="loadingScheduleEntry.fields.Driver">
         <strong>Driver: </strong>
         <span>{{ loadingScheduleEntry.fields.Driver }}</span>
+      </div>
+      <div *ngIf="loadingScheduleEntry.fields.Spaces">
+        <strong>Spaces: </strong>
+        <span>{{ loadingScheduleEntry.fields.Spaces }}</span>
       </div>
     </div>
   </div>
