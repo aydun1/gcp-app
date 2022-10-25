@@ -102,7 +102,6 @@
         <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) === false"></mat-footer-row>
         <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="!selectedPanId || (loading | async) === true || getTotalRequestedLines(interstateTransfers.value['lines'])"></mat-footer-row>
         <mat-footer-row *matFooterRowDef="['unselected']" [class.hidden]="selectedPanId"></mat-footer-row>
-
         <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
       </mat-table>
     </div>

@@ -27,7 +27,7 @@ export class PanListSimpleComponent implements OnInit {
   public transferForm!: FormGroup;
   public columns = ['product', 'notes', 'transfer'];
   public panList: number | null = null;
-  public selectedPanId!: string;
+  public selectedPanId: string = this.route.snapshot.queryParams['pan'] || '';
 
   public get displayedColumns(): Array<string> {
     return this.columns;

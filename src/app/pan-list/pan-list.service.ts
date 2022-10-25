@@ -60,24 +60,22 @@ export class PanListService {
   }
 
   getRequestedQuantitiesOnce(loadingScheduleId: string, panListId: number): Observable<RequestLine[]> {
-    this.loading.next(true);
     const url = `${this._panListLinesUrl}/items?expand=fields(select=ItemNumber,ItemDescription,Quantity, Notes)&filter=fields/Title eq '${loadingScheduleId}' and fields/PanList eq '${panListId}'&orderby=fields/ItemNumber asc`;
     return this.http.get<{value: RequestLine[]}>(url).pipe(
       map(res => {
-        this.loading.next(false);
         return res.value.filter(_ => _.fields.Quantity > 0 || _.fields.Notes);
       }),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
-        this.loading.next(false);
         return of([]);
       })
     );
   }
 
   getRequestedQuantities(loadingScheduleId: string, panListId: number): Observable<RequestLine[]> {
+    this.loading.next(true);
     this._requestedsSubject$.next([]);
-    const request = this.getRequestedQuantitiesOnce(loadingScheduleId, panListId);
+    const request = this.getRequestedQuantitiesOnce(loadingScheduleId, panListId).pipe(tap(() => this.loading.next(false)));
     lastValueFrom(request).then(_ => this._requestedsSubject$.next(_));
     return this._requestedsSubject$;
   }
