@@ -2,9 +2,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, catchError, combineLatest, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, of, switchMap, tap, throwError } from 'rxjs';
 
-import { SharedService } from '../../shared.service';
 import { NavigationService } from '../../navigation.service';
 import { LoadingScheduleService } from '../shared/loading-schedule.service';
 import { LoadingSchedule } from '../shared/loading-schedule';
@@ -26,8 +25,7 @@ export class LoadingScheduleViewComponent implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar,
     private navService: NavigationService,
-    private loadingScheduleService: LoadingScheduleService,
-    private sharedService: SharedService
+    private loadingScheduleService: LoadingScheduleService
   ) { }
 
   ngOnInit() {
@@ -38,8 +36,7 @@ export class LoadingScheduleViewComponent implements OnInit {
         typeof _ === 'string' ? this.loadingScheduleService.getLoadingScheduleEntry(_) : of(_)
       )
     );
-    this.loadingScheduleEntry$ = combineLatest([loadingSchedule$, this.sharedService.getBranch()]).pipe(
-      map(_ => _[0]),
+    this.loadingScheduleEntry$ = loadingSchedule$.pipe(
       tap(_ => this.goToPanList(_)),
       catchError((err: HttpErrorResponse) => this.handleError(err, true))
     );
@@ -72,9 +69,10 @@ export class LoadingScheduleViewComponent implements OnInit {
   }
 
   goToPanList(ls: LoadingSchedule | null): void {
+    const panId = this.route.snapshot.queryParams['pan'];
     if (!ls) return;
-    const pla = ls.fields.PanListsArray || [];
-    const pan = pla?.length > 0 ? pla[pla.length  - 1][0] : null;
+    const pans = ls.fields.PanListsArray?.map(_ => _[0]) || [];
+    const pan = pans.find(_ => _ === panId) ? panId : pans.length > 0 ? pans[pans.length  - 1] : null;
     this.router.navigate([], { queryParams: {pan}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 

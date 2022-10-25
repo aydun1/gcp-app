@@ -96,7 +96,7 @@ export class PanListSimpleComponent implements OnInit {
     if ('pan' in params) {
       this.selectedPanId = params['pan'];
     } else {
-      this.selectedPanId = '0';
+      this.selectedPanId = '';
     }
   }
 

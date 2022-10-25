@@ -85,13 +85,15 @@
 
         <ng-container matColumnDef="empty">
           <mat-footer-cell *matFooterCellDef>
-            Nothing to show here.
+            Add some items by clicking "Edit list".
           </mat-footer-cell>
         </ng-container>
 
         <ng-container matColumnDef="unselected">
           <mat-footer-cell *matFooterCellDef>
-            Pick a pan list to view.
+            <div *ngIf="!panLists">
+              Create a new pan list to begin.
+            </div>
           </mat-footer-cell>
         </ng-container>
 
