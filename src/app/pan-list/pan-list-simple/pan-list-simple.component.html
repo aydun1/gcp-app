@@ -17,7 +17,7 @@
       </ng-template>
       <button *ngIf="!sent && selectedPanId && panLists" mat-raised-button color="primary" type="button" (click)="sendList()">Send</button>
       <button *ngIf="!sent && selectedPanId && panLists" mat-button type="button" [routerLink]="['panlist']" [queryParams]="{pan: selectedPanId}" class="edit">Edit list</button>
-      <button mat-icon-button type="button" class="menu" [matMenuTriggerFor]="actionsMenu">
+      <button *ngIf="selectedPanId && panLists" mat-icon-button type="button" class="menu" [matMenuTriggerFor]="actionsMenu">
         <mat-icon>more_vert</mat-icon>
       </button>  
     </div>
