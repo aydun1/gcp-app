@@ -2,6 +2,7 @@ export interface SuggestedItem {
   Bin: string;
   Category: string;
   Id: number;
+  PreTransit: number;
   InTransit: number;
   ItemDesc: string;
   ItemNmbr: string;
