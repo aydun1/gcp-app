@@ -26,8 +26,8 @@
       </div>
       <a mat-raised-button color="primary" [disabled]="loading" [routerLink]="['new']" class="action">Add entry</a>
     </div>
-    <div *ngIf="loadingSchedule$ | async as loadingSchedule" class="inner">
-      <div *ngFor="let s of loadingSchedule | groupBy:groups; let i = index">
+    <div *ngIf="loadingSchedules$ | async as loadingSchedules" class="inner">
+      <div *ngFor="let s of loadingSchedules | groupBy:groups; let i = index">
         <div *ngIf="s">
           <h3>{{ groups[i] }}</h3>
           <mat-table #table [dataSource]="s" [trackBy]="trackByFn">

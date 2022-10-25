@@ -30,7 +30,7 @@ export class LoadingScheduleService {
 
   private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
-    const params = '?expand=fields(select=TransportCompany,Driver,Spaces,ArrivalDate,LoadingDate,From,To,Status,Notes)&orderby=fields/ArrivalDate asc';
+    const params = '?expand=fields(select=TransportCompany,Driver,Spaces,ArrivalDate,LoadingDate,From,To,Status,PanLists,Notes)&orderby=fields/ArrivalDate asc';
     let url = `${this._loadingScheduleUrl}/items${params}`;
     const parsed = filterKeys.map(key => {
       switch (key) {
@@ -48,16 +48,17 @@ export class LoadingScheduleService {
     return url;
   }
 
-  private getLoadingSchedule(url: string, paginate = false): Observable<LoadingSchedule[]> {
+  private getLoadingSchedules(url: string, paginate = false): Observable<LoadingSchedule[]> {
     this._loadingLoadingSchedule = true;
     this.loading.next(true);
-    return this.http.get(url).pipe(
+    return this.http.get<{value: LoadingSchedule[]}>(url).pipe(
       tap(_ => {
         if (paginate) this._nextPage = _['@odata.nextLink'];
         this._loadingLoadingSchedule = false;
         this.loading.next(false);
       }),
-      map((res: any) => res.value)
+      map(res => res.value),
+      tap(_ => _.forEach(ls => this.parseMultiLine('PanLists', 'PanListsArray', ls)))
     );
   }
 
@@ -87,7 +88,7 @@ export class LoadingScheduleService {
     this._nextPage = '';
     this._loadingLoadingSchedule = false;
     const url = this.createUrl(filters);
-    this.getLoadingSchedule(url, true).subscribe(_ => this._loadingScheduleSubject$.next(_));
+    this.getLoadingSchedules(url, true).subscribe(_ => this._loadingScheduleSubject$.next(_));
     return this._loadingScheduleSubject$;
   }
 
@@ -95,7 +96,7 @@ export class LoadingScheduleService {
     if (!this._nextPage || this._loadingLoadingSchedule) return;
     this._loadingScheduleSubject$.pipe(
       take(1),
-      switchMap(acc => this.getLoadingSchedule(this._nextPage).pipe(
+      switchMap(acc => this.getLoadingSchedules(this._nextPage).pipe(
         map(curr => [...acc, ...curr])
       ))
     ).subscribe(_ => this._loadingScheduleSubject$.next(_))

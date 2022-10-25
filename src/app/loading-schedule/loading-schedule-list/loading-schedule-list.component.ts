@@ -19,7 +19,7 @@ export class LoadingScheduleListComponent implements OnInit {
   public branchFilter = new FormControl('');
   public statusFilter = new FormControl('');
   public viewFilter = new FormControl('');
-  public loadingSchedule$!: Observable<LoadingSchedule[]>;
+  public loadingSchedules$!: Observable<LoadingSchedule[]>;
   public deliveries!: LoadingSchedule[];
   public loadingList$ = this.loadingScheduleService.loading;
   public loading = false;
@@ -41,7 +41,7 @@ export class LoadingScheduleListComponent implements OnInit {
   ngOnInit(): void {
     const state$ = this.shared.getBranch();
 
-    this.loadingSchedule$ = this.route.queryParams.pipe(
+    this.loadingSchedules$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, '', '')),
@@ -66,10 +66,11 @@ export class LoadingScheduleListComponent implements OnInit {
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
       tap(_ => this._loadingScheduleSubject$.next(_)),
       tap(_ => {
+        console.log(_)
         this.totals = this.groups.reduce((acc, curr) => (acc[curr] = _.filter(res => res.fields?.Status === curr).reduce((a, b) =>  a + (b.fields?.Spaces || 0), 0), acc), {});
         this.totals['total'] = _.reduce((a, b) =>  a + (b.fields?.Spaces || 0), 0);
       }),
-      switchMap(_ => this._loadingScheduleSubject$),
+      switchMap(_ => this._loadingScheduleSubject$)
     )
   }
 
