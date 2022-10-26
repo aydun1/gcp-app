@@ -1,14 +1,17 @@
-export interface PurchaseOrderLine {
+export interface IntransitTransferLine {
   Id: string;
-  PONumber: string;
+  DocId: string;
   LineNumber: number;
-  Date: string;
+  OrderDate: string;
+  EtaDate: string;
   ExtdCost: number;
   CancelledQty: number;
   ExtendedCost: number;
   ItemDesc: string;
   ItemNmbr: string;
-  OrderQty: number;
+  TransferQty: number;
+  QtyFulfilled: number;
+  QtyShipped: number;
   QtyOnHand: number;
   QtyAvailable: number;
 };

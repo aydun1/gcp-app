@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, map, Observable, of, lastValueFrom } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
+import { IntransitTransferLine } from './intransit-transfer-line';
 import { PurchaseOrder } from './purchase-order';
 import { PurchaseOrderLine } from './purchase-order-line';
 
@@ -19,8 +20,14 @@ export class InterstateTransfersService {
     private snackBar: MatSnackBar
   ) { }
 
-  getInterstateTransfers(from: string, to: string): Observable<PurchaseOrderLine[]> {
+  getPurchaseOrders(from: string, to: string): Observable<PurchaseOrderLine[]> {
     return this.http.get<{lines: PurchaseOrderLine[]}>(`${environment.gpEndpoint}/po?from=${from}&to=${to}`).pipe(
+      map(_ => _.lines)
+    );
+  }
+
+  getInterstateTransfers(from: string, to: string): Observable<IntransitTransferLine[]> {
+    return this.http.get<{lines: IntransitTransferLine[]}>(`${environment.gpEndpoint}/itt?from=${from}&to=${to}`).pipe(
       map(_ => _.lines)
     );
   }

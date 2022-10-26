@@ -13,6 +13,7 @@ import { InterstateTransferSuggestedComponent } from './interstate-transfer-sugg
 import { PipeModule } from '../shared/pipes/pipe.module';
 import { PanListModule } from '../pan-list/pan-list.module';
 import { TransactionHistoryDialogComponent } from './transaction-history-dialog/transaction-history-dialog.component';
+import { InterstateTransfersActiveComponent } from './interstate-transfers-active/interstate-transfers-active.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { TransactionHistoryDialogComponent } from './transaction-history-dialog/
     InterstateTransferRequestedComponent,
     InterstateTransferSuggestedComponent,
     InterstateTransferViewComponent,
+    InterstateTransfersActiveComponent,
     TransactionHistoryDialogComponent
   ],
   imports: [

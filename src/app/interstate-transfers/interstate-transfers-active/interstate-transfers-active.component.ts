@@ -7,14 +7,14 @@ import { BehaviorSubject, catchError, distinctUntilChanged, map, Observable, of,
 
 import { SharedService } from '../../shared.service';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
-import { PurchaseOrderLine } from '../shared/purchase-order-line';
+import { IntransitTransferLine } from '../shared/intransit-transfer-line';
 
 @Component({
-  selector: 'gcp-interstate-transfer-requested',
-  templateUrl: './interstate-transfer-requested.component.html',
-  styleUrls: ['./interstate-transfer-requested.component.css']
+  selector: 'gcp-interstate-transfers-active',
+  templateUrl: './interstate-transfers-active.component.html',
+  styleUrls: ['./interstate-transfers-active.component.css']
 })
-export class InterstateTransferRequestedComponent implements OnInit {
+export class InterstateTransfersActiveComponent implements OnInit {
   private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
   private _loadList!: boolean;
   public ownState = this.shared.branch;
@@ -68,28 +68,29 @@ export class InterstateTransferRequestedComponent implements OnInit {
       )),
       tap(_ => this.parseParams(_)),
       tap(_ => this.loading = true),
-      switchMap(_ => this._loadList ? this.getPurchaseOrders(_) : []),
+      switchMap(_ => this._loadList ? this.getInterstateTransfers(_) : []),
       tap(_ => this._InterstateTransferSubject$.next(this.makeFormGroup(_))),
       switchMap(_ => this._InterstateTransferSubject$),
     )
   }
 
-  makeFormGroup(lines: Array<PurchaseOrderLine>) {
+  makeFormGroup(lines: Array<IntransitTransferLine>) {
     this.lines.clear();
     let i = -1;
     lines.forEach(_ => 
       this.lines.push(this.fb.group({
         index: [i += 1],
         id: [_.Id],
-        poNumber: [_.PONumber],
+        docId: [_.DocId],
         lineNumber: [_.LineNumber],
-        reqDate: [_.Date],
+        orderDate: [_.OrderDate],
+        etaDate: [_.EtaDate],
         itemDesc: [_.ItemDesc],
         itemNumber: [_.ItemNmbr],
-        orderQty: [_.OrderQty],
-        extendedCost: [_.ExtdCost],
+        transferQty: [_.TransferQty],
+        qtyFulfilled: [_.QtyFulfilled],
+        QtyShipped: [_.QtyShipped],
         qtyAvailable: [_.QtyAvailable],
-        cancelledQty: [_.CancelledQty],
         toTransfer: []
       }))
     );
@@ -97,11 +98,11 @@ export class InterstateTransferRequestedComponent implements OnInit {
     return this.transferForm;
   }
   
-  getPurchaseOrders(params: Params): Observable<PurchaseOrderLine[]> {
+  getInterstateTransfers(params: Params): Observable<IntransitTransferLine[]> {
     const from = params['from'] || '';
     const to = params['to'] || '';
     if (!from || !to) return of([]);
-    return this.interstateTransfersService.getPurchaseOrders(from, to);
+    return this.interstateTransfersService.getInterstateTransfers(from, to);
   }
 
   parseParams(params: Params): void {
