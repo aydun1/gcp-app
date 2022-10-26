@@ -248,7 +248,7 @@
         <mat-cell *matCellDef="let line" [formGroup]="line">
           <input formControlName="toTransfer" class="transfer-input" type="number" placeholder="0" min="0">
           <div *ngIf="estimatePallets" class="pallet-count">
-            <span *ngIf="line.value['palletQty'] && line.value['palletQty'] !== 5000">({{ (line.value['toTransfer'] / line.value['palletQty']) | number: '1.0-1' }})</span>
+            <span *ngIf="line.value['spaces']">({{ line.value['spaces'] | number: '1.0-1' }})</span>
           </div>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>

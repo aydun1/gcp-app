@@ -13,6 +13,7 @@ export interface SuggestedItem {
   OrderPointQty: number;
   PackSize: number;
   PalletQty: number;
+  PalletHeight: number;
   QtyAllocated: number;
   QtyAllocatedByDate: number;
   QtyAvailable: number;

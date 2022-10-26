@@ -170,13 +170,14 @@ export class PanListComponent implements OnInit {
   formMapper(_: SuggestedItem): any {
     const toFill = (_[this.max] && _['QtyAvailable'] < _[this.min]) ? _['QtyRequired'] + _[this.max] : null;
     const qtyAllocated = (_.QtyAllocated +  _.QtyBackordered) || null;
-    const qtyOnHand = _.QtyOnHand + _.InTransit + _.PreTransit;
+    const qtyOnHand = _.QtyOnHand + _.InTransit + _.PreTransit; 
     return {
       id: _.Id,
       itemDesc: _.ItemDesc,
       itemNumber: _.ItemNmbr,
       bin: _.Bin?.replace('QLD BIN', ''),
       palletQty: _.PalletQty,
+      palletHeight: _.PalletHeight,
       packSize: _.PackSize == _.PalletQty ? '-' : _.PackSize,
       vendor: _.Vendor,
       category: _.Category,
@@ -202,7 +203,8 @@ export class PanListComponent implements OnInit {
     const notes = new FormControl<string | null>(line.Notes || null);
     const origNotes = new FormControl<string | null>(line.Notes || null);
     const f = this.formMapper(line);
-    const formGroup = this.fb.group({...f, toTransfer, origToTransfer, notes, origNotes, custom});
+    const spaces = line.PalletQty && line.PalletQty !== 5000 ? ((line.ToTransfer || 0) / line.PalletQty * (Math.trunc(line.PalletHeight / 1000) / 2)) : 0;
+    const formGroup = this.fb.group({...f, toTransfer, origToTransfer, notes, origNotes, custom, spaces});
 
     formGroup.valueChanges.pipe(
       tap(() => this.saving.next('saving')),
@@ -213,7 +215,11 @@ export class PanListComponent implements OnInit {
         const unchangedQty = a_new['toTransfer'] === a_old['toTransfer'];
         return unchangedNotes && unchangedQty;
       }),
-      tap(() => this.saving.next('saving')),
+      tap(_ => {
+        this.saving.next('saving');
+        const spaces = _['palletQty'] && _['palletQty'] !== 5000 ? ((_['toTransfer'] as number) / (_['palletQty'] as number) * (Math.trunc(_['palletHeight'] as number / 1000) / 2)) : 0;
+        formGroup.patchValue({spaces});
+      }),
       switchMap(_ => this.updatePanList(_)),
       tap(_ => {
         formGroup.patchValue({origToTransfer: _.fields['Quantity'], origNotes: _.fields['Notes']});
@@ -340,7 +346,7 @@ export class PanListComponent implements OnInit {
   }
 
   getTotalPalletCount(lines: Array<any>): number {
-    return lines.reduce((acc, cur) => acc + (cur.value.palletQty && cur.value.palletQty !== 5000 ? cur.value.toTransfer / cur.value.palletQty : 0), 0);
+    return lines.reduce((acc, cur) => acc + cur.value.spaces, 0);
   }
 
   submitForm(): void {
