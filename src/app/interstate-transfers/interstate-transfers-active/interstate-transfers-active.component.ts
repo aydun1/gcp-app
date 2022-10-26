@@ -123,7 +123,7 @@ export class InterstateTransfersActiveComponent implements OnInit {
     if ('view' in params) {
       this.viewFilter.patchValue(params['view']);
     } else {
-      this.viewFilter.patchValue('ungrouped');
+      this.viewFilter.patchValue('grouped');
     }
   }
 

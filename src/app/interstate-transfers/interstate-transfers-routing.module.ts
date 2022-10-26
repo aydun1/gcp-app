@@ -40,7 +40,12 @@ const routes: Routes = [
   {
     path: 'active',
     component: InterstateTransfersActiveComponent,
-    canActivate: [MsalGuard]
+    canActivate: [MsalGuard],
+    children: [{
+      path: ':ittId',
+      component: InterstateTransferViewComponent,
+      canActivate: [MsalGuard]
+    }]
   },
 ]
 
