@@ -66,7 +66,6 @@ export class LoadingScheduleListComponent implements OnInit {
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
       tap(_ => this._loadingScheduleSubject$.next(_)),
       tap(_ => {
-        console.log(_)
         this.totals = this.groups.reduce((acc, curr) => (acc[curr] = _.filter(res => res.fields?.Status === curr).reduce((a, b) =>  a + (b.fields?.Spaces || 0), 0), acc), {});
         this.totals['total'] = _.reduce((a, b) =>  a + (b.fields?.Spaces || 0), 0);
       }),

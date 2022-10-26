@@ -6,5 +6,9 @@
     <div class="title">Edit pan list</div>
   </ng-container>
 </mat-toolbar>
-
-<gcp-pan-list [autosave]="true" [showSuppliers]="false" [showNotes]="true" [estimatePallets]="true" [defaultCategories] = "['M', 'A', 'H', 'PM']" [defaultColumns] = "['VIC', 'required', 'toFill']"></gcp-pan-list>
+<div class="outer">
+  <div class="inner">
+    <h2 class="header">Suggested items</h2>
+    <gcp-pan-list [autosave]="true" [showSuppliers]="false" [showNotes]="true" [estimatePallets]="true" [defaultCategories] = "['M', 'A', 'H', 'PM']" [defaultColumns] = "['VIC', 'required', 'toFill']"></gcp-pan-list>  
+  </div>
+</div>

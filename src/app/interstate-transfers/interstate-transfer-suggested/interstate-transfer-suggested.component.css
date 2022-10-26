@@ -1,3 +1,8 @@
+.outer {
+  margin: 0 auto;
+  max-width: 1024px;
+}
+
 .buttons {
   border-top: 1px solid #7a7a7a96;
   padding: 0 10px;
@@ -16,6 +21,10 @@
 }
 
 @media print {
+  .inner {
+    margin: 0;
+  }
+
   .buttons {
     display: none;
   }

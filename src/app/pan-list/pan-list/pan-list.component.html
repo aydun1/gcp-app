@@ -1,334 +1,312 @@
-<div class="outer">
-  <h2>Suggested items</h2>
-  <form class="inner" [formGroup]="transferForm" (ngSubmit)="submitForm()">
-    <div class="options">
-      <div class="buttons">
+<form [formGroup]="transferForm" (ngSubmit)="submitForm()">
+  <div class="options">
+    <div class="buttons">
+      <ng-container *ngIf="suggestions">
         <mat-form-field appearance="outline" class="branch">
           <mat-label>Branch</mat-label>
           <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
             <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
           </mat-select>
         </mat-form-field>
-
         <mat-form-field *ngIf="showSuppliers" appearance="outline">
           <mat-label>Suppliers</mat-label>
           <mat-select [(ngModel)]="chosenVendors" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setVendors($event)">
             <mat-option *ngFor="let b of otherVendors" [value]="b.branch">{{ b.branch }}</mat-option>
           </mat-select>
         </mat-form-field>
-
         <mat-form-field appearance="outline">
           <mat-label>Categories</mat-label>
           <mat-select [(ngModel)]="categories" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setCategories($event)">
             <mat-option *ngFor="let c of categoryOptions" [value]="c.value">{{ c.name }}</mat-option>
           </mat-select>
         </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Show columns</mat-label>
-          <mat-select [(ngModel)]="chosenColumns" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setColumns($event)">
-            <mat-option *ngFor="let s of otherStates" [value]="s">{{ s }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div *ngIf="autosave && (saving | async) as s" class="autosave">Autosave: {{ s }}</div>
+      </ng-container>
+      <mat-form-field appearance="outline">
+        <mat-label>Show columns</mat-label>
+        <mat-select [(ngModel)]="chosenColumns" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setColumns($event)">
+          <mat-option *ngFor="let s of otherStates" [value]="s">{{ s }}</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
-    <div>
-      <mat-table #table [dataSource]="lines.controls" [trackBy]="trackByFn" formArrayName="lines">
-        <ng-container matColumnDef="bin">
-          <mat-header-cell *matHeaderCellDef> Bin </mat-header-cell>
-          <mat-cell *matCellDef="let line">
-            {{ line.value['bin'] }}
-          </mat-cell>
-          <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="product">
-          <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
-          <mat-cell *matCellDef="let line" [formGroup]="line" (click)="openDialog(line.value['itemNumber'])" class="opener">
-            <div class="details">
-              <strong class="link">
-                {{ line.value['itemNumber'] }}
-              </strong>
-              <div class="description" [title]="line.value['itemDesc']">
-                {{ line.value['itemDesc'] }}
-              </div>
-              <div class="description">
-                {{ line.value['packSize'] || '-' }} | {{ line.value['palletQty'] || '-' }}
-              </div>
+    <div *ngIf="autosave && (saving | async) as s" class="autosave">Autosave: {{ s }}</div>
+  </div>
+  <div>
+    <mat-table #table [dataSource]="lines.controls" [trackBy]="trackByFn" formArrayName="lines">
+      <ng-container matColumnDef="bin">
+        <mat-header-cell *matHeaderCellDef> Bin </mat-header-cell>
+        <mat-cell *matCellDef="let line">
+          {{ line.value['bin'] }}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="product">
+        <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
+        <mat-cell *matCellDef="let line" [formGroup]="line" (click)="openDialog(line.value['itemNumber'])" class="opener">
+          <div class="details">
+            <strong class="link">
+              {{ line.value['itemNumber'] }}
+            </strong>
+            <div class="description" [title]="line.value['itemDesc']">
+              {{ line.value['itemDesc'] }}
             </div>
-          </mat-cell>
-          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="allocated">
-          <mat-header-cell *matHeaderCellDef>
-            <div class="load-details right">
-              <div>
-                Allocated
-              </div>
+            <div class="description">
+              {{ line.value['packSize'] || '-' }} | {{ line.value['palletQty'] || '-' }}
             </div>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let line">
-            <div class="load-details right">
-              {{ line.value['qtyAllocated'] | number }}
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="allocated">
+        <mat-header-cell *matHeaderCellDef>
+          <div class="load-details right">
+            <div>
+              Allocated
             </div>
-          </mat-cell>
-          <mat-footer-cell *matFooterCellDef>
-          </mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="required">
-          <mat-header-cell *matHeaderCellDef>
-            <div class="load-details right">
-              <div>
-                Required
-              </div>
-              <mat-slide-toggle class="example-margin" [(ngModel)]="hideUnrequireds" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line">
+          <div class="load-details right">
+            {{ line.value['qtyAllocated'] | number }}
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+        </mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="required">
+        <mat-header-cell *matHeaderCellDef>
+          <div class="load-details right">
+            <div>
+              Required
             </div>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let line">
-            <div class="load-details right">
-              {{ line.value['qtyRequired'] | number }}
+            <mat-slide-toggle class="example-margin" [(ngModel)]="hideUnrequireds" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line">
+          <div class="load-details right">
+            {{ line.value['qtyRequired'] | number }}
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+        </mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="QLD">
+        <mat-header-cell *matHeaderCellDef>
+          <div class="load-details right">
+            <div>
+              QLD
             </div>
-          </mat-cell>
-          <mat-footer-cell *matFooterCellDef>
-          </mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="QLD">
-          <mat-header-cell *matHeaderCellDef>
-            <div class="load-details right">
-              <div>
-                QLD
-              </div>
-              <mat-slide-toggle [(ngModel)]="hideNoStockQld" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="hideNoStockQld" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line">
+          <div class="load-details right">
+            {{ line.value['qldOnHand'] | number }}
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+        </mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="SA">
+        <mat-header-cell *matHeaderCellDef>
+          <div class="load-details right">
+            <div>
+              SA
             </div>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let line">
-            <div class="load-details right">
-              {{ line.value['qldOnHand'] | number }}
+            <mat-slide-toggle [(ngModel)]="hideNoStockSa" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line">
+          <div class="load-details right">
+            {{ line.value['saOnHand'] | number }}
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+        </mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="HEA">
+        <mat-header-cell *matHeaderCellDef>
+          <div class="load-details right">
+            <div>
+              HEA
             </div>
-          </mat-cell>
-          <mat-footer-cell *matFooterCellDef>
-          </mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="SA">
-          <mat-header-cell *matHeaderCellDef>
-            <div class="load-details right">
-              <div>
-                SA
-              </div>
-              <mat-slide-toggle [(ngModel)]="hideNoStockSa" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="hideNoStockHea" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line">
+          <div class="load-details right">
+            {{ line.value['heaOnHand'] | number }}
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+        </mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="VIC">
+        <mat-header-cell *matHeaderCellDef>
+          <div class="load-details right">
+            <div>
+              VIC
             </div>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let line">
-            <div class="load-details right">
-              {{ line.value['saOnHand'] | number }}
+            <mat-slide-toggle [(ngModel)]="hideNoStockVic" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line">
+          <div class="load-details right">
+            {{ line.value['vicOnHand'] | number }}
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+        </mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="NSW">
+        <mat-header-cell *matHeaderCellDef>
+          <div class="load-details right">
+            <div>
+              NSW
             </div>
-          </mat-cell>
-          <mat-footer-cell *matFooterCellDef>
-          </mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="HEA">
-          <mat-header-cell *matHeaderCellDef>
-            <div class="load-details right">
-              <div>
-                HEA
-              </div>
-              <mat-slide-toggle [(ngModel)]="hideNoStockHea" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="hideNoStockNsw" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line">
+          <div class="load-details right">
+            {{ line.value['nswOnHand'] | number }}
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+        </mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="WA">
+        <mat-header-cell *matHeaderCellDef>
+          <div class="load-details right">
+            <div>
+              WA
             </div>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let line">
-            <div class="load-details right">
-              {{ line.value['heaOnHand'] | number }}
+            <mat-slide-toggle [(ngModel)]="hideNoStockWa" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line">
+          <div class="load-details right">
+            {{ line.value['waOnHand'] | number }}
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+        </mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="onHand">
+        <mat-header-cell *matHeaderCellDef>
+          <div class="load-details right">
+            <div>On hand</div>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line">
+          <div class="load-details right" [ngClass]="{ understocked: line.value['underStocked'] }">
+            {{ line.value['qtyOnHand'] | number }}
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+        </mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="toFill">
+        <mat-header-cell *matHeaderCellDef>
+          <div class="load-details right">
+            <div>
+              To fill
             </div>
-          </mat-cell>
-          <mat-footer-cell *matFooterCellDef>
-          </mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="VIC">
-          <mat-header-cell *matHeaderCellDef>
-            <div class="load-details right">
-              <div>
-                VIC
-              </div>
-              <mat-slide-toggle [(ngModel)]="hideNoStockVic" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            <mat-slide-toggle class="example-margin" [(ngModel)]="hideNoMaxes" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line">
+          <div class="load-details right">
+            {{ line.value['toFill'] | number }}
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+        </mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="suggested">
+        <mat-header-cell *matHeaderCellDef>
+          <div class="load-details right">
+            <div>
+              Suggested
             </div>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let line">
-            <div class="load-details right">
-              {{ line.value['vicOnHand'] | number }}
-            </div>
-          </mat-cell>
-          <mat-footer-cell *matFooterCellDef>
-          </mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="NSW">
-          <mat-header-cell *matHeaderCellDef>
-            <div class="load-details right">
-              <div>
-                NSW
-              </div>
-              <mat-slide-toggle [(ngModel)]="hideNoStockNsw" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
-            </div>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let line">
-            <div class="load-details right">
-              {{ line.value['nswOnHand'] | number }}
-            </div>
-          </mat-cell>
-          <mat-footer-cell *matFooterCellDef>
-          </mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="WA">
-          <mat-header-cell *matHeaderCellDef>
-            <div class="load-details right">
-              <div>
-                WA
-              </div>
-              <mat-slide-toggle [(ngModel)]="hideNoStockWa" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
-            </div>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let line">
-            <div class="load-details right">
-              {{ line.value['waOnHand'] | number }}
-            </div>
-          </mat-cell>
-          <mat-footer-cell *matFooterCellDef>
-          </mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="onHand">
-          <mat-header-cell *matHeaderCellDef>
-            <div class="load-details right">
-              <div>On hand</div>
-            </div>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let line">
-            <div class="load-details right" [ngClass]="{ understocked: line.value['underStocked'] }">
-              {{ line.value['qtyOnHand'] | number }}
-            </div>
-          </mat-cell>
-          <mat-footer-cell *matFooterCellDef>
-          </mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="toFill">
-          <mat-header-cell *matHeaderCellDef>
-            <div class="load-details right">
-              <div>
-                To fill
-              </div>
-              <mat-slide-toggle class="example-margin" [(ngModel)]="hideNoMaxes" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
-            </div>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let line">
-            <div class="load-details right">
-              {{ line.value['toFill'] | number }}
-            </div>
-          </mat-cell>
-          <mat-footer-cell *matFooterCellDef>
-          </mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="suggested">
-          <mat-header-cell *matHeaderCellDef>
-            <div class="load-details right">
-              <div>
-                Suggested
-              </div>
-              <mat-slide-toggle class="example-margin" [(ngModel)]="hideUnsuggesteds" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
-            </div>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let line">
-            <div class="load-details right">
-              {{ line.value['suggested'] | number }}
-            </div>
-          </mat-cell>
-          <mat-footer-cell *matFooterCellDef>
-          </mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="transfer">
-          <mat-header-cell *matHeaderCellDef>
-            <div class="load-details">
-              Request 
-            </div>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let line" [formGroup]="line">
-            <input formControlName="toTransfer" class="transfer-input" type="number" placeholder="0" min="0">
-            <div *ngIf="estimatePallets" class="pallet-count">
-              <span *ngIf="line.value['palletQty'] && line.value['palletQty'] !== 5000">({{ (line.value['toTransfer'] / line.value['palletQty']) | number: '1.0-1' }})</span>
-            </div>
-          </mat-cell>
-          <mat-footer-cell *matFooterCellDef>
-            <div class="transferTotal">
-              {{ getTotalToTransfer(lines.controls) | number }}
-            </div>
-            <div class="transferTotal">
-              ({{ getTotalPalletCount(lines.controls) | number: '1.0-1' }})
-            </div>
-          </mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="notes">
-          <mat-header-cell *matHeaderCellDef>
-            <div class="load-details">
-              Notes 
-            </div>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let line" [formGroup]="line">
-            <input formControlName="notes" class="transfer-input" type="text">
-          </mat-cell>
-          <mat-footer-cell *matFooterCellDef>
-          </mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="another">
-          <mat-header-cell *matHeaderCellDef>
-            <mat-form-field class="search-form">
-              <mat-label>Add an item...</mat-label>
-              <gcp-item-control [formControl]="itemSearch" [territory]="ownState"></gcp-item-control>
-            </mat-form-field>
-          </mat-header-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="loading">
-          <mat-footer-cell *matFooterCellDef>
-            <gcp-loading-row></gcp-loading-row>
-          </mat-footer-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="empty">
-          <mat-footer-cell *matFooterCellDef>
-            Nothing to show here.
-          </mat-footer-cell>
-        </ng-container>
-
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-footer-row *matHeaderRowDef="['another']"></mat-footer-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" [class.hidden]="
-        !row.value.custom &&
-        ((vendorCodes.length > 0 && !vendorCodes.includes(row.value['vendor'])) ||
-        (categories.length > 0 && !categories.includes(row.value['category'])) ||
-        (row.value['heaOnHand'] <= 0 && hideNoStockHea) ||
-        (row.value['vicOnHand'] <= 0 && hideNoStockVic) ||
-        (row.value['nswOnHand'] <= 0 && hideNoStockNsw) ||
-        (row.value['saOnHand'] <= 0 && hideNoStockSa) ||
-        (row.value['waOnHand'] <= 0 && hideNoStockWa) ||
-        (row.value['suggested'] <= 0 && hideUnsuggesteds) ||
-        (!row.value['qtyRequired'] && hideUnrequireds) ||
-        (!row.value['toFill'] && hideNoMaxes))"></mat-row>
-        <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="!loading"></mat-footer-row>
-        <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(lines.controls)"></mat-footer-row>
-        <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
-      </mat-table>
-    </div>
-  </form>
-</div>
+            <mat-slide-toggle class="example-margin" [(ngModel)]="hideUnsuggesteds" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line">
+          <div class="load-details right">
+            {{ line.value['suggested'] | number }}
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+        </mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="transfer">
+        <mat-header-cell *matHeaderCellDef>
+          <div class="load-details">
+            Request 
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line" [formGroup]="line">
+          <input formControlName="toTransfer" class="transfer-input" type="number" placeholder="0" min="0">
+          <div *ngIf="estimatePallets" class="pallet-count">
+            <span *ngIf="line.value['palletQty'] && line.value['palletQty'] !== 5000">({{ (line.value['toTransfer'] / line.value['palletQty']) | number: '1.0-1' }})</span>
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+          <div class="transferTotal">
+            {{ getTotalToTransfer(lines.controls) | number }}
+          </div>
+          <div class="transferTotal">
+            ({{ getTotalPalletCount(lines.controls) | number: '1.0-1' }})
+          </div>
+        </mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="notes">
+        <mat-header-cell *matHeaderCellDef>
+          <div class="load-details">
+            Notes 
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line" [formGroup]="line">
+          <input formControlName="notes" class="transfer-input" type="text">
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+        </mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="another">
+        <mat-header-cell *matHeaderCellDef>
+          <mat-form-field class="search-form">
+            <mat-label>Add an item...</mat-label>
+            <gcp-item-control [formControl]="itemSearch" [territory]="ownState"></gcp-item-control>
+          </mat-form-field>
+        </mat-header-cell>
+      </ng-container>
+      <ng-container matColumnDef="loading">
+        <mat-footer-cell *matFooterCellDef>
+          <gcp-loading-row></gcp-loading-row>
+        </mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="empty">
+        <mat-footer-cell *matFooterCellDef>
+          Nothing to show here.
+        </mat-footer-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-footer-row *matHeaderRowDef="['another']"></mat-footer-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" [class.hidden]="
+      !row.value.custom &&
+      ((vendorCodes.length > 0 && !vendorCodes.includes(row.value['vendor'])) ||
+      (categories.length > 0 && !categories.includes(row.value['category'])) ||
+      (row.value['heaOnHand'] <= 0 && hideNoStockHea) ||
+      (row.value['vicOnHand'] <= 0 && hideNoStockVic) ||
+      (row.value['nswOnHand'] <= 0 && hideNoStockNsw) ||
+      (row.value['saOnHand'] <= 0 && hideNoStockSa) ||
+      (row.value['waOnHand'] <= 0 && hideNoStockWa) ||
+      (row.value['suggested'] <= 0 && hideUnsuggesteds) ||
+      (!row.value['qtyRequired'] && hideUnrequireds) ||
+      (!row.value['toFill'] && hideNoMaxes))"></mat-row>
+      <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="!loading"></mat-footer-row>
+      <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(lines.controls)"></mat-footer-row>
+      <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+    </mat-table>
+  </div>
+</form>
