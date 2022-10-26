@@ -30,7 +30,7 @@
         <a mat-list-item routerLink="/transfers" routerLinkActive="active"><mat-icon>trolley</mat-icon><span class="menu-label">Inventory</span><mat-icon class="chevron">expand_more</mat-icon></a>
         <ng-container *ngIf="urlActive('/transfers')">
           <a mat-list-item routerLink="/transfers/suggested-items" routerLinkActive="active" class="sub-item"><span class="menu-label">Suggested items</span></a>
-          <a mat-list-item routerLink="/transfers/active" routerLinkActive="['active']" class="sub-item"><span class="menu-label">Requested items (ITT)</span></a>
+          <a mat-list-item routerLink="/transfers/active" routerLinkActive="active" class="sub-item"><span class="menu-label">Requested items (ITT)</span></a>
           <a mat-list-item routerLink="/transfers/requested-items" routerLinkActive="active" class="sub-item"><span class="menu-label">Requested items (PO)</span></a>
           <a mat-list-item routerLink="/transfers/new" routerLinkActive="active" class="sub-item"><span class="menu-label">Quick transfer</span></a>
         </ng-container>

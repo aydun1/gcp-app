@@ -5,6 +5,7 @@ import { Observable, of, switchMap } from 'rxjs';
 import { PurchaseOrder } from '../shared/purchase-order';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
 import { NavigationService } from '../../navigation.service';
+import { InTransitTransfer } from '../shared/intransit-transfer';
 
 @Component({
   selector: 'gcp-interstate-transfer-view',
@@ -13,7 +14,7 @@ import { NavigationService } from '../../navigation.service';
 })
 export class InterstateTransferViewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';
-  public interstateTransfer$!: Observable<PurchaseOrder>;
+  public interstateTransfer$!: Observable<InTransitTransfer>;
   public loading = false;
 
   constructor(
@@ -24,13 +25,13 @@ export class InterstateTransferViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.interstateTransfer$ = this.route.paramMap.pipe(
-      switchMap(params => this.getInterstateTransfer(params.get('id')))
+      switchMap(params => this.getInterstateTransfer(params.get('ittId')))
     )
   }
 
-  getInterstateTransfer(id: string | null): Observable<PurchaseOrder> {
+  getInterstateTransfer(id: string | null): Observable<InTransitTransfer> {
     if (!id) return of();
-    return this.interstateTransfersService.getPurchaseOrder(id);
+    return this.interstateTransfersService.getInTransitTransfer(id);
   }
 
   goBack(): void {

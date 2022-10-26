@@ -32,12 +32,14 @@ import { DocsModule } from './docs/docs.module';
 import { LoadingModule } from './loading/loading.module';
 import { LoadingDotsComponent } from './loading-dots/loading-dots.component';
 import { LetterheadComponent } from './letterhead/letterhead.component';
+import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
   declarations: [
     BigButtonComponent,
     LoadingDotsComponent,
-    LetterheadComponent
+    LetterheadComponent,
+    FooterComponent
   ],
   imports: [
     CommonModule,
@@ -73,6 +75,7 @@ import { LetterheadComponent } from './letterhead/letterhead.component';
     BigButtonComponent,
     LoadingDotsComponent,
     LetterheadComponent,
+    FooterComponent,
     LoadingModule,
     PipeModule,
     ControlsModule,

@@ -7,36 +7,71 @@
   </ng-container>
 </mat-toolbar>
 
-<div class="outer">
-  <h2>Purchase order</h2>
-  <div class="options inner">
-    <div class="buttons">
-    </div>
-  </div>
-  <div class="inner">
-    <div class="line">
-      <div class="product-details">
+<div class="outer" *ngIf="interstateTransfer$ | async as s" >
+  <div class="inner header-wrap">
+    <gcp-letterhead class="print-header">Interstate Transfer</gcp-letterhead>
+    <h2 class="header">Interstate Transfer</h2>
+    <div class="print-details">
+      <div>
+        <strong>Document Id: </strong>
+        <span>{{ s.docId }}</span>
       </div>
       <div>
-        Qty Ordered
+        <strong>Order date: </strong>
+        <span>{{ s.orderDate | date:'dd/MM/yyyy' }}</span>
       </div>
-      <div class="product-sending">
+      <div>
+        <strong>For: </strong>
+        <span>{{ s.toSite }}</span>
+      </div>
+      <div>
+        <strong>From: </strong>
+        <span>{{ s.fromSite }}</span>
       </div>
     </div>
   </div>
-  <div *ngIf="interstateTransfer$ | async as s" class="inner">
+  <div class="table-heading inner">
+    <div class="line">
+      <div class="bin">
+        Bin
+      </div>
+      <div class="product-details">
+        Item
+      </div>
+      <div class="quantities">
+        Qty available
+      </div>
+      <div class="quantities">
+        Qty ordered
+      </div>
+      <div class="quantities product-sending">
+        Qty picked
+      </div>
+    </div>
+  </div>
+  <div class="inner content">
     <div *ngFor="let line of s.lines" class="line">
+      <div class="bin">
+        {{ line.Bin || '-' }}
+      </div>
       <div class="product-details">
         <strong>{{ line.ItemNmbr }}</strong>
-        <div>{{ line.ItemDesc }}</div>
+        <div class="description">{{ line.ItemDesc }}</div>
       </div>
-      <div>
-        {{ line.OrderQty }}
+      <div class="quantities">
+        {{ line.QtyAvailable | number }}
       </div>
-      <div class="product-sending">
-
+      <div class="quantities">
+        <strong>{{ line.QtyFulfilled | number }}</strong>
+      </div>
+      <div class="quantities product-sending">
+        <div class="underline"></div>
       </div>
     </div>
+  </div>
+  <div class="footer inner">
+    <mat-divider></mat-divider>
+    <gcp-footer></gcp-footer>
   </div>
 </div>
 

@@ -1,0 +1,41 @@
+.footer {
+  display: flex;
+}
+
+.comments {
+  flex: 1;
+}
+
+.pallet-grid {
+   display: grid;
+   font-size: 14px;
+   grid-template-rows: 40px 50px 50px;
+   grid-template-columns: 60px 60px 60px 60px 60px 60px 60px 60px;
+   gap: 0px;
+}
+
+.column-header {
+  align-items: center;
+  border-bottom: 1px solid black;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.row-header {
+  align-items: center;
+  border-right: 1px solid black;
+  display: flex;
+  justify-content: end;
+  padding-right: 10px;
+  text-align: right;
+}
+
+.bordered {
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
+}
+
+.footer {
+  display: flex;
+}

@@ -1,5 +1,5 @@
 <div class="outer">
-  <h2 class="header">Requested items</h2>
+  <h2 class="header">Requested items (ITT)</h2>
   <form class="inner" [formGroup]="transferForm" (ngSubmit)="createTransfer()">
     <div class="options">
       <div class="buttons">
@@ -26,7 +26,7 @@
     </div>
     <div *ngIf="interstateTransfers$ | async as interstateTransfers">
       <div *ngFor="let t of interstateTransfers.value['lines'] | groupByProperty:(viewFilter.value === 'grouped' ? 'docId' : '');trackBy: trackByGroupsFn">
-        <h3 *ngIf="t.key !== 'undefined'">{{ t.key }}</h3>
+        <a *ngIf="t.key !== 'undefined'" [routerLink]="[t.key]"><h3>{{ t.key }}</h3></a>
         <mat-table #table [dataSource]="t.value" [trackBy]="trackByFn" formArrayName="lines">
           <ng-container matColumnDef="date">
             <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>

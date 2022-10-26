@@ -14,4 +14,7 @@ export interface IntransitTransferLine {
   QtyShipped: number;
   QtyOnHand: number;
   QtyAvailable: number;
+  Bin: string;
+  FromSite: string;
+  ToSite: string;
 };
