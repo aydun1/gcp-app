@@ -163,9 +163,8 @@ export class PanListComponent implements OnInit {
     ).subscribe();
   }
 
-  extraLine(): FormGroup<any> {
-    const line = {ItemNmbr: 'UNSET'} as SuggestedItem;
-    return this.makeFormGroup(line, true);
+  calculateSpaces(palQty: number, palHeight: number, toTransfer: number | undefined): number {
+    return palQty && palQty !== 500 ? ((toTransfer || 0) / palQty * (Math.trunc(palHeight / 1000) / 2)) : 0;
   }
 
   formMapper(_: SuggestedItem): any {
@@ -204,7 +203,7 @@ export class PanListComponent implements OnInit {
     const notes = new FormControl<string | null>(line.Notes || null);
     const origNotes = new FormControl<string | null>(line.Notes || null);
     const f = this.formMapper(line);
-    const spaces = line.PalletQty && line.PalletQty !== 5000 ? ((line.ToTransfer || 0) / line.PalletQty * (Math.trunc(line.PalletHeight / 1000) / 2)) : 0;
+    const spaces = this.calculateSpaces(line.PalletQty, line.PalletHeight, line.ToTransfer);
     const formGroup = this.fb.group({...f, toTransfer, origToTransfer, notes, origNotes, custom, spaces});
 
     formGroup.valueChanges.pipe(
@@ -218,7 +217,7 @@ export class PanListComponent implements OnInit {
       }),
       tap(_ => {
         this.saving.next('saving');
-        const spaces = _['palletQty'] && _['palletQty'] !== 5000 ? ((_['toTransfer'] as number) / (_['palletQty'] as number) * (Math.trunc(_['palletHeight'] as number / 1000) / 2)) : 0;
+        const spaces = this.calculateSpaces(_['palletQty'] as number, _['palletHeight'] as number, _['toTransfer'] as number);
         formGroup.patchValue({spaces});
       }),
       switchMap(_ => this.updatePanList(_)),
