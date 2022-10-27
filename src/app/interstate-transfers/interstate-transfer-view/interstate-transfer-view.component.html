@@ -39,6 +39,9 @@
         Item
       </div>
       <div class="quantities">
+        U of M
+      </div>
+      <div class="quantities">
         Qty available
       </div>
       <div class="quantities">
@@ -59,10 +62,13 @@
         <div class="description">{{ line.ItemDesc }}</div>
       </div>
       <div class="quantities">
+        {{ line.UOFM }}
+      </div>
+      <div class="quantities">
         {{ line.QtyAvailable | number }}
       </div>
       <div class="quantities">
-        <strong>{{ line.QtyFulfilled | number }}</strong>
+        <strong>{{ line.TransferQty - line.QtyShipped | number }}</strong>
       </div>
       <div class="quantities product-sending">
         <div class="underline"></div>

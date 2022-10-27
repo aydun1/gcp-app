@@ -17,4 +17,5 @@ export interface IntransitTransferLine {
   Bin: string;
   FromSite: string;
   ToSite: string;
+  UOFM: string;
 };

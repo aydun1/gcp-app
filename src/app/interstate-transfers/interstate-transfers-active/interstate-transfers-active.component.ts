@@ -88,7 +88,7 @@ export class InterstateTransfersActiveComponent implements OnInit {
         itemDesc: [_.ItemDesc],
         itemNumber: [_.ItemNmbr],
         transferQty: [_.TransferQty],
-        qtyFulfilled: [_.QtyFulfilled],
+        qtyFulfilled: [_.TransferQty - _.QtyShipped],
         QtyShipped: [_.QtyShipped],
         qtyAvailable: [_.QtyAvailable],
         toTransfer: []

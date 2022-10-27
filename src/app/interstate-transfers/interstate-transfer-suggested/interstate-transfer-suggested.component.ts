@@ -3,6 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
 
@@ -43,7 +44,7 @@ export class InterstateTransferSuggestedComponent implements OnInit {
     const lines = this.activeLines.filter((_: any) => _.toTransfer);
     const subject = `Items requested by ${this._ownState}`;
     const rows = lines.map(_ => `<tr><td>${_.itemNumber}</td><td>${_.toTransfer}</td></tr>`).join('');
-    const body = `<p><strong>ITT order no.:</strong> ${id}</p><table><tr><th>Item number</th><th>Qty Requested</th></tr>${rows}</table>`;
+    const body = `<p><strong>Order no.:</strong> <a href="${environment.redirectUri}/transfers/active/${id}">${id}</a></p><table><tr><th>Item number</th><th>Qty Requested</th></tr>${rows}</table>`;
     const to = this.shared.emailMap.get(this.fromState || '') || [];
     this.interstateTransfersService.createInTransitTransfer(this.fromState, this._ownState, lines, id).then(_ => {
       this.snackBar.open('Successfully created ITT.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
