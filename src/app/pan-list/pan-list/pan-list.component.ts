@@ -2,11 +2,12 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { MatTable } from '@angular/material/table';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { catchError, debounceTime, distinctUntilChanged, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
-import { TransactionHistoryDialogComponent } from 'src/app/interstate-transfers/transaction-history-dialog/transaction-history-dialog.component';
 
+import { TransactionHistoryDialogComponent } from '../../interstate-transfers/transaction-history-dialog/transaction-history-dialog.component';
 import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
 import { PanListService } from '../pan-list.service';
@@ -282,6 +283,15 @@ export class PanListComponent implements OnInit {
     } else {
       this.chosenVendors = [];
     }
+    if ('hea' in params) this.hideNoStockHea = params['hea'] === 'true';
+    if ('nsw' in params) this.hideNoStockNsw = params['nsw'] === 'true';
+    if ('qld' in params) this.hideNoStockQld = params['qld'] === 'true';
+    if ('sa' in params) this.hideNoStockSa = params['sa'] === 'true';
+    if ('vic' in params) this.hideNoStockVic = params['vic'] === 'true';
+    if ('wa' in params) this.hideNoStockWa = params['wa'] === 'true';
+    if ('suggested' in params) this.hideUnsuggesteds = params['suggested'] === 'true';
+    if ('required' in params) this.hideUnrequireds = params['required'] === 'true';
+    if ('tofill' in params) this.hideNoMaxes = params['tofill'] === 'true';    
   }
 
   compareQueryStrings(prev: Params, curr: Params): boolean {
@@ -321,6 +331,10 @@ export class PanListComponent implements OnInit {
 
   setColumns(columns: MatSelectChange): void {
     this.router.navigate([], { queryParams: {columns: columns.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  toggle(label: string, a: MatSlideToggleChange): void {
+    this.router.navigate([], { queryParams: {[label]: a.checked || null}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   getTotalQtyOnHand(lines: Array<any>): number {

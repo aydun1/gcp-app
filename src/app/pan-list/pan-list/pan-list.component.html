@@ -78,7 +78,7 @@
             <div>
               Required
             </div>
-            <mat-slide-toggle class="example-margin" [(ngModel)]="hideUnrequireds" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="hideUnrequireds" (change)="toggle('required', $event)" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
@@ -95,7 +95,7 @@
             <div>
               QLD
             </div>
-            <mat-slide-toggle [(ngModel)]="hideNoStockQld" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="hideNoStockQld" (change)="toggle('qld', $event)" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
@@ -112,7 +112,7 @@
             <div>
               SA
             </div>
-            <mat-slide-toggle [(ngModel)]="hideNoStockSa" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="hideNoStockSa" (change)="toggle('sa', $event)" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
@@ -129,7 +129,7 @@
             <div>
               HEA
             </div>
-            <mat-slide-toggle [(ngModel)]="hideNoStockHea" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="hideNoStockHea" (change)="toggle('hea', $event)" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
@@ -146,7 +146,7 @@
             <div>
               VIC
             </div>
-            <mat-slide-toggle [(ngModel)]="hideNoStockVic" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="hideNoStockVic" (change)="toggle('vic', $event)" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
@@ -163,7 +163,7 @@
             <div>
               NSW
             </div>
-            <mat-slide-toggle [(ngModel)]="hideNoStockNsw" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="hideNoStockNsw" (change)="toggle('nsw', $event)" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
@@ -180,7 +180,7 @@
             <div>
               WA
             </div>
-            <mat-slide-toggle [(ngModel)]="hideNoStockWa" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="hideNoStockWa" (change)="toggle('wa', $event)" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
@@ -211,7 +211,7 @@
             <div>
               To fill
             </div>
-            <mat-slide-toggle class="example-margin" [(ngModel)]="hideNoMaxes" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="hideNoMaxes" (change)="toggle('tofill', $event)" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
@@ -228,7 +228,7 @@
             <div>
               Suggested
             </div>
-            <mat-slide-toggle class="example-margin" [(ngModel)]="hideUnsuggesteds" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="hideUnsuggesteds" (change)="toggle('suggested', $event)" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
