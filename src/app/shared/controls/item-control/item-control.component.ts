@@ -80,8 +80,8 @@ export class ItemControlComponent implements ControlValueAccessor, MatFormFieldC
   }
 
   @Input()
-  set territory(value: string) {
-    this._territory$.next(value);
+  set territory(value: string | null) {
+    this._territory$.next(value || '');
   }
   private _territory$ = new BehaviorSubject<string>('');
 

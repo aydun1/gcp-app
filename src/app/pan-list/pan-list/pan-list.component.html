@@ -276,7 +276,7 @@
         <mat-header-cell *matHeaderCellDef>
           <mat-form-field class="search-form">
             <mat-label>Add an item...</mat-label>
-            <gcp-item-control [formControl]="itemSearch" [territory]="ownState"></gcp-item-control>
+            <gcp-item-control [formControl]="itemSearch" [territory]="branchFilter.value"></gcp-item-control>
           </mat-form-field>
         </mat-header-cell>
       </ng-container>
