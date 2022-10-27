@@ -68,7 +68,7 @@
         {{ line.QtyAvailable | number }}
       </div>
       <div class="quantities">
-        <strong>{{ line.TransferQty - line.QtyShipped | number }}</strong>
+        <strong>{{ line.QtyRemaining | number }}</strong>
       </div>
       <div class="quantities product-sending">
         <div class="underline"></div>

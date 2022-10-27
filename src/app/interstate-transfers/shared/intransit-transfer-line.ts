@@ -12,6 +12,7 @@ export interface IntransitTransferLine {
   TransferQty: number;
   QtyFulfilled: number;
   QtyShipped: number;
+  QtyRemaining: number;
   QtyOnHand: number;
   QtyAvailable: number;
   Bin: string;
