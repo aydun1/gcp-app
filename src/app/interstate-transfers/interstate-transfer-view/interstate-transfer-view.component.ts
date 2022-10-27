@@ -6,6 +6,7 @@ import { PurchaseOrder } from '../shared/purchase-order';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
 import { NavigationService } from '../../navigation.service';
 import { InTransitTransfer } from '../shared/intransit-transfer';
+import { PurchaseOrderLine } from '../shared/purchase-order-line';
 
 @Component({
   selector: 'gcp-interstate-transfer-view',
@@ -38,8 +39,12 @@ export class InterstateTransferViewComponent implements OnInit {
     this.navService.back();
   }
 
-  trackByFn(index: number, item: PurchaseOrder): string {
-    return item.PONumber;
+  print(): void {
+    window.print();
+  }
+
+  trackByFn(index: number, item: PurchaseOrderLine): string {
+    return item.Id;
   }
 
 }

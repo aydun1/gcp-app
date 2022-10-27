@@ -6,6 +6,11 @@
 
 .table-heading {
   font-weight: bold;
+  margin-top: 2.5cm;
+}
+
+.print-button {
+  margin-left: auto;
 }
 
 .line {
@@ -27,13 +32,14 @@
   flex: 1;
 }
 
-.description {
+.small {
   font-size: 14px;
 }
 
 .quantities {
   flex: 0 0 75px;
   margin-left: 10px;
+  text-align: right;
 }
 
 .header-wrap {
@@ -50,6 +56,10 @@
 }
 
 .mat-divider {
+  margin-bottom: 20px;
+}
+
+.bottom-divider {
   margin: 20px 0;
 }
 

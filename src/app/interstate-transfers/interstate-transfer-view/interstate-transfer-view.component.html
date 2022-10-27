@@ -4,6 +4,7 @@
   </button>
   <ng-container>
     <div class="title">Requested items</div>
+    <button mat-icon-button class="print-button" (click)="print()"><mat-icon>print</mat-icon></button>
   </ng-container>
 </mat-toolbar>
 
@@ -42,16 +43,17 @@
         U of M
       </div>
       <div class="quantities">
-        Qty available
+        On hand
       </div>
       <div class="quantities">
-        Qty ordered
+        Ordered
       </div>
       <div class="quantities product-sending">
-        Qty picked
+        Picked
       </div>
     </div>
   </div>
+  <mat-divider></mat-divider>
   <div class="inner content">
     <div *ngFor="let line of s.lines" class="line">
       <div class="bin">
@@ -59,13 +61,13 @@
       </div>
       <div class="product-details">
         <strong>{{ line.ItemNmbr }}</strong>
-        <div class="description">{{ line.ItemDesc }}</div>
+        <div class="small description">{{ line.ItemDesc }}</div>
       </div>
-      <div class="quantities">
+      <div class="small quantities">
         {{ line.UOFM }}
       </div>
-      <div class="quantities">
-        {{ line.QtyAvailable | number }}
+      <div class="small quantities">
+        {{ line.QtyOnHand | number }}
       </div>
       <div class="quantities">
         <strong>{{ line.QtyRemaining | number }}</strong>
@@ -76,7 +78,7 @@
     </div>
   </div>
   <div class="footer inner">
-    <mat-divider></mat-divider>
+    <mat-divider class="bottom-divider"></mat-divider>
     <gcp-footer></gcp-footer>
   </div>
 </div>
