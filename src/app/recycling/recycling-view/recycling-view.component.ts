@@ -53,7 +53,7 @@ export class RecyclingViewComponent implements OnDestroy, OnInit {
     this.getCage();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.renderer.removeClass(document.body, 'print');
   }
 
@@ -61,7 +61,7 @@ export class RecyclingViewComponent implements OnDestroy, OnInit {
     this.cageSource$.next();
   }
 
-  updating(e: boolean) {
+  updating(e: boolean): void {
     this.loading.next(e);
   }
 
