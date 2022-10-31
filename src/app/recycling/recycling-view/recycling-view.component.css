@@ -12,6 +12,10 @@ input {
   display: flex;
 }
 
+.top-title {
+  flex: 1;
+}
+
 .content {
   display: block;
   margin: 0 auto;

@@ -1,4 +1,4 @@
-import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, combineLatest, map, Observable, switchMap, tap } from 'rxjs';
 
@@ -8,6 +8,7 @@ import { Cage } from '../shared/cage';
 
 @Component({
   selector: 'gcp-recycling-view',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './recycling-view.component.html',
   styleUrls: ['./recycling-view.component.css']
 })
@@ -72,6 +73,14 @@ export class RecyclingViewComponent implements OnDestroy, OnInit {
         this.loadingHistory.next(false);
       })
     );
+  }
+
+  getPrev(): Observable<string> {
+    return this.recyclingService.getNextCageId(this.cageId, true);
+  }
+
+  getNext(): Observable<string> {
+    return this.recyclingService.getNextCageId(this.cageId, false);
   }
 
   setCageNotes(id: string): void {
