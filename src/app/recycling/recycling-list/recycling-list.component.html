@@ -92,7 +92,7 @@
       <ng-container matColumnDef="weight">
         <mat-header-cell *matHeaderCellDef> Net weight </mat-header-cell>
         <mat-cell *matCellDef="let cage">
-          {{ cage.fields.NetWeight || 0 | number }} kg
+          {{ cage.fields.NetWeight || 0 }} kg
         </mat-cell>
         <mat-footer-cell *matFooterCellDef> {{ weight || 0 | number }} kg </mat-footer-cell>
       </ng-container>
