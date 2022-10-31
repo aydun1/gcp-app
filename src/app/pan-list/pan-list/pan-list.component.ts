@@ -180,7 +180,7 @@ export class PanListComponent implements OnInit {
       bin: _.Bin?.replace('QLD BIN', ''),
       palletQty: _.PalletQty,
       palletHeight: _.PalletHeight,
-      packSize: _.PackSize == _.PalletQty ? '-' : _.PackSize,
+      packSize: _.PackSize === _.PalletQty ? '-' : _.PackSize,
       vendor: _.Vendor,
       category: _.Category,
       vicOnHand: _.OnHandVIC,
