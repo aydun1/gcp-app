@@ -61,7 +61,7 @@ h2 {
     overflow-y: auto;
   }
 
-  .options {
+  h2, .options {
     display: none;
   }
 }

@@ -142,11 +142,7 @@ h3 {
 }
 
 @media print {
-  .header {
-    display: none;
-  }
-
-  .options {
+  h2, .options {
     display: none;
   }
 
@@ -160,7 +156,6 @@ h3 {
     gap: 0;
     padding: 0;
   }
-
 
   .mat-header-cell.mat-column-product,
   .mat-footer-cell.mat-column-product {

@@ -169,3 +169,9 @@ h2 {
     grid-row: 4;
   }
 }
+
+@media print {
+  h2, .options {
+    display: none;
+  }
+}

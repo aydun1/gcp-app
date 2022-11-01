@@ -220,7 +220,7 @@ h2 {
     overflow-y: auto;
   }
 
-  .options {
+  h2, .options {
     display: none;
   }
 
@@ -238,12 +238,14 @@ h2 {
     display: none;
   }
 
-  .mat-header-cell.mat-column-customer {
-    margin-left: 10px;
-    margin-right: -10px;
-  }
-
   .mat-row {
     display: flex;
+    gap: 0;
+    padding: 10px 0;
+  }
+
+  
+  .mat-cell.mat-column-site {
+    align-items: center;
   }
 }

@@ -1,4 +1,5 @@
 <div *ngIf="(cages$ | async) as cages"  class="outer">
+  <gcp-letterhead class="print-heading">Recycling cages</gcp-letterhead>
   <div *ngIf="selection.isEmpty() && (choices$ | async) as choices"class="options inner">
     <div class="buttons">
       <mat-form-field appearance="outline" class="branch">

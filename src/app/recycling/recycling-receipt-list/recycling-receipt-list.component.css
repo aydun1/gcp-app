@@ -33,6 +33,10 @@
 }
 
 @media print {
+  :host {
+    overflow-y: auto;
+  }
+
   .options {
     display: none;
   }
