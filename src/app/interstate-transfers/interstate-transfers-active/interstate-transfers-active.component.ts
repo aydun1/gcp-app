@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { BehaviorSubject, catchError, distinctUntilChanged, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
@@ -17,15 +16,13 @@ import { IntransitTransferLine } from '../shared/intransit-transfer-line';
 export class InterstateTransfersActiveComponent implements OnInit {
   private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
   private _loadList!: boolean;
-  public ownState = this.shared.branch;
+  private ownState = this.shared.branch;
   public fromBranchFilter = new FormControl({value: this.ownState, disabled: true});
   public toBranchFilter = new FormControl('');
   public viewFilter = new FormControl('');
   public interstateTransfers$!: Observable<FormGroup<any>>;
   public loading = false;
-  public creating = false;
-  public displayedColumns = [ 'date', 'product', 'available', 'quantity', 'transfer'];
-  public totals!: object;
+  public displayedColumns = [ 'date', 'product', 'available', 'quantity'];
   public states = this.shared.branches;
   public transferForm!: FormGroup;
 
@@ -46,7 +43,6 @@ export class InterstateTransfersActiveComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private snackBar: MatSnackBar,
     private shared: SharedService,
     private interstateTransfersService: InterstateTransfersService
   ) { }
@@ -91,6 +87,7 @@ export class InterstateTransfersActiveComponent implements OnInit {
         qtyFulfilled: [_.TransferQty - _.QtyShipped],
         QtyShipped: [_.QtyShipped],
         qtyAvailable: [_.QtyAvailable],
+        toSite: [_.ToSite],
         toTransfer: []
       }))
     );
@@ -101,7 +98,7 @@ export class InterstateTransfersActiveComponent implements OnInit {
   getInterstateTransfers(params: Params): Observable<IntransitTransferLine[]> {
     const from = params['from'] || '';
     const to = params['to'] || '';
-    if (!from || !to) return of([]);
+    if (!from) return of([]);
     return this.interstateTransfersService.getInterstateTransfers(from, to);
   }
 
@@ -151,35 +148,6 @@ export class InterstateTransfersActiveComponent implements OnInit {
     this.router.navigate([], { queryParams: {view: view.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  createTransfer() {
-    this.creating = true;
-    const formData = this.lines.value.filter(_ => _.toTransfer);
-    const subject = `PO lines fulfilled by ${this.fromBranchFilter.value}`;
-    const rows = formData.map(_ => `<tr><td>${_.poNumber}</td><td>${_.itemNumber}</td><td>${_.toTransfer}</td></tr>`).join('');
-    const body = `<table><tr><th>PO number</th><th>Item number</th><th>tQty fulfilled</th></tr>${rows}</table>`;
-    const to = this.shared.emailMap.get(this.toBranchFilter.value || '') || [];
-    this.interstateTransfersService.createTransfer(this.fromBranchFilter.value, this.toBranchFilter.value, formData).pipe(
-      tap(() => {
-        this.snackBar.open('Successfully created interstate transfer.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
-        this.router.navigate([], { queryParams: {v: 1}, queryParamsHandling: 'merge', replaceUrl: true});
-        this.lines.controls.forEach(_ => {
-          const orderQty = _.value['orderQty'];
-          const toTransfer = _.value['toTransfer'];
-          if (toTransfer > 0) {
-            _.patchValue({orderQty: orderQty - toTransfer, toTransfer: null})
-          }
-        });
-        this.creating = false;
-      }),
-      switchMap(_ => this.shared.sendMail(to, subject, body, 'HTML')),
-      catchError(err => {
-        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-warn']});
-        this.creating = false;
-        return of();
-      })
-    ).subscribe();
-  }
-
   getTotalQtyOnHand(lines: Array<any>): number {
     return lines.reduce((acc, cur) => acc + cur.qtyOnHand, 0);
   }
@@ -190,10 +158,6 @@ export class InterstateTransfersActiveComponent implements OnInit {
 
   getTotalRequestedLines(lines: Array<any>): number {
     return lines.reduce((acc, cur) => acc + 1, 0);
-  }
-
-  getTotalToTransfer(lines: Array<any>): number {
-    return lines.reduce((acc, cur) => acc + cur.toTransfer, 0);
   }
 
   trackByGroupsFn(index: number, item: any): string {

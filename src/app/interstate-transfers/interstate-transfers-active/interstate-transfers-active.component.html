@@ -1,6 +1,6 @@
 <div class="outer">
   <h2 class="header">Requested items (ITT)</h2>
-  <form class="inner" [formGroup]="transferForm" (ngSubmit)="createTransfer()">
+  <form class="inner" [formGroup]="transferForm">
     <div class="options">
       <div class="buttons">
         <mat-form-field appearance="outline" class="branch">
@@ -12,6 +12,7 @@
         <mat-form-field appearance="outline" class="branch">
           <mat-label>To</mat-label>
           <mat-select [formControl]="toBranchFilter" (selectionChange)="setToBranch($event)">
+            <mat-option>Show all</mat-option>
             <mat-option *ngFor="let s of otherBranches" [value]="s">{{ s }}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -26,7 +27,10 @@
     </div>
     <div *ngIf="interstateTransfers$ | async as interstateTransfers">
       <div *ngFor="let t of interstateTransfers.value['lines'] | groupByProperty:(viewFilter.value === 'grouped' ? 'docId' : '');trackBy: trackByGroupsFn">
-        <a *ngIf="t.key !== 'undefined'" [routerLink]="[t.key]"><h3>{{ t.key }}</h3></a>
+        <div *ngIf="t.key !== 'undefined'" class="section-head">
+          <a [routerLink]="[t.key]"><h3>{{ t.key }}</h3></a>
+          <span *ngIf="!toBranchFilter.value">{{ t.value[0]['toSite'] }}</span>
+        </div>
         <mat-table #table [dataSource]="t.value" [trackBy]="trackByFn" formArrayName="lines">
           <ng-container matColumnDef="date">
             <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
@@ -87,22 +91,6 @@
             </mat-footer-cell>
           </ng-container>
 
-          <ng-container matColumnDef="transfer">
-            <mat-header-cell *matHeaderCellDef>
-              <div class="loadDetails">
-                Qty to transfer
-              </div>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
-              <div class="underline"></div>
-            </mat-cell>
-            <mat-footer-cell *matFooterCellDef>
-              <div class="transferTotal">
-                {{ getTotalToTransfer(t.value) | number }}
-              </div>
-            </mat-footer-cell>
-          </ng-container>
-
           <ng-container matColumnDef="loading">
             <mat-footer-cell *matFooterCellDef>
               <gcp-loading-row></gcp-loading-row>
@@ -114,16 +102,10 @@
               There are no items requested from {{ fromBranchFilter.value }} by {{ toBranchFilter.value }}.
             </mat-footer-cell>
           </ng-container>
-          <ng-container matColumnDef="unpicked">
-            <mat-footer-cell *matFooterCellDef>
-              Pick a branch to see their requested items!
-            </mat-footer-cell>
-          </ng-container>
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
           <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="!loading"></mat-footer-row>
           <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="!toBranchFilter.value || loading || getTotalRequestedLines(t.value)"></mat-footer-row>
-          <mat-footer-row *matFooterRowDef="['unpicked']" [class.hidden]="toBranchFilter.value"></mat-footer-row>
           <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
         </mat-table>
       </div>
