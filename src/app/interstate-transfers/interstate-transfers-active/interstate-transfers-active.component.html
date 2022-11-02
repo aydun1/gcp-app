@@ -77,19 +77,15 @@
           <ng-container matColumnDef="available">
             <mat-header-cell *matHeaderCellDef>
               <div class="loadDetails">
-                Qty available
+                On hand
               </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
               <div class="loadDetails">
-                {{ line['qtyAvailable'] | number }}
+                {{ line['qtyOnHand'] | number }}
               </div>
             </mat-cell>
-            <mat-footer-cell *matFooterCellDef>
-              <div class="loadDetails">
-                {{ getTotalQtyOnHand(t.value) | number }}
-              </div>
-            </mat-footer-cell>
+            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
           </ng-container>
 
           <ng-container matColumnDef="loading">

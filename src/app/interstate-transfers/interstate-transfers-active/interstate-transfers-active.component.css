@@ -120,6 +120,10 @@ h3 {
     justify-content: inherit;
   }
 
+  .mat-footer-cell.mat-column-date {
+    flex: 1;
+  }
+
   .mat-footer-cell.mat-column-product {
     display: none;
   }

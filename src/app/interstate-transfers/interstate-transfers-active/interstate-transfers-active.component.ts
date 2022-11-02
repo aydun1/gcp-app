@@ -87,6 +87,7 @@ export class InterstateTransfersActiveComponent implements OnInit {
         qtyFulfilled: [_.TransferQty - _.QtyShipped],
         QtyShipped: [_.QtyShipped],
         qtyAvailable: [_.QtyAvailable],
+        qtyOnHand: [_.QtyOnHand],
         toSite: [_.ToSite],
         toTransfer: []
       }))
@@ -153,7 +154,7 @@ export class InterstateTransfersActiveComponent implements OnInit {
   }
 
   getTotalRequestedQty(lines: Array<any>): number {
-    return lines.reduce((acc, cur) => acc + cur.orderQty, 0);
+    return lines.reduce((acc, cur) => acc + cur.transferQty, 0);
   }
 
   getTotalRequestedLines(lines: Array<any>): number {
