@@ -43,15 +43,16 @@ export class InterstateTransferNewComponent implements OnInit {
   }
   
   createTransfer(): void {
+    if (!this.activeLines || this.activeLines.length === 0 || !this.toState || !this.fromState) return;
     this.creating = true;
-    const id = this.interstateTransfersService.createId(this._ownState);
-    if (!this.activeLines || this.activeLines.length === 0 || !this._ownState || !this.fromState) return;
+    const id = this.interstateTransfersService.createId(this.toState);
+    const mpa = this._ownState === 'HEA';
     const lines = this.activeLines.filter((_: any) => _.toTransfer);
     const subject = `Created ITT for ${this.fromState} to ${this.toState}`;
     const rows = lines.map(_ => `<tr><td>${_.itemNumber}</td><td>${_.toTransfer}</td></tr>`).join('');
     const body = `<p><strong>Order no.:</strong> <a href="${environment.redirectUri}/transfers/active/${id}">${id}</a></p><table><tr><th>Item number</th><th>Qty Requested</th></tr>${rows}</table>`;
-    const to = [this.fromState, this.toState].filter(_ => _ !== this._ownState).map(_ => this.shared.emailMap.get(_ || '')).flat(1).filter(_ => _) as string[];
-    this.interstateTransfersService.createInTransitTransfer(this.fromState, this._ownState, lines, id).then(_ => {
+    const to = [this.fromState, this.toState].filter(_ => _ !== this._ownState).map(_ => this.shared.emailMap.get(`${_}${mpa ? '_MPA' : ''}` || '')).flat(1).filter(_ => _) as string[];
+    this.interstateTransfersService.createInTransitTransfer(this.fromState, this.toState, lines, id).then(_ => {
       this.snackBar.open('Successfully created ITT.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
       this.router.navigate(['transfers']);
       this.creating = false;

@@ -29,10 +29,15 @@ export class SharedService {
 
   public emailMap = new Map<string, Array<string>>([
     ['HEA', ['esther.wong@gardencityplastics.com']],
+    ['HEA_MPA', ['esther.wong@gardencityplastics.com']],
     ['QLD', ['qld@gardencityplastics.com', 'megan.williams@gardencityplastics.com']],
+    ['QLD_MPA', ['qld@gardencityplastics.com']],
     ['NSW', ['nsw@gardencityplastics.com']],
+    ['NSW_MPA', ['nsw@gardencityplastics.com']],
     ['SA', ['sa@gardencityplastics.com']],
-    ['WA', ['wa@gardencityplastics.com']]
+    ['SA_MPA', ['sa@gardencityplastics.com']],
+    ['WA', ['wa@gardencityplastics.com']],
+    ['WA_MPA', ['wasales@micropellets.com.au']],
   ]);
 
   public officesMap = new Map<string, string>([
