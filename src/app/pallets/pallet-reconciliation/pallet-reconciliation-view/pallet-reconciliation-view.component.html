@@ -12,7 +12,7 @@
     <h2>Pallet stocktake entry</h2>
     <div class="actions">
       <div class="edit">
-        <a mat-raised-button [routerLink]="['edit']" type="button">Edit entry</a>
+        <a *ngIf="branch === stocktake.fields.Branch && isRecent" mat-raised-button [routerLink]="['edit']" type="button">Edit entry</a>
       </div>
     </div>
   </div>
