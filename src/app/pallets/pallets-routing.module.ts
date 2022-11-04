@@ -26,29 +26,42 @@ const routes: Routes = [
     path: 'stocktake',
     data: {title: 'Pallet stocktake'},
     component: PalletReconciliationListComponent,
-    children: [{
-      path: 'new',
-      data: {title: 'New Pallet stocktake'},
-      component: PalletReconciliationNewComponent
-    }, {
-      path: ':id',
-      data: {title: 'Pallet stocktake'},
-      component: PalletReconciliationViewComponent
-    }]
+    children: [
+      {
+        path: 'new',
+        data: {title: 'New Pallet stocktake'},
+        component: PalletReconciliationNewComponent
+      },
+      {
+        path: ':id',
+        data: {title: 'Pallet stocktake'},
+        component: PalletReconciliationViewComponent,
+        children: [
+          {
+            path: 'edit',
+            data: {title: 'Edit entry'},
+            component: PalletReconciliationNewComponent,
+          }
+        ]
+      }
+    ]
   },
   {
     path: 'transfer',
     data: {title: 'Interstate Pallet Transfers'},
     component: PalletInterstateTransferListComponent,
-    children: [{
-      data: {title: 'New Interstate Pallet Transfer'},
-      path: 'new',
-      component: PalletInterstateTransferNewComponent
-    }, {
-      path: ':id',
-      data: {title: 'Interstate Pallet Transfers'},
-      component: PalletInterstateTransferViewComponent
-    }]
+    children: [
+      {
+        data: {title: 'New Interstate Pallet Transfer'},
+        path: 'new',
+        component: PalletInterstateTransferNewComponent
+      },
+      {
+        path: ':id',
+        data: {title: 'Interstate Pallet Transfers'},
+        component: PalletInterstateTransferViewComponent
+      }
+    ]
   }
 ]
 

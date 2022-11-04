@@ -3,12 +3,20 @@
     <mat-icon>arrow_back</mat-icon>
   </button>
   <ng-container>
-    <div class="title">Stocktake</div>
+    <div class="title">Pallet stocktake</div>
   </ng-container>
 </mat-toolbar>
 
 <div *ngIf="stocktake$ | async as stocktake; else loadingPage" class="outer">
-  <mat-card>
+  <div class="header screen-header">
+    <h2>Pallet stocktake entry</h2>
+    <div class="actions">
+      <div class="edit">
+        <a mat-raised-button [routerLink]="['edit']" type="button">Edit entry</a>
+      </div>
+    </div>
+  </div>
+  <mat-card class="inner">
     <mat-card-title>Stocktake results</mat-card-title>
     <mat-list>
       <mat-list-item>
@@ -43,7 +51,7 @@
       </mat-list-item>
     </mat-list>
   </mat-card>
-  <mat-card>
+  <mat-card class="inner">
     <mat-card-title>Physical stocktake</mat-card-title>
     <mat-list>
       <mat-list-item>
@@ -58,7 +66,7 @@
       </mat-list-item>
     </mat-list>
   </mat-card>
-  <mat-card>
+  <mat-card class="inner">
     <mat-card-title>Pallets elsewhere</mat-card-title>
     <mat-list>
       <mat-list-item>
@@ -85,6 +93,8 @@
     </mat-list>
   </mat-card>
 </div>
+
+<router-outlet></router-outlet>
 
 <ng-template #loadingPage>
   <gcp-loading-page></gcp-loading-page>

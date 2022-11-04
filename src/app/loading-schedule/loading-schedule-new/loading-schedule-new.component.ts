@@ -88,7 +88,6 @@ export class LoadingScheduleNewComponent implements OnInit {
     );
 
     if (this.id) {
-      console.log(this.id);
       lastValueFrom(this.loadingScheduleService.getLoadingScheduleEntry(this.id)).then(
         _ => {
           const data = {};

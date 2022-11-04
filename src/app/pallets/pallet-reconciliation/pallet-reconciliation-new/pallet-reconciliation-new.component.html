@@ -7,15 +7,15 @@
   </ng-container>
 </mat-toolbar>
 
-<div class="outer">
-  <h2>New pallet stocktake report</h2>
+<div *ngIf="loadingData | async; else loadingPage" class="outer">
+  <h2>{{id ? 'Edit' : 'New'}} pallet stocktake report</h2>
   <form (ngSubmit)="onSubmit()" [formGroup]="palletRecForm">
     <mat-card>
       <mat-form-field appearance="fill">
         <mat-label>Invoice/stocktake date</mat-label>
         <input matInput [matDatepicker]="picker1" formControlName="date">
         <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-        <mat-datepicker  #picker1></mat-datepicker>
+        <mat-datepicker #picker1></mat-datepicker>
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>Branch</mat-label>
@@ -24,7 +24,7 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="fill">
-        <mat-label>Completed by</mat-label>
+        <mat-label>{{id ? 'Edited' : 'Completed'}} by</mat-label>
         <input matInput type="text" formControlName="name" autocomplete="off">
       </mat-form-field>
       <mat-form-field appearance="fill">
@@ -99,3 +99,7 @@
     </div>
   </form>
 </div>
+
+<ng-template #loadingPage>
+  <gcp-loading-page></gcp-loading-page>
+</ng-template>

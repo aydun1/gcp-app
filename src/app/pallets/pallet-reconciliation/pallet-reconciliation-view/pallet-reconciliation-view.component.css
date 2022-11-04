@@ -1,5 +1,17 @@
-.mat-card {
-  margin: 10px;
+.inner {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.header.screen-header {
+  display: flex;
+}
+
+.header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 10px;
 }
 
 .mat-list-base .mat-list-item .mat-line:nth-child(n+2) {

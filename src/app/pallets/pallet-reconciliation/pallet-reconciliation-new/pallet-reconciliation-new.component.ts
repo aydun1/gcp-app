@@ -1,7 +1,8 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { catchError, combineLatest, tap, throwError } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject, catchError, combineLatest, lastValueFrom, tap, throwError } from 'rxjs';
 
 import { PalletsService } from '../../shared/pallets.service';
 import { PalletsReconciliationService } from '../../shared/pallets-reconciliation.service';
@@ -16,10 +17,10 @@ interface PalletRecForm {
   currentBalance: FormControl<string | null>;
   onSite: FormControl<string | null>;
   offSite: FormControl<string | null>;
-  toBeCollected: FormControl<string | null>;
-  toBeRepaid: FormControl<string | null>;
-  inTransitOff: FormControl<string | null>;
-  inTransitOn: FormControl<string | null>;
+  toBeCollected: FormControl<number | null>;
+  toBeRepaid: FormControl<number | null>;
+  inTransitOff: FormControl<number | null>;
+  inTransitOn: FormControl<number | null>;
 }
 
 @Component({
@@ -30,6 +31,7 @@ interface PalletRecForm {
 export class PalletReconciliationNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';
 
+  public loadingData = new BehaviorSubject<boolean>(false);
   public palletRecForm!: FormGroup<PalletRecForm>;
   public adjBalance = 0;
   public stocktakeResult = 0;
@@ -37,9 +39,12 @@ export class PalletReconciliationNewComponent implements OnInit {
   public states = this.sharedService.branches;
   public state!: string;
   public loading = false;
+  public id: string | null = null;
 
   constructor(
     private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
     private snackBar: MatSnackBar,
     private palletsService: PalletsService,
     private palletsReconciliationService: PalletsReconciliationService,
@@ -56,10 +61,6 @@ export class PalletReconciliationNewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.sharedService.getBranch().subscribe(state => {
-      this.state = state;
-      if (this.palletRecForm) this.palletRecForm.patchValue({branch: state});
-    });
     const name = this.sharedService.getName();
     const date = new Date();
     this.palletRecForm = this.fb.group({
@@ -70,11 +71,45 @@ export class PalletReconciliationNewComponent implements OnInit {
       currentBalance: ['', [Validators.required, Validators.min(0)]],
       onSite: ['', [Validators.required, Validators.min(0)]],
       offSite: ['', [Validators.required, Validators.min(0)]],
-      toBeCollected: new FormControl({value: '', disabled: true}),
-      toBeRepaid: new FormControl({value: '', disabled: true}),
-      inTransitOff: new FormControl({value: '', disabled: true}),
-      inTransitOn: new FormControl({value: '', disabled: true}),
+      toBeCollected: new FormControl({value: 0, disabled: true}),
+      toBeRepaid: new FormControl({value: 0, disabled: true}),
+      inTransitOff: new FormControl({value: 0, disabled: true}),
+      inTransitOn: new FormControl({value: 0, disabled: true}),
     });
+
+    this.id = this.route.snapshot.paramMap.get('id');
+
+    if (this.id) {
+      lastValueFrom(this.palletsReconciliationService.getReconciliation(this.id)).then(
+        _ => {
+          const data = {};
+          data['date'] = new Date(_.fields['Date'] || _.fields['Created']);
+          data['pallet'] = _.fields['Pallet'];
+          data['branch'] = _.fields['Branch'];
+          data['currentBalance'] = _.fields['CurrentBalance'];
+          data['onSite'] = _.fields['OnSite'];
+          data['offSite'] = _.fields['OffSite'];
+          data['toBeCollected'] = _.fields['ToBeCollected'];
+          data['toBeRepaid'] = _.fields['ToBeRepaid'];
+          data['inTransitOff'] = _.fields['InTransitOff'];
+          data['inTransitOn'] = _.fields['InTransitOn'];
+          this.palletRecForm.patchValue(data);
+          this.palletRecForm.get('date')?.disable();
+          this.palletRecForm.get('pallet')?.disable();
+          this.loadingData.next(true);
+        }
+      )
+    } else {
+      this.sharedService.getBranch().pipe(
+        tap(_ => {
+          this.state = _;
+          if (this.palletRecForm) this.palletRecForm.patchValue({branch: _});
+        })
+      ).subscribe();
+      this.palletRecForm.get('date')?.valueChanges.subscribe(() => this.updateTransits());
+      this.palletRecForm.get('pallet')?.valueChanges.subscribe(() => this.updateTransits());    
+      this.loadingData.next(true);
+    }
 
     this.palletRecForm.valueChanges.pipe(
       tap(_ => {
@@ -84,8 +119,6 @@ export class PalletReconciliationNewComponent implements OnInit {
       })
     ).subscribe();
 
-    this.palletRecForm.get('date')?.valueChanges.subscribe(() => this.updateTransits());
-    this.palletRecForm.get('pallet')?.valueChanges.subscribe(() => this.updateTransits());    
   }
 
   updateTransits(): void {
@@ -98,8 +131,8 @@ export class PalletReconciliationNewComponent implements OnInit {
     const owed = this.palletsService.getPalletsOwedToBranch(this.state, pallet, date);
     combineLatest([offs, ons, owed]).subscribe(([a, b, c]) => {
       this.palletRecForm.patchValue({
-        inTransitOff: `${a}`,
-        inTransitOn: `${b}`,
+        inTransitOff: a,
+        inTransitOn: b,
         [c > 0 ? 'toBeCollected' : 'toBeRepaid']: Math.abs(c),
         [c > 0 ? 'toBeRepaid' : 'toBeCollected']: 0
       })
@@ -111,10 +144,12 @@ export class PalletReconciliationNewComponent implements OnInit {
     if (this.palletRecForm.invalid) return;
     this.loading = true;
     const payload = {...this.palletRecForm.getRawValue(), surplus: this.surplus, deficit: this.deficit, result: this.stocktakeResult};
-    this.palletsReconciliationService.addReconciliation(payload).pipe(
+    const action = this.id ? this.palletsReconciliationService.updateReconciliation(this.id, payload) :
+                             this.palletsReconciliationService.addReconciliation(payload);
+    action.pipe(
       tap(_ => {
-        this.goBack();
-        this.snackBar.open('Added pallet stocktake', '', {duration: 3000});
+        this.router.navigate(['pallets/stocktake'], {replaceUrl: true});
+        this.snackBar.open(`${this.id ? 'Updated' : 'Added'} pallet stocktake`, '', {duration: 3000});
       }),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
