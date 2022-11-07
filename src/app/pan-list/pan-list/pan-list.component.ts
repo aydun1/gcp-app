@@ -33,15 +33,18 @@ export class PanListComponent implements OnInit {
   @Input() estimatePallets: boolean = false;
   @Input() min = 'MinOrderQty';
   @Input() max = 'MaxOrderQty';
+  @Input() panNote!: string;
   @Output() saveClicked: EventEmitter<FormGroup> = new EventEmitter();
   @Output() lineCount: EventEmitter<number> = new EventEmitter();
   @Output() activeLines: EventEmitter<any[]> = new EventEmitter();
+  @Output() note: EventEmitter<string | null> = new EventEmitter();
 
   private _scheduleId!: string;
   private _panId!: number;
   private _loadList!: boolean;
 
   public itemSearch = new FormControl<SuggestedItem | null>(null);
+  public notes = new FormControl<string>(this.panNote);
   public branchFilter = new FormControl({value: '', disabled: true});
   public viewFilter = new FormControl('');
   public loading = false;
@@ -115,6 +118,7 @@ export class PanListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.notes.setValue(this.panNote);
     if (!this.showNotes) this.columns = this.columns.filter(_ => _ !== 'notes');
     this.saving.next('saved');
     this._scheduleId = this.route.snapshot.paramMap.get('id') || '';
@@ -128,6 +132,11 @@ export class PanListComponent implements OnInit {
         this.activeLines.emit(_['lines'].filter((l: any) => l.toTransfer > 0));
         this.lineCount.emit(this.getLinesToTransfer(_['lines']));
       })
+    ).subscribe();
+
+    this.notes.valueChanges.pipe(
+      debounceTime(500),
+      tap(_ => this.note.next(_))
     ).subscribe();
 
     this.route.queryParams.pipe(

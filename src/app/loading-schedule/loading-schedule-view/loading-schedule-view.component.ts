@@ -7,6 +7,7 @@ import { BehaviorSubject, catchError, Observable, of, switchMap, tap, throwError
 import { NavigationService } from '../../navigation.service';
 import { LoadingScheduleService } from '../shared/loading-schedule.service';
 import { LoadingSchedule } from '../shared/loading-schedule';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'gcp-loading-schedule-view',
@@ -19,6 +20,7 @@ export class LoadingScheduleViewComponent implements OnInit {
   private scheduleSource$ = new BehaviorSubject<string | LoadingSchedule | null>(null);
   public loadingScheduleEntry$!: Observable<any>;
   public date = new Date();
+  public notes = new FormControl<string>('');
 
   constructor(
     private route: ActivatedRoute,
@@ -29,6 +31,7 @@ export class LoadingScheduleViewComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
     const id = this.route.snapshot.paramMap.get('id');
     this.scheduleSource$.next(id);
     const loadingSchedule$ = this.scheduleSource$.pipe(

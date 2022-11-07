@@ -22,6 +22,7 @@ export class LoadingScheduleService {
   private _columns$ = new BehaviorSubject<any>(null);
 
   public loading = new BehaviorSubject<boolean>(false);
+  public panLists: Array<string[]> | undefined;
 
   constructor(
     private http: HttpClient,
@@ -121,7 +122,8 @@ export class LoadingScheduleService {
   getLoadingScheduleEntry(id: string | null): Observable<LoadingSchedule> {
     const url = `${this._loadingScheduleUrl}/items('${id}')`;
     return this.http.get<LoadingSchedule>(url).pipe(
-      tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _))
+      tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _)),
+      tap(_ => this.panLists = _['fields']['PanListsArray'])
     );
   }
 
@@ -169,6 +171,19 @@ export class LoadingScheduleService {
         const to = ['aidan.obrien@gardencityplastics.com'];
         return this.shared.sendMail(to, subject, body, 'HTML');
       })
+    ));
+  }
+
+  addNote(id: string, panListId: string, note: string | null): Promise<any> {
+    const url = `${this._loadingScheduleUrl}/items('${id}')`;
+    return lastValueFrom(this.getLoadingScheduleEntry(id).pipe(
+      switchMap(_ => {
+        const toUpdate = _.fields.PanListsArray?.find(p => `${p[0]}` === `${panListId}`) || [];
+        toUpdate[1] = note || '';
+        const fields = {PanLists: _.fields.PanListsArray?.join('\r\n')};
+        return this.http.patch<LoadingSchedule>(url, {fields});
+      }),
+      tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _))
     ));
   }
 
