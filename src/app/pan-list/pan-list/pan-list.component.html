@@ -305,7 +305,7 @@
       (!row.value['qtyRequired'] && hideUnrequireds) ||
       (!row.value['toFill'] && hideNoMaxes))"></mat-row>
       <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="!loading"></mat-footer-row>
-      <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(lines.controls)"></mat-footer-row>
+      <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(lines.controls) || !suggestions"></mat-footer-row>
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
     <mat-card *ngIf="showNotes" class="notes">
