@@ -2,7 +2,7 @@ import { Component, HostBinding, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, catchError, lastValueFrom, Observable, Subject, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, firstValueFrom, Observable, switchMap, tap, throwError } from 'rxjs';
 
 import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
@@ -88,7 +88,7 @@ export class LoadingScheduleNewComponent implements OnInit {
     );
 
     if (this.id) {
-      lastValueFrom(this.loadingScheduleService.getLoadingScheduleEntry(this.id)).then(
+      firstValueFrom(this.loadingScheduleService.getLoadingScheduleEntry(this.id)).then(
         _ => {
           const data = {};
           data['status'] = _.fields['Status'];

@@ -13,11 +13,13 @@ import { RequestLine } from '../request-line';
 })
 export class PanListSimpleComponent implements OnInit {
   @Input() panLists!: Array<string[]>;
+  @Input() note!: string;
+  @Input() scheduleId!: string;
+
   @Output() addPanList = new EventEmitter<boolean>();
   @Output() deletePanList = new EventEmitter<string>();
   @Output() sendPanList = new EventEmitter<string>();
 
-  @Input() scheduleId!: string;
 
   private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
   private _loadList!: boolean;
@@ -28,6 +30,7 @@ export class PanListSimpleComponent implements OnInit {
   public columns = ['product', 'notes', 'transfer'];
   public panList: number | null = null;
   public selectedPanId: string = this.route.snapshot.queryParams['pan'] || '';
+  public selectedPanId$: BehaviorSubject<string> = new BehaviorSubject<string>(this.route.snapshot.queryParams['pan'] || '');
 
   public get displayedColumns(): Array<string> {
     return this.columns;
@@ -93,6 +96,10 @@ export class PanListSimpleComponent implements OnInit {
   }
 
   parseParams(params: Params): void {
+    if (this.panLists) {
+      const pan = this.panLists.find(_ => _[0] === params['pan']);
+      this.note = pan ? pan[1] : '';
+    }
     if ('pan' in params) {
       this.selectedPanId = params['pan'];
     } else {
@@ -142,6 +149,10 @@ export class PanListSimpleComponent implements OnInit {
 
   trackByFn(index: number, item: any): string {
     return item.id;
+  }
+
+  trackByFn2(index: number, item: any): string {
+    return item[0];
   }
 
 }

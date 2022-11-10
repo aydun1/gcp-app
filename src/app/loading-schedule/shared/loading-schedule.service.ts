@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
-import { BehaviorSubject, lastValueFrom, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, map, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { environment } from '../../../environments/environment';
@@ -17,7 +17,8 @@ export class LoadingScheduleService {
   private _loadingScheduleUrl = `${environment.endpoint}/${environment.siteUrl}/${this._listUrl}`;
   private _transportCompaniesUrl = `${environment.endpoint}/${environment.siteUrl}/${this._transportCompaniesListUrl}`;
   private _nextPage!: string;
-  private _loadingScheduleSubject$ = new BehaviorSubject<LoadingSchedule[]>([]);
+  private _loadingScheduleListSubject$ = new BehaviorSubject<LoadingSchedule[]>([]);
+  private _loadingScheduleSubject$ = new Subject<LoadingSchedule>();
   private _loadingLoadingSchedule!: boolean;
   private _columns$ = new BehaviorSubject<any>(null);
 
@@ -64,14 +65,14 @@ export class LoadingScheduleService {
   }
 
   private updateList(res: LoadingSchedule): Observable<LoadingSchedule> {
-    return this._loadingScheduleSubject$.pipe(
+    return this._loadingScheduleListSubject$.pipe(
       take(1),
       map(_ => {
         const entries = _.map(pallet => pallet);
         const i = entries.findIndex(pallet => pallet.id === res.id);
         if (i > -1) entries[i] = res
         else entries.push(res);
-        this._loadingScheduleSubject$.next(entries);
+        this._loadingScheduleListSubject$.next(entries);
         return res
       })
     );
@@ -89,18 +90,18 @@ export class LoadingScheduleService {
     this._nextPage = '';
     this._loadingLoadingSchedule = false;
     const url = this.createUrl(filters);
-    this.getLoadingSchedules(url, true).subscribe(_ => this._loadingScheduleSubject$.next(_));
-    return this._loadingScheduleSubject$;
+    this.getLoadingSchedules(url, true).subscribe(_ => this._loadingScheduleListSubject$.next(_));
+    return this._loadingScheduleListSubject$;
   }
 
   getNextPage(): void {
     if (!this._nextPage || this._loadingLoadingSchedule) return;
-    this._loadingScheduleSubject$.pipe(
+    this._loadingScheduleListSubject$.pipe(
       take(1),
       switchMap(acc => this.getLoadingSchedules(this._nextPage).pipe(
         map(curr => [...acc, ...curr])
       ))
-    ).subscribe(_ => this._loadingScheduleSubject$.next(_))
+    ).subscribe(_ => this._loadingScheduleListSubject$.next(_))
   }
 
   getColumns(): BehaviorSubject<any> {
@@ -119,36 +120,43 @@ export class LoadingScheduleService {
     return this._columns$;
   }
 
-  getLoadingScheduleEntry(id: string | null): Observable<LoadingSchedule> {
+  getLoadingScheduleEntry(id: string | null): Subject<LoadingSchedule> {
     const url = `${this._loadingScheduleUrl}/items('${id}')`;
-    return this.http.get<LoadingSchedule>(url).pipe(
+    this.http.get<LoadingSchedule>(url).pipe(
       tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _)),
       tap(_ => this.panLists = _['fields']['PanListsArray'])
-    );
+    ).subscribe(_ => this._loadingScheduleSubject$.next(_));
+    return this._loadingScheduleSubject$;
   }
 
   addPanList(id: string): Promise<LoadingSchedule> {
     const url = `${this._loadingScheduleUrl}/items('${id}')`;
-    return lastValueFrom(this.getLoadingScheduleEntry(id).pipe(
+    return firstValueFrom(this.getLoadingScheduleEntry(id).pipe(
       switchMap(_ => {
         const pans = _.fields.PanListsArray || [];
         const newId = pans.length > 0 ? parseInt(pans[pans.length - 1][0]) + 1 : 1;
         const fields = {PanLists: [...pans, `${newId},`].join('\r\n')};
         return this.http.patch<LoadingSchedule>(url, {fields});
       }),
-      tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _))
+      tap(_ => {
+        this.parseMultiLine('PanLists', 'PanListsArray', _);
+        this._loadingScheduleSubject$.next(_);
+      })
     ));
   }
 
   removePanList(id: string, panListId: string): Promise<LoadingSchedule> {
     const url = `${this._loadingScheduleUrl}/items('${id}')`;
-    return lastValueFrom(this.getLoadingScheduleEntry(id).pipe(
+    return firstValueFrom(this.getLoadingScheduleEntry(id).pipe(
       switchMap(_ => {
         const pans = _.fields.PanListsArray || [];
         const fields = {PanLists: [...pans.filter(p => `${p[0]}` !== `${panListId}`)].join('\r\n')};
         return this.http.patch<LoadingSchedule>(url, {fields});
       }),
-      tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _))
+      tap(_ => {
+        this.parseMultiLine('PanLists', 'PanListsArray', _);
+        this._loadingScheduleSubject$.next(_);
+      })
     ));
   }
 
@@ -156,7 +164,7 @@ export class LoadingScheduleService {
     const url = `${this._loadingScheduleUrl}/items('${id}')`;
     const date = new Date();
     const result = date.toLocaleDateString('en-CA');
-    return lastValueFrom(this.getLoadingScheduleEntry(id).pipe(
+    return firstValueFrom(this.getLoadingScheduleEntry(id).pipe(
       switchMap(_ => {
         const toUpdate = _.fields.PanListsArray?.find(p => `${p[0]}` === `${panListId}`) || [];
         toUpdate[2] = result;
@@ -174,16 +182,19 @@ export class LoadingScheduleService {
     ));
   }
 
-  addNote(id: string, panListId: string, note: string | null): Promise<any> {
+  addPanNote(id: string, panListId: string, note: string | null): Promise<LoadingSchedule> {
     const url = `${this._loadingScheduleUrl}/items('${id}')`;
-    return lastValueFrom(this.getLoadingScheduleEntry(id).pipe(
+    return firstValueFrom(this.getLoadingScheduleEntry(id).pipe(
       switchMap(_ => {
         const toUpdate = _.fields.PanListsArray?.find(p => `${p[0]}` === `${panListId}`) || [];
         toUpdate[1] = note || '';
         const fields = {PanLists: _.fields.PanListsArray?.join('\r\n')};
         return this.http.patch<LoadingSchedule>(url, {fields});
       }),
-      tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _))
+      tap(_ => {
+        this.parseMultiLine('PanLists', 'PanListsArray', _);
+        this._loadingScheduleSubject$.next(_);
+      })
     ));
   }
 
@@ -246,6 +257,10 @@ export class LoadingScheduleService {
 
     return a.pipe(
       switchMap(() => b),
+      tap(_ => {
+        this.parseMultiLine('PanLists', 'PanListsArray', _);
+        this._loadingScheduleSubject$.next(_);
+      }),
       switchMap(_ => this.updateList(_))
     )
   }

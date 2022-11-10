@@ -91,6 +91,14 @@ h2 {
   text-overflow: ellipsis;
 }
 
+.pan-notes {
+  margin-top: 20px;
+}
+
+.pan-notes > p {
+  margin: 5px 0;
+}
+
 @media (max-width: 800px) {
   .mat-cell {
     min-height: 0;

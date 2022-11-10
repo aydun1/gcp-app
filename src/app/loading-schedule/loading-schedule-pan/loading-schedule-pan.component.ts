@@ -29,7 +29,7 @@ export class LoadingSchedulePanComponent implements OnInit {
   }
 
   updateNote(note: string | null): void {
-    this.loadingScheduleService.addNote(this.scheduleId, this.panListId, note)
+    this.loadingScheduleService.addPanNote(this.scheduleId, this.panListId, note);
   }
 
   goBack(): void {
