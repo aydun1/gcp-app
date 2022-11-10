@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-import { BehaviorSubject, distinctUntilChanged, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
+import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
@@ -55,6 +55,11 @@ export class InterstateTransfersActiveComponent implements OnInit {
 
     this.interstateTransfers$ = this.route.queryParams.pipe(
       startWith({}),
+      switchMap(_ => this.router.events.pipe(
+        startWith(new NavigationEnd(1, '', '')),
+        filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+        map(() => _)
+      )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       switchMap(params => state$.pipe(
         map(state => {
