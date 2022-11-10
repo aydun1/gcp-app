@@ -1,4 +1,4 @@
-<form (ngSubmit)="createTransfer()">
+<form (ngSubmit)="createTransfer()" [formGroup]="newTransferForm">
   <div class="outer">
     <div class="inner">
       <h2>Transfer items</h2>
@@ -10,7 +10,7 @@
     Transferring {{ lineCount || 0 }} lines from
     <mat-form-field floatLabel="never">
       <mat-label>Branch</mat-label>
-      <mat-select [(ngModel)]="fromState" [ngModelOptions]="{standalone: true}">
+      <mat-select formControlName="fromState">
         <mat-option *ngFor="let b of allStates" [value]="b">{{ b }}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -18,10 +18,10 @@
     <span class="to">to</span>
     <mat-form-field floatLabel="never">
       <mat-label>Branch</mat-label>
-      <mat-select [(ngModel)]="toState" [ngModelOptions]="{standalone: true}">
+      <mat-select formControlName="toState">
         <mat-option *ngFor="let b of otherStates" [value]="b">{{ b }}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-raised-button color="primary" class="save-button" type="submit" [disabled]="!fromState || !lineCount || creating">Save to GP</button>
+    <button mat-raised-button color="primary" class="save-button" type="submit" [disabled]="!lineCount || creating">Save to GP</button>
   </div>
 </form>

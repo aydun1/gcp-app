@@ -48,7 +48,7 @@ export class InterstateTransferSuggestedComponent implements OnInit {
     const to = this.shared.emailMap.get(this.fromState || '') || [];
     this.interstateTransfersService.createInTransitTransfer(this.fromState, this._ownState, lines, id).then(_ => {
       this.snackBar.open('Successfully created ITT.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
-      this.router.navigate(['transfers']);
+      this.router.navigate(['transfers/active', id]);
       this.creating = false;
       this.shared.sendMail(to, subject, body, 'HTML');
     }).catch(err => {

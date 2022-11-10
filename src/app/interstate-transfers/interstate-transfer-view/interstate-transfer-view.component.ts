@@ -1,6 +1,6 @@
 import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, of, switchMap } from 'rxjs';
+import { catchError, concatMap, delay, Observable, of, retry, retryWhen, switchMap, take, tap, throwError } from 'rxjs';
 
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
 import { NavigationService } from '../../navigation.service';
@@ -16,6 +16,7 @@ export class InterstateTransferViewComponent implements OnDestroy, OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';
   public interstateTransfer$!: Observable<InTransitTransfer>;
   public loading = false;
+  public error!: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -37,7 +38,14 @@ export class InterstateTransferViewComponent implements OnDestroy, OnInit {
 
   getInterstateTransfer(id: string | null): Observable<InTransitTransfer> {
     if (!id) return of();
-    return this.interstateTransfersService.getInTransitTransfer(id);
+    return this.interstateTransfersService.getInTransitTransfer(id).pipe(
+      retry({count: 10, delay: 2000}),
+      catchError(_ => {
+        console.log(_);
+        this.error = 'Unable to get ITT from GP (or it is still importing), please try again later.';
+        return of();
+      })
+    );
   }
 
   goBack(): void {

@@ -8,7 +8,7 @@
   </ng-container>
 </mat-toolbar>
 
-<div class="outer" *ngIf="interstateTransfer$ | async as s" >
+<div class="outer" *ngIf="interstateTransfer$ | async as s; else loadingPage" >
   <div class="inner header-wrap">
     <gcp-letterhead class="print-header">Interstate Transfer</gcp-letterhead>
     <h2 class="header">Interstate Transfer</h2>
@@ -83,3 +83,7 @@
   </div>
 </div>
 
+<ng-template #loadingPage>
+  <gcp-loading-page *ngIf="!error"></gcp-loading-page>
+  <div *ngIf="error">{{ error }}</div>
+</ng-template>
