@@ -75,4 +75,9 @@
   .print-details {
     margin-top: 16px;
   }
+
+  .line {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
 }
