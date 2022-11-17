@@ -96,13 +96,13 @@
 
           <ng-container matColumnDef="empty">
             <mat-footer-cell *matFooterCellDef>
-              There are no items requested from {{ fromBranchFilter.value }} by {{ toBranchFilter.value }}.
+              There are no items requested from {{ fromBranchFilter.value }} by {{ toBranchFilter.value || 'other branches' }}.
             </mat-footer-cell>
           </ng-container>
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
           <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="!loading"></mat-footer-row>
-          <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="!toBranchFilter.value || loading || getTotalRequestedLines(t.value)"></mat-footer-row>
+          <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(t.value)"></mat-footer-row>
           <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
         </mat-table>
       </div>
