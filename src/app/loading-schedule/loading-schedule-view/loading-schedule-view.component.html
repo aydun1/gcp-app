@@ -108,7 +108,7 @@
     <mat-card-header>
       <mat-card-title>Pan list</mat-card-title>
     </mat-card-header>
-    <gcp-pan-list-simple [note]="panNote" [scheduleId]="loadingScheduleEntry.id" [panLists]="loadingScheduleEntry.fields.PanListsArray" (addPanList)="addPanList(loadingScheduleEntry.id)" (deletePanList)="deletePanList(loadingScheduleEntry.id, $event)" (sendPanList)="sendPanList(loadingScheduleEntry.id, $event)"></gcp-pan-list-simple>
+    <gcp-pan-list-simple [note]="panNote" [scheduleId]="loadingScheduleEntry.id" [panLists]="loadingScheduleEntry.fields.PanListsArray" (addPanList)="addPanList(loadingScheduleEntry.id)" (deletePanList)="deletePanList(loadingScheduleEntry.id, $event)" (sendPanList)="sendPanList(loadingScheduleEntry.id, $event, loadingScheduleEntry)"></gcp-pan-list-simple>
   </mat-card>
 
   <mat-card class="inner attachments">

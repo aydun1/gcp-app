@@ -56,8 +56,8 @@ export class LoadingScheduleViewComponent implements OnInit {
     this.loadingScheduleService.removePanList(id, panListId);
   }
 
-  sendPanList(id: string, panListId: string): void {
-    this.loadingScheduleService.sendPanList(id, panListId).then(_ => {
+  sendPanList(id: string, panListId: string, ls: LoadingSchedule): void {
+    this.loadingScheduleService.sendPanList(id, panListId, ls).then(_ => {
       this.snackBar.open('Pan list sent', '', {duration: 3000})
     });
   }

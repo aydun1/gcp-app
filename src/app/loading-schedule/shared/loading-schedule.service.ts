@@ -160,7 +160,7 @@ export class LoadingScheduleService {
     ));
   }
 
-  sendPanList(id: string, panListId: string): Promise<any> {
+  sendPanList(id: string, panListId: string, ls: LoadingSchedule): Promise<any> {
     const url = `${this._loadingScheduleUrl}/items('${id}')`;
     const date = new Date();
     const result = date.toLocaleDateString('en-CA');
@@ -174,9 +174,9 @@ export class LoadingScheduleService {
       tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _)),
       switchMap(_ => this.markPanSent(id)),
       switchMap(_ => {
-        const subject = `New pan list`;
+        const subject = `New pan list for ${ls.fields.To}`;
         let body = `Click <a href="${environment.redirectUri}/loading-schedule/${id}?pan=${panListId}">here</a> to view`
-        const to = ['aidan.obrien@gardencityplastics.com'];
+        const to = [ls.fields.From, ls.fields.To].map(_ => this.shared.emailMap.get(`${_}` || '')).flat(1).filter(_ => _) as string[];
         return this.shared.sendMail(to, subject, body, 'HTML');
       })
     ));

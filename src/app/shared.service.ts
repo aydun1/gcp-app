@@ -40,6 +40,10 @@ export class SharedService {
     ['WA_MPA', ['wasales@micropellets.com.au']],
   ]);
 
+  public panMap = new Map<string, Array<string>>([
+    ['VIC', ['melb.dispatch@gardencityplastics.com']]
+  ]);
+
   public officesMap = new Map<string, string>([
     ['Stapylton', 'QLD'],
     ['Heatherton','HEA'],
