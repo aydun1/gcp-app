@@ -16,30 +16,33 @@ const routes: Routes = [
       {
         path: '',
         data: {title: 'Loading Schedule'},
-        component: LoadingScheduleListComponent
-      },
-      {
-        path: 'new',
-        data: {title: 'New entry'},
-        component: LoadingScheduleNewComponent
-      },
-      {
-        path: ':id',
-        data: {title: 'View entry'},
-        component: LoadingScheduleViewComponent,
+        component: LoadingScheduleListComponent,
         children: [
           {
-            path: 'edit',
-            data: {title: 'Edit entry'},
-            component: LoadingScheduleNewComponent,
+            path: 'new',
+            data: {title: 'New entry'},
+            component: LoadingScheduleNewComponent
           },
           {
-            path: 'panlist',
-            data: {title: 'Edit pan list'},
-            component: LoadingSchedulePanComponent,
-          }
+            path: ':id',
+            data: {title: 'View entry'},
+            component: LoadingScheduleViewComponent,
+            children: [
+              {
+                path: 'edit',
+                data: {title: 'Edit entry'},
+                component: LoadingScheduleNewComponent,
+              },
+              {
+                path: 'panlist',
+                data: {title: 'Edit pan list'},
+                component: LoadingSchedulePanComponent,
+              }
+            ]
+          },
         ]
       },
+
     ],
     canActivate: [MsalGuard]
   }
