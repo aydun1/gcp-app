@@ -33,8 +33,7 @@ export class InterstateTransferSuggestedComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const state$ = this.shared.getBranch();
-    state$.subscribe(_ => this._ownState = _);
+    this.shared.getBranch().subscribe(_ => this._ownState = _);
   }
   
   createTransfer(): void {
