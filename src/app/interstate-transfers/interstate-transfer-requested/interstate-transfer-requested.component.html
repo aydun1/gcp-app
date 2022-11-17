@@ -13,6 +13,7 @@
         <mat-form-field appearance="outline" class="branch">
           <mat-label>To</mat-label>
           <mat-select [formControl]="toBranchFilter" (selectionChange)="setToBranch($event)">
+            <mat-option>Show all</mat-option>
             <mat-option *ngFor="let s of otherBranches" [value]="s">{{ s }}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -28,7 +29,10 @@
     </div>
     <div *ngIf="interstateTransfers$ | async as interstateTransfers">
       <div *ngFor="let t of interstateTransfers.value['lines'] | groupByProperty:(viewFilter.value === 'grouped' ? 'poNumber' : '');trackBy: trackByGroupsFn">
-        <h3 *ngIf="t.key !== 'undefined'">{{ t.key }}</h3>
+        <div *ngIf="t.key !== 'undefined'" class="section-head">
+          <h3>{{ t.key }}</h3>
+          <span *ngIf="!toBranchFilter.value">{{ t.value[0]['toSite'] }}</span>
+        </div>
         <mat-table #table [dataSource]="t.value" [trackBy]="trackByFn" formArrayName="lines">
           <ng-container matColumnDef="date">
             <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
@@ -113,19 +117,13 @@
 
           <ng-container matColumnDef="empty">
             <mat-footer-cell *matFooterCellDef>
-              There are no items requested from {{ fromBranchFilter.value }} by {{ toBranchFilter.value }}.
-            </mat-footer-cell>
-          </ng-container>
-          <ng-container matColumnDef="unpicked">
-            <mat-footer-cell *matFooterCellDef>
-              Pick a branch to see their requested items!
+              There are no items requested from {{ fromBranchFilter.value }} by {{ toBranchFilter.value || 'other branches' }}.
             </mat-footer-cell>
           </ng-container>
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
           <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="!loading"></mat-footer-row>
-          <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="!toBranchFilter.value || loading || getTotalRequestedLines(t.value)"></mat-footer-row>
-          <mat-footer-row *matFooterRowDef="['unpicked']" [class.hidden]="toBranchFilter.value"></mat-footer-row>
+          <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(t.value)"></mat-footer-row>
           <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
         </mat-table>
       </div>

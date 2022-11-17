@@ -3,15 +3,11 @@
   max-width: 1024px;
 }
 
-.coloured {
-  border-radius: 10px;
-  color: white;
-  padding: 5px 10px;
-  min-width: 80px;
-}
-
-.mobile {
-  display: none;
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 0;
 }
 
 h2 {
@@ -40,10 +36,6 @@ h2 {
 
 .buttons {
   flex: 1;
-}
-
-.alert{
-  text-align: center;
 }
 
 .mat-column-date {

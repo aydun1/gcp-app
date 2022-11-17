@@ -83,6 +83,7 @@ export class InterstateTransferRequestedComponent implements OnInit {
         id: [_.Id],
         poNumber: [_.PONumber],
         lineNumber: [_.LineNumber],
+        toSite: [_.ToSite],
         reqDate: [_.Date],
         itemDesc: [_.ItemDesc],
         itemNumber: [_.ItemNmbr],
@@ -100,7 +101,7 @@ export class InterstateTransferRequestedComponent implements OnInit {
   getPurchaseOrders(params: Params): Observable<PurchaseOrderLine[]> {
     const from = params['from'] || '';
     const to = params['to'] || '';
-    if (!from || !to) return of([]);
+    if (!from) return of([]);
     return this.interstateTransfersService.getPurchaseOrders(from, to);
   }
 
@@ -122,7 +123,7 @@ export class InterstateTransferRequestedComponent implements OnInit {
     if ('view' in params) {
       this.viewFilter.patchValue(params['view']);
     } else {
-      this.viewFilter.patchValue('ungrouped');
+      this.viewFilter.patchValue('grouped');
     }
   }
 
