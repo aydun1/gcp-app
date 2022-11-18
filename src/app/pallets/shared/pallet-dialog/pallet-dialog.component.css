@@ -2,16 +2,16 @@
   width: 100%;
 }
 
-.mat-mdc-button-toggle-group {
+.mat-button-toggle-group {
   margin-bottom: 29.5px;
 }
 
-.mat-mdc-button-toggle-button {
+.mat-button-toggle-button {
   align-items: stretch;
   display: flex;
 }
 
-.mat-mdc-button-toggle {
+.mat-button-toggle {
   display: flex;
   flex: 1;
 }
@@ -28,7 +28,7 @@
   border-radius: 20px;
 }
 
-.mat-mdc-button-toggle-checked .name {
+.mat-button-toggle-checked .name {
   background: rgb(0 0 0 / 90%);
 
 }
@@ -39,7 +39,7 @@ img {
   width: 100%;
 }
 
-.ng-submitted .mat-mdc-button-toggle-group.ng-invalid {
+.ng-submitted .mat-button-toggle-group.ng-invalid {
   border: red 2px solid;
 }
 

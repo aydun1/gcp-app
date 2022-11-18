@@ -29,8 +29,11 @@ h2 {
   font-size: 14px;
 }
 
+.buttons > .mat-mdc-form-field {
+  margin-right: 10px;
+}
+
 .mat-mdc-form-field {
-  font-size: 14px;
   width: 145px;
 }
 
@@ -58,6 +61,7 @@ h2 {
 .options {
   align-items: baseline;
   display: flex;
+  margin: 10px 0;
 }
 
 .buttons {
@@ -69,7 +73,7 @@ h2 {
 }
 
 .mat-column-bin {
-  flex: 0 1 120px;
+  flex: 0 1 130px;
 }
 
 .mat-column-product {
@@ -125,13 +129,13 @@ h2 {
 
 .mat-column-transfer {
   background: #a5a5a5;
-  flex: 0 0 100px;
+  flex: 0 0 150px;
   padding-left: 24px;
 }
 
 .mat-column-notes {
   background: #a5a5a5;
-  flex: 0 0 100px;
+  flex: 0 0 150px;
   padding-left: 24px;
 }
 
@@ -253,7 +257,7 @@ h2 {
 
 @media print {
   .options,
-  .mat-slide-toggle{
+  .mat-mdc-slide-toggle{
     display: none;
   }
 
@@ -284,6 +288,7 @@ h2 {
 
   .mat-mdc-row, .mat-mdc-header-row {
     display: flex;
+    gap: 0;
     padding: 0;
   }
 

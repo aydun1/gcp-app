@@ -57,8 +57,7 @@ h2 {
 }
 
 .mat-column-transfer {
-  flex: 0 0 74px;
-  padding-left: 24px;
+  flex: 0 0 106px;
 }
 
 .load-details {
@@ -150,6 +149,7 @@ h2 {
 
   .mat-mdc-row {
     display: flex;
+    gap: 0;
     padding: 0;
   }
 

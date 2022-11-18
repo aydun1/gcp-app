@@ -17,7 +17,7 @@ $light-accent: mat.define-palette(mat.$blue-palette, A400, A100, A400);
 $light-theme: mat.define-light-theme((
  color: (
    primary: $light-primary,
-   accent: $light-accent,
+   accent: $light-accent
  )
 ));
 
@@ -27,7 +27,7 @@ $dark-accent: mat.define-palette(mat.$blue-palette, 200, A100, A400);
 $dark-theme: mat.define-dark-theme((
  color: (
    primary: $dark-primary,
-   accent: $dark-accent,
+   accent: $dark-accent
  )
 ));
 
@@ -42,6 +42,7 @@ $dark-theme: mat.define-dark-theme((
 @include mat.divider-theme($light-theme);
 @include mat.expansion-theme($light-theme);
 @include mat.form_field-theme($light-theme);
+@include mat.icon-theme($light-theme);
 @include mat.input-theme($light-theme);
 @include mat.list-theme($light-theme);
 @include mat.menu-theme($light-theme);
@@ -150,6 +151,20 @@ a, .link {
   display: none !important;
 }
 
+.mat-mdc-cell {
+  border-bottom-style: none !important;
+}
+
+.mat-mdc-row {
+  border-bottom-color: rgba(0, 0, 0, 0.12) !important;
+  border-bottom-style: solid !important;
+  border-bottom-width: 1px !important;
+}
+
+.dark-theme .mat-mdc-row {
+  border-bottom-color:rgba(255, 255, 255, 0.12) !important;
+}
+
 .mat-mdc-header-row {
   border-radius: 5px 5px 0 0;
   position: sticky;
@@ -183,7 +198,7 @@ a, .link {
 
 .dark-theme .mat-mdc-table,
 .dark-theme gcp-big-button > .link {
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
 .mat-mdc-row,
@@ -217,6 +232,10 @@ gcp-big-button > .link,
   * {
     border-color: gray !important;
     color: black !important;
+  }
+
+  .mat-mdc-dialog-surface {
+    border-radius: 0 !important;
   }
 
   .inner {

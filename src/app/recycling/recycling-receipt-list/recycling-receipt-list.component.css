@@ -10,7 +10,6 @@
 }
 
 .mat-mdc-form-field {
-  font-size: 14px;
   margin-right: 10px;
   width: 145px;
 }
@@ -22,6 +21,7 @@
 .options {
   align-items: baseline;
   display: flex;
+  margin-top: 20px;
 }
 
 .buttons {

@@ -29,7 +29,6 @@ h2 {
 }
 
 .mat-mdc-form-field {
-  font-size: 14px;
   margin-right: 10px;
   width: 145px;
 }
@@ -100,18 +99,22 @@ h2 {
   }
 
   .mat-mdc-cell {
+    border-bottom-style:none !important;
     min-height: 0;
   }
-
+  
   .mat-mdc-cell:first-of-type{
     padding-left: 0;
   }
 
   .mat-mdc-row {
+    border-bottom-color: rgba(0, 0, 0, 0.12);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
     display: grid;
     gap: 5px;
-    grid-template-columns: 50px 80px 1fr 40px;
-    grid-template-rows: 40px 44px 51px 1fr;
+    grid-template-columns: 50px 121px 1fr 64px;
+    grid-template-rows: 40px 44px 60px 1fr;
     padding: 10px;
   }
 
@@ -134,7 +137,7 @@ h2 {
 
   .mat-mdc-cell.mat-column-menu {
     grid-row: 1;
-    max-width: 50px;
+    max-width: 64px;
     padding-right: 0;
   }
 

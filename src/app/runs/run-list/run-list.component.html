@@ -4,7 +4,7 @@
     <h2>Local deliveries</h2>
     <div class="options inner">
       <div class="buttons">
-        <mat-form-field appearance="outline" class="run">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="run">
           <mat-label>Run</mat-label>
           <mat-select [formControl]="runFilter" (selectionChange)="pickRun($event)">
             <mat-option value="">Default</mat-option>

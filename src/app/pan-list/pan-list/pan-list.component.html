@@ -2,26 +2,26 @@
   <div class="options">
     <div class="buttons">
       <ng-container *ngIf="suggestions">
-        <mat-form-field appearance="outline" class="branch">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
           <mat-label>Branch</mat-label>
           <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
             <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field *ngIf="showSuppliers" appearance="outline">
+        <mat-form-field *ngIf="showSuppliers" subscriptSizing="dynamic" appearance="outline">
           <mat-label>Suppliers</mat-label>
           <mat-select [(ngModel)]="chosenVendors" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setVendors($event)">
             <mat-option *ngFor="let b of otherVendors" [value]="b.branch">{{ b.branch }}</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline">
+        <mat-form-field subscriptSizing="dynamic" appearance="outline">
           <mat-label>Categories</mat-label>
           <mat-select [(ngModel)]="categories" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setCategories($event)">
             <mat-option *ngFor="let c of categoryOptions" [value]="c.value">{{ c.name }}</mat-option>
           </mat-select>
         </mat-form-field>
       </ng-container>
-      <mat-form-field appearance="outline">
+      <mat-form-field subscriptSizing="dynamic" appearance="outline">
         <mat-label>Show columns</mat-label>
         <mat-select [(ngModel)]="chosenColumns" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setColumns($event)">
           <mat-option *ngFor="let s of otherStates" [value]="s">{{ s }}</mat-option>

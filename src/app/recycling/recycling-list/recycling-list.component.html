@@ -2,14 +2,14 @@
   <gcp-letterhead class="print-heading">Recycling cages</gcp-letterhead>
   <div *ngIf="selection.isEmpty() && (choices$ | async) as choices"class="options inner">
     <div class="buttons">
-      <mat-form-field appearance="outline" class="branch">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
         <mat-label>{{ choices.Branch.name }}</mat-label>
         <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
           <mat-option>All</mat-option>
           <mat-option *ngFor="let s of choices.Branch.choice.choices" value="{{ s }}">{{ s }}</mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="outline" class="status">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="status">
         <mat-label>{{ choices.Status.name }}</mat-label>
         <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event, choices.Status.choice.choices)">
           <mat-option>All</mat-option>
@@ -21,14 +21,14 @@
           </mat-optgroup>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="outline" class="asset-type">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="asset-type">
         <mat-label>{{ choices.AssetType.name }}</mat-label>
         <mat-select [formControl]="assetTypeFilter" (selectionChange)="setAssetType($event)">
           <mat-option>All</mat-option>
           <mat-option *ngFor="let s of choices.AssetType.choice.choices" value="{{ s }}">{{ s }}</mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="outline" class="bin-filter">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="bin-filter">
         <mat-label>Cage number</mat-label>
         <input matInput [formControl]="binFilter" min="0" type="number" autocomplete="off" placeholder="Type to search...">
         <button *ngIf="!binFilter.value" matSuffix mat-icon-button disabled type="button">

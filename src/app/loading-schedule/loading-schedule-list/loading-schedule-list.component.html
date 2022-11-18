@@ -4,20 +4,20 @@
     <gcp-letterhead class="print-heading">Loading schedule</gcp-letterhead>
     <div class="options inner">
       <div class="buttons">
-        <mat-form-field appearance="outline" class="branch">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
           <mat-label>Branch</mat-label>
           <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
             <mat-option *ngFor="let s of states" value="{{ s }}">{{ s }}</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline" class="branch">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
           <mat-label>Status</mat-label>
           <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event)">
             <mat-option value="active">Active</mat-option>
             <mat-option value="delivered">Delivered</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline" class="branch">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
           <mat-label>View</mat-label>
           <mat-select [formControl]="viewFilter" (selectionChange)="setView($event)">
             <mat-option value="ungrouped">Ungrouped</mat-option>
@@ -30,7 +30,7 @@
     <div *ngIf="loadingSchedules$ | async as loadingSchedules" class="inner">
       <div *ngFor="let s of loadingSchedules | groupBy:groups; let i = index">
         <div *ngIf="s">
-          <h3>{{ groups[i] }}</h3>
+          <h3 *ngIf="groups[i]">{{ groups[i] }}</h3>
           <mat-table #table [dataSource]="s" [trackBy]="trackByFn">
 
             <ng-container matColumnDef="reference">
@@ -81,7 +81,7 @@
             <ng-container matColumnDef="transportCompany">
               <mat-header-cell *matHeaderCellDef> Transport company / driver </mat-header-cell>
               <mat-cell *matCellDef="let delivery">
-                <div class="coloured" [style.background]="delivery.fields.TransportCompany | stringColour">
+                <div *ngIf="delivery.fields.TransportCompany" class="coloured" [style.background]="delivery.fields.TransportCompany | stringColour">
                   <div>{{ delivery.fields.TransportCompany }}</div>
                   <div>{{ delivery.fields.Driver }}</div>
                 </div>

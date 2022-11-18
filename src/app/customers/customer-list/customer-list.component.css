@@ -9,16 +9,13 @@
   max-width: 1024px;
 }
 
-.mat-mdc-form-field {
-  font-size: 14px;
-}
-
 .mat-mdc-footer-row {
   font-weight: bold;
 }
 
 .options {
   display: flex;
+  margin-top: 20px;
 }
 
 .name-filter {
