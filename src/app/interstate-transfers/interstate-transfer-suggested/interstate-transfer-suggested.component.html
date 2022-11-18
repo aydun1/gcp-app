@@ -8,7 +8,7 @@
   </div>
   <div class="buttons mat-app-background">
     Requesting {{ lineCount || 0 }} lines from
-    <mat-form-field floatLabel="never">
+    <mat-form-field>
       <mat-label>Branch</mat-label>
       <mat-select [(ngModel)]="fromState" [ngModelOptions]="{standalone: true}">
         <mat-option *ngFor="let b of otherStates" [value]="b">{{ b }}</mat-option>

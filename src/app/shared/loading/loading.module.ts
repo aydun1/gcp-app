@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { LoadingPageComponent } from './loading-page/loading-page.component';
 import { LoadingRowComponent } from './loading-row/loading-row.component';
@@ -9,7 +9,9 @@ import { LoadingRowComponent } from './loading-row/loading-row.component';
     LoadingPageComponent,
     LoadingRowComponent
 ],
-  imports: [MatProgressSpinnerModule],
+  imports: [
+    MatProgressSpinnerModule
+  ],
   exports: [
     LoadingPageComponent,
     LoadingRowComponent

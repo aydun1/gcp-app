@@ -1,8 +1,8 @@
 import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
-import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select';
-import { BehaviorSubject, map, Observable, Subject, tap } from 'rxjs';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 
 import { Site } from '../../../customers/shared/site';
 import { Customer } from '../../../customers/shared/customer';

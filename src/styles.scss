@@ -8,8 +8,8 @@
 //  If you don't need the default component typographies but still want the hierarchy styles,
 //  you can delete this line and instead use:
 //    `@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());`
-@include mat.all-legacy-component-typographies();
-@include mat.legacy-core();
+@include mat.all-component-typographies();
+@include mat.core();
 
 // Define a light theme
 $light-primary: mat.define-palette(mat.$green-palette, 700);
@@ -31,52 +31,54 @@ $dark-theme: mat.define-dark-theme((
  )
 ));
 
-@include mat.legacy-core-theme($light-theme);
-@include mat.legacy-autocomplete-theme($light-theme);
-@include mat.legacy-button-theme($light-theme);
+@include mat.core-theme($light-theme);
+@include mat.autocomplete-theme($light-theme);
+@include mat.button-theme($light-theme);
 @include mat.button_toggle-theme($light-theme);
-@include mat.legacy-card-theme($light-theme);
-@include mat.legacy-checkbox-theme($light-theme);
+@include mat.card-theme($light-theme);
+@include mat.checkbox-theme($light-theme);
 @include mat.datepicker-theme($light-theme);
-@include mat.legacy-dialog-theme($light-theme);
+@include mat.dialog-theme($light-theme);
 @include mat.divider-theme($light-theme);
 @include mat.expansion-theme($light-theme);
 @include mat.form_field-theme($light-theme);
-@include mat.legacy-input-theme($light-theme);
-@include mat.legacy-menu-theme($light-theme);
-@include mat.legacy-option-theme($light-theme);
+@include mat.input-theme($light-theme);
+@include mat.list-theme($light-theme);
+@include mat.menu-theme($light-theme);
+@include mat.option-theme($light-theme);
 @include mat.progress_spinner-theme($light-theme);
-@include mat.legacy-select-theme($light-theme);
+@include mat.select-theme($light-theme);
 @include mat.sidenav-theme($light-theme);
 @include mat.slide_toggle-theme($light-theme);
 @include mat.snack_bar-theme($light-theme);
-@include mat.legacy-table-theme($light-theme);
+@include mat.table-theme($light-theme);
 @include mat.toolbar-theme($light-theme);
-@include mat.legacy-tooltip-theme($light-theme);
+@include mat.tooltip-theme($light-theme);
 
 .dark-theme {
-  @include mat.legacy-core-color($dark-theme);
-  @include mat.legacy-autocomplete-color($dark-theme);
-  @include mat.legacy-button-color($dark-theme);
+  @include mat.core-color($dark-theme);
+  @include mat.autocomplete-color($dark-theme);
+  @include mat.button-color($dark-theme);
   @include mat.button_toggle-color($dark-theme);
-  @include mat.legacy-card-color($dark-theme);
-  @include mat.legacy-checkbox-color($dark-theme);
+  @include mat.card-color($dark-theme);
+  @include mat.checkbox-color($dark-theme);
   @include mat.datepicker-color($dark-theme);
-  @include mat.legacy-dialog-color($dark-theme);
+  @include mat.dialog-color($dark-theme);
   @include mat.divider-color($dark-theme);
   @include mat.expansion-color($dark-theme);
   @include mat.form_field-color($dark-theme);
-  @include mat.legacy-input-color($dark-theme);
-  @include mat.legacy-menu-color($dark-theme);
-  @include mat.legacy-option-color($dark-theme);
+  @include mat.input-color($dark-theme);
+  @include mat.list-color($dark-theme);
+  @include mat.menu-color($dark-theme);
+  @include mat.option-color($dark-theme);
   @include mat.progress_spinner-color($dark-theme);
-  @include mat.legacy-select-color($dark-theme);
+  @include mat.select-color($dark-theme);
   @include mat.sidenav-color($dark-theme);
   @include mat.slide_toggle-color($dark-theme);
   @include mat.snack_bar-color($dark-theme);
-  @include mat.legacy-table-color($dark-theme);
+  @include mat.table-color($dark-theme);
   @include mat.toolbar-color($dark-theme);
-  @include mat.legacy-tooltip-color($dark-theme);
+  @include mat.tooltip-color($dark-theme);
 }
 
 html,
@@ -98,7 +100,7 @@ a, .link {
   color: mat.get-color-from-palette($dark-accent);
 }
 
-.mat-cell:hover a {
+.mat-mdc-cell:hover a {
   text-decoration: underline;
 }
 
@@ -107,9 +109,10 @@ a, .link {
   color: white;
 }
 
-.mat-table {
-  border: 1px solid rgba(0,0,0,.12);
+.mat-mdc-table {
+  border: 1px solid rgba(0,0,0,.12)!important;
   border-radius: 5px;
+  overflow: hidden;
 }
 
 .mat-dialog-container {
@@ -147,14 +150,14 @@ a, .link {
   display: none !important;
 }
 
-.mat-header-row {
+.mat-mdc-header-row {
   border-radius: 5px 5px 0 0;
   position: sticky;
   top: 0;
   z-index: 1;
 }
 
-.mat-button-toggle-label-content {
+.mat-mdc-button-toggle-label-content {
   height: 100%;
 }
 
@@ -178,18 +181,18 @@ a, .link {
   color: white;
 }
 
-.dark-theme .mat-table,
+.dark-theme .mat-mdc-table,
 .dark-theme gcp-big-button > .link {
   border-color: rgba(255, 255, 255, 0.12);
 }
 
-.mat-row,
+.mat-mdc-row,
 gcp-big-button > .link,
 .note.load {
   background: white;
 }
 
-.dark-theme .mat-row,
+.dark-theme .mat-mdc-row,
 .dark-theme gcp-big-button > .link,
 .dark-theme .note.load {
   background: #424242;
@@ -225,23 +228,23 @@ gcp-big-button > .link,
     position: absolute;
   }
 
-  .mat-drawer-container {
+  .mat-mdc-drawer-container {
     background: none;
   }
 
-  .mat-card {
+  .mat-mdc-card {
     box-shadow: none !important;
   }
 
-  .mat-table {
-    border: none;
+  .mat-mdc-table {
+    border: none!important;
   }
 
   .mat-toolbar {
     display: none !important;
   }
 
-  .mat-row {
+  .mat-mdc-row {
     break-inside: avoid;
   }
 
@@ -267,7 +270,7 @@ gcp-big-button > .link,
     height: auto;
   }
 
-  .mat-dialog-container {
+  .mat-mdc-dialog-container {
     border-radius: 0!important;
     box-shadow: none!important;
     overflow-x: hidden!important;

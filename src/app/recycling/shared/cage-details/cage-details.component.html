@@ -27,6 +27,6 @@
   <mat-list-item *ngIf="cage.fields.ToDepot">
     <div mat-line>{{ cage.fields.ToDepot | date: 'dd/MM/yyyy' }}</div>
     <div mat-line>Delivered to depot ({{ cage.fields.Depot }})</div>
-    <button *ngIf="!cage.statusId || cage.statusId < 2" mat-icon-button type="button" (click)="removeDepot()"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
+    <button *ngIf="!cage.statusId || cage.statusId < 2" mat-icon-button type="button" (click)="removeDepot()"><mat-icon matListItemIcon class="last-icon">close</mat-icon></button>
   </mat-list-item>
 </mat-list>

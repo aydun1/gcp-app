@@ -22,13 +22,13 @@ h3 {
   margin: 0;
 }
 
-.mat-form-field {
+.mat-mdc-form-field {
   font-size: 14px;
   margin-right: 10px;
   width: 145px;
 }
 
-.mat-footer-row {
+.mat-mdc-footer-row {
   border-top-width: 1px;
   border-top-color: rgba(0, 0, 0, 0.12);
   bottom: 0;
@@ -80,21 +80,21 @@ h3 {
 }
 
 @media (max-width: 800px) {
-  .mat-cell {
+  .mat-mdc-cell {
     min-height: 0;
   }
 
-  .mat-cell:first-of-type,
-  .mat-header-cell:first-of-type {
+  .mat-mdc-cell:first-of-type,
+  .mat-mdc-header-cell:first-of-type {
     padding-left: 0;
   }
 
-  .mat-cell:last-of-type,
-  .mat-header-cell:last-of-type {
+  .mat-mdc-cell:last-of-type,
+  .mat-mdc-header-cell:last-of-type {
     padding-right: 0;
   }
 
-  .mat-header-row {
+  .mat-mdc-header-row {
     display: grid;
     gap: 5px;
     grid-template-columns: 1fr 70px 70px;
@@ -102,7 +102,7 @@ h3 {
     padding: 10px 10px 0 10px;
   }
 
-  .mat-row {
+  .mat-mdc-row {
     display: grid;
     gap: 5px;
     grid-template-columns: 1fr 70px 70px;
@@ -110,36 +110,36 @@ h3 {
     padding: 10px 10px 0 10px;
   }
 
-  .mat-header-cell.mat-column-product {
+  .mat-mdc-header-cell.mat-column-product {
     display: none;
   }
 
-  .mat-cell.mat-column-product {
+  .mat-mdc-cell.mat-column-product {
     grid-column: 1 / 4;
     grid-row: 1;
     justify-content: inherit;
   }
 
-  .mat-footer-cell.mat-column-date {
+  .mat-mdc-footer-cell.mat-column-date {
     flex: 1;
   }
 
-  .mat-footer-cell.mat-column-product {
+  .mat-mdc-footer-cell.mat-column-product {
     display: none;
   }
 
-  .mat-cell.mat-column-date {
+  .mat-mdc-cell.mat-column-date {
     grid-column: 1;
     grid-row: 2;
   }
 
-  .mat-cell.mat-column-available {
+  .mat-mdc-cell.mat-column-available {
     grid-column: 2;
     grid-row: 2;
     justify-content: inherit;
   }
 
-  .mat-cell.mat-column-quantity {
+  .mat-mdc-cell.mat-column-quantity {
     grid-column: 3;
     grid-row: 2;
   }
@@ -154,15 +154,15 @@ h3 {
     margin-bottom: 0;
   }
 
-  .mat-row,
-  .mat-header-row {
+  .mat-mdc-row,
+  .mat-mdc-header-row {
     display: flex;
     gap: 0;
     padding: 0;
   }
 
-  .mat-header-cell.mat-column-product,
-  .mat-footer-cell.mat-column-product {
+  .mat-mdc-header-cell.mat-column-product,
+  .mat-mdc-footer-cell.mat-column-product {
     display: flex;
   }
 

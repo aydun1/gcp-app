@@ -22,15 +22,15 @@ input {
   max-width: 1024px;
 }
 
-.mat-footer-row {
+.mat-mdc-footer-row {
   font-weight: bold;
 }
 
-.mat-subheader {
+.mat-mdc-subheader {
   display: flex;
 }
 
-.mat-subheader > span {
+.mat-mdc-subheader > span {
   flex: 1;
 }
 

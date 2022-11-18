@@ -273,8 +273,8 @@
         </mat-footer-cell>
       </ng-container>
       <ng-container matColumnDef="another">
-        <mat-header-cell *matHeaderCellDef>
-          <mat-form-field class="search-form">
+        <mat-header-cell *matHeaderCellDef class="search-cell">
+          <mat-form-field class="search-form" subscriptSizing="dynamic" appearance="fill">
             <mat-label>Add an item...</mat-label>
             <gcp-item-control [formControl]="itemSearch" [territory]="branchFilter.value"></gcp-item-control>
           </mat-form-field>
@@ -291,7 +291,7 @@
         </mat-footer-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-footer-row *matHeaderRowDef="['another']"></mat-footer-row>
+      <mat-header-row *matHeaderRowDef="['another']"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [class.hidden]="
       !row.value.custom &&
       ((vendorCodes.length > 0 && !vendorCodes.includes(row.value['vendor'])) ||

@@ -8,7 +8,7 @@
 
   <div class="buttons mat-app-background">
     Transferring {{ lineCount || 0 }} lines from
-    <mat-form-field floatLabel="never">
+    <mat-form-field>
       <mat-label>Branch</mat-label>
       <mat-select formControlName="fromState">
         <mat-option *ngFor="let b of allStates" [value]="b">{{ b }}</mat-option>
@@ -16,7 +16,7 @@
     </mat-form-field>
 
     <span class="to">to</span>
-    <mat-form-field floatLabel="never">
+    <mat-form-field>
       <mat-label>Branch</mat-label>
       <mat-select formControlName="toState">
         <mat-option *ngFor="let b of otherStates" [value]="b">{{ b }}</mat-option>

@@ -13,11 +13,11 @@ gcp-loading-row {
   margin: 40px 0 20px 0;
 }
 
-.mat-footer-row {
+.mat-mdc-footer-row {
   font-weight: bold;
 }
 
-.mat-dialog-content {
+.mat-mdc-dialog-content {
   height: 40vh;
 }
 
@@ -28,7 +28,7 @@ gcp-loading-row {
   margin-left: auto;
 }
 
-.mat-table {
+.mat-mdc-table {
   border: 0;
 }
 

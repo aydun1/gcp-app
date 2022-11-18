@@ -4,12 +4,12 @@
   top: 0;
 }
 
-.mat-list {
+.mat-mdc-list {
   margin-bottom: 16px;
   padding: 0;
 }
 
-.mat-form-field {
+.mat-mdc-form-field {
   width: 100%;
 }
 

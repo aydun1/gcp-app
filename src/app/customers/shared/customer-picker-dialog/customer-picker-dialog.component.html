@@ -5,35 +5,37 @@
   </button>
 </div>
 <form [formGroup]="customerForm" (ngSubmit)="pickCustomer()">
-  <mat-form-field color="primary" appearance="outline">
-    <mat-label>Customer</mat-label>
-    <gcp-customer-control placeholder="Type to search..." formControlName="customer" [territory]="branch"></gcp-customer-control>
-    <mat-icon matSuffix>search</mat-icon>
-    <mat-error *ngIf="customerForm.get('customer')?.hasError('unselected')">
-      Select a customer from the list
-    </mat-error>
-  </mat-form-field>
+  <mat-dialog-content>
+    <mat-form-field color="primary" appearance="outline">
+      <mat-label>Customer</mat-label>
+      <gcp-customer-control placeholder="Type to search..." formControlName="customer" [territory]="branch"></gcp-customer-control>
+      <mat-icon matSuffix>search</mat-icon>
+      <mat-error *ngIf="customerForm.get('customer')?.hasError('unselected')">
+        Select a customer from the list
+      </mat-error>
+    </mat-form-field>
 
-  <mat-form-field *ngIf="data?.address && !this.customerForm.value.site" color="primary" appearance="outline">
-    <mat-label>Address</mat-label>
-    <mat-select formControlName="address">
-      <mat-option *ngFor="let a of addresses$ | async" [value]="a">{{ a.name }}</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <ng-container *ngIf="sites$ | async as sites">
-    <mat-form-field *ngIf="sites.length > 0" color="primary" appearance="outline">
-      <mat-label>Site</mat-label>
-      <mat-select formControlName="site">
-        <mat-option *ngFor="let s of sites" [value]="s">{{ s.fields.Title }}</mat-option>
+    <mat-form-field *ngIf="data?.address && !this.customerForm.value.site" color="primary" appearance="outline">
+      <mat-label>Address</mat-label>
+      <mat-select formControlName="address">
+        <mat-option *ngFor="let a of addresses$ | async" [value]="a">{{ a.name }}</mat-option>
       </mat-select>
     </mat-form-field>
-  </ng-container>
-  <mat-form-field *ngIf="data?.notes" color="primary" appearance="outline">
-    <mat-label>Notes</mat-label>
-    <textarea matInput formControlName="notes" autocomplete="off" placeholder="Optional notes"></textarea>
-  </mat-form-field>
-  <pre *ngIf="data?.address">{{ address || customerForm.value.customer?.address1_composite }}</pre>
+
+    <ng-container *ngIf="sites$ | async as sites">
+      <mat-form-field *ngIf="sites.length > 0" color="primary" appearance="outline">
+        <mat-label>Site</mat-label>
+        <mat-select formControlName="site">
+          <mat-option *ngFor="let s of sites" [value]="s">{{ s.fields.Title }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
+    <mat-form-field *ngIf="data?.notes" color="primary" appearance="outline">
+      <mat-label>Notes</mat-label>
+      <textarea matInput formControlName="notes" autocomplete="off" placeholder="Optional notes"></textarea>
+    </mat-form-field>
+    <pre *ngIf="data?.address">{{ address || customerForm.value.customer?.address1_composite }}</pre>
+  </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button type="button" mat-button mat-dialog-close tabindex=-1>Cancel</button>
     <button type="submit" mat-raised-button color="primary" [disabled]="loading || loadingAddresses || loadingSites">{{'Ok'}}</button>

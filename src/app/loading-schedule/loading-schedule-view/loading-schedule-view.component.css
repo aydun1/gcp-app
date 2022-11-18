@@ -23,7 +23,6 @@
 
 .inner {
   margin-top: 0;
-  margin-bottom: 10px;
 }
 
 .selector {
@@ -84,11 +83,11 @@ input {
     margin-top: 16px;
   }
 
-  .header, .attachments, .mat-card-title {
+  .header, .attachments, .mat-mdc-card-title {
     display: none;
   }
   
-  .mat-card {
+  .mat-mdc-card {
     padding-top: 0;
   }
 

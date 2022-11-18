@@ -9,13 +9,13 @@
   max-width: 1024px;
 }
 
-.mat-form-field {
+.mat-mdc-form-field {
   font-size: 14px;
   margin-right: 10px;
   width: 145px;
 }
 
-.mat-footer-row {
+.mat-mdc-footer-row {
   font-weight: bold;
 }
 

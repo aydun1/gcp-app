@@ -14,7 +14,7 @@
   margin: 0 10px;
 }
 
-.mat-list-base .mat-list-item .mat-line:nth-child(n+2) {
+.mat-mdc-list-base .mat-mdc-list-item .mat-mdc-line:nth-child(n+2) {
   color: #7e7e7e;
 }
 

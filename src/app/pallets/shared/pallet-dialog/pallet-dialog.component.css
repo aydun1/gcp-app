@@ -1,17 +1,17 @@
-.mat-form-field {
+.mat-mdc-form-field {
   width: 100%;
 }
 
-.mat-button-toggle-group {
+.mat-mdc-button-toggle-group {
   margin-bottom: 29.5px;
 }
 
-.mat-button-toggle-button {
+.mat-mdc-button-toggle-button {
   align-items: stretch;
   display: flex;
 }
 
-.mat-button-toggle {
+.mat-mdc-button-toggle {
   display: flex;
   flex: 1;
 }

@@ -84,7 +84,7 @@
             <gcp-action-button [cages]="[cage]" (updated)="getCagesWithCustomer()" class="actions"></gcp-action-button>
             <mat-list>
               <mat-list-item *ngIf="cage.fields.Site">
-                <mat-icon mat-list-icon>business</mat-icon>
+                <mat-icon matListItemIcon>business</mat-icon>
                 <div mat-line>{{ cage.fields.Site }}</div>
                 <div mat-line>Site</div>            
               </mat-list-item>

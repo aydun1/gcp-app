@@ -13,17 +13,17 @@ gcp-loading-row {
   margin: 40px 0 20px 0;
 }
 
-.mat-form-field {
+.mat-mdc-form-field {
   font-size: 14px;
   margin-right: 10px;
   width: 145px;
 }
 
-.mat-footer-row {
+.mat-mdc-footer-row {
   font-weight: bold;
 }
 
-.mat-dialog-content {
+.mat-mdc-dialog-content {
   height: 40vh;
 }
 
@@ -38,7 +38,7 @@ gcp-loading-row {
   margin-right: 10px;
 }
 
-.mat-table {
+.mat-mdc-table {
   border: 0;
 }
 
@@ -63,7 +63,7 @@ gcp-loading-row {
     display: none;
   }
  
-  .mat-dialog-content {
+  .mat-mdc-dialog-content {
     height: auto;
     max-height: none;
   }

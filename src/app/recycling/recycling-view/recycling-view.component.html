@@ -25,19 +25,19 @@
       <mat-list>
         <div mat-subheader><span class="subheader">Details</span></div>
         <mat-list-item *ngIf="cage.fields.Status">
-          <mat-icon mat-list-icon>timeline</mat-icon>
+          <mat-icon matListItemIcon>timeline</mat-icon>
           <div mat-line>{{ cage.fields.Status }}</div>
           <div mat-line>Status</div>
         </mat-list-item>
         <mat-list-item *ngIf="cage.fields.Status">
-          <mat-icon mat-list-icon>location_city</mat-icon>
+          <mat-icon matListItemIcon>location_city</mat-icon>
           <div mat-line>{{ cage.fields.Branch }}</div>
           <div mat-line>Branch</div>
         </mat-list-item>
       </mat-list>
       <mat-nav-list>
         <a mat-list-item *ngIf="cage.fields.CustomerNumber" [routerLink]="['/customers', cage.fields.CustomerNumber]">
-          <mat-icon mat-list-icon>business</mat-icon>
+          <mat-icon matListItemIcon>business</mat-icon>
           <div mat-line>{{ cage.fields.Customer }} 
             <span>({{ cage.fields.CustomerNumber }})</span>
             <span *ngIf="cage.fields.Site">({{ cage.fields.Site }})</span>
@@ -48,16 +48,16 @@
       <mat-list>
         <form (ngSubmit)="setCageNotes(cage.id)">
           <mat-list-item>
-            <mat-icon mat-list-icon>tag</mat-icon>
+            <mat-icon matListItemIcon>tag</mat-icon>
             <div *ngIf="editCageNotes" mat-line>
               <input [(ngModel)]="currentCageNotes" [ngModelOptions]="{standalone: true}" type="text" placeholder="Reference number or cage notes">
             </div>
             <div *ngIf="!editCageNotes" mat-line>{{ currentCageNotes }}</div>
             <div mat-line>Reference</div>
-            <button mat-icon-button type="button" *ngIf="!editCageNotes" (click)="editCageNotes = true"><mat-icon mat-list-icon class="last-icon">edit</mat-icon></button>
+            <button mat-icon-button type="button" *ngIf="!editCageNotes" (click)="editCageNotes = true"><mat-icon matListItemIcon class="last-icon">edit</mat-icon></button>
             <ng-container *ngIf="editCageNotes">
-              <button mat-icon-button type="button" (click)="cancelEditCageNotes(cage.fields.Notes)"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
-              <button mat-icon-button type="submit"><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
+              <button mat-icon-button type="button" (click)="cancelEditCageNotes(cage.fields.Notes)"><mat-icon matListItemIcon class="last-icon">close</mat-icon></button>
+              <button mat-icon-button type="submit"><mat-icon matListItemIcon class="last-icon">check</mat-icon></button>
             </ng-container>
           </mat-list-item>
         </form>
