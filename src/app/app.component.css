@@ -99,7 +99,7 @@
   max-width: 100%;
 }
 
-.login-card .mat-button {
+.login-card .mat-mdc-button {
   display: block;
   margin: 0 auto;
 }

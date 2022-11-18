@@ -14,30 +14,30 @@
   <div class="list-container">
     <mat-list *ngIf="transfer?.fields as docket">
       <mat-list-item>
-        <div mat-line><strong>{{ docket.Title | titlecase }}</strong></div>
+        <span matListItemTitle><strong>{{ docket.Title | titlecase }}</strong></span>
       </mat-list-item>
       <mat-list-item *ngIf="docket.Notes">
-        <div mat-line>{{ docket.Notes }}</div>
-        <div mat-line>Reference number</div>
+        <span matListItemTitle>{{ docket.Notes }}</span>
+        <span>Reference number</span>
       </mat-list-item>
       <mat-list-item>
-        <div mat-line>{{ docket.Pallet }}</div>
-        <div mat-line>Pallet type</div>
+        <span matListItemTitle>{{ docket.Pallet }}</span>
+        <span>Pallet type</span>
       </mat-list-item>
       <mat-list-item>
-        <div mat-line>{{ docket.Out}}</div>
-        <div mat-line>{{ docket.Pallet }} pallets delivered</div>
+        <span matListItemTitle>{{ docket.Out}}</span>
+        <span>{{ docket.Pallet }} pallets delivered</span>
       </mat-list-item>
       <mat-list-item>
-        <div mat-line>{{ quantities ? quantities[docket.Pallet]['total'] : '...'}}</div>
-        <div mat-line>Total {{ docket.Pallet }} pallets owed</div>
+        <span matListItemTitle>{{ quantities ? quantities[docket.Pallet]['total'] : '...'}}</span>
+        <span>Total {{ docket.Pallet }} pallets owed</span>
       </mat-list-item>
     </mat-list>
   </div>
-  <div class="signs">Qty for exchange: ______</div>
+  <div class="signs">Qty for exchange: <div class="underline"></div></div>
   <div class="signs">
-    <div class="sender">Sent by: ________________</div>
-    <div>Received by: ________________</div>
+    <div class="sender">Sent by: <div class="underline wider"></div></div>
+    <div class="receiver">Received by: <div class="underline wider"></div></div>
   </div>
 </div>
 </mat-dialog-content>

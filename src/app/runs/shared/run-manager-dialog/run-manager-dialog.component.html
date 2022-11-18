@@ -10,7 +10,7 @@
           <button matListItemMeta type="button" mat-icon-button (click)="openEditor(run.id, run.fields.Title)" class="icon"><mat-icon>edit</mat-icon></button>
         </mat-list-item>
         <mat-list-item *ngIf="!runs || !runs.length">
-          <div mat-line>No additional runs yet</div>
+          <span>No additional runs yet</span>
         </mat-list-item>
       </mat-list>
     </ng-container>

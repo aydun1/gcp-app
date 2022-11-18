@@ -28,7 +28,7 @@
   border-radius: 20px;
 }
 
-.mat-button-toggle-checked .name {
+.mat-mdc-button-toggle-checked .name {
   background: rgb(0 0 0 / 90%);
 
 }
@@ -39,7 +39,7 @@ img {
   width: 100%;
 }
 
-.ng-submitted .mat-button-toggle-group.ng-invalid {
+.ng-submitted .mat-mdc-button-toggle-group.ng-invalid {
   border: red 2px solid;
 }
 

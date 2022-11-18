@@ -17,80 +17,102 @@
     </div>
   </div>
   <mat-card class="inner">
-    <mat-card-title>Stocktake results</mat-card-title>
-    <mat-list>
-      <mat-list-item>
-        <div mat-line>{{ stocktake.fields.Branch }}</div>
-        <div mat-line>Branch</div>
-      </mat-list-item>
-      <mat-list-item>
-        <div mat-line>{{ stocktake.lastModifiedBy.user.displayName }}</div>
-        <div mat-line>Created by</div>
-      </mat-list-item>
-      <mat-list-item>
-        <div mat-line>{{ stocktake.fields.Pallet }}</div>
-        <div mat-line>Pallet</div>
-      </mat-list-item>
-      <mat-divider></mat-divider>
-      <mat-list-item>
-        <div mat-line>{{ stocktake.fields.CurrentBalance }}</div>
-        <div mat-line>Account balance</div>
-      </mat-list-item>
-      <mat-list-item>
-        <div mat-line>{{ stocktake.fields.OnSite + stocktake.fields.OffSite + stocktake.fields.ToBeCollected - stocktake.fields.ToBeRepaid + stocktake.fields.InTransitOff - stocktake.fields.InTransitOn }}</div>
-        <div mat-line>Adjusted count</div>
-      </mat-list-item>
-      <mat-divider></mat-divider>
-      <mat-list-item *ngIf="stocktake.fields.Surplus !== undefined">
-        <div mat-line class="green">{{ stocktake.fields.Surplus}}</div>
-        <div mat-line>Surplus (Physical > Invoice)</div>
-      </mat-list-item>
-      <mat-list-item *ngIf="stocktake.fields.Deficit">
-        <div mat-line class="red">{{ stocktake.fields.Deficit }}</div>
-        <div mat-line>Deficit (Physical < Invoice)</div>
-      </mat-list-item>
-    </mat-list>
+    <mat-card-header>
+      <mat-card-title>Stocktake results</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item>
+          <span matListItemTitle>{{ stocktake.fields.Branch }}</span>
+          <span>Branch</span>
+        </mat-list-item>
+        <mat-list-item>
+          <span matListItemTitle>{{ stocktake.lastModifiedBy.user.displayName }}</span>
+          <span>Created by</span>
+        </mat-list-item>
+        <mat-list-item>
+          <span matListItemTitle>{{ stocktake.fields.Pallet }}</span>
+          <span>Pallet</span>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+    <mat-divider></mat-divider>
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item>
+          <span matListItemTitle>{{ stocktake.fields.CurrentBalance }}</span>
+          <span>Account balance</span>
+        </mat-list-item>
+        <mat-list-item>
+          <span matListItemTitle>{{ stocktake.fields.OnSite + stocktake.fields.OffSite + stocktake.fields.ToBeCollected - stocktake.fields.ToBeRepaid + stocktake.fields.InTransitOff - stocktake.fields.InTransitOn }}</span>
+          <span>Adjusted count</span>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+    <mat-divider></mat-divider>
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item *ngIf="stocktake.fields.Surplus !== undefined">
+          <span matListItemTitle class="green">{{ stocktake.fields.Surplus}}</span>
+          <span>Surplus (Physical > Invoice)</span>
+        </mat-list-item>
+        <mat-list-item *ngIf="stocktake.fields.Deficit">
+          <span matListItemTitle class="red">{{ stocktake.fields.Deficit }}</span>
+          <span>Deficit (Physical < Invoice)</span>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
   </mat-card>
+
   <mat-card class="inner">
-    <mat-card-title>Physical stocktake</mat-card-title>
-    <mat-list>
-      <mat-list-item>
-        <mat-icon matListItemIcon>add</mat-icon>
-        <div mat-line>{{ stocktake.fields.OnSite }}</div>
-        <div mat-line>On site</div>
-      </mat-list-item>
-      <mat-list-item>
-        <mat-icon matListItemIcon>add</mat-icon>
-        <div mat-line>{{ stocktake.fields.OffSite }}</div>
-        <div mat-line>Off site</div>
-      </mat-list-item>
-    </mat-list>
+    <mat-card-header>
+      <mat-card-title>Physical stocktake</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item>
+          <mat-icon matListItemIcon>add</mat-icon>
+          <span matListItemTitle>{{ stocktake.fields.OnSite }}</span>
+          <span>On site</span>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon matListItemIcon>add</mat-icon>
+          <span matListItemTitle>{{ stocktake.fields.OffSite }}</span>
+          <span>Off site</span>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
   </mat-card>
+
   <mat-card class="inner">
-    <mat-card-title>Pallets elsewhere</mat-card-title>
-    <mat-list>
-      <mat-list-item>
-        <mat-icon matListItemIcon>add</mat-icon>
-        <div mat-line>{{ stocktake.fields.ToBeCollected }}</div>
-        <div mat-line>IOUs - pallets to be collected</div>
-      </mat-list-item>
-      <mat-list-item>
-        <mat-icon matListItemIcon>remove</mat-icon>
-        <div mat-line>{{ stocktake.fields.ToBeRepaid }}</div>
-        <div mat-line>IOUs - pallets to be repaid</div>
-      </mat-list-item>
-      <mat-divider></mat-divider>
-      <mat-list-item>
-        <mat-icon matListItemIcon>add</mat-icon>
-        <div mat-line>{{ stocktake.fields.InTransitOff }}</div>
-        <div mat-line>Pallets in transit - off</div>
-      </mat-list-item>
-      <mat-list-item>
-        <mat-icon matListItemIcon>remove</mat-icon>
-        <div mat-line>{{ stocktake.fields.InTransitOn }}</div>
-        <div mat-line>Pallets in transit - on</div>
-      </mat-list-item>
-    </mat-list>
+    <mat-card-header>
+      <mat-card-title>Pallets elsewhere</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item>
+          <mat-icon matListItemIcon>add</mat-icon>
+          <span matListItemTitle>{{ stocktake.fields.ToBeCollected }}</span>
+          <span>IOUs - pallets to be collected</span>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon matListItemIcon>remove</mat-icon>
+          <span matListItemTitle>{{ stocktake.fields.ToBeRepaid }}</span>
+          <span>IOUs - pallets to be repaid</span>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+          <mat-icon matListItemIcon>add</mat-icon>
+          <span matListItemTitle>{{ stocktake.fields.InTransitOff }}</span>
+          <span>Pallets in transit - off</span>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon matListItemIcon>remove</mat-icon>
+          <span matListItemTitle>{{ stocktake.fields.InTransitOn }}</span>
+          <span>Pallets in transit - on</span>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
   </mat-card>
 </div>
 

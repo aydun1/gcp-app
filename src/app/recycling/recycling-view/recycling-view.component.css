@@ -51,11 +51,7 @@ input {
 }
 
 .mat-column-nav {
-  flex: 0 1 40px;
-}
-
-.last-icon {
-  order: 9;
+  flex: 0 1 88px;
 }
 
 .actions {
