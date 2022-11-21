@@ -176,7 +176,7 @@ export class LoadingScheduleService {
       switchMap(_ => {
         const subject = `New pan list for ${ls.fields.To}`;
         let body = `Click <a href="${environment.redirectUri}/loading-schedule/${id}?pan=${panListId}">here</a> to view`
-        const to = [ls.fields.From, ls.fields.To].map(_ => this.shared.emailMap.get(`${_}` || '')).flat(1).filter(_ => _) as string[];
+        const to = [ls.fields.From, ls.fields.To].map(_ => this.shared.panMap.get(`${_}` || '')).flat(1).filter(_ => _) as string[];
         return this.shared.sendMail(to, subject, body, 'HTML');
       })
     ));
