@@ -85,8 +85,8 @@
             <mat-list>
               <mat-list-item *ngIf="cage.fields.Site">
                 <mat-icon matListItemIcon>business</mat-icon>
-                <div mat-line>{{ cage.fields.Site }}</div>
-                <div mat-line>Site</div>            
+                <span matListItemTitle>{{ cage.fields.Site }}</span>
+                <span>Site</span>            
               </mat-list-item>
               <div mat-subheader>Weights</div>
               <gcp-cage-weights [cage]="cage" (updated)="getCagesWithCustomer()"></gcp-cage-weights>

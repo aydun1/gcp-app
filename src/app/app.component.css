@@ -78,8 +78,13 @@
   overflow: hidden;
 }
 
+.menu-icon {
+  color: inherit;
+  margin-right: 16px !important;
+}
+
 .menu-label {
-  margin-left: 14px;
+  margin-left: 0;
 }
 
 .mat-mdc-list-base .mat-mdc-list-item.sub-item {

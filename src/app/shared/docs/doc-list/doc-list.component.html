@@ -3,10 +3,10 @@
     <a mat-list-item [href]="doc.webUrl" target="_blank">
       <img *ngIf="doc.file" [src]="icon(doc.file.mimeType)" alt="File type icon" matListItemIcon>
       <mat-spinner *ngIf="!doc.file" matListItemIcon diameter="24"></mat-spinner>
-      <div mat-line>{{ doc.name }}</div>
-      <div mat-line *ngIf="doc.createdBy else loading2">Uploaded by {{ doc.createdBy.user.displayName }} on {{ doc.createdDateTime | date: 'dd/MM/yyyy hh:mm a' }} </div>
+      <span matListItemTitle>{{ doc.name }}</span>
+      <span *ngIf="doc.createdBy else loading2">Uploaded by {{ doc.createdBy.user.displayName }} on {{ doc.createdDateTime | date: 'dd/MM/yyyy hh:mm a' }} </span>
       <ng-template #loading2>
-        <div mat-line>{{ doc.percent || 0 }}% </div>
+        <span>{{ doc.percent || 0 }}% </span>
       </ng-template>
     </a>
     <button mat-icon-button class="menu-toggle" type="button" [matMenuTriggerFor]="menu" [matMenuTriggerData]="{doc: doc}"><mat-icon>more_vert</mat-icon></button>

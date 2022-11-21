@@ -309,7 +309,7 @@
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
     <mat-card *ngIf="showNotes" class="notes">
-      <mat-form-field class="search-form">
+      <mat-form-field class="search-form" subscriptSizing="dynamic">
         <mat-label>Notes</mat-label>
         <input matInput type="text" [formControl]="notes" autocomplete="off">
       </mat-form-field>

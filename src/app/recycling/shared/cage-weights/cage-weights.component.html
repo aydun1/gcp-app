@@ -1,31 +1,31 @@
 <form (ngSubmit)="setCageWeight()">
   <mat-list-item *ngIf="cage.fields.Status">
     <mat-icon matListItemIcon>scale</mat-icon>
-    <div  *ngIf="editCageWeight" mat-line><input [(ngModel)]="cageWeight" [ngModelOptions]="{standalone: true}" type="number" placeholder="Weight in kg"></div>
-    <div  *ngIf="!editCageWeight" mat-line>{{ cage.fields.CageWeight || 0 | number }} kg</div>
-    <div mat-line>Cage weight</div>
-    <button mat-icon-button type="button" *ngIf="!editCageWeight" (click)="editCageWeight = true"><mat-icon matListItemIcon class="last-icon">edit</mat-icon></button>
+    <span *ngIf="editCageWeight" matListItemTitle><input [(ngModel)]="cageWeight" [ngModelOptions]="{standalone: true}" type="number" placeholder="Weight in kg"></span>
+    <span *ngIf="!editCageWeight" matListItemTitle>{{ cage.fields.CageWeight || 0 | number }} kg</span>
+    <span>Cage weight</span>
+    <button matListItemMeta mat-icon-button type="button" *ngIf="!editCageWeight" (click)="editCageWeight = true"><mat-icon class="last-icon">edit</mat-icon></button>
     <ng-container *ngIf="editCageWeight">
-      <button mat-icon-button type="button" (click)="cancelCageWeight()"><mat-icon matListItemIcon class="last-icon">close</mat-icon></button>
-      <button mat-icon-button type="submit"><mat-icon matListItemIcon class="last-icon">check</mat-icon></button>
+      <button matListItemMeta mat-icon-button type="button" (click)="cancelCageWeight()"><mat-icon class="last-icon">close</mat-icon></button>
+      <button matListItemMeta mat-icon-button type="submit"><mat-icon class="last-icon">check</mat-icon></button>
     </ng-container>
   </mat-list-item>
 </form>
 <form (ngSubmit)="setGrossWeight()">
   <mat-list-item *ngIf="cage.fields.Status">
     <mat-icon matListItemIcon>scale</mat-icon>
-    <div *ngIf="editGrossWeight" mat-line><input [(ngModel)]="grossWeight" [ngModelOptions]="{standalone: true}" type="number" placeholder="Weight in kg"></div>
-    <div *ngIf="!editGrossWeight" mat-line>{{ cage.fields.GrossWeight || 0 | number }} kg</div>
-    <div mat-line>Gross weight</div>
-    <button mat-icon-button type="button" *ngIf="!editGrossWeight" (click)="editGrossWeight = true"><mat-icon matListItemIcon class="last-icon">edit</mat-icon></button>
+    <span *ngIf="editGrossWeight" matListItemTitle><input [(ngModel)]="grossWeight" [ngModelOptions]="{standalone: true}" type="number" placeholder="Weight in kg"></span>
+    <span *ngIf="!editGrossWeight" matListItemTitle>{{ cage.fields.GrossWeight || 0 | number }} kg</span>
+    <span>Gross weight</span>
+    <button matListItemMeta mat-icon-button type="button" *ngIf="!editGrossWeight" (click)="editGrossWeight = true"><mat-icon class="last-icon">edit</mat-icon></button>
     <ng-container *ngIf="editGrossWeight">
-      <button mat-icon-button type="button" (click)="cancelGrossWeight()"><mat-icon matListItemIcon class="last-icon">close</mat-icon></button>
-      <button mat-icon-button type="submit"><mat-icon matListItemIcon class="last-icon">check</mat-icon></button>
+      <button matListItemMeta mat-icon-button type="button" (click)="cancelGrossWeight()"><mat-icon class="last-icon">close</mat-icon></button>
+      <button matListItemMeta mat-icon-button type="submit"><mat-icon class="last-icon">check</mat-icon></button>
     </ng-container>
   </mat-list-item>
 </form>
 <mat-list-item *ngIf="cage.fields.NetWeight">
   <mat-icon matListItemIcon>scale</mat-icon>
-  <div mat-line>{{ cage.fields.NetWeight }} kg</div>
-  <div mat-line>Net weight</div>
+  <span matListItemTitle>{{ cage.fields.NetWeight }} kg</span>
+  <span>Net weight</span>
 </mat-list-item>
