@@ -94,9 +94,11 @@
 
 <div *ngIf="!loginDisplay" class="login">
   <mat-card class="login-card">
-    <img src="/assets/bannerlogo.png" class="logo" alt="Garden City Plastics logo">
-    <p>Welcome to the Garden City Plastics inventory management system.</p>
-    <p>Click below to login.</p>
-    <button mat-button (click)="login()">Login</button>
+    <mat-card-content>
+      <img src="/assets/gcp_banner.png" class="logo" alt="Garden City Plastics logo">
+      <p>Welcome to the Garden City Plastics inventory management system.</p>
+      <p>Click below to login.</p>
+      <button mat-button (click)="login()">Login</button>
+    </mat-card-content>
   </mat-card>
 </div>
