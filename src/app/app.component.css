@@ -87,8 +87,8 @@
   margin-left: 0;
 }
 
-.mat-mdc-list-base .mat-mdc-list-item.sub-item {
-  height: 32px;
+.menu-logout {
+  margin-right: 5px;
 }
 
 .login {
@@ -101,12 +101,12 @@
 }
 
 .logo {
-  max-width: 100%;
+  max-width: 280px;
+  width: 100%;
 }
 
-.login-card .mat-mdc-button {
-  display: block;
-  margin: 0 auto;
+.mat-mdc-card-actions {
+  justify-content: center;
 }
 
 .token {
