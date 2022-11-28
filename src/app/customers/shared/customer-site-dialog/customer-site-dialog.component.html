@@ -7,8 +7,12 @@
       <mat-list>
         <mat-list-item *ngFor="let site of sites" (click)="openEditor(site.id, site.fields.Title, site.fields.Address)" [class.active] = "site.id === siteId">
           <span matListItemTitle>{{ site.fields.Title }}</span>
-          <button matListItemMeta *ngIf="site.id === siteId" color="warn" type="button" mat-raised-button class="icon" (click)="deleteSite()" [disabled]="loading" class="delete">Delete site</button>
-          <button matListItemMeta type="button" mat-icon-button class="icon"><mat-icon>edit</mat-icon></button>
+          <ng-container *ngIf="site.id === siteId" matListItemMeta>
+            <button color="warn" type="button" mat-raised-button class="icon" (click)="deleteSite()" [disabled]="loading" class="delete">Delete site</button>
+          </ng-container>
+          <ng-container matListItemMeta>
+            <button type="button" mat-icon-button class="icon"><mat-icon>edit</mat-icon></button>
+          </ng-container>
         </mat-list-item>
       </mat-list>
     </ng-container>

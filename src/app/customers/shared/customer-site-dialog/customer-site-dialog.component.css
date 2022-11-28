@@ -9,6 +9,10 @@
   padding: 0;
 }
 
+.mat-mdc-list-item {
+  align-items: center;
+}
+
 .mat-mdc-form-field {
   width: 100%;
 }
