@@ -9,19 +9,19 @@
   max-width: 1024px;
 }
 
-.mat-form-field {
-  font-size: 14px;
+.mat-mdc-form-field {
   margin-right: 10px;
   width: 145px;
 }
 
-.mat-footer-row {
+.mat-mdc-footer-row {
   font-weight: bold;
 }
 
 .options {
   align-items: baseline;
   display: flex;
+  margin-top: 20px;
 }
 
 .buttons {
@@ -68,7 +68,7 @@
 }
 
 .mat-column-checked {
-  flex: 0 0 40px;
+  flex: 0 0 80px;
 }
 
 .mat-column-fields-CageNumber {
@@ -92,20 +92,20 @@
 }
 
 .mat-column-weight {
-  flex: 0 1 80px;
+  flex: 0 1 100px;
 }
 
 .mat-column-check {
   display: none;
 }
 
-.mat-cell.mat-column-status {
+.mat-mdc-cell.mat-column-status {
   align-items: baseline;
   flex-direction: column;
   justify-content: center;
 }
 
-.mat-cell.mat-column-assetType {
+.mat-mdc-cell.mat-column-assetType {
   font-weight: 500;
 }
 

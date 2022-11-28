@@ -9,7 +9,9 @@ import { LoadingRowComponent } from './loading-row/loading-row.component';
     LoadingPageComponent,
     LoadingRowComponent
 ],
-  imports: [MatProgressSpinnerModule],
+  imports: [
+    MatProgressSpinnerModule
+  ],
   exports: [
     LoadingPageComponent,
     LoadingRowComponent

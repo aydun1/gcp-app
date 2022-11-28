@@ -2,7 +2,7 @@
   <gcp-letterhead class="print-heading">Polymer receipts</gcp-letterhead>
   <div class="options inner">
     <div class="buttons">
-      <mat-form-field appearance="outline" class="branch">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
         <mat-label>Branch</mat-label>
         <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
           <mat-option>All</mat-option>

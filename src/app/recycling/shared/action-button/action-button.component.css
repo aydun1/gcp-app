@@ -5,8 +5,13 @@
 
 .action {
   flex: 1;
+  white-space: nowrap;
 }
 
 .menu, .action {
   margin-left: 10px;
+}
+
+.mat-mdc-raised-button {
+  margin-bottom: 12px;
 }

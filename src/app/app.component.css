@@ -78,11 +78,16 @@
   overflow: hidden;
 }
 
-.menu-label {
-  margin-left: 14px;
+.menu-icon {
+  color: inherit;
+  margin-right: 16px !important;
 }
 
-.mat-list-base .mat-list-item.sub-item {
+.menu-label {
+  margin-left: 0;
+}
+
+.mat-mdc-list-base .mat-mdc-list-item.sub-item {
   height: 32px;
 }
 
@@ -99,7 +104,7 @@
   max-width: 100%;
 }
 
-.login-card .mat-button {
+.login-card .mat-mdc-button {
   display: block;
   margin: 0 auto;
 }

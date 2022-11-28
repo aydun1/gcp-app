@@ -1,10 +1,15 @@
-.mat-dialog-content {
+.mat-mdc-dialog-content {
   overflow: hidden;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
 }
 
 .customer {
@@ -72,9 +77,10 @@
     display: none;
   }
 
-  .mat-dialog-content {
+  .mat-mdc-dialog-content {
     height: calc(100vh - 158px);
     max-height: none;
+    padding: 0;
   }
   
 }

@@ -44,58 +44,61 @@
   </div>
 
   <mat-card class="inner details-card">
-    <mat-list>
-      <h3 matSubheader>Details</h3>
-      <mat-list-item>
-        <mat-icon mat-list-icon>business</mat-icon>
-        <div mat-line>{{ loadingScheduleEntry.fields.TransportCompany }}</div>
-        <div mat-line>Transport company</div>
-      </mat-list-item>
-      <mat-list-item>
-        <mat-icon mat-list-icon>person</mat-icon>
-        <div mat-line>{{ loadingScheduleEntry.fields.Driver }}</div>
-        <div mat-line>Driver</div>
-      </mat-list-item>
-      <mat-list-item>
-        <mat-icon mat-list-icon>tag</mat-icon>
-        <div mat-line>{{ loadingScheduleEntry.fields.Spaces }}</div>
-        <div mat-line>Spaces</div>
-      </mat-list-item>
-      <mat-list-item>
-        <mat-icon mat-list-icon>notes</mat-icon>
-        <div mat-line>{{ loadingScheduleEntry.fields.Notes }}</div>
-        <div mat-line>Notes</div>
-      </mat-list-item>
-    </mat-list>
-    <div class="side-by-side">
+    <mat-card-content>
       <mat-list>
-        <h3 matSubheader>Loading</h3>
+        <h3 matSubheader>Details</h3>
         <mat-list-item>
-          <mat-icon mat-list-icon>place</mat-icon>
-          <div mat-line>{{ loadingScheduleEntry.fields.From }}</div>
-          <div mat-line>From</div>
+          <mat-icon matListItemIcon>business</mat-icon>
+          <span matListItemTitle>{{ loadingScheduleEntry.fields.TransportCompany }}</span>
+          <span>Transport company</span>
         </mat-list-item>
         <mat-list-item>
-          <mat-icon mat-list-icon>today</mat-icon>
-          <div mat-line>{{ loadingScheduleEntry.fields.LoadingDate | date:'dd/MM/yyyy' }}</div>
-          <div mat-line>Loading on</div>
+          <mat-icon matListItemIcon>person</mat-icon>
+          <span matListItemTitle>{{ loadingScheduleEntry.fields.Driver }}</span>
+          <span>Driver</span>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon matListItemIcon>tag</mat-icon>
+          <span matListItemTitle>{{ loadingScheduleEntry.fields.Spaces }}</span>
+          <span>Spaces</span>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon matListItemIcon>notes</mat-icon>
+          <span matListItemTitle>{{ loadingScheduleEntry.fields.Notes }}</span>
+          <span>Notes</span>
         </mat-list-item>
       </mat-list>
-      <mat-icon class="arrow">arrow_forward</mat-icon>
-      <mat-list>
-        <h3 matSubheader>Arriving</h3>
-        <mat-list-item>
-          <mat-icon mat-list-icon>place</mat-icon>
-          <div mat-line>{{ loadingScheduleEntry.fields.To }}</div>
-          <div mat-line>To</div>
-        </mat-list-item>
-        <mat-list-item>
-          <mat-icon mat-list-icon>event</mat-icon>
-          <div mat-line>{{ (loadingScheduleEntry.fields.ArrivalDate | date:'dd/MM/yyyy') || '-' }}</div>
-          <div mat-line>Arriving on</div>
-        </mat-list-item>
-      </mat-list>
-    </div>
+      <div class="side-by-side">
+        <mat-list>
+          <h3 matSubheader>Loading</h3>
+          <mat-list-item>
+            <mat-icon matListItemIcon>place</mat-icon>
+            <span matListItemTitle>{{ loadingScheduleEntry.fields.From }}</span>
+            <span>From</span>
+          </mat-list-item>
+          <mat-list-item>
+            <mat-icon matListItemIcon>today</mat-icon>
+            <span matListItemTitle>{{ loadingScheduleEntry.fields.LoadingDate | date:'dd/MM/yyyy' }}</span>
+            <span>Loading on</span>
+          </mat-list-item>
+        </mat-list>
+        <mat-icon class="arrow">arrow_forward</mat-icon>
+        <mat-list>
+          <h3 matSubheader>Arriving</h3>
+          <mat-list-item>
+            <mat-icon matListItemIcon>place</mat-icon>
+            <span matListItemTitle>{{ loadingScheduleEntry.fields.To }}</span>
+            <span>To</span>
+          </mat-list-item>
+          <mat-list-item>
+            <mat-icon matListItemIcon>event</mat-icon>
+            <span matListItemTitle>{{ (loadingScheduleEntry.fields.ArrivalDate | date:'dd/MM/yyyy') || '-' }}</span>
+            <span>Arriving on</span>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </mat-card-content>
+
 
     <div class="status">
       <div class="approved">
@@ -113,9 +116,7 @@
 
   <mat-card class="inner attachments">
     <gcp-docs [id]="loadingScheduleEntry.id" folder="loading-schedule">
-      <mat-card-header>
         <mat-card-title>Attachments</mat-card-title>
-      </mat-card-header>
     </gcp-docs>
   </mat-card>
 </div>

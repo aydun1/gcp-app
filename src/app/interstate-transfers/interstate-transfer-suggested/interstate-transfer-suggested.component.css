@@ -9,14 +9,14 @@
   position: sticky;
   bottom: 0;
   display: flex;
-  align-items: baseline;
+  align-items: center;
 }
 
 .save-button {
   margin-left: auto;
 }
 
-.mat-form-field {
+.mat-mdc-form-field {
   margin-left: 10px;
 }
 

@@ -3,14 +3,14 @@
   <gcp-letterhead class="print-heading">Interstate pallet transfers</gcp-letterhead>
   <div class="options inner">
     <div class="buttons">
-      <mat-form-field appearance="outline" class="branch">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
         <mat-label>Branch</mat-label>
         <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
           <mat-option>All</mat-option>
           <mat-option *ngFor="let s of states" value="{{ s }}">{{ s }}</mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="outline" class="status">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="status">
         <mat-label>Pallet</mat-label>
         <mat-select [formControl]="palletFilter" (selectionChange)="setPallet($event)">
           <mat-option>All</mat-option>
