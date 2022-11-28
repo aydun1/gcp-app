@@ -9,14 +9,14 @@
   padding: 0;
 }
 
+.mat-mdc-list-item {
+  align-items: center;
+}
+
 .mat-mdc-form-field {
   width: 100%;
 }
 
 .delete {
   margin: 0 12px;
-}
-
-.mat-mdc-list-item-meta {
-  pointer-events: auto;
 }

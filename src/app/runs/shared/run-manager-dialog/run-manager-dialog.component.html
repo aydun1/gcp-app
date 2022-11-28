@@ -6,8 +6,12 @@
       <mat-list>
         <mat-list-item *ngFor="let run of runs" [class.active] = "run.id === runId" class="active">
           <span>{{ run.fields.Title }}</span>
-          <button matListItemMeta *ngIf="run.id === runId" color="warn" type="button" mat-raised-button class="icon" (click)="deleteRun()" [disabled]="loading" class="delete">Delete run</button>
-          <button matListItemMeta type="button" mat-icon-button (click)="openEditor(run.id, run.fields.Title)" class="icon"><mat-icon>edit</mat-icon></button>
+          <ng-container *ngIf="run.id === runId" matListItemMeta>
+            <button color="warn" type="button" mat-raised-button class="icon" (click)="deleteRun()" [disabled]="loading" class="delete">Delete run</button>
+          </ng-container>
+          <ng-container matListItemMeta>
+            <button type="button" mat-icon-button (click)="openEditor(run.id, run.fields.Title)" class="icon"><mat-icon>edit</mat-icon></button>
+          </ng-container>
         </mat-list-item>
         <mat-list-item *ngIf="!runs || !runs.length">
           <span>No additional runs yet</span>

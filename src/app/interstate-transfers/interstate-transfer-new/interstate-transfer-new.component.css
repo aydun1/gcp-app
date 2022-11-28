@@ -9,11 +9,11 @@
   position: sticky;
   bottom: 0;
   display: flex;
-  align-items: baseline;
+  align-items: center;
 }
 
 .mat-mdc-form-field {
-  width: 100px;
+  width: 120px;
 }
 
 .to {

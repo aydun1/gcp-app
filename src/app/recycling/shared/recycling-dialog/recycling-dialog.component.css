@@ -25,12 +25,12 @@
 .buttons {
   align-items: center;
   display: flex;
-  margin-right: 20px;
+  margin: 0 50px 0 10px;
 }
 
 .mat-mdc-dialog-title {
   flex: 1;
-  line-height: 40px;
+  line-height: 48px;
   margin: 0;
 }
 

@@ -5,7 +5,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { MatTable } from '@angular/material/table';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { catchError, debounceTime, distinctUntilChanged, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, catchError, debounceTime, distinctUntilChanged, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { TransactionHistoryDialogComponent } from '../../interstate-transfers/transaction-history-dialog/transaction-history-dialog.component';
 import { NavigationService } from '../../navigation.service';
@@ -47,7 +47,7 @@ export class PanListComponent implements OnInit {
   public notes = new FormControl<string>(this.panNote);
   public branchFilter = new FormControl({value: '', disabled: true});
   public viewFilter = new FormControl('');
-  public loading = false;
+  public loading = new BehaviorSubject<boolean>(true);
   public creating = false;
   public chosenColumns: Array<string> = [];
   public chosenVendors: Array<string> = [];
@@ -66,7 +66,7 @@ export class PanListComponent implements OnInit {
   public hideUnsuggesteds = false;
   public hideNoMaxes = false;
   public saving = new Subject<string>();
-  public columns = [ 'bin', 'product', 'allocated', 'onHand', 'HEA', 'NSW', 'QLD', 'SA', 'VIC', 'WA', 'required', 'suggested', 'toFill', 'transfer', 'notes'];
+  public columns = [ 'bin', 'product', 'allocated', 'onHand', 'HEA', 'NSW', 'QLD', 'SA', 'VIC', 'WA', 'required', 'suggested', 'toFill', 'spacer', 'transfer', 'notes'];
   public categoryOptions = [
     {value: 'M', name: 'Manufactured'},
     {value: 'A', name: 'Allied'},
@@ -149,11 +149,12 @@ export class PanListComponent implements OnInit {
         })
       )),
       tap(_ => this.parseParams(_)),
-      tap(_ => this.loading = true),
+      tap(_ => this.loading.next(true)),
       switchMap(_ => this._loadList && this.suggestions ? this.getSuggestedItems(_) : of([] as Array<SuggestedItem>)),
       map(_ => _.map(line => this.makeFormGroup(line, false))),
       tap(_ => {
-        this.loading = false;
+        this.loading.next(false);
+        console.log(this.loading);
         this.lines.clear();
         _.filter(_ => _.value['qtyRequired'] > 0 || _.value['toFill'] > 0 || _.value['suggested'] > 0).forEach(l => this.lines.push(l))
         this._matTable?.renderRows();

@@ -4,10 +4,13 @@
     <span *ngIf="editCageWeight" matListItemTitle><input [(ngModel)]="cageWeight" [ngModelOptions]="{standalone: true}" type="number" placeholder="Weight in kg"></span>
     <span *ngIf="!editCageWeight" matListItemTitle>{{ cage.fields.CageWeight || 0 | number }} kg</span>
     <span>Cage weight</span>
-    <button matListItemMeta mat-icon-button type="button" *ngIf="!editCageWeight" (click)="editCageWeight = true"><mat-icon class="last-icon">edit</mat-icon></button>
-    <ng-container *ngIf="editCageWeight">
-      <button matListItemMeta mat-icon-button type="button" (click)="cancelCageWeight()"><mat-icon class="last-icon">close</mat-icon></button>
-      <button matListItemMeta mat-icon-button type="submit"><mat-icon class="last-icon">check</mat-icon></button>
+    <ng-container *ngIf="!editCageWeight" matListItemMeta>
+      <button mat-icon-button type="button" (click)="editCageWeight = true"><mat-icon class="last-icon">edit</mat-icon></button>
+    </ng-container>
+
+    <ng-container *ngIf="editCageWeight" matListItemMeta>
+      <button mat-icon-button type="button" (click)="cancelCageWeight()"><mat-icon class="last-icon">close</mat-icon></button>
+      <button mat-icon-button type="submit"><mat-icon class="last-icon">check</mat-icon></button>
     </ng-container>
   </mat-list-item>
 </form>
@@ -17,10 +20,12 @@
     <span *ngIf="editGrossWeight" matListItemTitle><input [(ngModel)]="grossWeight" [ngModelOptions]="{standalone: true}" type="number" placeholder="Weight in kg"></span>
     <span *ngIf="!editGrossWeight" matListItemTitle>{{ cage.fields.GrossWeight || 0 | number }} kg</span>
     <span>Gross weight</span>
-    <button matListItemMeta mat-icon-button type="button" *ngIf="!editGrossWeight" (click)="editGrossWeight = true"><mat-icon class="last-icon">edit</mat-icon></button>
-    <ng-container *ngIf="editGrossWeight">
-      <button matListItemMeta mat-icon-button type="button" (click)="cancelGrossWeight()"><mat-icon class="last-icon">close</mat-icon></button>
-      <button matListItemMeta mat-icon-button type="submit"><mat-icon class="last-icon">check</mat-icon></button>
+    <ng-container *ngIf="!editGrossWeight" matListItemMeta>
+      <button mat-icon-button type="button" (click)="editGrossWeight = true"><mat-icon class="last-icon">edit</mat-icon></button>
+    </ng-container>
+    <ng-container *ngIf="editGrossWeight" matListItemMeta>
+      <button mat-icon-button type="button" (click)="cancelGrossWeight()"><mat-icon class="last-icon">close</mat-icon></button>
+      <button mat-icon-button type="submit"><mat-icon class="last-icon">check</mat-icon></button>
     </ng-container>
   </mat-list-item>
 </form>

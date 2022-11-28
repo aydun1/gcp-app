@@ -101,6 +101,7 @@ h2 {
   .mat-mdc-cell {
     border-bottom-style:none !important;
     min-height: 0;
+    padding: 0;
   }
   
   .mat-mdc-cell:first-of-type{
@@ -112,9 +113,8 @@ h2 {
     border-bottom-style: solid;
     border-bottom-width: 1px;
     display: grid;
-    gap: 5px;
-    grid-template-columns: 50px 121px 1fr 64px;
-    grid-template-rows: 40px 44px 60px 1fr;
+    grid-template-columns: 50px 121px 1fr 48px;
+    grid-template-rows: 48px 44px 60px 1fr;
     padding: 10px;
   }
 

@@ -259,7 +259,11 @@ gcp-big-button > .link,
   }
 
   .mat-mdc-table {
-    border: none!important;
+    border: none !important;
+  }
+
+  .mat-mdc-row {
+    border-bottom: none !important;
   }
 
   .mat-toolbar {
@@ -296,6 +300,9 @@ gcp-big-button > .link,
     border-radius: 0!important;
     box-shadow: none!important;
     overflow-x: hidden!important;
+  }
+
+  .mat-mdc-dialog-content {
     padding: 0!important;
   }
 

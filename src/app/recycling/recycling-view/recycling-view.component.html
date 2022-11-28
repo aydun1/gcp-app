@@ -55,10 +55,12 @@
               </span>
               <span *ngIf="!editCageNotes" matListItemTitle>{{ currentCageNotes }}</span>
               <span>Reference</span>
-              <button matListItemMeta mat-icon-button type="button" *ngIf="!editCageNotes" (click)="editCageNotes = true"><mat-icon>edit</mat-icon></button>
-              <ng-container *ngIf="editCageNotes">
-                <button matListItemMeta mat-icon-button type="button" (click)="cancelEditCageNotes(cage.fields.Notes)"><mat-icon>close</mat-icon></button>
-                <button matListItemMeta mat-icon-button type="submit"><mat-icon>check</mat-icon></button>
+              <ng-container matListItemMeta *ngIf="!editCageNotes">
+                <button mat-icon-button type="button" (click)="editCageNotes = true"><mat-icon>edit</mat-icon></button>
+              </ng-container>
+              <ng-container matListItemMeta *ngIf="editCageNotes">
+                <button mat-icon-button type="button" (click)="cancelEditCageNotes(cage.fields.Notes)"><mat-icon>close</mat-icon></button>
+                <button mat-icon-button type="submit"><mat-icon>check</mat-icon></button>
               </ng-container>
             </mat-list-item>
           </form>

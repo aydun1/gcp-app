@@ -239,6 +239,21 @@
         <mat-footer-cell *matFooterCellDef>
         </mat-footer-cell>
       </ng-container>
+
+      <ng-container matColumnDef="spacer">
+        <mat-header-cell *matHeaderCellDef>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line">
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+        </mat-footer-cell>
+      </ng-container>
+
+
+
+
+
+
       <ng-container matColumnDef="transfer">
         <mat-header-cell *matHeaderCellDef>
           <div class="load-details">
@@ -280,7 +295,7 @@
           </mat-form-field>
         </mat-header-cell>
       </ng-container>
-      <ng-container matColumnDef="loading">
+      <ng-container matColumnDef="loadingDef">
         <mat-footer-cell *matFooterCellDef>
           <gcp-loading-row></gcp-loading-row>
         </mat-footer-cell>
@@ -304,7 +319,7 @@
       (row.value['suggested'] <= 0 && hideUnsuggesteds) ||
       (!row.value['qtyRequired'] && hideUnrequireds) ||
       (!row.value['toFill'] && hideNoMaxes))"></mat-row>
-      <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="!loading"></mat-footer-row>
+      <mat-footer-row *matFooterRowDef="['loadingDef']" [class.hidden]="(loading | async) === false"></mat-footer-row>
       <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(lines.controls) || !suggestions"></mat-footer-row>
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>

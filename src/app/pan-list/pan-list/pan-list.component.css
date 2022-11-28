@@ -41,6 +41,10 @@ h2 {
   width: 100%;
 }
 
+.mat-mdc-header-row {
+  font-size: 12px;
+}
+
 .mat-mdc-row {
   align-items: stretch;
 }
@@ -78,7 +82,13 @@ h2 {
 
 .mat-column-product {
   flex: 1 1 250px;
+  padding: 0 4px;
   white-space: nowrap;
+}
+
+.mat-column-spacer {
+  flex: 0 0 10px;
+  padding: 0;
 }
 
 .mat-column-HEA,
@@ -93,7 +103,7 @@ h2 {
 .mat-column-toFill,
 .mat-column-suggested {
   flex: 0 1 100px;
-  text-align: right;
+  padding: 0;
 }
 
 .understocked {
@@ -102,16 +112,11 @@ h2 {
 
 .load-details {
   flex: 0 1 100%;
-  margin-right: 10px;
 }
 
 .loading-spinner {
   display: flex;
   justify-content: center;
-}
-
-.mat-mdc-header-cell.mat-column-transfer {
-  text-align: center;
 }
 
 .mat-mdc-footer-cell.mat-column-transfer .transferTotal {
@@ -129,14 +134,15 @@ h2 {
 
 .mat-column-transfer {
   background: #a5a5a5;
-  flex: 0 0 150px;
-  padding-left: 24px;
+  flex: 0 0 120px;
+  padding-left: 12px;
 }
 
 .mat-column-notes {
   background: #a5a5a5;
   flex: 0 0 150px;
-  padding-left: 24px;
+  padding-left: 12px;
+  padding-right: 12px;
 }
 
 .mat-column-menu {
@@ -171,7 +177,6 @@ h2 {
 
   .mat-mdc-row, .mat-mdc-header-row {
     display: grid;
-    gap: 5px;
     grid-auto-columns: 1fr;
     grid-auto-flow: column;
     grid-template-rows: 60px 44px;
@@ -179,7 +184,7 @@ h2 {
   }
 
   .mat-mdc-header-row {
-    grid-template-rows: 38px;
+    grid-template-rows: 56px;
     padding: 10px;
   }
 
@@ -196,7 +201,7 @@ h2 {
     padding: 0;
   }
 
-  .mat-mdc-cell:first-of-type{
+  .mat-mdc-cell:first-of-type {
     padding-left: 0;
   }
 
@@ -239,9 +244,9 @@ h2 {
   .mat-mdc-cell.mat-column-transfer {
     position: absolute;
     background: none;
-    right: 0;
+    right: 10px;
     top: 10px;
-    width: 80px;
+    width: 120px;
   }
 
   .mat-mdc-cell.mat-column-notes {
@@ -268,10 +273,6 @@ h2 {
   .options,
   .mat-mdc-slide-toggle{
     display: none;
-  }
-
-  .load-details {
-    margin-right: 0;
   }
 
   .pallet-count {

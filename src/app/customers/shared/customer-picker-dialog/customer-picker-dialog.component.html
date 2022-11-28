@@ -30,7 +30,7 @@
         </mat-select>
       </mat-form-field>
     </ng-container>
-    <mat-form-field *ngIf="data?.notes" color="primary" appearance="outline">
+    <mat-form-field *ngIf="data?.notes" color="primary" appearance="outline" subscriptSizing="dynamic">
       <mat-label>Notes</mat-label>
       <textarea matInput formControlName="notes" autocomplete="off" placeholder="Optional notes"></textarea>
     </mat-form-field>

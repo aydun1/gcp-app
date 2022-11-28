@@ -9,7 +9,11 @@
 }
 
 .header {
-  align-items: flex-start;
+  align-items: center;
   display: flex;
   justify-content: space-between;
+}
+
+.header > .mdc-button {
+  margin-right: 24px;
 }

@@ -89,17 +89,10 @@ h2 {
 }
 
 .mat-column-actions {
-  flex: 0 1 190px;
-}
-
-.mat-column-status {
-  flex: 0 0 30px;
-  padding-left: 11px;
-}
-
-.mat-column-menu {
-  flex: 0 0 40px;
-  padding-right: 10px;
+  align-items: center;
+  display: flex;
+  flex: 0 0 234px;
+  padding: 0;
 }
 
 .mat-column-actions > button {
@@ -110,9 +103,14 @@ h2 {
   margin-right: 0;
 }
 
-.mat-column-actions {
-  align-items: center;
-  display: flex;
+.mat-column-status {
+  flex: 0 0 41px;
+  padding: 0;
+}
+
+.mat-column-menu {
+  flex: 0 0 48px;
+  padding: 0 5px 0 0;
 }
 
 .drag {
@@ -124,8 +122,9 @@ h2 {
 
 @media (max-width: 1024px) {
   .mat-column-actions {
-    flex: 0 1 110px;
+    flex: 0 0 110px;
     overflow: visible;
+    justify-content: center;
   }
   
   .mat-column-actions.mat-mdc-cell {
@@ -133,17 +132,14 @@ h2 {
     align-items: stretch;
   }
   
-  .mat-column-actions > button {
-    margin: 0 10px 5px 0;
-  }
-  
-  .mat-column-actions > button:last-child {
-    margin-right: 10px;
+  .mat-column-actions > .mdc-button {
+    margin-right: 0;
   }
 
-  .mat-column-actions > button:last-child {
-    margin-bottom: 0;
+  .mat-column-actions > .mdc-button:first-child {
+    margin-bottom: 5px;
   }
+
 }
 
 @media (max-width: 800px) {
@@ -153,24 +149,24 @@ h2 {
 
   .mat-mdc-row {
     display: grid;
-    gap: 5px;
-    grid-template-columns: 1fr 80px 120px 40px 40px;
-    grid-template-rows: 36px 30px 1fr;
+    grid-template-columns: 1fr 80px 120px 40px 38px;
+    grid-template-rows: 48px 48px 1fr;
     padding: 10px;
+  }
+
+  .mat-mdc-cell {
+    padding: 0;
   }
 
   .mat-mdc-cell.mat-column-sequence {
     grid-row: 1;
     justify-content: inherit;
-    padding-bottom: 0;
-    padding-top: 0;
-    padding-right: 0;
+    padding-left: 26px;
   }
 
   .mat-mdc-cell.mat-column-menu {
     grid-row: 1;
     max-width: 50px;
-    padding-right: 0;
   }
 
   .mat-mdc-cell.mat-column-status {
@@ -204,11 +200,11 @@ h2 {
     justify-content: right;
   }
 
-  .mat-mdc-cell.mat-column-actions > button {
+  .mat-column-actions > .mdc-button:first-child {
     margin-bottom: 0;
+    margin-right: 5px;
   }
 }
-
 
 @media print {
   .scroller {

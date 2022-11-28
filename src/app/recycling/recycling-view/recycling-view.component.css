@@ -10,6 +10,7 @@ input {
 .header {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
 }
 
 .top-title {
