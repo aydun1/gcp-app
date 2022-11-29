@@ -100,6 +100,10 @@ a, .link {
   color: mat.get-color-from-palette($light-accent);
 }
 
+input {
+  pointer-events: auto;
+}
+
 .dark-theme a, .dark-theme .link {
   color: mat.get-color-from-palette($dark-accent);
 }
