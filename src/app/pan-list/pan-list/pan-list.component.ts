@@ -177,8 +177,6 @@ export class PanListComponent implements OnInit {
   }
 
   formMapper(_: SuggestedItem): any {
-    const qtyAllocated = _.QtyAllocated +  _.QtyBackordered;
-    const qtyOnHand = _.QtyOnHand + _.InTransit + _.PreTransit;
     const required = Math.max(0, _.QtyAvailable * -1);
     const toFill = _[this.max] ? _.QtyAvailable * -1 + _[this.max] : required;
     const suggested =  _.QtyAvailable < _[this.min] ? toFill : 0;
@@ -198,9 +196,10 @@ export class PanListComponent implements OnInit {
       saOnHand: _.OnHandSA,
       waOnHand: _.OnHandWA,
       nswOnHand: _.OnHandNSW,
-      qtyOnHand,
-      qtyAllocated: qtyAllocated || null,
-      underStocked: qtyAllocated && qtyAllocated > qtyOnHand,
+      qtyOnHand: _.QtyOnHand,
+      qtyAllocated: _.QtyAllocated,
+      qtyBackordered: _.QtyBackordered,
+      underStocked: _.QtyAllocated && _.QtyAllocated > _.QtyOnHand,
       qtyRequired: required || null,
       suggested: suggested || null,
       toFill: toFill,
