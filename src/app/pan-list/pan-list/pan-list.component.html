@@ -306,7 +306,7 @@
         </mat-footer-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-header-row *matHeaderRowDef="['another']"></mat-header-row>
+      <mat-header-row *matHeaderRowDef="['another']" class="item-adder"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [class.hidden]="
       !row.value.custom &&
       ((vendorCodes.length > 0 && !vendorCodes.includes(row.value['vendor'])) ||

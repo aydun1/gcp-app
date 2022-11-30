@@ -37,6 +37,10 @@ h2 {
   width: 145px;
 }
 
+.item-adder {
+  position: static;
+}
+
 .search-form {
   width: 100%;
 }

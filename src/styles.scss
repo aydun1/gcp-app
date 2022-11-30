@@ -119,8 +119,6 @@ input {
 
 .mat-mdc-table {
   border: 1px solid rgba(0,0,0,.12)!important;
-  border-radius: 5px;
-  overflow: hidden;
 }
 
 .mat-mdc-dialog-container {
@@ -173,7 +171,6 @@ input {
 }
 
 .mat-mdc-header-row {
-  border-radius: 5px 5px 0 0;
   position: sticky;
   top: 0;
   z-index: 1;
