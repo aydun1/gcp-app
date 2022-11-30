@@ -9,30 +9,29 @@
   max-width: 1024px;
 }
 
-.mat-form-field {
-  font-size: 14px;
-}
-
-.mat-footer-row {
+.mat-mdc-footer-row {
   font-weight: bold;
 }
 
 .options {
   display: flex;
+  margin-top: 20px;
 }
 
 .name-filter {
   flex: 1;
 }
 
-.region-filter,
-.pallet-filter {
-  min-width: 140px;
+.region-filter {
+  flex: 0 0 164px;
 }
 
-.region-filter,
-.name-filter {
+.mat-mdc-form-field {
   margin-right: 10px;
+}
+
+.mat-mdc-form-field:last-child {
+  margin-right: 0;
 }
 
 .mat-column-name {
@@ -53,8 +52,14 @@
     flex-direction: column;
   }
 
-  .region-filter, .name-filter {
-    margin: 0;
+  .mat-mdc-form-field {
+    flex: auto;
+    margin-bottom: 10px;
+    margin-right: 0;
+  }
+
+  .mat-mdc-form-field:last-child {
+    margin-bottom: 0;
   }
 }
 

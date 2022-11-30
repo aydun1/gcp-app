@@ -2,26 +2,26 @@
   <div class="options">
     <div class="buttons">
       <ng-container *ngIf="suggestions">
-        <mat-form-field appearance="outline" class="branch">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
           <mat-label>Branch</mat-label>
           <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
             <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field *ngIf="showSuppliers" appearance="outline">
+        <mat-form-field *ngIf="showSuppliers" subscriptSizing="dynamic" appearance="outline">
           <mat-label>Suppliers</mat-label>
           <mat-select [(ngModel)]="chosenVendors" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setVendors($event)">
             <mat-option *ngFor="let b of otherVendors" [value]="b.branch">{{ b.branch }}</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline">
+        <mat-form-field subscriptSizing="dynamic" appearance="outline">
           <mat-label>Categories</mat-label>
           <mat-select [(ngModel)]="categories" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setCategories($event)">
             <mat-option *ngFor="let c of categoryOptions" [value]="c.value">{{ c.name }}</mat-option>
           </mat-select>
         </mat-form-field>
       </ng-container>
-      <mat-form-field appearance="outline">
+      <mat-form-field subscriptSizing="dynamic" appearance="outline">
         <mat-label>Show columns</mat-label>
         <mat-select [(ngModel)]="chosenColumns" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setColumns($event)">
           <mat-option *ngFor="let s of otherStates" [value]="s">{{ s }}</mat-option>
@@ -239,6 +239,21 @@
         <mat-footer-cell *matFooterCellDef>
         </mat-footer-cell>
       </ng-container>
+
+      <ng-container matColumnDef="spacer">
+        <mat-header-cell *matHeaderCellDef>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line">
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+        </mat-footer-cell>
+      </ng-container>
+
+
+
+
+
+
       <ng-container matColumnDef="transfer">
         <mat-header-cell *matHeaderCellDef>
           <div class="load-details">
@@ -273,14 +288,14 @@
         </mat-footer-cell>
       </ng-container>
       <ng-container matColumnDef="another">
-        <mat-header-cell *matHeaderCellDef>
-          <mat-form-field class="search-form">
+        <mat-header-cell *matHeaderCellDef class="search-cell">
+          <mat-form-field class="search-form" subscriptSizing="dynamic" appearance="fill">
             <mat-label>Add an item...</mat-label>
             <gcp-item-control [formControl]="itemSearch" [territory]="branchFilter.value"></gcp-item-control>
           </mat-form-field>
         </mat-header-cell>
       </ng-container>
-      <ng-container matColumnDef="loading">
+      <ng-container matColumnDef="loadingDef">
         <mat-footer-cell *matFooterCellDef>
           <gcp-loading-row></gcp-loading-row>
         </mat-footer-cell>
@@ -291,7 +306,7 @@
         </mat-footer-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-footer-row *matHeaderRowDef="['another']"></mat-footer-row>
+      <mat-header-row *matHeaderRowDef="['another']" class="item-adder"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [class.hidden]="
       !row.value.custom &&
       ((vendorCodes.length > 0 && !vendorCodes.includes(row.value['vendor'])) ||
@@ -304,12 +319,12 @@
       (row.value['suggested'] <= 0 && hideUnsuggesteds) ||
       (!row.value['qtyRequired'] && hideUnrequireds) ||
       (!row.value['toFill'] && hideNoMaxes))"></mat-row>
-      <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="!loading"></mat-footer-row>
+      <mat-footer-row *matFooterRowDef="['loadingDef']" [class.hidden]="(loading | async) === false"></mat-footer-row>
       <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(lines.controls) || !suggestions"></mat-footer-row>
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
     <mat-card *ngIf="showNotes" class="notes">
-      <mat-form-field class="search-form">
+      <mat-form-field class="search-form" subscriptSizing="dynamic">
         <mat-label>Notes</mat-label>
         <input matInput type="text" [formControl]="notes" autocomplete="off">
       </mat-form-field>

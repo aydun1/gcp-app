@@ -16,7 +16,7 @@
     <button mat-stroked-button type="button" [matMenuTriggerFor]="sitesMenu" [matMenuTriggerData]="{customer: customer}" [disabled]="!sites">
       {{ site || 'All sites' }}
     </button>
-    <button mat-icon-button type="button" class="menu" [matMenuTriggerFor]="actionsMenu" [matMenuTriggerData]="{customer: customer}">
+    <button mat-icon-button aria-label="Sites menu" type="button" class="menu" [matMenuTriggerFor]="actionsMenu" [matMenuTriggerData]="{customer: customer}">
       <mat-icon>more_vert</mat-icon>
     </button>
   </div>

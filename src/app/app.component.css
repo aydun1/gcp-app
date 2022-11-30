@@ -78,12 +78,17 @@
   overflow: hidden;
 }
 
-.menu-label {
-  margin-left: 14px;
+.menu-icon {
+  color: inherit;
+  margin-right: 16px !important;
 }
 
-.mat-list-base .mat-list-item.sub-item {
-  height: 32px;
+.menu-label {
+  margin-left: 0;
+}
+
+.menu-logout {
+  margin-right: 5px;
 }
 
 .login {
@@ -96,12 +101,12 @@
 }
 
 .logo {
-  max-width: 100%;
+  max-width: 280px;
+  width: 100%;
 }
 
-.login-card .mat-button {
-  display: block;
-  margin: 0 auto;
+.mat-mdc-card-actions {
+  justify-content: center;
 }
 
 .token {

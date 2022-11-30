@@ -13,13 +13,12 @@ h2 {
   margin-left: 10px;
 }
 
-.mat-form-field {
-  font-size: 14px;
+.mat-mdc-form-field {
   margin-right: 10px;
   width: 145px;
 }
 
-.mat-footer-row {
+.mat-mdc-footer-row {
   font-weight: bold;
 }
 
@@ -40,7 +39,11 @@ h2 {
   flex: 0 1 400px;
 }
 
-.mat-column-from, .mat-column-to, .mat-column-status, .mat-column-pallet, .mat-column-date {
+.mat-column-date {
+  flex: 0 1 128px;
+}
+
+.mat-column-from, .mat-column-to, .mat-column-status, .mat-column-pallet {
   flex: 0 1 90px;
 }
 

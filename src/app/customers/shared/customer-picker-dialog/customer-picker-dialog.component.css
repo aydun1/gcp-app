@@ -4,12 +4,16 @@
   top: 0;
 }
 
-.mat-form-field {
+.mat-mdc-form-field {
   width: 100%;
 }
 
 .header {
-  align-items: flex-start;
+  align-items: center;
   display: flex;
   justify-content: space-between;
+}
+
+.header > .mdc-button {
+  margin-right: 24px;
 }

@@ -10,84 +10,87 @@
   <h2>{{ id ? 'Edit' : 'Add a new' }} loading schedule entry</h2>
   <form (ngSubmit)="onSubmit()" [formGroup]="loadingScheduleForm">
     <mat-card>
-      <mat-form-field appearance="fill">
-        <mat-label>Status</mat-label>
-        <mat-select formControlName="status">
-          <mat-option *ngFor="let status of choices?.Status?.choice?.choices" [value]="status">
-          {{ status }}
-        </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <div class="spacer">
-        <mat-divider></mat-divider>
-      </div>
-      <div class="field-container">
+      <mat-card-content>
         <mat-form-field appearance="fill">
-          <mat-label>From</mat-label>
-          <mat-select matInput type="text" formControlName="from">
-            <mat-option *ngFor="let s of fromStates" [value]="s">{{ s }}</mat-option>
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            <mat-option *ngFor="let status of choices?.Status?.choice?.choices" [value]="status">
+            {{ status }}
+          </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-icon class="arrow">arrow_forward</mat-icon>
-        <mat-form-field appearance="fill">
-          <mat-label>To</mat-label>
-          <mat-select matInput type="text" formControlName="to">
-            <mat-option *ngFor="let s of targetStates" [value]="s">{{ s }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="field-container">
-        <mat-form-field appearance="fill">
-          <mat-label>Loading date</mat-label>
-          <input matInput [matDatepicker]="picker1" formControlName="loadingDate" title="Loading date">
-          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-          <mat-datepicker  #picker1></mat-datepicker>
-        </mat-form-field>
-        <mat-icon class="arrow">arrow_forward</mat-icon>
-        <mat-form-field appearance="fill">
-          <mat-label>Arrival date</mat-label>
-          <input matInput [matDatepicker]="picker2" formControlName="arrivalDate" title="Arrival date" [min]="loadingScheduleForm.value['loadingDate']">
-          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-          <mat-datepicker  #picker2></mat-datepicker>
-        </mat-form-field>
-      </div>
-
+      </mat-card-content>
       <div class="spacer">
         <mat-divider></mat-divider>
       </div>
-
-      <mat-form-field appearance="fill">
-        <mat-label>Transport company</mat-label>
-        <input type="text" title="Transport company" matInput formControlName="transportCompany" [matAutocomplete]="auto1">
-        <mat-autocomplete #auto1="matAutocomplete" [displayWith]="displayFn">
-          <mat-option *ngFor="let option of transportCompanies$ | async" [value]="option">
-            {{option.fields.Title}}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill">
-        <mat-label>Driver</mat-label>
-        <input type="text" title="Driver" matInput formControlName="driver" [matAutocomplete]="auto2">
-        <mat-autocomplete #auto2="matAutocomplete">
-          <mat-option *ngFor="let option of loadingScheduleForm.value['transportCompany']?.fields?.DriversArray" [value]="option">
-            {{option}}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-
+      <mat-card-content>
+        <div class="field-container">
+          <mat-form-field appearance="fill">
+            <mat-label>From</mat-label>
+            <mat-select matInput type="text" formControlName="from">
+              <mat-option *ngFor="let s of fromStates" [value]="s">{{ s }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-icon class="arrow">arrow_forward</mat-icon>
+          <mat-form-field appearance="fill">
+            <mat-label>To</mat-label>
+            <mat-select matInput type="text" formControlName="to">
+              <mat-option *ngFor="let s of targetStates" [value]="s">{{ s }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="field-container">
+          <mat-form-field appearance="fill">
+            <mat-label>Loading date</mat-label>
+            <input matInput [matDatepicker]="picker1" formControlName="loadingDate" title="Loading date">
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker  #picker1></mat-datepicker>
+          </mat-form-field>
+          <mat-icon class="arrow">arrow_forward</mat-icon>
+          <mat-form-field appearance="fill">
+            <mat-label>Arrival date</mat-label>
+            <input matInput [matDatepicker]="picker2" formControlName="arrivalDate" title="Arrival date" [min]="loadingScheduleForm.value['loadingDate']">
+            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker  #picker2></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </mat-card-content>
       <div class="spacer">
         <mat-divider></mat-divider>
       </div>
-      <mat-form-field appearance="fill">
-        <mat-label>Spaces</mat-label>
-        <input matInput type="number" formControlName="spaces" autocomplete="off" title="Spaces" min="0">
-      </mat-form-field>
-      <mat-form-field appearance="fill">
-        <mat-label>Notes</mat-label>
-        <textarea matInput type="text" formControlName="notes" autocomplete="off" title="Notes"></textarea>
-      </mat-form-field>
+      <mat-card-content>
+        <mat-form-field appearance="fill">
+          <mat-label>Transport company</mat-label>
+          <input type="text" title="Transport company" matInput formControlName="transportCompany" [matAutocomplete]="auto1">
+          <mat-autocomplete #auto1="matAutocomplete" [displayWith]="displayFn">
+            <mat-option *ngFor="let option of transportCompanies$ | async" [value]="option">
+              {{option.fields.Title}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Driver</mat-label>
+          <input type="text" title="Driver" matInput formControlName="driver" [matAutocomplete]="auto2">
+          <mat-autocomplete #auto2="matAutocomplete">
+            <mat-option *ngFor="let option of loadingScheduleForm.value['transportCompany']?.fields?.DriversArray" [value]="option">
+              {{option}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </mat-card-content>
+      <div class="spacer">
+        <mat-divider></mat-divider>
+      </div>
+      <mat-card-content>
+        <mat-form-field appearance="fill">
+          <mat-label>Spaces</mat-label>
+          <input matInput type="number" formControlName="spaces" autocomplete="off" title="Spaces" min="0">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Notes</mat-label>
+          <textarea matInput type="text" formControlName="notes" autocomplete="off" title="Notes"></textarea>
+        </mat-form-field>
+      </mat-card-content>
     </mat-card>
     <div class="buttons">
       <button mat-raised-button color="primary" [disabled]="savingData" type="submit">Confirm</button>

@@ -10,6 +10,7 @@ input {
 .header {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
 }
 
 .top-title {
@@ -22,15 +23,15 @@ input {
   max-width: 1024px;
 }
 
-.mat-footer-row {
+.mat-mdc-footer-row {
   font-weight: bold;
 }
 
-.mat-subheader {
+.mat-mdc-subheader {
   display: flex;
 }
 
-.mat-subheader > span {
+.mat-mdc-subheader > span {
   flex: 1;
 }
 
@@ -51,11 +52,7 @@ input {
 }
 
 .mat-column-nav {
-  flex: 0 1 40px;
-}
-
-.last-icon {
-  order: 9;
+  flex: 0 1 88px;
 }
 
 .actions {

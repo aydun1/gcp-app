@@ -14,8 +14,6 @@
     {{ this.data.customer.name }} <span *ngIf="data.site">({{ data.site }})</span>
   </div>
 </div>
-
-
 <mat-dialog-content>
   <div *ngIf="(pallets$ | async) as pallets">
     <mat-table #table [dataSource]="pallets" [trackBy]="trackByFn">
@@ -69,7 +67,7 @@
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
   </div>
-  <gcp-loading-row *ngIf="loading$ | async"></gcp-loading-row>
+  <gcp-loading-row *ngIf="loading$ | async" class="loading-row"></gcp-loading-row>
 
 </mat-dialog-content>
 <mat-menu #palletsMenu="matMenu" xPosition="before">

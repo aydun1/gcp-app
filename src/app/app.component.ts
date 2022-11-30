@@ -84,7 +84,7 @@ export class AppComponent implements OnInit, OnDestroy {
       tap((msg: EventMessage) => this.authService.instance.setActiveAccount(msg.payload ? msg.payload['account'] : null))
     ).subscribe();
 
-    // Periodically check for software updates
+    // On interaction
     this.msalBroadcastService.inProgress$.pipe(
       filter((status: InteractionStatus) => status === InteractionStatus.None),
       takeUntil(this._destroying$),
@@ -96,7 +96,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Periodically check for software updates
     if (this.swUpdate.isEnabled) {
-      withLatestFrom();
       this.swUpdate.versionUpdates.pipe(
         filter((evt: VersionEvent) => evt.type === 'VERSION_READY')
       ).subscribe(() => location.reload());

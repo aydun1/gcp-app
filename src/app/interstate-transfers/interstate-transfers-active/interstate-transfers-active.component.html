@@ -1,23 +1,23 @@
 <div class="outer">
   <h2>Requested items (ITT)</h2>
   <gcp-letterhead class="print-heading">Requested items</gcp-letterhead>
-  <form class="inner" [formGroup]="transferForm">
-    <div class="options">
+  <form [formGroup]="transferForm">
+    <div class="options inner">
       <div class="buttons">
-        <mat-form-field appearance="outline" class="branch">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
           <mat-label>From</mat-label>
           <mat-select [formControl]="fromBranchFilter" (selectionChange)="setFromBranch($event)">
             <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline" class="branch">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
           <mat-label>To</mat-label>
           <mat-select [formControl]="toBranchFilter" (selectionChange)="setToBranch($event)">
             <mat-option>Show all</mat-option>
             <mat-option *ngFor="let s of otherBranches" [value]="s">{{ s }}</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline" class="branch">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
           <mat-label>View</mat-label>
           <mat-select [formControl]="viewFilter" (selectionChange)="setView($event)">
             <mat-option value="ungrouped">Ungrouped</mat-option>
@@ -26,7 +26,7 @@
         </mat-form-field>
       </div>
     </div>
-    <div *ngIf="interstateTransfers$ | async as interstateTransfers">
+    <div *ngIf="interstateTransfers$ | async as interstateTransfers" class="inner">
       <div *ngFor="let t of interstateTransfers.value['lines'] | groupByProperty:(viewFilter.value === 'grouped' ? 'docId' : '');trackBy: trackByGroupsFn">
         <div *ngIf="t.key !== 'undefined'" class="section-head">
           <a [routerLink]="[t.key]"><h3>{{ t.key }}</h3></a>

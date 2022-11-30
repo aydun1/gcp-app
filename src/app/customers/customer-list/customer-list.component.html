@@ -1,17 +1,17 @@
 <div class="outer">
   <gcp-letterhead class="print-heading">Customers</gcp-letterhead>
   <div class="options inner">
-    <mat-form-field appearance="outline" class="region-filter">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="region-filter">
       <mat-label>Select Territory</mat-label>
       <mat-select [formControl]="territoryFilter" (selectionChange)="setRegion($event)">
         <mat-option *ngFor="let t of territories" value="{{ t }}">{{ t }}</mat-option>
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="name-filter">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="name-filter">
       <mat-label>Find by name</mat-label>
       <input matInput [formControl]="nameFilter" type="text" autocomplete="off" placeholder="Type to search...">
-      <button *ngIf="!nameFilter.value" matSuffix mat-icon-button disabled type="button">
+      <button *ngIf="!nameFilter.value" matSuffix mat-icon-button type="button" disabled>
         <mat-icon>search</mat-icon>
       </button>
       <button *ngIf="nameFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearNameFilter()" type="button">
@@ -19,7 +19,7 @@
       </button>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="pallet-filter">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="pallet-filter">
       <mat-label>Pallets</mat-label>
       <mat-select [formControl]="palletsFilter" multiple (selectionChange)="setPallets($event)">
         <mat-option value="loscam">Loscam</mat-option>

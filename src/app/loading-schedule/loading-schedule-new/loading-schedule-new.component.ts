@@ -123,7 +123,7 @@ export class LoadingScheduleNewComponent implements OnInit {
         this.snackBar.open(`${this.id ? 'Updated' : 'Added'} loading schedule entry`, '', {duration: 3000});
       }),
       catchError(err => {
-        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
+        this.snackBar.open(err.error?.error?.message || 'Unknown error', 'ok', {duration: 3000});
         this.savingData = false;
         return throwError(() => new Error(err));
       })
