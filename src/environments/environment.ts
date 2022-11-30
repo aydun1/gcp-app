@@ -1,11 +1,13 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
+const apiUrl = 'http://localhost:3000';
 
 export const environment = {
   production: false,
   redirectUri: 'http://localhost:4200',
-  gpEndpoint: 'http://localhost:3000/gp',
+  gpEndpoint: `${apiUrl}/gp`,
+  cwEndpoint: `${apiUrl}/cw`,
   endpoint: 'https://graph.microsoft.com/v1.0',
   siteUrl: 'sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4',
 };
