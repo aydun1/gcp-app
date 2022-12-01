@@ -20,6 +20,7 @@
 
 .mat-mdc-dialog-content {
   height: 40vh;
+  padding: 0;
 }
 
 .buttons {

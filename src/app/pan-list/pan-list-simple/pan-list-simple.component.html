@@ -1,5 +1,5 @@
 <div class="outer">
-  <form class="inner" [formGroup]="transferForm">
+  <form [formGroup]="transferForm">
     <div class="options">
       <div class="buttons">
         <mat-button-toggle-group class="selector" name="panList" aria-label="Pan List" [(ngModel)]="selectedPanId" [ngModelOptions]="{standalone: true}" (change)="setPan($event.value)">

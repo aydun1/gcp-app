@@ -4,7 +4,8 @@
   justify-content: space-between;
   margin: 0 10px;
 }
-.mat-mdc-card-title {
+
+gcp-docs .mat-mdc-card-title {
   padding: 16px 16px 0;
 }
 

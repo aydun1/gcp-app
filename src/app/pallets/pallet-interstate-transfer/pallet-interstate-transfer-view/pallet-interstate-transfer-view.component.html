@@ -23,7 +23,7 @@
       <button *ngIf="(transport || sender) && transfer.summary.approved && !transfer.summary.transferred" mat-raised-button class="action" color="primary" (click)="transferp(transfer.summary.id)" [disabled]="loading || editQuantity" type="button">Mark as transferred</button>
     </div>
   </div>
-  <mat-card class="inner">
+  <mat-card appearance="outlined" class="inner">
     <mat-card-content>
       <mat-list>
         <mat-list-item>
@@ -110,7 +110,7 @@
       </div>
     </mat-card-content>
   </mat-card>
-  <mat-card class="inner">
+  <mat-card appearance="outlined" class="inner">
     <gcp-docs [id]="transfer.summary.id" folder="transfers" (statusChanged)="markFileAttached(transfer.summary.id, $event)">
       <mat-card-header>
         <mat-card-title>Attachments</mat-card-title>

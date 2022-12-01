@@ -10,7 +10,7 @@
 <div *ngIf="loadingData | async; else loadingPage" class="outer">
   <h2>{{id ? 'Edit' : 'New'}} pallet stocktake report</h2>
   <form (ngSubmit)="onSubmit()" [formGroup]="palletRecForm">
-    <mat-card>
+    <mat-card appearance="outlined">
       <mat-card-content>
         <mat-form-field appearance="fill">
           <mat-label>Invoice/stocktake date</mat-label>
@@ -40,7 +40,7 @@
         </mat-form-field>
       </mat-card-content>
     </mat-card>
-    <mat-card>
+    <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>Physical stocktake</mat-card-title>
       </mat-card-header>
@@ -55,7 +55,7 @@
         </mat-form-field>
       </mat-card-content>
     </mat-card>
-    <mat-card>
+    <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>Pallets elsewhere</mat-card-title>
       </mat-card-header>
@@ -92,7 +92,7 @@
         </mat-form-field>
       </mat-card-content>
     </mat-card>
-    <mat-card>
+    <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>Stocktake result</mat-card-title>
       </mat-card-header>
