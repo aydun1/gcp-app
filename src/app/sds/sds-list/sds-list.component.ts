@@ -1,4 +1,6 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'gcp-sds-list',
@@ -7,9 +9,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SdsListComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private http: HttpClient,
+  ) { }
 
   ngOnInit(): void {
+    1
   }
 
+  login() {
+    this.http.get(`${environment.cwEndpoint}/login`).subscribe();
+  }
+
+  materials() {
+    this.http.get(`${environment.cwEndpoint}/materials`).subscribe();
+  }
 }
