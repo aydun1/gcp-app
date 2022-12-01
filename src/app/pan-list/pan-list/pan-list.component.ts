@@ -25,6 +25,7 @@ export class PanListComponent implements OnInit {
   @ViewChild(MatTable) _matTable!:MatTable<any>;
 
   @Input() suggestions = true;
+  @Input() includeUnsent = false;
   @Input() autosave!: boolean;
   @Input() defaultCategories: Array<string> = [];
   @Input() defaultColumns: Array<string> = [];
@@ -90,7 +91,7 @@ export class PanListComponent implements OnInit {
   }
 
   public get otherStates(): Array<string> {
-    const states = this.states.filter(_ => _ !== this.branchFilter.value)
+    const states = this.states.filter(_ => _ !== this.branchFilter.value);
     return [...states, 'allocated', 'required', 'toFill'];
   }
 
@@ -177,6 +178,7 @@ export class PanListComponent implements OnInit {
   }
 
   formMapper(_: SuggestedItem): any {
+    const qtyOnHand = this.includeUnsent ? _.QtyOnHand + _.InTransit + _.PreTransit : _.QtyOnHand;
     const required = Math.max(0, _.QtyAvailable * -1);
     const toFill = _[this.max] ? _.QtyAvailable * -1 + _[this.max] : required;
     const suggested =  _.QtyAvailable < _[this.min] ? toFill : 0;
@@ -196,10 +198,10 @@ export class PanListComponent implements OnInit {
       saOnHand: _.OnHandSA,
       waOnHand: _.OnHandWA,
       nswOnHand: _.OnHandNSW,
-      qtyOnHand: _.QtyOnHand,
+      qtyOnHand,
       qtyAllocated: _.QtyAllocated,
       qtyBackordered: _.QtyBackordered,
-      underStocked: _.QtyAllocated && _.QtyAllocated > _.QtyOnHand,
+      underStocked: _.QtyAllocated && _.QtyAllocated > qtyOnHand,
       qtyRequired: required || null,
       suggested: suggested || null,
       toFill: toFill,
