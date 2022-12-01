@@ -5,8 +5,8 @@
   <ng-container>
     <div class="top-title">Cage</div>
   </ng-container>
-  <a *ngIf="getPrev() | async as n" mat-icon-button [routerLink]="['..', n]" replaceUrl="true"><mat-icon>chevron_left</mat-icon></a>
-  <a *ngIf="getNext() | async as n" mat-icon-button [routerLink]="['..', n]" replaceUrl="true"><mat-icon>chevron_right</mat-icon></a>
+  <a *ngIf="getPrev() | async as n" mat-icon-button [routerLink]="['..', n]" [replaceUrl]="true" matTooltip="Previous cage"><mat-icon>chevron_left</mat-icon></a>
+  <a *ngIf="getNext() | async as n" mat-icon-button [routerLink]="['..', n]" [replaceUrl]="true" matTooltip="Next cage"><mat-icon>chevron_right</mat-icon></a>
 </mat-toolbar>
 
 <gcp-loading-page *ngIf="loading | async"></gcp-loading-page>
