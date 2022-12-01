@@ -222,6 +222,11 @@ gcp-big-button > .link,
   border-left: 2px solid red;
 }
 
+.wide-select {
+  position: fixed !important;
+  width: auto !important;
+}
+
 @media (max-width: 800px) {
   .home-cards {
     margin: 10px;
