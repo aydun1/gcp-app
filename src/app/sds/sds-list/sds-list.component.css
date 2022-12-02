@@ -1,0 +1,25 @@
+:host {
+  display: block;
+}
+
+.outer {
+  margin: 0 auto;
+  max-width: 1024px;
+}
+
+h2 {
+  margin-left: 10px;
+}
+
+.mat-column-bin {
+  flex: 0 0 120px;
+}
+
+
+.mat-column-product {
+  flex: 1;
+}
+
+.mat-column-onHand {
+  flex: 0 0 120px;
+}
