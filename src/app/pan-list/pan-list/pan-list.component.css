@@ -137,7 +137,7 @@ h2 {
 }
 
 .mat-column-transfer {
-  background: #a5a5a5;
+  background: #a5a5a5 !important;
   flex: 0 0 120px;
   padding-left: 12px;
 }
