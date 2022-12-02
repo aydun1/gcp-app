@@ -2,7 +2,7 @@ import { Component, HostBinding, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of, switchMap, tap } from 'rxjs';
 
-import { SharedService } from 'src/app/shared.service';
+import { SharedService } from '../../../shared.service';
 import { NavigationService } from '../../../navigation.service';
 import { PalletsReconciliationService } from '../../shared/pallets-reconciliation.service';
 import { Reconciliation } from '../../shared/reconciliation';
