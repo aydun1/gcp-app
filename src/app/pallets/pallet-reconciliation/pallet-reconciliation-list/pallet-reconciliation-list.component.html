@@ -21,7 +21,7 @@
     <a mat-raised-button [routerLink]="['.', 'new']" color="primary">New stocktake</a>
   </div>
 
-  <div *ngIf="(pallets$ | async) as pallets" class="inner">
+  <mat-card appearance="outlined" *ngIf="(pallets$ | async) as pallets" class="inner">
     <mat-table #table [dataSource]="pallets" [trackBy]="trackByFn">
       <ng-container matColumnDef="date">
         <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
@@ -72,7 +72,7 @@
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
       <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) ? false : true"></mat-footer-row>
     </mat-table>
-  </div>
+  </mat-card>
 </div>
 
 <router-outlet></router-outlet>

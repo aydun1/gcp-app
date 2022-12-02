@@ -10,7 +10,7 @@
 <div class="outer">
   <h2>Add a new cage</h2>
   <form (ngSubmit)="addCage()" [formGroup]="cageForm" class="inner">
-    <mat-card>
+    <mat-card appearance="outlined">
       <mat-card-content>
         <mat-form-field appearance="fill" class="asset-type">
           <mat-label>{{ (choices$ | async)?.AssetType.name }}</mat-label>

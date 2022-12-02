@@ -44,7 +44,7 @@ h2 {
 }
 
 .mat-column-recepient {
-  flex: 0 1 300px;
+  flex: 1 1 300px;
 }
 
 .mat-column-pallet {

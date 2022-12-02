@@ -56,7 +56,7 @@
     <div *ngIf="statusFilter.value"><strong>Status:</strong> {{ statusFilter.value }}</div>
   </div>
 
-  <div class="inner">
+  <mat-card appearance="outlined" class="inner">
     <mat-table #table [dataSource]="cages" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
 
       <ng-container matColumnDef="checked">
@@ -127,7 +127,7 @@
       <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) ? false : true"></mat-footer-row>
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
-  </div>
+  </mat-card>
 </div>
 
 <router-outlet></router-outlet>

@@ -43,7 +43,7 @@
     </div>
   </div>
 
-  <mat-card class="inner details-card">
+  <mat-card appearance="outlined" class="inner details-card">
     <mat-card-content>
       <mat-list>
         <h3 matSubheader>Details</h3>
@@ -107,14 +107,14 @@
     </div>
   </mat-card>
 
-  <mat-card class="inner pan-list">
+  <mat-card appearance="outlined" class="inner pan-list">
     <mat-card-header>
       <mat-card-title>Pan list</mat-card-title>
     </mat-card-header>
     <gcp-pan-list-simple [note]="panNote" [scheduleId]="loadingScheduleEntry.id" [panLists]="loadingScheduleEntry.fields.PanListsArray" (addPanList)="addPanList(loadingScheduleEntry.id)" (deletePanList)="deletePanList(loadingScheduleEntry.id, $event)" (sendPanList)="sendPanList(loadingScheduleEntry.id, $event, loadingScheduleEntry)"></gcp-pan-list-simple>
   </mat-card>
 
-  <mat-card class="inner attachments">
+  <mat-card appearance="outlined" class="inner attachments">
     <gcp-docs [id]="loadingScheduleEntry.id" folder="loading-schedule">
         <mat-card-title>Attachments</mat-card-title>
     </gcp-docs>

@@ -7,7 +7,7 @@
 //  If you specify typography styles for the components you use elsewhere, you should delete this line.
 //  If you don't need the default component typographies but still want the hierarchy styles,
 //  you can delete this line and instead use:
-//    `@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());`
+//    `@include mat.legacy-typography-hierarchy(mat.define-typography-config());`
 @include mat.all-component-typographies();
 @include mat.core();
 
@@ -115,10 +115,6 @@ input {
 .mat-toolbar {
   background-color: #007239;
   color: white;
-}
-
-.mat-mdc-table {
-  border: 1px solid rgba(0,0,0,.12)!important;
 }
 
 .mat-mdc-dialog-container {
@@ -261,11 +257,8 @@ gcp-big-button > .link,
   }
 
   .mat-mdc-card {
-    box-shadow: none !important;
-  }
-
-  .mat-mdc-table {
     border: none !important;
+    box-shadow: none !important;
   }
 
   .mat-mdc-row {

@@ -1,8 +1,3 @@
-.outer {
-  margin: 0 auto;
-  max-width: 1024px;
-}
-
 .coloured {
   border-radius: 10px;
   color: white;
@@ -37,6 +32,7 @@ h2 {
 .options {
   align-items: center;
   display: flex;
+  margin-left: 16px;
 }
 
 .buttons {
@@ -91,7 +87,8 @@ h2 {
 }
 
 .pan-notes {
-  margin-top: 20px;
+  margin: 0 16px 16px 16px;
+  min-height: 56px;
 }
 
 .pan-notes > p {

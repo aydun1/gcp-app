@@ -30,7 +30,7 @@
     </div>
     <div *ngIf="autosave && (saving | async) as s" class="autosave">Autosave: {{ s }}</div>
   </div>
-  <div>
+  <mat-card appearance="outlined">
     <mat-table #table [dataSource]="lines.controls" [trackBy]="trackByFn" formArrayName="lines">
       <ng-container matColumnDef="bin">
         <mat-header-cell *matHeaderCellDef> Bin </mat-header-cell>
@@ -249,11 +249,6 @@
         </mat-footer-cell>
       </ng-container>
 
-
-
-
-
-
       <ng-container matColumnDef="transfer">
         <mat-header-cell *matHeaderCellDef>
           <div class="load-details">
@@ -323,11 +318,11 @@
       <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(lines.controls) || !suggestions"></mat-footer-row>
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
-    <mat-card *ngIf="showNotes" class="notes">
+    <mat-card appearance="raised" *ngIf="showNotes" class="notes">
       <mat-form-field class="search-form" subscriptSizing="dynamic">
         <mat-label>Notes</mat-label>
         <input matInput type="text" [formControl]="notes" autocomplete="off">
       </mat-form-field>
     </mat-card>
-  </div>
+  </mat-card>
 </form>

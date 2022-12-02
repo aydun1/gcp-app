@@ -29,7 +29,7 @@
     </div>
   </div>
 
-  <div *ngIf="(pallets$ | async) as pallets" class="inner">
+  <mat-card appearance="outlined" *ngIf="(pallets$ | async) as pallets" class="inner">
     <mat-table #table [dataSource]="pallets" [trackBy]="trackByFn">
 
       <ng-container matColumnDef="date">
@@ -103,7 +103,7 @@
       <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) ? false : true"></mat-footer-row>
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
-  </div>
+  </mat-card>
 </div>
 
 <router-outlet></router-outlet>
