@@ -1,3 +1,7 @@
+textarea:focus {
+  height: 128px;
+}
+
 .opener {
   cursor: pointer;
 }

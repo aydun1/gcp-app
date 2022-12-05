@@ -321,7 +321,7 @@
     <mat-card appearance="raised" *ngIf="showNotes" class="notes">
       <mat-form-field class="search-form" subscriptSizing="dynamic">
         <mat-label>Notes</mat-label>
-        <input matInput type="text" [formControl]="notes" autocomplete="off">
+        <textarea matInput type="text" [formControl]="notes" autocomplete="off"></textarea>
       </mat-form-field>
     </mat-card>
   </mat-card>

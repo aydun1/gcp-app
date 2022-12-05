@@ -187,7 +187,7 @@ export class LoadingScheduleService {
     return firstValueFrom(this.getLoadingScheduleEntry(id).pipe(
       switchMap(_ => {
         const toUpdate = _.fields.PanListsArray?.find(p => `${p[0]}` === `${panListId}`) || [];
-        toUpdate[1] = note || '';
+        toUpdate[1] = note?.replace(/(?:\r\n|\r|\n)/g, '<br>') || '';
         const fields = {PanLists: _.fields.PanListsArray?.join('\r\n')};
         return this.http.patch<LoadingSchedule>(url, {fields});
       }),
