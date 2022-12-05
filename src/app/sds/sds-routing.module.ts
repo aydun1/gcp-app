@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SdsListComponent } from './sds-list/sds-list.component';
+import { SdsViewComponent } from './sds-view/sds-view.component';
 import { SdsComponent } from './sds.component';
 
 
@@ -12,8 +13,15 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        data: {title: 'Chemical list'},
-        component: SdsListComponent
+        data: {title: 'Chemicals'},
+        component: SdsListComponent,
+        children: [
+          {
+            path: ':id',
+            data: {title: 'Chemicals'},
+            component: SdsViewComponent,
+          }
+        ]
       }
     ]
   }

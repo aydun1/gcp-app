@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, catchError, combineLatest, firstValueFrom, forkJoin, lastValueFrom, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, lastValueFrom, map } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { Chemical } from './chemical';
@@ -16,9 +15,15 @@ export class SdsService {
     private http: HttpClient
   ) { }
 
-  getChemicals(branch: string): Promise<Chemical[]> {
-    console.log(999)
+  getOnHandChemicals(branch: string): Promise<Chemical[]> {
     const request = this.http.get<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/chemicals?branch=${branch}`).pipe(
+      map(res => res.chemicals)
+    );
+    return lastValueFrom(request);
+  }
+
+  getSavedChemicals(): any {
+    const request = this.http.get<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/saved-materials`).pipe(
       map(res => res.chemicals)
     );
     return lastValueFrom(request);

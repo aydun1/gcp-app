@@ -32,7 +32,7 @@ export class SdsListComponent implements OnInit {
   }
 
   getChemicals() {
-    this.chemicals$ = this.sdsService.getChemicals('QLD').then(_ => {console.log(_); return _})
+    this.chemicals$ = this.sdsService.getOnHandChemicals('QLD').then(_ => {console.log(_); return _})
   }
 
   setBranch(branch: MatSelectChange): void {

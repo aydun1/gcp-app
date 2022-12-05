@@ -32,9 +32,9 @@
         <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
         <mat-cell *matCellDef="let line">
           <div class="details">
-            <strong>
-              {{ line['ItemNmbr'] }}
-            </strong>
+            <a [routerLink]="[line['ItemNmbr']]">
+              <strong>{{ line['ItemNmbr'] }}</strong>
+            </a>
             <div class="description">
               {{ line['ItemDesc'] }}
             </div>
@@ -77,3 +77,4 @@
   </mat-card>
 </div>
 
+<router-outlet></router-outlet>
