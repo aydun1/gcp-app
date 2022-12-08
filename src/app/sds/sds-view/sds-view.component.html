@@ -1,0 +1,15 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="goBack()" class="mobile-button" type="button">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <ng-container>
+    <div class="title">{{ itemNumber }}</div>
+  </ng-container>
+</mat-toolbar>
+
+<div *ngIf="item$ | async as item">
+  {{ item.Name }}
+  <div *ngIf="!item.sdsExists" class="add-sds">
+    <button mat-button (click)="openBackpack()">Assign an SDS</button>
+  </div>
+</div>

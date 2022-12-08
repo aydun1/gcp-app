@@ -1,0 +1,45 @@
+:host {
+  display: block;
+}
+
+.outer {
+  margin: 0 auto;
+  max-width: 1024px;
+}
+
+h2 {
+  margin-left: 10px;
+}
+
+.mat-column-sds {
+  flex: 0 0 64px;
+}
+
+.mat-column-bin {
+  flex: 0 0 120px;
+}
+
+
+.mat-column-product {
+  flex: 1;
+}
+
+.mat-column-onHand {
+  flex: 0 0 120px;
+}
+
+.mat-column-packingGroup {
+  flex: 0 0 90px;
+}
+
+.mat-column-hazardRating {
+  flex: 0 0 90px;
+}
+
+.hazard-2 {
+  color: #fff230;
+}
+
+.hazard-3 {
+  color: #ff923c;
+}
