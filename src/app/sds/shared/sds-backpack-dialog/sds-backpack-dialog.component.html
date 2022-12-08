@@ -1,0 +1,14 @@
+<div class="header">
+  <h2 mat-dialog-title>Pick an SDS</h2>
+  <button mat-button (click)="syncFromChemwatch()">Sync</button>
+</div>
+<mat-dialog-content>
+  <mat-list>
+    <mat-list-item *ngFor="let c of chemicals$ | async">
+      <div>{{ c.Name }}</div>
+      <ng-container matListItemMeta>
+        <button mat-icon-button type="button" (click)="linkMaterial(c.CwNo)"><mat-icon class="last-icon">link</mat-icon></button>
+      </ng-container>
+    </mat-list-item>
+  </mat-list>
+</mat-dialog-content>

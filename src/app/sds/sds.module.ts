@@ -6,12 +6,14 @@ import { SdsComponent } from './sds.component';
 import { SdsListComponent } from './sds-list/sds-list.component';
 import { SdsRoutingModule } from './sds-routing.module';
 import { SdsViewComponent } from './sds-view/sds-view.component';
+import { SdsBackpackDialogComponent } from './shared/sds-backpack-dialog/sds-backpack-dialog.component';
 
 @NgModule({
   declarations: [
     SdsComponent,
     SdsListComponent,
-    SdsViewComponent
+    SdsViewComponent,
+    SdsBackpackDialogComponent
   ],
   imports: [
     CommonModule,

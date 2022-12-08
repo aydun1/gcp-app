@@ -14,6 +14,22 @@
   <mat-card appearance="outlined" class="inner" *ngIf="(chemicals$ | async) as chemicals">
     <mat-table #table [dataSource]="chemicals" [trackBy]="trackByFn">
 
+      <ng-container matColumnDef="sds">
+        <mat-header-cell *matHeaderCellDef>
+          <div>
+            SDS
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line">
+          <div>
+            <mat-icon *ngIf="line['sdsExists']" color="primary">check</mat-icon>
+            <mat-icon *ngIf="!line['sdsExists']" matTooltip="Item has no SDS attached" color="warn">error</mat-icon>
+
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
       <ng-container matColumnDef="bin">
         <mat-header-cell *matHeaderCellDef>
           <div>
@@ -56,7 +72,36 @@
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
-  
+
+      <ng-container matColumnDef="packingGroup">
+        <mat-header-cell *matHeaderCellDef>
+          <div class="loadDetails">
+            Packing group
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line">
+          <div class="loadDetails">
+            {{ line['packingGroup'] }}
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="hazardRating">
+        <mat-header-cell *matHeaderCellDef>
+          <div class="loadDetails">
+            Hazard
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let line">
+          <div class="loadDetails">
+            <mat-icon *ngIf="line['hazardRating'] === 2" class="hazard-3">warning</mat-icon>
+            <mat-icon *ngIf="line['hazardRating'] === 3" class="hazard-3">warning</mat-icon>
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
       <ng-container matColumnDef="loading">
         <mat-footer-cell *matFooterCellDef>
           <gcp-loading-row></gcp-loading-row>

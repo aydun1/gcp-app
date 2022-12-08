@@ -5,4 +5,5 @@ export interface Material {
   VendorName: string;
   Pkg: string;
   Dgc: string;
+  sdsExists: string;
 }
