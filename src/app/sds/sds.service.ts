@@ -36,6 +36,13 @@ export class SdsService {
     return lastValueFrom(request);
   }
 
+  getPdf(docNo: string) {
+    const request = this.http.get<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/get-pdf?docNo=${docNo}`).pipe(
+      map(res => res)
+    );
+    return lastValueFrom(request);
+  }
+
   getSyncedChemicals() {
     const request = this.http.get<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/synced-materials`).pipe(
       map(res => res.chemicals)

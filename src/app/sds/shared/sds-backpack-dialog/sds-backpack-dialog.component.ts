@@ -14,7 +14,7 @@ export class SdsBackpackDialogComponent implements OnInit {
   public saving = false;
   public selected: Chemical | undefined;
 
-  constructor(
+  constructor (
     public dialogRef: MatDialogRef<SdsBackpackDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {itemNumber: string},
     private sdsService: SdsService
@@ -24,9 +24,10 @@ export class SdsBackpackDialogComponent implements OnInit {
     this.getSynced();
   }
 
-  setItem(e: MatSelectionListChange) {
+  setItem(e: MatSelectionListChange): void {
     this.selected = e.options[0].value;
   }
+
   syncFromChemwatch(): void {
     this.sdsService.syncFromChemwatch();
   }

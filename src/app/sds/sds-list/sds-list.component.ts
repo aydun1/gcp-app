@@ -20,7 +20,7 @@ export class SdsListComponent implements OnInit {
   public textFilter = new FormControl(this.route.snapshot.paramMap.get('search'));
   public groupFilter = new FormControl(this.route.snapshot.paramMap.get('groupby'));
   public loading = false;
-  public displayedColumns = ['sds', 'bin', 'product', 'onHand', 'packingGroup', 'hazardRating'];
+  public displayedColumns = ['sds', 'bin', 'product', 'onHand', 'packingGroup', 'class', 'hazardRating'];
   public chemicals$!: Observable<Chemical[]>;
   public branchFilter = new FormControl({value: this.ownState, disabled: false});
   public states = this.shared.branches;

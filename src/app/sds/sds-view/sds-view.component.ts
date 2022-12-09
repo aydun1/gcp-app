@@ -31,7 +31,6 @@ export class SdsViewComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-
     this.item$ = combineLatest([this.route.paramMap, this.sharedService.getBranch(), this.refresh]).pipe(
       tap(([params, _]) => this.itemNumber = params.get('id')),
       switchMap(([params, _]) => this.getItem(params.get('id'), _)),
@@ -56,6 +55,10 @@ export class SdsViewComponent implements OnInit {
     dialogRef.afterClosed().subscribe(() => {
       this.refresh.next(true);
     });
+  }
+
+  getPdf(docNo: string) {
+    this.sdsService.getPdf(docNo);
   }
 
   goBack(): void {

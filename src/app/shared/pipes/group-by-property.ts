@@ -5,13 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class GroupByPropertyPipe implements PipeTransform {
   transform(collection: Array<any>, property: string): Array<any> | null {
-
-
-
     if(!collection || collection.length === 0) return [{key: 'undefined', value: []}];
-
-
-
     const groupedCollection = collection.reduce((previous, current)=> {
         if(!previous[current[property]]) {
             previous[current[property]] = [current];

@@ -3,4 +3,5 @@ export interface Chemical {
   CwNo: string;
   Name: string;
   sdsExists: number;
+  docNo: string
 }

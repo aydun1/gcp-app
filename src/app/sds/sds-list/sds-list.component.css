@@ -44,6 +44,10 @@ h2 {
   flex: 0 0 90px;
 }
 
+.mat-column-class {
+  flex: 0 0 90px;
+}
+
 .mat-column-hazardRating {
   flex: 0 0 90px;
 }

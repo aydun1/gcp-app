@@ -18,10 +18,12 @@
         <mat-icon>close</mat-icon>
       </button>
     </mat-form-field>
+
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
       <mat-label>Group by</mat-label>
       <mat-select [formControl]="groupFilter" (selectionChange)="setGroup($event)">
         <mat-option value="">Ungrouped</mat-option>
+        <mat-option value="class">Class</mat-option>
         <mat-option value="packingGroup">Packing group</mat-option>
         <mat-option value="hazardRating">Hazard</mat-option>
       </mat-select>
@@ -32,7 +34,7 @@
     <div *ngFor="let c of chemicals | groupByProperty:(groupFilter.value || '')">
       <div *ngIf="c" class="inner">
         <div *ngIf="c.key !== 'undefined'" class="section-head">
-          <h3>{{ c.key || 'Other' }}</h3>
+          <h3>{{ c.key !== 'null' ? c.key : 'Other' }}</h3>
         </div>
         <mat-card appearance="outlined">
           <mat-table #table [dataSource]="c.value" [trackBy]="trackByFn">
@@ -108,7 +110,21 @@
               </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
-      
+
+            <ng-container matColumnDef="class">
+              <mat-header-cell *matHeaderCellDef>
+                <div class="loadDetails">
+                  Class
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div class="loadDetails">
+                  {{ line['class'] }}
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+
             <ng-container matColumnDef="hazardRating">
               <mat-header-cell *matHeaderCellDef>
                 <div class="loadDetails">

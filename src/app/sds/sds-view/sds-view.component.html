@@ -7,8 +7,26 @@
   </ng-container>
 </mat-toolbar>
 
-<div *ngIf="item$ | async as item">
-  {{ item.Name }}
+<div *ngIf="item$ | async as item" class="content">
+  <mat-card *ngIf="item.sdsExists">
+    <mat-card-header>
+      <mat-card-title>
+        SDS details
+      </mat-card-title>
+    </mat-card-header>
+    <mat-list>
+      <mat-list-item>
+        <span matListItemTitle>{{ item.Name }}</span>
+        <span>Name</span>
+      </mat-list-item>
+      <mat-list-item (click)="getPdf(item.docNo)">
+        <span matListItemTitle>{{ item.docNo }}</span>
+        <span>PDF</span>
+      </mat-list-item>
+    </mat-list>
+
+  </mat-card>
+
   <div *ngIf="!item.sdsExists" class="add-sds">
     <button mat-button (click)="openBackpack()">Assign an SDS</button>
   </div>
