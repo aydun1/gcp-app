@@ -42,7 +42,7 @@ export class InterstateTransferViewComponent implements OnDestroy, OnInit {
       retry({count: 10, delay: 2000}),
       catchError(_ => {
         console.log(_);
-        this.error = 'Unable to get ITT from GP (or it is still importing), please try again later.';
+        this.error = `Unable to load ${id} from GP right now. It is likely still importing. Please check again later.`;
         return of();
       })
     );

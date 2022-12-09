@@ -3,12 +3,13 @@
   <button mat-button (click)="syncFromChemwatch()">Sync</button>
 </div>
 <mat-dialog-content>
-  <mat-list>
-    <mat-list-item *ngFor="let c of chemicals$ | async">
+  <mat-selection-list [multiple]="false" (selectionChange)="setItem($event)">
+    <mat-list-option *ngFor="let c of chemicals$ | async" [value]="c">
       <div>{{ c.Name }}</div>
-      <ng-container matListItemMeta>
-        <button mat-icon-button type="button" (click)="linkMaterial(c.CwNo)"><mat-icon class="last-icon">link</mat-icon></button>
-      </ng-container>
-    </mat-list-item>
-  </mat-list>
+    </mat-list-option>
+  </mat-selection-list>
+  <mat-dialog-actions align="end">
+    <button type="button" mat-button mat-dialog-close tabindex=-1>Cancel</button>
+    <button type="submit" mat-raised-button color="primary" [disabled]="saving" (click)="linkMaterial()">Save</button>
+  </mat-dialog-actions>
 </mat-dialog-content>

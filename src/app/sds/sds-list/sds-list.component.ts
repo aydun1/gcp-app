@@ -17,6 +17,8 @@ export class SdsListComponent implements OnInit {
   private ownState = this.shared.branch;
   private loadList!: boolean;
 
+  public textFilter = new FormControl('');
+  public groupFilter = new FormControl('');
   public loading = false;
   public displayedColumns = ['sds', 'bin', 'product', 'onHand', 'packingGroup', 'hazardRating'];
   public chemicals$!: Observable<Chemical[]>;
@@ -44,8 +46,13 @@ export class SdsListComponent implements OnInit {
       tap(_ => {
         this.parseParams(_);
       }),
-      switchMap(_ => this.loadList ? this.sdsService.getOnHandChemicals(_['branch']) : [])
-    )
+      switchMap(_ => this.loadList ? this.getChemicals(_['search'], _['branch']) : [])
+    );
+
+    this.textFilter.valueChanges.pipe(
+      map(_ => _ && _.length > 0 ? _ : null),
+      tap(_ => this.router.navigate([], { queryParams: {'search': _}, queryParamsHandling: 'merge', replaceUrl: true}))
+    ).subscribe();
   }
 
   parseParams(params: Params): void {
@@ -54,6 +61,16 @@ export class SdsListComponent implements OnInit {
       this.branchFilter.patchValue(params['branch']);
     } else {
       this.branchFilter.patchValue('');
+    }
+    if ('search' in params) {
+      this.textFilter.patchValue(params['search']);
+    } else {
+      if (this.textFilter.value) this.textFilter.patchValue('');
+    }
+    if ('groupby' in params) {
+      this.groupFilter.patchValue(params['groupby']);
+    } else {
+      this.groupFilter.patchValue('');
     }
   }
 
@@ -72,8 +89,23 @@ export class SdsListComponent implements OnInit {
     this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
+  setGroup(view: MatSelectChange): void {
+    this.router.navigate([], { queryParams: {groupby: view.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
   getTotalRequestedLines(lines: Array<any>): number {
     return lines.reduce((acc, cur) => acc + 1, 0);
+  }
+
+  getChemicals(search: string, branch: string): Promise<Chemical[]> {
+    search = (search || '').toLowerCase();
+    return this.sdsService.getOnHandChemicals(branch).then(_ =>
+      _.filter(c => c.ItemNmbr?.toLowerCase()?.includes(search))
+    )
+  }
+
+  clearTextFilter() {
+    this.textFilter.patchValue('');
   }
 
   trackByFn(index: number, item: Chemical): string {
