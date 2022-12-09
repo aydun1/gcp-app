@@ -71,7 +71,7 @@ export class InterstateTransferNewComponent implements OnInit {
       this.snackBar.open('Successfully created ITT.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
       this.router.navigate(['transfers/active', id]);
       this.creating = false;
-      this.shared.sendMail(to, subject, body, 'HTML');
+      if (environment.production) this.shared.sendMail(to, subject, body, 'HTML');
     }).catch(err => {
       this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-warn']});
       this.creating = false;
