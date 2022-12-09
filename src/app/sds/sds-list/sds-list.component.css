@@ -11,6 +11,18 @@ h2 {
   margin-left: 10px;
 }
 
+.options {
+  display: flex;
+}
+
+.mat-mdc-form-field {
+  margin-right: 10px;
+}
+
+.branch-filter {
+  flex: 0 0 160px;
+}
+
 .mat-column-sds {
   flex: 0 0 64px;
 }

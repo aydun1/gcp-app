@@ -71,8 +71,7 @@ export class CustomerListComponent implements OnInit {
         this.loscams = customers.map(_ => _.loscam).filter(_ => _).reduce((acc, val) => acc + val, 0);
         this.cheps = customers.map(_ => _.chep).filter(_ => _).reduce((acc, val) => acc + val, 0);
         this.plains = customers.map(_ => _.plain).filter(_ => _).reduce((acc, val) => acc + val, 0);
-      }),
-
+      })
     )
 
     this.nameFilter.valueChanges.pipe(

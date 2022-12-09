@@ -79,22 +79,18 @@ export class LoadingScheduleListComponent implements OnInit {
 
   parseParams(params: Params): void {
     if (!params) return;
-    const filters: Params = {};
     if ('branch' in params) {
       this.branchFilter.patchValue(params['branch']);
-      filters['branch'] = params['branch'];
     } else {
       this.branchFilter.patchValue('');
     }
     if ('status' in params) {
       this.statusFilter.patchValue(params['status']);
-      filters['status'] = params['status'];
     } else {
       this.statusFilter.patchValue('');
     }
     if ('view' in params) {
       this.viewFilter.patchValue(params['view']);
-      filters['view'] = params['view'];
     } else {
       this.viewFilter.patchValue('');
     }

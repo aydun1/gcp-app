@@ -1,7 +1,7 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, combineLatest, map, Observable, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, switchMap, tap } from 'rxjs';
 import { SharedService } from 'src/app/shared.service';
 
 import { NavigationService } from '../../navigation.service';
@@ -20,6 +20,7 @@ export class SdsViewComponent implements OnInit {
   public itemNumber = this.route.snapshot.paramMap.get('id');
   public branch!: string;
   public refresh = new BehaviorSubject<boolean>(true);
+  private opened = false;
 
   constructor (
     private route: ActivatedRoute,
@@ -29,27 +30,24 @@ export class SdsViewComponent implements OnInit {
     private sdsService: SdsService
   ) {}
 
-  ngOnInit() {
-
-    this.sharedService.getBranch().pipe(
-      tap(_ => this.branch = _)
-    ).subscribe();
+  ngOnInit(): void {
 
     this.item$ = combineLatest([this.route.paramMap, this.sharedService.getBranch(), this.refresh]).pipe(
       tap(([params, _]) => this.itemNumber = params.get('id')),
       switchMap(([params, _]) => this.getItem(params.get('id'), _)),
       tap(_ => {
-        if (!_.sdsExists) this.openBackpack();
+        if (!_.sdsExists && !this.opened) this.openBackpack();
       })
     );
     this.refresh.next(true);
   }
 
-  getItem(itemNumber: string | null, branch: string) {
-    return this.sdsService.getChemical(this.branch, itemNumber || '');
+  getItem(itemNumber: string | null, branch: string): Promise<Chemical> {
+    return this.sdsService.getChemical(branch, itemNumber || '');
   }
 
-  openBackpack() {
+  openBackpack(): void {
+    this.opened = true;
     const dialogRef = this.dialog.open(SdsBackpackDialogComponent, {
       autoFocus: false,
       width: '800px',
