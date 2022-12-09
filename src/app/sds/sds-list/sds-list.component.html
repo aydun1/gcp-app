@@ -21,121 +21,131 @@
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
       <mat-label>Group by</mat-label>
       <mat-select [formControl]="groupFilter" (selectionChange)="setGroup($event)">
-        <mat-option value="pkg">Packing group</mat-option>
-        <mat-option value="hazard">Hazard</mat-option>
+        <mat-option value="">Ungrouped</mat-option>
+        <mat-option value="packingGroup">Packing group</mat-option>
+        <mat-option value="hazardRating">Hazard</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 
-  <mat-card appearance="outlined" class="inner" *ngIf="(chemicals$ | async) as chemicals">
-    <mat-table #table [dataSource]="chemicals" [trackBy]="trackByFn">
-
-      <ng-container matColumnDef="sds">
-        <mat-header-cell *matHeaderCellDef>
-          <div>
-            SDS
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let line">
-          <div>
-            <mat-icon *ngIf="line['sdsExists']" color="primary">check</mat-icon>
-            <mat-icon *ngIf="!line['sdsExists']" matTooltip="Item has no SDS attached" color="warn">error</mat-icon>
-
-          </div>
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="bin">
-        <mat-header-cell *matHeaderCellDef>
-          <div>
-            Bin
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let line">
-          <div>
-            {{ line['Bin'] }}
-          </div>
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="product">
-        <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
-        <mat-cell *matCellDef="let line">
-          <div class="details">
-            <a [routerLink]="[line['ItemNmbr']]">
-              <strong>{{ line['ItemNmbr'] }}</strong>
-            </a>
-            <div class="description">
-              {{ line['ItemDesc'] }}
-            </div>
-          </div>
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
+  <div *ngIf="chemicals$ | async as chemicals">
+    <div *ngFor="let c of chemicals | groupByProperty:(groupFilter.value || '')">
+      <div *ngIf="c" class="inner">
+        <div *ngIf="c.key !== 'undefined'" class="section-head">
+          <h3>{{ c.key || 'Other' }}</h3>
+        </div>
+        <mat-card appearance="outlined">
+          <mat-table #table [dataSource]="c.value" [trackBy]="trackByFn">
+            <ng-container matColumnDef="sds">
+              <mat-header-cell *matHeaderCellDef>
+                <div>
+                  SDS
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div>
+                  <mat-icon *ngIf="line['sdsExists']" color="primary">check</mat-icon>
+                  <mat-icon *ngIf="!line['sdsExists']" matTooltip="Item has no SDS attached" color="warn">error</mat-icon>
+      
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+      
+            <ng-container matColumnDef="bin">
+              <mat-header-cell *matHeaderCellDef>
+                <div>
+                  Bin
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div>
+                  {{ line['Bin'] }}
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+      
+            <ng-container matColumnDef="product">
+              <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div class="details">
+                  <a [routerLink]="[line['ItemNmbr']]">
+                    <strong>{{ line['ItemNmbr'] }}</strong>
+                  </a>
+                  <div class="description">
+                    {{ line['ItemDesc'] }}
+                  </div>
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+        
+            <ng-container matColumnDef="onHand">
+              <mat-header-cell *matHeaderCellDef>
+                <div class="loadDetails">
+                  On hand
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div class="loadDetails">
+                  {{ line['QtyOnHand'] | number }}
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+      
+            <ng-container matColumnDef="packingGroup">
+              <mat-header-cell *matHeaderCellDef>
+                <div class="loadDetails">
+                  Packing group
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div class="loadDetails">
+                  {{ line['packingGroup'] }}
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+      
+            <ng-container matColumnDef="hazardRating">
+              <mat-header-cell *matHeaderCellDef>
+                <div class="loadDetails">
+                  Hazard
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div class="loadDetails">
+                  <mat-icon *ngIf="line['hazardRating'] === 2" class="hazard-2">warning</mat-icon>
+                  <mat-icon *ngIf="line['hazardRating'] === 3" class="hazard-3">warning</mat-icon>
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+      
+            <ng-container matColumnDef="loading">
+              <mat-footer-cell *matFooterCellDef>
+                <gcp-loading-row></gcp-loading-row>
+              </mat-footer-cell>
+            </ng-container>
+        
+            <ng-container matColumnDef="empty">
+              <mat-footer-cell *matFooterCellDef>
+                There are no chemicals in {{ branchFilter.value }}.
+              </mat-footer-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="!loading"></mat-footer-row>
+            <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(chemicals)"></mat-footer-row>
+            <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+          </mat-table>  
+        </mat-card>
   
-      <ng-container matColumnDef="onHand">
-        <mat-header-cell *matHeaderCellDef>
-          <div class="loadDetails">
-            On hand
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let line">
-          <div class="loadDetails">
-            {{ line['QtyOnHand'] | number }}
-          </div>
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="packingGroup">
-        <mat-header-cell *matHeaderCellDef>
-          <div class="loadDetails">
-            Packing group
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let line">
-          <div class="loadDetails">
-            {{ line['packingGroup'] }}
-          </div>
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="hazardRating">
-        <mat-header-cell *matHeaderCellDef>
-          <div class="loadDetails">
-            Hazard
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let line">
-          <div class="loadDetails">
-            <mat-icon *ngIf="line['hazardRating'] === 2" class="hazard-2">warning</mat-icon>
-            <mat-icon *ngIf="line['hazardRating'] === 3" class="hazard-3">warning</mat-icon>
-          </div>
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="loading">
-        <mat-footer-cell *matFooterCellDef>
-          <gcp-loading-row></gcp-loading-row>
-        </mat-footer-cell>
-      </ng-container>
-  
-      <ng-container matColumnDef="empty">
-        <mat-footer-cell *matFooterCellDef>
-          There are no chemicals in {{ branchFilter.value }}.
-        </mat-footer-cell>
-      </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="!loading"></mat-footer-row>
-      <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(chemicals)"></mat-footer-row>
-      <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
-    </mat-table>  
-  </mat-card>
+      </div>    
+    </div>
+  </div>
 </div>
 
 <router-outlet></router-outlet>

@@ -17,8 +17,8 @@ export class SdsListComponent implements OnInit {
   private ownState = this.shared.branch;
   private loadList!: boolean;
 
-  public textFilter = new FormControl('');
-  public groupFilter = new FormControl('');
+  public textFilter = new FormControl(this.route.snapshot.paramMap.get('search'));
+  public groupFilter = new FormControl(this.route.snapshot.paramMap.get('groupby'));
   public loading = false;
   public displayedColumns = ['sds', 'bin', 'product', 'onHand', 'packingGroup', 'hazardRating'];
   public chemicals$!: Observable<Chemical[]>;
@@ -107,6 +107,10 @@ export class SdsListComponent implements OnInit {
 
   clearTextFilter() {
     this.textFilter.patchValue('');
+  }
+
+  trackByGroupsFn(index: number, item: any): string {
+    return item.key;
   }
 
   trackByFn(index: number, item: Chemical): string {
