@@ -25,7 +25,7 @@ export class LoadingSchedulePanComponent implements OnInit {
 
   ngOnInit(): void {
     const panListDetails = this.loadingScheduleService.panLists?.find(_ => _[0] === this.panListId);
-    this.notes = panListDetails ? panListDetails[1] : '';
+    this.notes = panListDetails ? panListDetails[1].replace(/<br>/g, '\r\n') : '';
   }
 
   updateNote(note: string | null): void {
