@@ -82,8 +82,7 @@ export class SdsListComponent implements OnInit {
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
     const sameBranch = prev['branch'] === curr['branch'];
-    const sameSearch = prev['search'] === curr['search'];
-    return this.loadList && sameBranch && sameSearch;
+    return this.loadList && sameBranch;
   }
 
   setBranch(branch: MatSelectChange): void {

@@ -27,7 +27,6 @@ export class SdsBackpackDialogComponent implements OnInit {
   setItem(e: MatSelectionListChange) {
     this.selected = e.options[0].value;
   }
-
   syncFromChemwatch(): void {
     this.sdsService.syncFromChemwatch();
   }
