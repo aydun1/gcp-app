@@ -57,8 +57,12 @@ export class SdsViewComponent implements OnInit {
     });
   }
 
-  getPdf(docNo: string) {
+  getPdf(docNo: string): void {
     this.sdsService.getPdf(docNo);
+  }
+
+  getPdfPath(itemNmbr: string): string {
+    return this.sdsService.pdfPath(itemNmbr);
   }
 
   goBack(): void {

@@ -49,6 +49,10 @@ export class SdsService {
     lastValueFrom(request);
   }
 
+  pdfPath(itemNmbr: string): string {
+    return `${environment.sdsEndpoint}/sds/${itemNmbr}.pdf`;
+  }
+
   getSyncedChemicals() {
     const request = this.http.get<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/synced-materials`).pipe(
       map(res => res.chemicals)

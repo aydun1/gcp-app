@@ -19,10 +19,13 @@
         <span matListItemTitle>{{ item.Name }}</span>
         <span>Name</span>
       </mat-list-item>
-      <mat-list-item (click)="getPdf(item.ItemNmbr)">
-        <span matListItemTitle>{{ item.docNo }}</span>
-        <span>PDF</span>
-      </mat-list-item>
+      <a [href]="getPdfPath(item.ItemNmbr)" target="_blank" class="">
+        <mat-list-item>
+          <span matListItemTitle>{{ item.docNo }}</span>
+          <span>PDF</span>
+        </mat-list-item>
+      </a>
+
     </mat-list>
 
   </mat-card>
