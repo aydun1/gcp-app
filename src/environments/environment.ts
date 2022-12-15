@@ -8,6 +8,7 @@ export const environment = {
   redirectUri: 'http://localhost:4200',
   gpEndpoint: `${apiUrl}/gp`,
   cwEndpoint: `${apiUrl}/cw`,
+  sdsEndpoint: `${apiUrl}/public`,
   endpoint: 'https://graph.microsoft.com/v1.0',
   siteUrl: 'sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4',
 };

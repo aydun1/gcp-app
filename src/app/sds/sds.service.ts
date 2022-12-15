@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, lastValueFrom, map } from 'rxjs';
+import { BehaviorSubject, lastValueFrom, map, tap } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { Chemical } from './chemical';
@@ -36,11 +36,17 @@ export class SdsService {
     return lastValueFrom(request);
   }
 
-  getPdf(docNo: string) {
-    const request = this.http.get<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/get-pdf?docNo=${docNo}`).pipe(
-      map(res => res)
+  getPdf(itemNmbr: string): void {
+    const request = this.http.get(`${environment.sdsEndpoint}/sds/${itemNmbr}.pdf`, {responseType: 'blob'}).pipe(
+      tap(blob => {
+        const blobUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = `${itemNmbr}.pdf`;
+        link.href = blobUrl;
+        link.dispatchEvent(new MouseEvent(`click`, {bubbles: true, cancelable: true, view: window}));  
+      })
     );
-    return lastValueFrom(request);
+    lastValueFrom(request);
   }
 
   getSyncedChemicals() {
