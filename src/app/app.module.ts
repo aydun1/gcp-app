@@ -1,5 +1,5 @@
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { Platform } from '@angular/cdk/platform';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -100,7 +100,7 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     SharedModule,
     MatNativeDateModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: environment.production,
+      enabled: !isDevMode(),
       registrationStrategy: 'registerImmediately'
     })
   ],
