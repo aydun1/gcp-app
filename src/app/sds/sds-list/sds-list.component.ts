@@ -24,7 +24,7 @@ export class SdsListComponent implements OnInit {
   public chemicals$!: Observable<Chemical[]>;
   public branchFilter = new FormControl({value: this.ownState, disabled: false});
   public states = this.shared.branches;
-
+  public classes = ['9'];
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -107,6 +107,10 @@ export class SdsListComponent implements OnInit {
 
   clearTextFilter() {
     this.textFilter.patchValue('');
+  }
+
+  getTotalRequestedQty(lines: Array<any>, key: string): number {
+    return lines.reduce((acc, cur) => acc + cur[key], 0);
   }
 
   trackByGroupsFn(index: number, item: any): string {

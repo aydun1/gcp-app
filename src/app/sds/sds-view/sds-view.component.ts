@@ -16,11 +16,12 @@ import { SdsBackpackDialogComponent } from '../shared/sds-backpack-dialog/sds-ba
 })
 export class SdsViewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';
+  private opened = false;
   public item$!: Observable<Chemical>;
   public itemNumber = this.route.snapshot.paramMap.get('id');
   public branch!: string;
   public refresh = new BehaviorSubject<boolean>(true);
-  private opened = false;
+  public definitions = this.sdsService.defs;
 
   constructor (
     private route: ActivatedRoute,

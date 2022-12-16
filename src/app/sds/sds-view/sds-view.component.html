@@ -25,11 +25,22 @@
           <span>PDF</span>
         </mat-list-item>
       </a>
-
     </mat-list>
-
   </mat-card>
 
+  <mat-card *ngIf="item.hCodes.length > 0" class="card">
+    <mat-card-header>
+      <mat-card-title>
+        H codes
+      </mat-card-title>
+    </mat-card-header>
+    <mat-list>
+      <mat-list-item *ngFor="let h of item.hCodes">
+        <div matListItemTitle>{{ definitions[h] }}</div>
+        <div matListItemLine>{{ h }}</div>
+      </mat-list-item>
+    </mat-list>
+  </mat-card>
   <div *ngIf="!item.sdsExists" class="add-sds">
     <button mat-button (click)="openBackpack()">Assign an SDS</button>
   </div>

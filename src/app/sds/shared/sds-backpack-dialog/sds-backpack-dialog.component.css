@@ -3,3 +3,12 @@
   display: flex;
   justify-content: space-between;
 }
+
+.syncer {
+  display: flex;
+  align-items: center;
+}
+
+.syncer > .mat-mdc-button {
+  margin: 0 10px;
+}

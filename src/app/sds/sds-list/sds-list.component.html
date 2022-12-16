@@ -48,10 +48,11 @@
                 <div>
                   <mat-icon *ngIf="line['sdsExists']" color="primary">check</mat-icon>
                   <mat-icon *ngIf="!line['sdsExists']" matTooltip="Item has no SDS attached" color="warn">error</mat-icon>
-      
                 </div>
               </mat-cell>
-              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+              <mat-footer-cell *matFooterCellDef>
+                Total
+              </mat-footer-cell>
             </ng-container>
       
             <ng-container matColumnDef="bin">
@@ -94,7 +95,11 @@
                   {{ line['QtyOnHand'] | number }}
                 </div>
               </mat-cell>
-              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+              <mat-footer-cell *matFooterCellDef>
+                <div class="loadDetails">
+                  {{ getTotalRequestedQty(c.value, 'QtyOnHand') | number }}
+                </div>
+              </mat-footer-cell>
             </ng-container>
       
             <ng-container matColumnDef="packingGroup">
@@ -118,8 +123,9 @@
                 </div>
               </mat-header-cell>
               <mat-cell *matCellDef="let line">
-                <div *ngIf="line['class']" class="placard">
-                  <img [src]="'assets/placards/' + line['class'] + '.png'">
+                <div *ngIf="line['class'] && line['class'] !== 'none'" class="loadDetails placard">
+                  <img *ngIf="classes.includes(line['class']);else other_content" [src]="'assets/placards/' + line['class'] + '.png'">
+                  <ng-template #other_content>{{ line['class'] }}</ng-template>
                 </div>
               </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>

@@ -15,6 +15,11 @@ h2 {
   display: flex;
 }
 
+.loadDetails {
+  margin-left: auto;
+  text-align: right;
+}
+
 .mat-mdc-form-field {
   margin-right: 10px;
 }
@@ -30,7 +35,6 @@ h2 {
 .mat-column-bin {
   flex: 0 0 120px;
 }
-
 
 .mat-column-product {
   flex: 1;
@@ -50,6 +54,10 @@ h2 {
 
 .mat-column-hazardRating {
   flex: 0 0 90px;
+}
+
+.mat-mdc-footer-cell {
+  font-weight: bold;
 }
 
 .hazard {

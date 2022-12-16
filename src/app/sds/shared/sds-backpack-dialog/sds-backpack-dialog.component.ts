@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectionListChange } from '@angular/material/list';
+import { map, Observable, startWith, Subject, switchMap, tap } from 'rxjs';
 import { Chemical } from '../../chemical';
 import { SdsService } from '../../sds.service';
 
@@ -10,10 +11,11 @@ import { SdsService } from '../../sds.service';
   styleUrls: ['./sds-backpack-dialog.component.css']
 })
 export class SdsBackpackDialogComponent implements OnInit {
-  public chemicals$!: Promise<Chemical[]>;
+  public chemicals$!: Observable<Chemical[]>;
   public saving = false;
   public selected: Chemical | undefined;
-
+  public loading = true;
+  public subject = new Subject<boolean>();
   constructor (
     public dialogRef: MatDialogRef<SdsBackpackDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {itemNumber: string},
@@ -21,7 +23,11 @@ export class SdsBackpackDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getSynced();
+    this.chemicals$ = this.subject.pipe(
+      startWith(true),
+      switchMap(() => this.sdsService.getSyncedChemicals()),
+      tap(() => this.loading = false)
+    )
   }
 
   setItem(e: MatSelectionListChange): void {
@@ -29,11 +35,10 @@ export class SdsBackpackDialogComponent implements OnInit {
   }
 
   syncFromChemwatch(): void {
-    this.sdsService.syncFromChemwatch();
-  }
-
-  getSynced(): void {
-    this.chemicals$ = this.sdsService.getSyncedChemicals();
+    this.loading = true;
+    this.sdsService.syncFromChemwatch().then(
+      () => this.subject.next(true)
+    );
   }
 
   linkMaterial(): void {
