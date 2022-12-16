@@ -52,10 +52,28 @@ h2 {
   flex: 0 0 90px;
 }
 
+.hazard {
+  color: #ffffffa3;
+  padding: 3px;
+  border-radius: 4px;
+}
+
+.hazard-unknown {
+  background: #dfdfdf;
+}
+
+.hazard-0 {
+  background: #707070;
+}
+
 .hazard-2 {
-  color: #fff230;
+  background: #fff230;
 }
 
 .hazard-3 {
-  color: #ff923c;
+  background: #ff923c;
+}
+
+.placard > img {
+  width: 30px;
 }

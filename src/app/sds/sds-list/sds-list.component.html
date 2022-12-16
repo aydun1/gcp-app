@@ -118,8 +118,8 @@
                 </div>
               </mat-header-cell>
               <mat-cell *matCellDef="let line">
-                <div class="loadDetails">
-                  {{ line['class'] }}
+                <div *ngIf="line['class']" class="placard">
+                  <img [src]="'assets/placards/' + line['class'] + '.png'">
                 </div>
               </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
@@ -133,8 +133,10 @@
               </mat-header-cell>
               <mat-cell *matCellDef="let line">
                 <div class="loadDetails">
-                  <mat-icon *ngIf="line['hazardRating'] === 2" class="hazard-2">warning</mat-icon>
-                  <mat-icon *ngIf="line['hazardRating'] === 3" class="hazard-3">warning</mat-icon>
+                  <mat-icon *ngIf="line['hazardRating'] === -1" class="hazard hazard-unknown">question_mark</mat-icon>
+                  <mat-icon *ngIf="line['hazardRating'] === 0" class="hazard hazard-0">warning</mat-icon>
+                  <mat-icon *ngIf="line['hazardRating'] === 2" class="hazard hazard-2">warning</mat-icon>
+                  <mat-icon *ngIf="line['hazardRating'] === 3" class="hazard hazard-3">warning</mat-icon>
                 </div>
               </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
