@@ -1,0 +1,46 @@
+:host {
+  display: block;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.outer {
+  margin: 0 auto;
+  max-width: 1024px;
+}
+
+h2 {
+  margin-left: 10px;
+}
+
+.mat-mdc-form-field {
+  margin-right: 10px;
+  width: 160px;
+}
+
+.options {
+  align-items: baseline;
+  display: flex;
+}
+
+.buttons {
+  flex: 1;
+}
+
+.green {
+  color: #0f8900;
+}
+
+.red {
+  color: #ff3939;
+}
+
+@media print {
+  :host {
+    overflow-y: auto;
+  }
+
+  h2, .options {
+    display: none;
+  }
+}

@@ -2,20 +2,19 @@
   <h2 mat-dialog-title>Edit delivery</h2>
 </div>
 <form [formGroup]="deliveryForm" (ngSubmit)="updateDelivery()">
+<mat-dialog-content>
   <mat-form-field color="primary" appearance="outline">
     <mat-label>Notes</mat-label>
     <textarea matInput formControlName="notes" autocomplete="off" placeholder="Optional notes" class="notes"></textarea>
   </mat-form-field>
-
-  <mat-form-field color="primary" appearance="outline">
+    <mat-form-field color="primary" appearance="outline">
     <mat-label>Address</mat-label>
     <textarea matInput formControlName="address" autocomplete="off" placeholder="Delivery address"></textarea>
   </mat-form-field>
-
-  <mat-dialog-actions align="end">
-    <button type="button" mat-button mat-dialog-close tabindex=-1>Cancel</button>
-    <button type="submit" mat-raised-button color="primary" [disabled]="loading">{{'Ok'}}</button>
-  </mat-dialog-actions>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button type="button" mat-button mat-dialog-close tabindex=-1>Cancel</button>
+  <button type="submit" mat-raised-button color="primary" [disabled]="loading">{{'Ok'}}</button>
+</mat-dialog-actions>
 </form>
-
 <button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>

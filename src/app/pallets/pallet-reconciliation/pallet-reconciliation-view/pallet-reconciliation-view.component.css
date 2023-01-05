@@ -1,0 +1,33 @@
+.inner {
+  margin-top: 0;
+}
+
+.header.screen-header {
+  display: flex;
+}
+
+.header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 10px;
+}
+
+.mat-mdc-list-base .mat-mdc-list-item .mat-mdc-line:nth-child(n+2) {
+  color: #7e7e7e;
+}
+
+.outer {
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.green {
+  color: #0f8900;
+  font-weight: bold;
+}
+
+.red {
+  color: #ff3939;
+  font-weight: bold;
+}

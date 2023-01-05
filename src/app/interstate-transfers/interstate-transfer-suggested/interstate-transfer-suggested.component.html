@@ -1,0 +1,19 @@
+<form (ngSubmit)="createTransfer()">
+  <div class="outer">
+    <div class="inner">
+      <h2>Suggested items</h2>
+      <gcp-letterhead class="print-heading">Suggested items</gcp-letterhead>
+      <gcp-pan-list [autosave]="false" min="OrderPointQty" max="OrderUpToLvl" (activeLines)="activeLines=$event" (lineCount)="lineCount=$event"></gcp-pan-list>  
+    </div>
+  </div>
+  <div class="buttons mat-app-background">
+    Requesting {{ lineCount || 0 }} lines from
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label>Branch</mat-label>
+      <mat-select [(ngModel)]="fromState" [ngModelOptions]="{standalone: true}">
+        <mat-option *ngFor="let b of otherStates" [value]="b">{{ b }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-raised-button color="primary" class="save-button" type="submit" [disabled]="!fromState || !lineCount || creating">Save to GP</button>
+  </div>
+</form>

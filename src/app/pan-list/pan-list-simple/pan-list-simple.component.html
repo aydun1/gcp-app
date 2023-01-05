@@ -1,0 +1,123 @@
+<div class="outer">
+  <form [formGroup]="transferForm">
+    <div class="options">
+      <div class="buttons">
+        <mat-button-toggle-group class="selector" name="panList" aria-label="Pan List" [(ngModel)]="selectedPanId" [ngModelOptions]="{standalone: true}" (change)="setPan($event.value)">
+          <mat-button-toggle *ngFor="let pl of panLists;trackBy:trackByFn2" [value]="pl[0]">{{ pl[0] }}</mat-button-toggle>
+          <mat-button-toggle (click)="addPanList.next(true)">+</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+      <div *ngIf="selectedPanId && panLists;">
+        <span *ngIf="sent;else draft" class="pan-status">Sent ({{niceDate(sent)}})</span>
+      </div>
+      <ng-template #draft>
+        <span class="pan-status">
+          Draft
+        </span>
+      </ng-template>
+      <button *ngIf="!sent && selectedPanId && panLists" mat-raised-button color="primary" type="button" (click)="sendList()">Send</button>
+      <a *ngIf="!sent && selectedPanId && panLists" mat-button type="button" [routerLink]="['panlist']" [queryParams]="{pan: selectedPanId}" class="edit">Edit list</a>
+      <button *ngIf="selectedPanId && panLists" mat-icon-button type="button" class="menu" [matMenuTriggerFor]="actionsMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>  
+    </div>
+
+    <div *ngIf="interstateTransfers$ | async as interstateTransfers">
+      <mat-table #table [dataSource]="interstateTransfers.value['lines']" [trackBy]="trackByFn" formArrayName="lines">
+        <ng-container matColumnDef="bin">
+          <mat-header-cell *matHeaderCellDef> Bin </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            {{ line['bin'] }}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="product">
+          <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            <div class="details">
+              <strong>
+                {{ line['itemNumber'] }}
+              </strong>
+              <div class="description">
+                {{ line['itemDescription'] }}
+              </div>
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="notes">
+          <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            <div class="notes">
+              <div class="notes">
+                {{ line['notes'] }}
+              </div>
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="transfer">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="load-details right">
+              Requested 
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let line">
+            <div class="load-details right">
+              {{ line['toTransfer'] | number }}
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+            <div class="load-details transferTotal right">
+              {{ getTotalToTransfer(interstateTransfers.value['lines']) | number }}
+            </div>
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="loading">
+          <mat-footer-cell *matFooterCellDef>
+            <gcp-loading-row></gcp-loading-row>
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="empty">
+          <mat-footer-cell *matFooterCellDef>
+            Add some items by clicking "Edit list".
+          </mat-footer-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="unselected">
+          <mat-footer-cell *matFooterCellDef>
+            <div *ngIf="!panLists">
+              Create a new pan list to begin.
+            </div>
+          </mat-footer-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) === false"></mat-footer-row>
+        <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="!selectedPanId || (loading | async) === true || getTotalRequestedLines(interstateTransfers.value['lines'])"></mat-footer-row>
+        <mat-footer-row *matFooterRowDef="['unselected']" [class.hidden]="selectedPanId"></mat-footer-row>
+        <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+      </mat-table>
+
+      <div class="pan-notes">
+        <strong>Notes:</strong>
+        <div [innerHTML]="note"></div>
+      </div>
+
+    </div>
+  </form>
+</div>
+
+<mat-menu #actionsMenu="matMenu">
+  <ng-template matMenuContent>
+    <button mat-menu-item type="button" [disabled]="!selectedPanId && panLists" (click)="deleteItemsAndList()">Delete list</button>
+  </ng-template>
+</mat-menu>
+
+<router-outlet></router-outlet>

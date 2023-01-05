@@ -21,11 +21,12 @@ export class NavigationService {
     this.history.pop();
     const hist = this.history[this.history.length - 1]?.split('/')?.length;
     const curr = this.router.url.split('/').length;
+    const pan = this.router.url.match(/pan=([0-9]{1,2})/);
     if (this.history.length > 0 && hist !== curr) {
       this.location.back();
     } else {
       const url = this.router.url.substring(0, this.router.url.lastIndexOf('/'));
-      this.router.navigate([url]);
+      this.router.navigate([url], {queryParams: {pan: pan && curr === 4 ? pan[1] : null}});
     }
   }
 }

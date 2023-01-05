@@ -39,14 +39,15 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
   private cagesSubject$ = new Subject<string>();
   private customer!: Customer;
   private branch_!: string;
-  public pallets = ['Loscam', 'Chep', 'Plain']
+  public pallets = [
+    {name: 'Loscam', image: 'assets/loscam.png'},
+    {name: 'Chep', image: 'assets/chep.png'},
+    {name: 'Plain', image: 'assets/pallet.png'}
+  ]
   public customer$!: Observable<Customer>;
   public site!: string;
   public sites!: Array<Site>;
   public palletsOwing!: PalletQuantities | null;
-  public loscams!: number;
-  public cheps!: number;
-  public plains!: number;
   public cages!: {count: number, weight: number} | null;
   public addresses: Array<Address> = [];
 
@@ -135,27 +136,27 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
 
   getAddresses(): void {
     if (!this.customer) return;
-    this.cutomersService.getAddresses(this.customer.accountnumber).subscribe(_ => this.addresses = _);
+    this.cutomersService.getAddresses(this.customer.custNmbr).subscribe(_ => this.addresses = _);
   }
 
   refreshSites(): void {
     if (!this.customer) return;
-    this.sitesSubject$.next(this.customer.accountnumber);
+    this.sitesSubject$.next(this.customer.custNmbr);
   }
 
   refreshPallets(): void {
     if (!this.customer) return;
-    this.palletsSubject$.next(this.customer.accountnumber);
+    this.palletsSubject$.next(this.customer.custNmbr);
   }
 
   refreshCages(): void {
     if (!this.customer) return;
-    this.cagesSubject$.next(this.customer.accountnumber);
+    this.cagesSubject$.next(this.customer.custNmbr);
   }
 
   requestCages(): void {
     const message = 'Cage requested for delivery';
-    const data = {accountnumber: this.customer.accountnumber, site: this.site, message};
+    const data = {accountnumber: this.customer.custNmbr, site: this.site, message};
     this.dialog.open(RunPickerDialogComponent, {width: '600px', data, autoFocus: false});
   }
 
@@ -185,8 +186,8 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe();
   }
 
-  openPalletHistory(customer: Customer): void {
-    const data = {customer, addresses: this.addresses, site: this.site};
+  openPalletHistory(customer: Customer, pallet = ''): void {
+    const data = {customer, pallet, addresses: this.addresses, site: this.site};
     const dialogRef = this.dialog.open(PalletCustomerListDialogComponent, {panelClass: 'printable', width: '800px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe();
   }

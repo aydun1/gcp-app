@@ -1,32 +1,32 @@
 <mat-list>
   <div mat-subheader *ngIf="cage.fields.Date1 || cage.fields.Date2 || cage.fields.Date3 || cage.fields.Date4 || cage.fields.ToDepot">Dates</div>
   <mat-list-item *ngIf="cage.fields.Date4">
-    <div mat-line>{{ cage.fields.Date4 | date: 'dd/MM/yyyy' }}</div>
-    <div mat-line>Collected from Polymer</div>
+    <span matListItemTitle>{{ cage.fields.Date4 | date: 'dd/MM/yyyy' }}</span>
+    <span>Collected from Polymer</span>
   </mat-list-item>
   <mat-list-item *ngIf="cage.fields.Date3">
-    <div mat-line>{{ cage.fields.Date3 | date: 'dd/MM/yyyy' }}</div>
-    <div mat-line>Delivered to Polymer</div>
+    <span matListItemTitle>{{ cage.fields.Date3 | date: 'dd/MM/yyyy' }}</span>
+    <span>Delivered to Polymer</span>
   </mat-list-item>
   <mat-list-item *ngIf="cage.fields.FromLocalProcessing">
-    <div mat-line>{{ cage.fields.FromLocalProcessing | date: 'dd/MM/yyyy' }}</div>
-    <div mat-line>Collected from local processing</div>
+    <span matListItemTitle>{{ cage.fields.FromLocalProcessing | date: 'dd/MM/yyyy' }}</span>
+    <span>Collected from local processing</span>
   </mat-list-item>
   <mat-list-item *ngIf="cage.fields.ToLocalProcessing">
-    <div mat-line>{{ cage.fields.ToLocalProcessing | date: 'dd/MM/yyyy' }}</div>
-    <div mat-line>Delivered to local processing</div>
+    <span matListItemTitle>{{ cage.fields.ToLocalProcessing | date: 'dd/MM/yyyy' }}</span>
+    <span>Delivered to local processing</span>
   </mat-list-item>
   <mat-list-item *ngIf="cage.fields.Date2">
-    <div mat-line>{{ cage.fields.Date2 | date: 'dd/MM/yyyy' }}</div>
-    <div mat-line>Collected from customer</div>
+    <span matListItemTitle>{{ cage.fields.Date2 | date: 'dd/MM/yyyy' }}</span>
+    <span>Collected from customer</span>
   </mat-list-item>
   <mat-list-item *ngIf="cage.fields.Date1">
-    <div mat-line>{{ cage.fields.Date1 | date: 'dd/MM/yyyy' }}</div>
-    <div mat-line>Delivered to customer</div>
+    <span matListItemTitle>{{ cage.fields.Date1 | date: 'dd/MM/yyyy' }}</span>
+    <span>Delivered to customer</span>
   </mat-list-item>
   <mat-list-item *ngIf="cage.fields.ToDepot">
-    <div mat-line>{{ cage.fields.ToDepot | date: 'dd/MM/yyyy' }}</div>
-    <div mat-line>Delivered to depot ({{ cage.fields.Depot }})</div>
-    <button *ngIf="!cage.statusId || cage.statusId < 2" mat-icon-button type="button" (click)="removeDepot()"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
+    <span matListItemTitle>{{ cage.fields.ToDepot | date: 'dd/MM/yyyy' }}</span>
+    <span>Delivered to depot ({{ cage.fields.Depot }})</span>
+    <button *ngIf="!cage.statusId || cage.statusId < 2" mat-icon-button type="button" (click)="removeDepot()"><mat-icon matListItemIcon class="last-icon">close</mat-icon></button>
   </mat-list-item>
 </mat-list>

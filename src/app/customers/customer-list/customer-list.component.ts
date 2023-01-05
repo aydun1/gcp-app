@@ -28,7 +28,7 @@ export class CustomerListComponent implements OnInit {
   public territories$!: Observable<Territory[]>;
   public get territories(): Array<string> {return this.sharedService.territoryNames};
   public loading = this.customersService.loading;
-  public displayedColumns = ['name', 'accountnumber', 'loscam', 'chep', 'plain'];
+  public displayedColumns = ['name', 'custNmbr', 'loscam', 'chep', 'plain'];
   public sortSort!: string;
   public sortOrder!: 'asc' | 'desc';
   public loscams!: number;
@@ -68,11 +68,10 @@ export class CustomerListComponent implements OnInit {
       }),
       switchMap(_ => this.loadList ? this.getFirstPage(_) : []),
       tap(customers => {
-        this.loscams = customers.map(_ => _.new_pallets_loscam).filter(_ => _).reduce((acc, val) => acc + val, 0);
-        this.cheps = customers.map(_ => _.new_pallets_chep).filter(_ => _).reduce((acc, val) => acc + val, 0);
-        this.plains = customers.map(_ => _.new_pallets_plain).filter(_ => _).reduce((acc, val) => acc + val, 0);
-      }),
-
+        this.loscams = customers.map(_ => _.loscam).filter(_ => _).reduce((acc, val) => acc + val, 0);
+        this.cheps = customers.map(_ => _.chep).filter(_ => _).reduce((acc, val) => acc + val, 0);
+        this.plains = customers.map(_ => _.plain).filter(_ => _).reduce((acc, val) => acc + val, 0);
+      })
     )
 
     this.nameFilter.valueChanges.pipe(
@@ -154,6 +153,6 @@ export class CustomerListComponent implements OnInit {
   }
 
   trackByFn(index: number, item: Customer): string {
-    return item.accountnumber;
+    return item.custNmbr;
   }
 }

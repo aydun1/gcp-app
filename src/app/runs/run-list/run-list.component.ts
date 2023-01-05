@@ -146,14 +146,14 @@ export class RunListComponent implements OnInit {
     return item.id;
   }
 
-  openPalletDialog(name: string, accountnumber: string, site: string): void {
-    const customer = {name, accountnumber};
+  openPalletDialog(name: string, custNmbr: string, site: string): void {
+    const customer = {name, custNmbr};
     const data = {customer, site};
     this.dialog.open(PalletDialogComponent, {width: '600px', data, autoFocus: false});
   }
 
-  openRecyclingDialog(name: string, accountnumber: string, site: string): void {
-    const customer = {name, accountnumber};
+  openRecyclingDialog(name: string, custNmbr: string, site: string): void {
+    const customer = {name, custNmbr};
     const data = {customer, site, branch: this._branch};
     this.dialog.open(RecyclingDialogComponent, {width: '800px', data, autoFocus: false});
   }

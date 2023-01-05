@@ -1,13 +1,30 @@
 {
-  "name": "Pallet Management System",
-  "short_name": "PMS",
+  "name": "Inventory Management System",
+  "short_name": "IMS",
   "theme_color": "#309962",
   "background_color": "#fafafa",
   "display": "standalone",
-  "id": "/",
-  "scope": "/",
-  "start_url": "/",
+  "scope": "./",
+  "start_url": "./",
   "icons": [
+    {
+      "src": "assets/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "assets/icons/icon-144x144.png",
       "sizes": "144x144",
@@ -15,10 +32,16 @@
       "purpose": "any"
     },
     {
-      "src": "assets/icons/maskable-icon-192x192.png",
+      "src": "assets/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "maskable any"
     },
     {
       "src": "assets/icons/maskable-icon-384x384.png",

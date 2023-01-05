@@ -1,5 +1,5 @@
 <div class="header">
-  <gcp-letterhead>Pallet Management System</gcp-letterhead>
+  <gcp-letterhead>Inventory Management System</gcp-letterhead>
   <div class="buttons">
     <button mat-icon-button type="button" (click)="print()">
       <mat-icon>print</mat-icon>
@@ -61,5 +61,5 @@
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
   </div>
-  <gcp-loading-row *ngIf="loading$ | async"></gcp-loading-row>
+  <gcp-loading-row *ngIf="loading$ | async" class="loading-row"></gcp-loading-row>
 </mat-dialog-content>

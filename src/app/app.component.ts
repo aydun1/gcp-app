@@ -30,6 +30,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public checkedTeams = false;
   public token: string | undefined;
   public warehouse!: boolean;
+  public isQld = false;
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -48,7 +49,6 @@ export class AppComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.accounts)
     this.themingService.theme.subscribe(_ => {
       const darkClass = 'dark-theme';
       _ ? this.renderer.addClass(document.body, darkClass) : this.renderer.removeClass(document.body, darkClass)
@@ -62,7 +62,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.checkIfTeams();
     this.observer.observe(['(max-width: 600px)']).subscribe(_ => this.isMobile = _.matches);
     this.authService.instance.enableAccountStorageEvents();
-    this.sharedService.getBranch().subscribe();
+    this.sharedService.getBranch().subscribe(_ => this.isQld = _ === 'QLD');
 
     authentication.getAuthToken().then(
       _ => this.token = _
@@ -87,7 +87,7 @@ export class AppComponent implements OnInit, OnDestroy {
       tap((msg: EventMessage) => this.authService.instance.setActiveAccount(msg.payload ? msg.payload['account'] : null))
     ).subscribe();
 
-    // Periodically check for software updates
+    // On interaction
     this.msalBroadcastService.inProgress$.pipe(
       filter((status: InteractionStatus) => status === InteractionStatus.None),
       takeUntil(this._destroying$),
@@ -99,7 +99,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Periodically check for software updates
     if (this.swUpdate.isEnabled) {
-      withLatestFrom()
       this.swUpdate.versionUpdates.pipe(
         filter((evt: VersionEvent) => evt.type === 'VERSION_READY')
       ).subscribe(() => location.reload());

@@ -1,5 +1,5 @@
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { Platform } from '@angular/cdk/platform';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -64,7 +64,8 @@ function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
   protectedResourceMap.set(`${environment.endpoint}/sites`, ['Sites.ReadWrite.All']);
   protectedResourceMap.set(`${environment.endpoint}/`, ['Sites.ReadWrite.All']);//$batch
-  protectedResourceMap.set(`${environment.endpoint}/me`, ['user.read']);
+  protectedResourceMap.set(`${environment.endpoint}/me`, ['user.read', 'mail.send']);
+  protectedResourceMap.set(`${environment.gpEndpoint}/`, ['api://117fb891-acba-4e2f-b60a-9f95fc0680ff/GCP.API.Access']);
   protectedResourceMap.set('https://gardencityplastics.crm6.dynamics.com/api/data/v9.2', ['https://gardencityplastics.crm6.dynamics.com//user_impersonation']);
   return {
     interactionType: InteractionType.Redirect,
@@ -76,7 +77,7 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
   return {
     interactionType: InteractionType.Redirect,
     authRequest: {
-      scopes: ['user.read', 'Sites.ReadWrite.All', 'https://gardencityplastics.crm6.dynamics.com//user_impersonation']
+      scopes: ['user.read', 'Sites.ReadWrite.All', 'mail.send', 'https://gardencityplastics.crm6.dynamics.com//user_impersonation']
     },
     loginFailedRoute: "/"
   };
@@ -89,7 +90,7 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     LogoutComponent
   ],
   imports: [
-    BrowserModule.withServerTransition({ appId: 'serverApp' }),
+    BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
@@ -100,7 +101,7 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     SharedModule,
     MatNativeDateModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: environment.production,
+      enabled: !isDevMode(),
       registrationStrategy: 'registerImmediately'
     })
   ],

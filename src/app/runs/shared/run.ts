@@ -1,15 +1,15 @@
 export interface Run {
-  id: string,
-  lastModifiedDateTime: string | Date,
+  id: string;
+  lastModifiedDateTime: string | Date;
   lastModifiedBy: {
     user: {
-      displayName: string,
-      email: string,
-      id: string
+      displayName: string;
+      email: string;
+      id: string;
     }
   }
   fields: {
-    Title: string,
-    Branch: string,
+    Title: string;
+    Branch: string;
   }
 }

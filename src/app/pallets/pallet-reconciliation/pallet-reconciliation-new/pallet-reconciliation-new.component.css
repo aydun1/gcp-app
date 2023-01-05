@@ -1,0 +1,30 @@
+.outer {
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+h2 {
+  margin-left: 10px;
+}
+
+.mat-mdc-card {
+  margin: 10px;
+}
+
+.mat-mdc-form-field {
+    width: 100%;
+}
+
+.sum {
+  font-weight: bold;
+}
+
+.spacer {
+  margin-bottom: 20px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin: 30px 10px;
+}

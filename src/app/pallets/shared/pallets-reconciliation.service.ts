@@ -72,6 +72,7 @@ export class PalletsReconciliationService {
 
   addReconciliation(v: any): Observable<Reconciliation> {
     const payload = {fields: {
+      Date: v.date,
       Branch: v.branch,
       Pallet: v.pallet,
       CurrentBalance: v.currentBalance,
@@ -85,6 +86,19 @@ export class PalletsReconciliationService {
       OffSite: v.offSite,
     }};
     return this.http.post<Reconciliation>(`${this._reconciliationTrackerUrl}/items`, payload).pipe(
+      switchMap(res => this.updateList(res))
+    );
+  }
+
+  updateReconciliation(id: string, v: any): Observable<Reconciliation> {
+    const fields = {
+      CurrentBalance: v.currentBalance,
+      Surplus: v.surplus,
+      Deficit: v.deficit,
+      OnSite: v.onSite,
+      OffSite: v.offSite,
+    };
+    return this.http.patch<Reconciliation>(`${this._reconciliationTrackerUrl}/items('${id}')`, {fields}).pipe(
       switchMap(res => this.updateList(res))
     );
   }

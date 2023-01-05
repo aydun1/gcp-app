@@ -35,6 +35,7 @@ export class RecyclingListComponent implements OnInit {
   public statusPicked!: boolean;
   public placeholder = {AssetType: {choice: {choices: []}, name: ''}, Status: {choice: {choices: []}, name: ''}, Branch: {choice: {choices: []}, name: ''}}
   public selection = new SelectionModel<Cage>(true, []);
+  public date = new Date();
 
   constructor(
     private el: ElementRef,
@@ -204,7 +205,7 @@ export class RecyclingListComponent implements OnInit {
   }
 
   hideStatus(hide: boolean): void {
-    const displayedColumns = ['checked', 'fields/CageNumber', 'assetType', 'status', 'location', 'fields/Modified', 'weight', 'check'];
+    const displayedColumns = ['checked', 'fields/CageNumber', 'assetType', 'status', 'location', 'fields/Modified', 'weight'];
     this.displayedColumns = hide ? displayedColumns.filter(_ => _ !== 'status') : displayedColumns;
   }
 

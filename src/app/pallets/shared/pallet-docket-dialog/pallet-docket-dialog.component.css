@@ -1,4 +1,4 @@
-.mat-dialog-content {
+.mat-mdc-dialog-content {
   display: flex;
 }
 
@@ -13,10 +13,6 @@
   margin-left: auto;
 }
 
-.mat-spinner {
-  margin-right: 10px;
-}
-
 .sub-header {
   display: none;
 }
@@ -27,11 +23,28 @@
 }
 
 .sender {
+  display: flex;
   margin-right: 20px;
+}
+
+.receiver {
+  display: flex;
 }
 
 .list-container {
   height: 368px;
+}
+
+.underline {
+  border-bottom: 1px solid black;
+  height: 1px;
+  margin-top: 18px;
+  margin-left: 2px;
+  width: 100px;
+}
+
+.wider {
+  width: 140px;
 }
 
 @media print {

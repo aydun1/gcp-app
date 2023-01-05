@@ -6,6 +6,7 @@ import { LoadingScheduleComponent } from './loading-schedule.component';
 import { LoadingScheduleListComponent } from './loading-schedule-list/loading-schedule-list.component';
 import { LoadingScheduleNewComponent } from './loading-schedule-new/loading-schedule-new.component';
 import { LoadingScheduleViewComponent } from './loading-schedule-view/loading-schedule-view.component';
+import { LoadingSchedulePanComponent } from './loading-schedule-pan/loading-schedule-pan.component';
 
 const routes: Routes = [
   {
@@ -15,18 +16,33 @@ const routes: Routes = [
       {
         path: '',
         data: {title: 'Loading Schedule'},
-        component: LoadingScheduleListComponent
+        component: LoadingScheduleListComponent,
+        children: [
+          {
+            path: 'new',
+            data: {title: 'New entry'},
+            component: LoadingScheduleNewComponent
+          },
+          {
+            path: ':id',
+            data: {title: 'View entry'},
+            component: LoadingScheduleViewComponent,
+            children: [
+              {
+                path: 'edit',
+                data: {title: 'Edit entry'},
+                component: LoadingScheduleNewComponent,
+              },
+              {
+                path: 'panlist',
+                data: {title: 'Edit pan list'},
+                component: LoadingSchedulePanComponent,
+              }
+            ]
+          },
+        ]
       },
-      {
-        path: 'new',
-        data: {title: 'New entry'},
-        component: LoadingScheduleNewComponent
-      },
-      {
-        path: ':id',
-        data: {title: 'View entry'},
-        component: LoadingScheduleViewComponent
-      },
+
     ],
     canActivate: [MsalGuard]
   }

@@ -3,8 +3,10 @@
     <mat-icon>arrow_back</mat-icon>
   </button>
   <ng-container>
-    <div class="title">Cage</div>
+    <div class="top-title">Cage</div>
   </ng-container>
+  <a *ngIf="getPrev() | async as n" mat-icon-button [routerLink]="['..', n]" [replaceUrl]="true" matTooltip="Previous cage"><mat-icon>chevron_left</mat-icon></a>
+  <a *ngIf="getNext() | async as n" mat-icon-button [routerLink]="['..', n]" [replaceUrl]="true" matTooltip="Next cage"><mat-icon>chevron_right</mat-icon></a>
 </mat-toolbar>
 
 <gcp-loading-page *ngIf="loading | async"></gcp-loading-page>
@@ -19,50 +21,54 @@
       </div>
       <gcp-action-button [cages]="[cage]" (updated)="getCage()" (loading)="updating($event)" (dehired)="goBack()" class="actions"></gcp-action-button>
     </div>
-    <mat-card>
-      <mat-list>
-        <div mat-subheader><span class="subheader">Details</span></div>
-        <mat-list-item *ngIf="cage.fields.Status">
-          <mat-icon mat-list-icon>timeline</mat-icon>
-          <div mat-line>{{ cage.fields.Status }}</div>
-          <div mat-line>Status</div>
-        </mat-list-item>
-        <mat-list-item *ngIf="cage.fields.Status">
-          <mat-icon mat-list-icon>location_city</mat-icon>
-          <div mat-line>{{ cage.fields.Branch }}</div>
-          <div mat-line>Branch</div>
-        </mat-list-item>
-      </mat-list>
-      <mat-nav-list>
-        <a mat-list-item *ngIf="cage.fields.CustomerNumber" [routerLink]="['/customers', cage.fields.CustomerNumber]">
-          <mat-icon mat-list-icon>business</mat-icon>
-          <div mat-line>{{ cage.fields.Customer }} 
-            <span>({{ cage.fields.CustomerNumber }})</span>
-            <span *ngIf="cage.fields.Site">({{ cage.fields.Site }})</span>
-          </div>
-          <div mat-line>Assigned to</div>
-        </a>
-      </mat-nav-list>
-      <mat-list>
-        <form (ngSubmit)="setCageNotes(cage.id)">
-          <mat-list-item>
-            <mat-icon mat-list-icon>tag</mat-icon>
-            <div *ngIf="editCageNotes" mat-line>
-              <input [(ngModel)]="currentCageNotes" [ngModelOptions]="{standalone: true}" type="text" placeholder="Reference number or cage notes">
-            </div>
-            <div *ngIf="!editCageNotes" mat-line>{{ currentCageNotes }}</div>
-            <div mat-line>Reference</div>
-            <button mat-icon-button type="button" *ngIf="!editCageNotes" (click)="editCageNotes = true"><mat-icon mat-list-icon class="last-icon">edit</mat-icon></button>
-            <ng-container *ngIf="editCageNotes">
-              <button mat-icon-button type="button" (click)="cancelEditCageNotes(cage.fields.Notes)"><mat-icon mat-list-icon class="last-icon">close</mat-icon></button>
-              <button mat-icon-button type="submit"><mat-icon mat-list-icon class="last-icon">check</mat-icon></button>
-            </ng-container>
+    <mat-card appearance="outlined">
+      <mat-card-content>
+        <mat-list>
+          <div mat-subheader><span class="subheader">Details</span></div>
+          <mat-list-item *ngIf="cage.fields.Status">
+            <mat-icon matListItemIcon>timeline</mat-icon>
+            <span matListItemTitle>{{ cage.fields.Status }}</span>
+            <span>Status</span>
           </mat-list-item>
-        </form>
-        <div mat-subheader>Weights</div>
-        <gcp-cage-weights [cage]="cage" (updated)="getCage()"></gcp-cage-weights>
-      </mat-list>
-      <gcp-cage-details [cage]="cage" (updated)="getCage()"></gcp-cage-details>
+          <mat-list-item *ngIf="cage.fields.Status">
+            <mat-icon matListItemIcon>location_city</mat-icon>
+            <span matListItemTitle>{{ cage.fields.Branch }}</span>
+            <span>Branch</span>
+          </mat-list-item>
+        </mat-list>
+        <mat-nav-list>
+          <a mat-list-item *ngIf="cage.fields.CustomerNumber" [routerLink]="['/customers', cage.fields.CustomerNumber]">
+            <mat-icon matListItemIcon>business</mat-icon>
+            <span matListItemTitle>{{ cage.fields.Customer }} 
+              <span>({{ cage.fields.CustomerNumber }})</span>
+              <span *ngIf="cage.fields.Site">({{ cage.fields.Site }})</span>
+            </span>
+            <span>Assigned to</span>
+          </a>
+        </mat-nav-list>
+        <mat-list>
+          <form (ngSubmit)="setCageNotes(cage.id)">
+            <mat-list-item>
+              <mat-icon matListItemIcon>tag</mat-icon>
+              <span *ngIf="editCageNotes" matListItemTitle>
+                <input [(ngModel)]="currentCageNotes" [ngModelOptions]="{standalone: true}" type="text" placeholder="Reference number or cage notes">
+              </span>
+              <span *ngIf="!editCageNotes" matListItemTitle>{{ currentCageNotes }}</span>
+              <span>Reference</span>
+              <ng-container matListItemMeta *ngIf="!editCageNotes">
+                <button mat-icon-button type="button" (click)="editCageNotes = true"><mat-icon>edit</mat-icon></button>
+              </ng-container>
+              <ng-container matListItemMeta *ngIf="editCageNotes">
+                <button mat-icon-button type="button" (click)="cancelEditCageNotes(cage.fields.Notes)"><mat-icon>close</mat-icon></button>
+                <button mat-icon-button type="submit"><mat-icon>check</mat-icon></button>
+              </ng-container>
+            </mat-list-item>
+          </form>
+          <div mat-subheader>Weights</div>
+          <gcp-cage-weights [cage]="cage" (updated)="getCage()"></gcp-cage-weights>
+        </mat-list>
+        <gcp-cage-details [cage]="cage" (updated)="getCage()"></gcp-cage-details>
+      </mat-card-content>
     </mat-card>
   </div>
 
@@ -105,7 +111,7 @@
       <ng-container matColumnDef="nav">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
         <mat-cell *matCellDef="let cage">
-          <a mat-icon-button [disabled]="cage.id === cageId" [routerLink]="['..', cage.id]" class="pallet-link"><mat-icon>arrow_forward</mat-icon></a>
+          <a mat-icon-button *ngIf="cage.id !== cageId" [routerLink]="['..', cage.id]" class="pallet-link"><mat-icon>arrow_forward</mat-icon></a>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>

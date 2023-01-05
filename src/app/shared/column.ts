@@ -1,7 +1,7 @@
 export interface Column {
-  name: string,
-  displayName: string,
+  name: string;
+  displayName: string;
   choice?: {
-    choices: Array<string>
+    choices: Array<string>;
   }
 }

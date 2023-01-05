@@ -1,4 +1,4 @@
-gcp-loading-row {
+.loading-row {
   align-items: center;
   display: flex;
   height: 56px;
@@ -6,19 +6,21 @@ gcp-loading-row {
 
 .header {
   display: flex;
+  margin: 24px; 
 }
 
 .customer {
   display: flex;
-  margin: 40px 0 20px 0;
+  margin: 40px 24px 20px 24px;
 }
 
-.mat-footer-row {
+.mat-mdc-footer-row {
   font-weight: bold;
 }
 
-.mat-dialog-content {
+.mat-mdc-dialog-content {
   height: 40vh;
+  padding: 0;
 }
 
 .buttons {
@@ -28,7 +30,7 @@ gcp-loading-row {
   margin-left: auto;
 }
 
-.mat-table {
+.mat-mdc-table {
   border: 0;
 }
 
@@ -45,7 +47,7 @@ gcp-loading-row {
 }
 
 .mat-column-net-weight {
-  flex: 0 1 80px;
+  flex: 0 1 96px;
 }
 
 @media print {
@@ -53,9 +55,17 @@ gcp-loading-row {
     display: none;
   }
  
-  .mat-dialog-content {
+  .header, .customer {
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+  }
+
+  .mat-mdc-dialog-content {
     height: auto;
     max-height: none;
+    padding-left: 0;
+    padding-right: 0;
   }
 
 }

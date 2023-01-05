@@ -10,38 +10,40 @@
 <div class="outer">
   <h2>Add a new cage</h2>
   <form (ngSubmit)="addCage()" [formGroup]="cageForm" class="inner">
-    <mat-card>
-    <mat-form-field appearance="fill" class="asset-type">
-      <mat-label>{{ (choices$ | async)?.AssetType.name }}</mat-label>
-      <mat-select formControlName="assetType">
-        <mat-option *ngFor="let s of (choices$ | async)?.AssetType.choice.choices" value="{{ s }}">{{ s }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <ng-container *ngIf="isCage">
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Cage number</mat-label>
-        <input matInput type="number" formControlName="cageNumber" autocomplete="off" placeholder="The number of the cage" #cageNumberInput>
-        <mat-error *ngIf="cageForm.get('cageNumber')?.hasError('cageExists')">
-          Cage number is already assigned to this cage type. <a [routerLink]="['/recycling/cages', duplicateId]">Click to see the cage.</a>
-        </mat-error>
-      </mat-form-field>
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Empty cage weight</mat-label>
-        <input matInput type="number" formControlName="cageWeight" autocomplete="off" placeholder="The weight of the empty cage">
-        <span matSuffix>kg</span>
-      </mat-form-field>
-    </ng-container>
-    <mat-form-field appearance="fill" class="branch">
-      <mat-label>{{ (choices$ | async)?.Branch.name }}</mat-label>
-      <mat-select formControlName="branch">
-        <mat-option *ngFor="let s of (choices$ | async)?.Branch.choice.choices" value="{{ s }}">{{ s }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <mat-card appearance="outlined">
+      <mat-card-content>
+        <mat-form-field appearance="fill" class="asset-type">
+          <mat-label>{{ (choices$ | async)?.AssetType.name }}</mat-label>
+          <mat-select formControlName="assetType">
+            <mat-option *ngFor="let s of (choices$ | async)?.AssetType.choice.choices" value="{{ s }}">{{ s }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <ng-container *ngIf="isCage">
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Cage number</mat-label>
+            <input matInput type="number" formControlName="cageNumber" autocomplete="off" placeholder="The number of the cage" #cageNumberInput>
+            <mat-error *ngIf="cageForm.get('cageNumber')?.hasError('cageExists')">
+              Cage number is already assigned to this cage type. <a [routerLink]="['/recycling/cages', duplicateId]">Click to see the cage.</a>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Empty cage weight</mat-label>
+            <input matInput type="number" formControlName="cageWeight" autocomplete="off" placeholder="The weight of the empty cage">
+            <span matSuffix>kg</span>
+          </mat-form-field>
+        </ng-container>
+        <mat-form-field appearance="fill" class="branch">
+          <mat-label>{{ (choices$ | async)?.Branch.name }}</mat-label>
+          <mat-select formControlName="branch">
+            <mat-option *ngFor="let s of (choices$ | async)?.Branch.choice.choices" value="{{ s }}">{{ s }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
     <div class="buttons">
       <button mat-raised-button value="one" (click)="multi = 0" color="primary" [disabled]="loading">Save</button>
       <button mat-button value="many" (click)="multi = 1" [disabled]="loading">Save and add another</button>
       <button mat-button tabindex=-1 type="button" (click)="goBack()" [disabled]="loading">Cancel</button>
-    </div>
-  </mat-card>
+    </div>    
   </form>
 </div>

@@ -1,9 +1,10 @@
 <div cdkScrollable class="scroller">
   <div class="outer">
-    <h2>Deliveries</h2>
+    <gcp-letterhead class="print-heading">Local deliveries</gcp-letterhead>
+    <h2>Local deliveries</h2>
     <div class="options inner">
       <div class="buttons">
-        <mat-form-field appearance="outline" class="run">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="run">
           <mat-label>Run</mat-label>
           <mat-select [formControl]="runFilter" (selectionChange)="pickRun($event)">
             <mat-option value="">Default</mat-option>
@@ -14,7 +15,7 @@
       </div>
       <button type="button" mat-raised-button color="primary" (click)="openCustomerPicker()" [disabled]="loading" class="action">Add delivery</button>
     </div>
-    <div class="inner">
+    <mat-card appearance="outlined" class="inner">
       <mat-table #table [dataSource]="deliveries$" [trackBy]="trackByFn" cdkDropList [cdkDropListDisabled]="dragDisabled" (cdkDropListDropped)="moveItem($event)">
 
         <ng-container matColumnDef="sequence">
@@ -89,7 +90,7 @@
         <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loadingList$ | async) ? false : true"></mat-footer-row>
         <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="(loadingList$ | async) === false && !listSize ? false : true"></mat-footer-row>
       </mat-table>
-    </div>
+    </mat-card>
   </div>
 </div>
 <mat-menu #menu="matMenu" xPosition="before">

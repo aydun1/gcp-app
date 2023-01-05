@@ -19,7 +19,7 @@ export class LoadingScheduleListComponent implements OnInit {
   public branchFilter = new FormControl('');
   public statusFilter = new FormControl('');
   public viewFilter = new FormControl('');
-  public loadingSchedule$!: Observable<LoadingSchedule[]>;
+  public loadingSchedules$!: Observable<LoadingSchedule[]>;
   public deliveries!: LoadingSchedule[];
   public loadingList$ = this.loadingScheduleService.loading;
   public loading = false;
@@ -41,7 +41,7 @@ export class LoadingScheduleListComponent implements OnInit {
   ngOnInit(): void {
     const state$ = this.shared.getBranch();
 
-    this.loadingSchedule$ = this.route.queryParams.pipe(
+    this.loadingSchedules$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, '', '')),
@@ -69,7 +69,7 @@ export class LoadingScheduleListComponent implements OnInit {
         this.totals = this.groups.reduce((acc, curr) => (acc[curr] = _.filter(res => res.fields?.Status === curr).reduce((a, b) =>  a + (b.fields?.Spaces || 0), 0), acc), {});
         this.totals['total'] = _.reduce((a, b) =>  a + (b.fields?.Spaces || 0), 0);
       }),
-      switchMap(_ => this._loadingScheduleSubject$),
+      switchMap(_ => this._loadingScheduleSubject$)
     )
   }
 
@@ -79,22 +79,18 @@ export class LoadingScheduleListComponent implements OnInit {
 
   parseParams(params: Params): void {
     if (!params) return;
-    const filters: Params = {};
     if ('branch' in params) {
       this.branchFilter.patchValue(params['branch']);
-      filters['branch'] = params['branch'];
     } else {
       this.branchFilter.patchValue('');
     }
     if ('status' in params) {
       this.statusFilter.patchValue(params['status']);
-      filters['status'] = params['status'];
     } else {
       this.statusFilter.patchValue('');
     }
     if ('view' in params) {
       this.viewFilter.patchValue(params['view']);
-      filters['view'] = params['view'];
     } else {
       this.viewFilter.patchValue('');
     }
@@ -114,15 +110,15 @@ export class LoadingScheduleListComponent implements OnInit {
   }
 
   setBranch(branch: MatSelectChange): void {
-    this.router.navigate(['loading-schedule'], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setStatus(status: MatSelectChange): void {
-    this.router.navigate(['loading-schedule'], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate([], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setView(view: MatSelectChange): void {
-    this.router.navigate(['loading-schedule'], { queryParams: {view: view.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate([], { queryParams: {view: view.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   markDelivered(id: string) {

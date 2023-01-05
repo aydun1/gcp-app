@@ -1,16 +1,17 @@
 <div *ngIf="(cages$ | async) as cages"  class="outer">
+  <gcp-letterhead class="print-heading">Recycling cages</gcp-letterhead>
   <div *ngIf="selection.isEmpty() && (choices$ | async) as choices"class="options inner">
     <div class="buttons">
-      <mat-form-field appearance="outline" class="branch">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
         <mat-label>{{ choices.Branch.name }}</mat-label>
         <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
           <mat-option>All</mat-option>
           <mat-option *ngFor="let s of choices.Branch.choice.choices" value="{{ s }}">{{ s }}</mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="outline" class="status">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="status">
         <mat-label>{{ choices.Status.name }}</mat-label>
-        <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event, choices.Status.choice.choices)">
+        <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event, choices.Status.choice.choices)" panelClass="wide-select">
           <mat-option>All</mat-option>
           <mat-option *ngFor="let s of choices.Status.choice.choices" value="{{ s }}">{{ s }}</mat-option>
           <mat-optgroup label="Cage history">
@@ -20,20 +21,20 @@
           </mat-optgroup>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="outline" class="asset-type">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="asset-type">
         <mat-label>{{ choices.AssetType.name }}</mat-label>
-        <mat-select [formControl]="assetTypeFilter" (selectionChange)="setAssetType($event)">
+        <mat-select [formControl]="assetTypeFilter" (selectionChange)="setAssetType($event)" panelClass="wide-select">
           <mat-option>All</mat-option>
           <mat-option *ngFor="let s of choices.AssetType.choice.choices" value="{{ s }}">{{ s }}</mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="outline" class="bin-filter">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="bin-filter">
         <mat-label>Cage number</mat-label>
         <input matInput [formControl]="binFilter" min="0" type="number" autocomplete="off" placeholder="Type to search...">
-        <button *ngIf="!binFilter.value" matSuffix mat-icon-button disabled>
+        <button *ngIf="!binFilter.value" matSuffix mat-icon-button disabled type="button">
           <mat-icon>search</mat-icon>
         </button>
-        <button *ngIf="binFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearBinFilter()">
+        <button *ngIf="binFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearBinFilter()" type="button">
           <mat-icon>close</mat-icon>
         </button>
       </mat-form-field>
@@ -50,9 +51,12 @@
     <gcp-action-button [cages]="selection.selected" class="actions"></gcp-action-button>  
   </div>
 
-  <div class="status-header inner">{{ statusFilter.value }}</div>
+  <div class="status-header inner">
+    <div><strong>Date:</strong> {{ date | date: 'dd/MM/yyyy' }}</div>
+    <div *ngIf="statusFilter.value"><strong>Status:</strong> {{ statusFilter.value }}</div>
+  </div>
 
-  <div class="inner">
+  <mat-card appearance="outlined" class="inner">
     <mat-table #table [dataSource]="cages" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
 
       <ng-container matColumnDef="checked">
@@ -89,7 +93,7 @@
       <ng-container matColumnDef="weight">
         <mat-header-cell *matHeaderCellDef> Net weight </mat-header-cell>
         <mat-cell *matCellDef="let cage">
-          {{ cage.fields.NetWeight || 0 | number }} kg
+          {{ cage.fields.NetWeight || 0 }} kg
         </mat-cell>
         <mat-footer-cell *matFooterCellDef> {{ weight || 0 | number }} kg </mat-footer-cell>
       </ng-container>
@@ -118,20 +122,12 @@
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
 
-      <ng-container matColumnDef="check">
-        <mat-header-cell *matHeaderCellDef></mat-header-cell>
-        <mat-cell *matCellDef="let cage">
-          <mat-checkbox color="accent"></mat-checkbox>
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
       <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) ? false : true"></mat-footer-row>
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
-  </div>
+  </mat-card>
 </div>
 
 <router-outlet></router-outlet>

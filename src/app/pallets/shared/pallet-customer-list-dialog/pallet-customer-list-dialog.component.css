@@ -1,4 +1,4 @@
-gcp-loading-row {
+.loading-row {
   align-items: center;
   display: flex;
   height: 56px;
@@ -6,25 +6,26 @@ gcp-loading-row {
 
 .header {
   display: flex;
+  justify-content: space-between;
+  margin: 24px; 
+}
+
+.header-items {
+  display: none;
 }
 
 .customer {
   display: flex;
-  margin: 40px 0 20px 0;
+  margin: 40px 24px 20px 24px;
 }
 
-.mat-form-field {
-  font-size: 14px;
-  margin-right: 10px;
-  width: 145px;
-}
-
-.mat-footer-row {
+.mat-mdc-footer-cell {
   font-weight: bold;
 }
 
-.mat-dialog-content {
+.mat-mdc-dialog-content {
   height: 40vh;
+  padding: 0;
 }
 
 .buttons {
@@ -38,7 +39,7 @@ gcp-loading-row {
   margin-right: 10px;
 }
 
-.mat-table {
+.mat-mdc-table {
   border: 0;
 }
 
@@ -46,16 +47,23 @@ gcp-loading-row {
   flex: 1 1 180px;
 }
 
-.mat-column-pallet, .mat-column-date {
+.mat-column-date {
   flex: 0 1 115px;
 }
 
-.mat-column-out, .mat-column-in {
-  flex: 0 1 80px;
+.mat-column-pallet,
+.mat-column-out,
+.mat-column-in {
+  flex: 0 1 91px;
 }
 
 .mat-column-docket {
   flex: 0 1 40px;
+}
+
+.quantity {
+  text-align: right;
+  width: 100%;
 }
 
 @media print {
@@ -63,9 +71,26 @@ gcp-loading-row {
     display: none;
   }
  
-  .mat-dialog-content {
-    height: auto;
-    max-height: none;
+  .header, .customer {
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
   }
 
+  .header-items {
+    display: block;
+    margin-top: 32px;
+  }
+
+  .header-item > strong {
+    display: inline-block;
+    width: 54px;
+  }
+
+  .mat-mdc-dialog-content {
+    height: auto;
+    max-height: none;
+    padding-left: 0;
+    padding-right: 0;
+  }
 }

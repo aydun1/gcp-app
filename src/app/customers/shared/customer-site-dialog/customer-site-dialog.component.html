@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Add a site to {{ data.customer.accountnumber }}</h2>
+<h2 mat-dialog-title>Add a site to {{ data.customer.custNmbr }}</h2>
 <form (ngSubmit)="siteId ? editSite() : addSite()" [formGroup]="siteForm">
   <mat-dialog-content class="mat-typography">
     <p>Use this when you wish to keep track of pallets for customers with more than one physical location, but only one debtor ID. The address is optional.</p>
@@ -6,9 +6,13 @@
       <h3>Sites</h3>
       <mat-list>
         <mat-list-item *ngFor="let site of sites" (click)="openEditor(site.id, site.fields.Title, site.fields.Address)" [class.active] = "site.id === siteId">
-          <div mat-line>{{ site.fields.Title }}</div>
-          <button *ngIf="site.id === siteId" color="warn" type="button" mat-raised-button class="icon" (click)="deleteSite()" [disabled]="loading" class="delete">Delete site</button>
-          <button type="button" mat-icon-button class="icon"><mat-icon>edit</mat-icon></button>
+          <span matListItemTitle>{{ site.fields.Title }}</span>
+          <ng-container *ngIf="site.id === siteId" matListItemMeta>
+            <button color="warn" type="button" mat-raised-button class="icon" (click)="deleteSite()" [disabled]="loading" class="delete">Delete site</button>
+          </ng-container>
+          <ng-container matListItemMeta>
+            <button type="button" mat-icon-button class="icon"><mat-icon>edit</mat-icon></button>
+          </ng-container>
         </mat-list-item>
       </mat-list>
     </ng-container>

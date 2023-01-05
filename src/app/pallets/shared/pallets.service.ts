@@ -42,10 +42,10 @@ export class PalletsService {
 
     const parsed = filterKeys.map(key => {
       switch (key) {
-        case 'from':
-          return `fields/From eq '${filters['from']}'`;
         case 'to':
           return `fields/To eq '${filters['to']}'`;
+
+
         case 'status':
           if (filters['status'] === 'Pending') return `(fields/Status eq 'Pending' or fields/Status eq 'Edited')`
           return `fields/Status eq '${filters['status']}'`;
@@ -61,6 +61,8 @@ export class PalletsService {
       const cleanName = this.shared.sanitiseName(filters['name']);
       parsed.push(`(startswith(fields/CustomerNumber, '${cleanName}') or startswith(fields/Title, '${cleanName}'))`);
     }
+
+    if (filterKeys.includes('from')) parsed.push(`fields/From eq '${filters['from']}'`);
     if (filterKeys.includes('branch')) parsed.unshift(`fields/Branch eq '${filters['branch']}'`);
     if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Cancelled'`);
     if (limit) {
@@ -312,7 +314,7 @@ export class PalletsService {
   }
 
   getPalletsOwedToBranch(branch: string, pallet: string, date: Date): Observable<number> {
-    const startOfMonth = new Date(Date.UTC(date.getFullYear(), date.getUTCMonth(), 1)).toISOString();
+    const startOfMonth = `${date.getFullYear()}-${date.getMonth() + 1}-1`;
     const dateInt = this.dateInt(date);
     const eod = new Date(date.setHours(23,59,59,999)).toISOString();
 
@@ -333,9 +335,8 @@ export class PalletsService {
 
   getPalletsOwedByCustomer(custnmbr: string, site?: string | undefined): Observable<PalletQuantities> {
     const date = new Date();
-    const startOfMonth = new Date(Date.UTC(date.getFullYear(), date.getUTCMonth(), 1)).toISOString();
+    const startOfMonth = `${date.getFullYear()}-${date.getMonth() + 1}-1`;
     const dateInt = this.dateInt(date);
-
     let url = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}/items?expand=fields(select=Title,Pallet,Owing,Branch)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt lt '${dateInt}'`;
     let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=Title,Pallet,Out,In,Branch)&filter=fields/Date ge '${startOfMonth}' and fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
     if (site !== undefined) {
@@ -351,14 +352,12 @@ export class PalletsService {
       map(([pastMonths, currentMonth]) => ['Loscam', 'Chep', 'Plain'].reduce((acc, pallet) => {
         const currentPallets = Object.values(currentMonth).filter(_ => _.fields.Pallet === pallet).map(_ => {return {branch: _.fields.Branch, pallets: _.fields.Out - _.fields.In }});
         const pastPallets = Object.values(pastMonths).filter(_ => _.fields.Pallet === pallet).map(_ => {return {branch: _.fields.Branch, pallets: _.fields.Owing }});
-        console.log(pallet)
         const totals: PalletQuantity = [...currentPallets, ...pastPallets].reduce((acc, qty) => {
           const stateCounts = {...acc['stateCounts'], [qty.branch]: (acc['stateCounts'][qty.branch] || 0) + qty.pallets};
           const total = acc['total'] + qty.pallets;
           const states = (acc['states'].includes(qty.branch) ? acc['states'] : [...acc['states'], qty.branch]).sort();
           return {stateCounts, total, states} as PalletQuantity;
         }, {stateCounts: [], total: 0, states: [] as Array<string>} as  PalletQuantity);
-        console.log(totals);
         acc[pallet] = totals;
         return acc;
       }, {} as PalletQuantities))
@@ -367,17 +366,28 @@ export class PalletsService {
 
   getInTransitOff(branch: string, pallet: string): Observable<number> {
     const melbourneMidnight = new Date(new Date(new Date().toLocaleString('en-US', {timeZone: 'Australia/Melbourne'})).setHours(0,0,0,0)).toISOString();
-    let url = this._palletTrackerUrl + `/items?expand=fields(select=Quantity,${pallet})`;
-    url += `&filter=fields/From eq '${branch}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;
-    url += ` and fields/Status ne 'Cancelled' and (fields/Status ne 'Transferred' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
+    let url = this._palletTrackerUrl + `/items?expand=fields(select=Quantity,${pallet})&filter=`;
+    const filters = [
+      `(fields/Status eq 'Pending' or fields/Status eq 'Approved' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`,
+      `(fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`,
+      `fields/From eq '${branch}'`,
+      `fields/Title eq null`,
+    ];
+    url += filters.join(' and ');
     return this.http.get(url).pipe(map(_ => _['value'].reduce((acc: number, val: Pallet) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
 
   getInTransitOn(branch: string, pallet: string): Observable<number> {
     const melbourneMidnight = new Date(new Date(new Date().toLocaleString('en-US', {timeZone: 'Australia/Melbourne'})).setHours(0,0,0,0)).toISOString();
-    let url = this._palletTrackerUrl + `/items?expand=fields(select=Quantity,${pallet})`;
-    url += `&filter=fields/To eq '${branch}' and fields/Title eq null and (fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`;
-    url += ` and fields/Status ne 'Cancelled' and (fields/Status eq 'Approved' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`;
+    let url = this._palletTrackerUrl + `/items?expand=fields(select=Quantity,${pallet})&filter=`;
+
+    const filters = [
+      `(fields/Status eq 'Approved' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`,
+      `(fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`,
+      `fields/To eq '${branch}'`,
+      `fields/Title eq null`,
+    ];
+    url += filters.join(' and ');
     return this.http.get(url).pipe(map(_ => _['value'].reduce((acc: number, val: Pallet) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
 

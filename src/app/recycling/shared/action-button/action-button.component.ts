@@ -84,7 +84,7 @@ export class ActionButtonComponent implements OnInit {
   }
 
   openSiteDialog(): void {
-    const customer = {accountnumber: this.branch};
+    const customer = {custNmbr: this.branch};
     const data = {customer, sites: this.depots};
     const dialogRef = this.dialog.open(CustomerSiteDialogComponent, {width: '600px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe(() => this.refreshDepots());
@@ -213,7 +213,7 @@ export class ActionButtonComponent implements OnInit {
       tap(() => this.loading.next(true)),
       switchMap(_ => {
         if (!_) return of(1);
-        const tasks = cages.map(cage => this.recyclingService.allocateToCustomer(cage.id, _.customer.accountnumber, _.customer.name, _.site).pipe(take(1)));
+        const tasks = cages.map(cage => this.recyclingService.allocateToCustomer(cage.id, _.customer.custNmbr, _.customer.name, _.site).pipe(take(1)));
         return forkJoin(tasks);
       })
     ).subscribe(() => this.onComplete());

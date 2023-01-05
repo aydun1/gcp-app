@@ -52,6 +52,17 @@ export class RecyclingService {
     return this._columns$;
   }
 
+  getNextCageId(id: string, prev: boolean): Observable<string> {
+    return this._cagesSubject$.pipe(
+      map(_ => {
+        if (!id) return '';
+        const index = _.findIndex(_ => _.id === id);
+        if (_.length - index < 5 ) this.getNextPage();
+        const direction = prev ? -1 : 1;
+        return _[index + direction]?.id; 
+    }))
+  }
+
   private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
     let url = `${this._cageTrackerUrl}/items?expand=fields`;

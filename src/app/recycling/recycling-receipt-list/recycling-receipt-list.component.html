@@ -1,7 +1,8 @@
 <div class="outer">
+  <gcp-letterhead class="print-heading">Polymer receipts</gcp-letterhead>
   <div class="options inner">
     <div class="buttons">
-      <mat-form-field appearance="outline" class="branch">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
         <mat-label>Branch</mat-label>
         <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
           <mat-option>All</mat-option>
@@ -12,7 +13,7 @@
     <a mat-raised-button [routerLink]="['new']" color="primary" class="add-receipt">Add Receipt</a>
   </div>
 
-  <div *ngIf="(receipts$ | async) as receipts" class="inner">
+  <mat-card appearance="outlined" *ngIf="(receipts$ | async) as receipts" class="inner">
     <mat-table #table [dataSource]="receipts" [trackBy]="trackByFn">
 
       <ng-container matColumnDef="date">
@@ -45,7 +46,7 @@
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
-  </div>
+  </mat-card>
 </div>
 
 <router-outlet></router-outlet>

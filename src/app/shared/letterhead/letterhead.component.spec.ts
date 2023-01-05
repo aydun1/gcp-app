@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LetterheadComponent } from './letterhead.component';
 
-describe('PrintHeaderComponent', () => {
+describe('LetterheadComponent', () => {
   let component: LetterheadComponent;
   let fixture: ComponentFixture<LetterheadComponent>;
 

@@ -1,0 +1,51 @@
+.outer {
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.field-container {
+  display: flex;
+  margin: 0 -8px;
+}
+
+.field-container > .mat-mdc-form-field {
+  flex: 1;
+  min-width: 120px;
+  margin: 0 8px;
+}
+
+h2 {
+  margin-left: 10px;
+}
+
+img {
+  height: auto;
+  width: 50px;
+  padding-right: 16px;
+  padding-left: 8px;
+}
+
+.mat-mdc-card {
+  margin: 10px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin: 30px 10px;
+}
+
+.arrow {
+  margin: 0 12px;
+  padding-top: 18px;
+}
+
+@media (max-width: 800px) {
+  .pallets {
+    flex-direction: column;
+  }
+}

@@ -13,13 +13,12 @@ h2 {
   margin-left: 10px;
 }
 
-.mat-form-field {
-  font-size: 14px;
+.mat-mdc-form-field {
   margin-right: 10px;
-  width: 145px;
+  width: 160px;
 }
 
-.mat-footer-row {
+.mat-mdc-footer-row {
   font-weight: bold;
 }
 
@@ -36,15 +35,19 @@ h2 {
   margin-left: auto;
 }
 
+.mat-column-date {
+  flex: 0 1 128px;
+}
+
 .mat-column-notes {
   flex: 0 1 180px;
 }
 
 .mat-column-recepient {
-  flex: 0 1 300px;
+  flex: 1 1 300px;
 }
 
-.mat-column-pallet, .mat-column-date {
+.mat-column-pallet {
   flex: 0 1 115px;
 }
 
@@ -53,7 +56,7 @@ h2 {
 }
 
 .mat-column-docket {
-  flex: 0 1 40px;
+  flex: 0 1 106px;
 }
 
 @media print {
@@ -61,7 +64,7 @@ h2 {
     overflow-y: auto;
   }
 
-  .options {
+  h2, .options {
     display: none;
   }
 }

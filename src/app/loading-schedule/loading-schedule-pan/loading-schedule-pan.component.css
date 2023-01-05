@@ -1,0 +1,14 @@
+.outer {
+  margin: 0 auto;
+  max-width: 1024px;
+}
+
+@media print {
+  .inner {
+    margin: 0;
+  }
+
+  .header {
+    display: none;
+  }
+}

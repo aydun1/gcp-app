@@ -58,7 +58,7 @@ export class CustomerPickerDialogComponent implements OnInit {
     });
     this.customerForm.get('address')?.valueChanges.subscribe(_ => {
       if (_) {
-        const lastLine = [_.city, _.stateorprovince, _.postalcode];
+        const lastLine = [_.city, _.state, _.postcode];
         this.address = [_.line1, _.line2, _.line3, lastLine.join(' ')].filter(_ => _).join('\r\n');
       } else {
         this.address = '';
@@ -75,7 +75,7 @@ export class CustomerPickerDialogComponent implements OnInit {
       this.loadingAddresses = true;
       addField?.disable();
     };
-    this.addresses$ = this.customersService.getAddresses(customer.accountnumber).pipe(
+    this.addresses$ = this.customersService.getAddresses(customer.custNmbr).pipe(
       tap(_ => {
         this.loadingAddresses = false;
         addField?.enable();
@@ -85,7 +85,7 @@ export class CustomerPickerDialogComponent implements OnInit {
 
   getSites(customer: Customer): void {
     this.loadingSites = true;
-    this.sites$ = this.customersService.getSites(customer.accountnumber).pipe(
+    this.sites$ = this.customersService.getSites(customer.custNmbr).pipe(
       tap(_ => {
         this.customerForm.patchValue({site: _.length > 0 ? _[0] : null});
         this.loadingSites = false;

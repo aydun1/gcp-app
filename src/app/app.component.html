@@ -3,7 +3,7 @@
     <button *ngIf="snav" mat-icon-button (click)="snav.toggle()">
       <mat-icon>menu</mat-icon>
     </button>
-    <a class="title" [routerLink]="['/']">Pallet Management System</a>
+    <a class="title" [routerLink]="['/']">Inventory Management System</a>
     <div class="toolbar-spacer"></div>
     <div *ngIf="photo$ | async as photo; else noPic" class="photo-button" mat-button [matMenuTriggerFor]="menu"><img [src]="photo" [alt]="accounts[0].name" alt="Avatar"></div>
     <ng-template #noPic>
@@ -13,27 +13,71 @@
   <mat-sidenav-container>
     <mat-sidenav #snav [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile">
       <mat-nav-list>
-        <a *ngIf="!warehouse" mat-list-item routerLink="/customers" routerLinkActive="active"><mat-icon>groups</mat-icon><span class="menu-label">Customers</span></a>
-        <a mat-list-item routerLink="/pallets" routerLinkActive="active"><mat-icon>view_list</mat-icon><span class="menu-label">Pallet Manager</span></a>
+        <a *ngIf="!warehouse" mat-list-item routerLink="/customers" routerLinkActive="active">
+          <mat-icon matListItemIcon class="menu-icon">groups</mat-icon>
+          <span class="menu-label">Customers</span>
+        </a>
+        <a mat-list-item routerLink="/pallets" routerLinkActive="active">
+          <mat-icon matListItemIcon class="menu-icon">view_list</mat-icon>
+          <span class="menu-label">Pallets</span>
+          <mat-icon class="chevron">expand_more</mat-icon>
+        </a>
         <ng-container *ngIf="urlActive('/pallets')">
           <a mat-list-item routerLink="/pallets/history" routerLinkActive="active" class="sub-item"><span class="menu-label">Branch history</span></a>
           <a mat-list-item routerLink="/pallets/transfer" routerLinkActive="active" class="sub-item"><span class="menu-label">Interstate transfers</span></a>
           <a mat-list-item routerLink="/pallets/stocktake" routerLinkActive="active" class="sub-item"><span class="menu-label">Stocktake</span></a>
           <mat-divider></mat-divider>
         </ng-container>
-        <a mat-list-item routerLink="/recycling" routerLinkActive="active"><mat-icon>recycling</mat-icon><span class="menu-label">Recycling</span></a>
+        <a mat-list-item routerLink="/recycling" routerLinkActive="active">
+          <mat-icon matListItemIcon class="menu-icon">recycling</mat-icon>
+          <span class="menu-label">Recycling</span>
+          <mat-icon class="chevron">expand_more</mat-icon>
+        </a>
         <ng-container *ngIf="urlActive('/recycling')">
-          <a mat-list-item routerLink="/recycling/cages" routerLinkActive="active" class="sub-item"><span class="menu-label">Cage manager</span></a>
-          <a mat-list-item routerLink="/recycling/receipts" routerLinkActive="active" class="sub-item"><span class="menu-label">Polymer receipts</span></a>
+          <a mat-list-item routerLink="/recycling/cages" routerLinkActive="active" class="sub-item">
+            <span class="menu-label">Cage manager</span>
+          </a>
+          <a mat-list-item routerLink="/recycling/receipts" routerLinkActive="active" class="sub-item">
+            <span class="menu-label">Polymer receipts</span>
+          </a>
           <mat-divider></mat-divider>
         </ng-container>
-        <a mat-list-item routerLink="/runs" routerLinkActive="active"><mat-icon>local_shipping</mat-icon><span class="menu-label">Runs</span></a>
-        <a mat-list-item routerLink="/loading-schedule" routerLinkActive="active"><mat-icon>departure_board</mat-icon><span class="menu-label">Loading schedule</span></a>
+        <a mat-list-item routerLink="/transfers" routerLinkActive="active">
+          <mat-icon matListItemIcon class="menu-icon">trolley</mat-icon>
+          <span class="menu-label">Inventory</span>
+          <mat-icon class="chevron">expand_more</mat-icon>
+        </a>
+        <ng-container *ngIf="urlActive('/transfers')">
+          <a mat-list-item routerLink="/transfers/suggested-items" routerLinkActive="active" class="sub-item">
+            <span class="menu-label">Suggested items</span>
+          </a>
+          <a mat-list-item routerLink="/transfers/active" routerLinkActive="active" class="sub-item">
+            <span class="menu-label">Requested items (ITT)</span>
+          </a>
+          <a mat-list-item routerLink="/transfers/requested-items" routerLinkActive="active" class="sub-item">
+            <span class="menu-label">Requested items (PO)</span>
+          </a>
+          <a mat-list-item routerLink="/transfers/new" routerLinkActive="active" class="sub-item">
+            <span class="menu-label">Quick transfer</span>
+          </a>
+        </ng-container>
+
+        <a mat-list-item routerLink="/loading-schedule" routerLinkActive="active">
+          <mat-icon matListItemIcon class="menu-icon">departure_board</mat-icon>
+          <span class="menu-label">Loading schedule</span>
+        </a>
+        <a mat-list-item routerLink="/runs" routerLinkActive="active">
+          <mat-icon matListItemIcon class="menu-icon">local_shipping</mat-icon>
+          <span class="menu-label" matListItemTitle>Runs</span>
+        </a>
+        <a mat-list-item routerLink="/chemicals" routerLinkActive="active">
+          <mat-icon matListItemIcon class="menu-icon">science</mat-icon>
+          <span class="menu-label" matListItemTitle>Chemicals</span>
+        </a>
       </mat-nav-list>
       <div class="token">{{ token }}</div>
     </mat-sidenav>
     <mat-sidenav-content>
-      <gcp-letterhead class="print-heading">Pallet Management System</gcp-letterhead>
       <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>
@@ -45,18 +89,23 @@
     </div>
     <mat-list>
       <mat-list-item class="menu-accounts" *ngFor="let account of accounts">
-        <div mat-line>{{ account.name }}</div>
-        <div mat-line>{{ account.username }}</div>
+        <span matListItemTitle>{{ account.name }}</span>
+        <span>{{ account.username }}</span>
       </mat-list-item>
     </mat-list>
   </mat-menu>
 </ng-container>
 
 <div *ngIf="!loginDisplay" class="login">
-  <mat-card class="login-card">
-    <img src="/assets/bannerlogo.png" class="logo" alt="Garden City Plastics logo">
-    <p>Welcome to the Garden City Plastics pallet management system.</p>
-    <p>Click below to login.</p>
-    <button mat-button (click)="login()">Login</button>
+  <mat-card appearance="outlined" class="login-card">
+    <mat-card-content>
+      <img src="/assets/gcp_banner.png" class="logo" alt="Garden City Plastics logo">
+      <p>Welcome to the Garden City Plastics inventory management system.</p>
+      <p>Click below to login.</p>
+      
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button (click)="login()" color="primary">LOGIN</button>
+    </mat-card-actions>
   </mat-card>
 </div>

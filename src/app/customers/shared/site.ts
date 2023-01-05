@@ -1,7 +1,7 @@
 export interface Site {
-  id: string,
+  id: string;
   fields: {
-    Title: string,
-    Address: string,
+    Title: string;
+    Address: string;
   }
 }

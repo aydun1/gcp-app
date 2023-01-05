@@ -1,0 +1,168 @@
+:host {
+  display: block;
+}
+
+.outer {
+  margin: 0 auto;
+  max-width: 1024px;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+h2 {
+  margin-left: 10px;
+}
+
+h3 {
+  margin: 0;
+}
+
+.mat-mdc-form-field {
+  margin-right: 10px;
+  width: 160px;
+}
+
+.mat-mdc-footer-row {
+  border-top-width: 1px;
+  border-top-color: rgba(0, 0, 0, 0.12);
+  bottom: 0;
+  font-weight: bold;
+  margin-top: -1px;
+  position: sticky;
+}
+
+.options {
+  align-items: baseline;
+  display: flex;
+}
+
+.buttons {
+  flex: 1;
+}
+
+.mat-column-date {
+  flex: 0 0 100px;
+}
+
+.mat-column-product {
+  flex: 1 1 250px;
+  white-space: nowrap;
+}
+
+.mat-column-quantity {
+  flex: 0 1 140px;
+  font-weight: bold;
+  text-align: right;
+}
+
+.mat-column-available {
+  flex: 0 0 140px;
+  text-align: right;
+}
+
+.loadDetails {
+  flex: 0 1 100%;
+}
+
+.details {
+  overflow: hidden;
+}
+
+.description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 800px) {
+  .mat-mdc-cell {
+    min-height: 0;
+  }
+
+  .mat-mdc-cell:first-of-type,
+  .mat-mdc-header-cell:first-of-type {
+    padding-left: 0;
+  }
+
+  .mat-mdc-cell:last-of-type,
+  .mat-mdc-header-cell:last-of-type {
+    padding-right: 0;
+  }
+
+  .mat-mdc-header-row {
+    display: grid;
+    gap: 5px;
+    grid-template-columns: 1fr 70px 70px;
+    grid-template-rows: 40px;
+    padding: 10px 10px 0 10px;
+  }
+
+  .mat-mdc-row {
+    display: grid;
+    gap: 5px;
+    grid-template-columns: 1fr 70px 70px;
+    grid-template-rows: 40px 44px;
+    padding: 10px 10px 0 10px;
+  }
+
+  .mat-mdc-header-cell.mat-column-product {
+    display: none;
+  }
+
+  .mat-mdc-cell.mat-column-product {
+    grid-column: 1 / 4;
+    grid-row: 1;
+    justify-content: inherit;
+  }
+
+  .mat-mdc-footer-cell.mat-column-date {
+    flex: 1;
+  }
+
+  .mat-mdc-footer-cell.mat-column-product {
+    display: none;
+  }
+
+  .mat-mdc-cell.mat-column-date {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .mat-mdc-cell.mat-column-available {
+    grid-column: 2;
+    grid-row: 2;
+    justify-content: inherit;
+  }
+
+  .mat-mdc-cell.mat-column-quantity {
+    grid-column: 3;
+    grid-row: 2;
+  }
+}
+
+@media print {
+  h2, .options {
+    display: none;
+  }
+
+  .section-head {
+    margin-bottom: 0;
+  }
+
+  .mat-mdc-row,
+  .mat-mdc-header-row {
+    display: flex;
+    gap: 0;
+    padding: 0;
+  }
+
+  .mat-mdc-header-cell.mat-column-product,
+  .mat-mdc-footer-cell.mat-column-product {
+    display: flex;
+  }
+
+}

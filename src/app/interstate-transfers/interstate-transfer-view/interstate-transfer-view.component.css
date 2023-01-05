@@ -1,0 +1,83 @@
+
+.outer {
+  margin: 0 auto;
+  max-width: 1024px;
+}
+
+.table-heading {
+  font-weight: bold;
+  margin-top: 2.5cm;
+}
+
+.print-button {
+  margin-left: auto;
+}
+
+.line {
+  align-items: center;
+  display: flex;
+  margin: 10px 0;
+}
+
+.underline {
+  border-bottom: solid black 1px;
+  margin-top: 29px;
+}
+
+.bin {
+  flex: 0 0 100px;
+}
+
+.product-details {
+  flex: 1;
+}
+
+.small {
+  font-size: 12px;
+}
+
+.quantities {
+  flex: 0 0 75px;
+  margin-left: 10px;
+  text-align: right;
+}
+
+.header-wrap {
+  display: flex;
+  justify-content: space-between;
+}
+
+.print-header {
+  display: none;
+}
+
+.footer {
+  break-inside: avoid;
+}
+
+.mat-divider {
+  margin-bottom: 20px;
+}
+
+.bottom-divider {
+  margin: 20px 0;
+}
+
+@media print {
+  .header {
+    display: none;
+  }
+
+  .print-header {
+    display: block;
+  }
+
+  .print-details {
+    margin-top: 16px;
+  }
+
+  .line {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}

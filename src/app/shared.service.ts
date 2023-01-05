@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { DomSanitizer, SafeUrl, Title } from '@angular/platform-browser';
 import { MsalService } from '@azure/msal-angular';
 import { AccountInfo } from '@azure/msal-browser';
-import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, lastValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 
 import { environment } from '../environments/environment';
 
@@ -12,6 +12,7 @@ import { environment } from '../environments/environment';
 })
 export class SharedService {
   public territories = {
+    'HEA': ['HEA'],
     'NSW': ['NSW', 'NSWSALES'],
     'QLD': ['QLD'],
     'SA': ['SA'],
@@ -26,6 +27,32 @@ export class SharedService {
   public territoryNames = this.branches.concat(['INT', 'NATIONAL']);
   public isWarehouse!: boolean;
 
+  public emailMap = new Map<string, Array<string>>([
+    ['HEA', ['esther.wong@gardencityplastics.com']],
+    ['HEA_MPA', ['esther.wong@gardencityplastics.com']],
+    ['QLD', ['qld@gardencityplastics.com', 'megan.williams@gardencityplastics.com']],
+    ['QLD_MPA', ['qld@gardencityplastics.com']],
+    ['NSW', ['nsw@gardencityplastics.com']],
+    ['NSW_MPA', ['nsw@gardencityplastics.com']],
+    ['SA', ['sa@gardencityplastics.com']],
+    ['SA_MPA', ['sa@gardencityplastics.com']],
+    ['WA', ['wa@gardencityplastics.com']],
+    ['WA_MPA', ['wasales@micropellets.com.au']],
+  ]);
+
+  public panMap = new Map<string, Array<string>>([
+    ['VIC', ['melb.dispatch@gardencityplastics.com']]
+  ]);
+
+  public officesMap = new Map<string, string>([
+    ['Stapylton', 'QLD'],
+    ['Heatherton','HEA'],
+    ['Somersby', 'NSW'],
+    ['Wingfield', 'SA'],
+    ['Dandenong South', 'VIC'],
+    ['Forrestfield', 'WA']
+  ]);
+
   constructor(
     private http: HttpClient,
     private dom: DomSanitizer,
@@ -34,7 +61,7 @@ export class SharedService {
   ) { }
 
   checkIfWarehouse(accounts: Array<any>) {
-    this.isWarehouse = this.warehouseStaff.includes(accounts[0].username);
+    this.isWarehouse = this.warehouseStaff.includes(accounts[0]?.username);
   }
 
   getPhoto(): Observable<SafeUrl> {
@@ -46,10 +73,10 @@ export class SharedService {
   }
 
   getBranch(): Observable<string> {
-    const url = `${environment.endpoint}/me/state`;
+    const url = `${environment.endpoint}/me/officeLocation`;
     return this._state$.pipe(
       switchMap(cur => cur ? of(cur) : this.http.get(url).pipe(
-        map(_ => _['value'] ? _['value'] : 'NA'),
+        map(_ => _['value'] ? this.officesMap.get(_['value']) || 'NA' : 'NA'),
         tap(_ => {
           this.branch = _;
           this._state$.next(_);
@@ -63,6 +90,10 @@ export class SharedService {
     return activeAccount?.name || '';
   }
 
+  getOwnEmail(): string {
+    const activeAccount = this.authService.instance.getActiveAccount();
+    return activeAccount?.username || '';
+  }
 
   getAccount(): AccountInfo | null {
     const activeAccount = this.authService.instance.getActiveAccount();
@@ -76,5 +107,35 @@ export class SharedService {
   setTitle(pageTitle: string): void {
     const title =  pageTitle ? `${pageTitle} - ${this.appTitle}` : this.appTitle;
     this.titleService.setTitle(title);
+  }
+
+  getTransactions(branch: string | undefined, itemNmbr: string | undefined): Promise<any[]> {
+    const request = this.http.get<{invoices: any[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/current?branch=${branch}`).pipe(
+      map(_ => _.invoices)
+    );
+    return lastValueFrom(request).catch(
+      e => {
+        console.log(e);
+        return [];
+      }
+    );
+  }
+
+  sendMail(to: Array<string>, subject: string, body: string, contentType: 'Text' | 'HTML'): Promise<Object> {
+    const url = `${environment.endpoint}/me/sendMail`;
+    const cc = ['aidan.obrien@gardencityplastics.com', this.getOwnEmail()];
+    const payload  = {
+      message: {
+        subject: subject,
+        body: {
+          contentType: contentType,
+          content: body,
+        },
+        toRecipients: to.map(_ => {return {emailAddress: {address: _}}}),
+        ccRecipients: cc.map(_ => {return {emailAddress: {address: _}}}),
+      },
+      saveToSentItems: false
+    }
+    return lastValueFrom(this.http.post(url, payload));
   }
 }

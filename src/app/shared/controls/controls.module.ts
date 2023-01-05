@@ -6,10 +6,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
 import { CustomerControlComponent } from './customer-control/customer-control.component';
+import { ItemControlComponent } from './item-control/item-control.component';
 
 @NgModule({
   declarations: [
-    CustomerControlComponent
+    CustomerControlComponent,
+    ItemControlComponent
   ],
   imports: [
     CommonModule,
@@ -19,7 +21,8 @@ import { CustomerControlComponent } from './customer-control/customer-control.co
     MatInputModule
   ],
   exports: [
-    CustomerControlComponent
+    CustomerControlComponent,
+    ItemControlComponent
   ],
 })
 export class ControlsModule {}

@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Transferring pallets for {{ data.customer.name }} ({{ data.customer.accountnumber }})</h2>
+<h2 mat-dialog-title>Transferring pallets for {{ data.customer.name }} ({{ data.customer.custNmbr }})</h2>
 <form (ngSubmit)="addPallets()" [formGroup]="palletForm">
   <mat-dialog-content>
     <mat-button-toggle-group formControlName="palletType" aria-label="Pallet type">
@@ -20,11 +20,11 @@
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Pallets delivered</mat-label>
-      <input matInput type="number" formControlName="outQty" autocomplete="off" placeholder="Pallets delivered to customer" min="0">
+      <input matInput type="number" formControlName="outQty" autocomplete="off" placeholder="Pallets delivered to customer" min="0" max="1000">
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Pallets collected</mat-label>
-      <input matInput type="number" formControlName="inQty" autocomplete="off" placeholder="Pallets collected from customer" min="0">
+      <input matInput type="number" formControlName="inQty" autocomplete="off" placeholder="Pallets collected from customer" min="0" max="1000">
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Notes</mat-label>

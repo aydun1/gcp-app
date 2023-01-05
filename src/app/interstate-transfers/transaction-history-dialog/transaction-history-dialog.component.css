@@ -1,0 +1,31 @@
+.header {
+  font-weight: bold;
+}
+
+.row {
+  align-items: center;
+  display: flex;
+  margin: 5px 0;
+}
+
+.notes {
+  font-style: italic;
+  margin: 5px 0;
+}
+
+.date {
+  flex: 0 1 130px;
+}
+
+.customer {
+  flex: 1;
+}
+
+.invoice-number {
+  flex: 0 1 120px;
+}
+
+.quantity {
+  flex: 0 0 60px;
+  text-align: right;
+}
