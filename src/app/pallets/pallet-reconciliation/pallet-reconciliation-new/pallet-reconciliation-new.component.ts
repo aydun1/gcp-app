@@ -101,7 +101,7 @@ export class PalletReconciliationNewComponent implements OnInit {
     } else {
       this.sharedService.getBranch().pipe(
         tap(_ => {
-          if (this.palletRecForm) this.palletRecForm.patchValue({branch: 'VIC'});
+          if (this.palletRecForm) this.palletRecForm.patchValue({branch: _});
         })
       ).subscribe();
       this.palletRecForm.get('date')?.valueChanges.subscribe(() => this.updateTransits());
@@ -122,12 +122,12 @@ export class PalletReconciliationNewComponent implements OnInit {
   updateTransits(): void {
     const date = this.palletRecForm.get('date')?.value;
     const pallet = this.palletRecForm.get('pallet')?.value;
-    const state = this.palletRecForm.get('state')?.value;
-    if (!pallet || !date || !state) return;
+    const branch = this.palletRecForm.get('branch')?.value;
+    if (!pallet || !date || !branch) return;
     this.loading = true;
-    const offs = this.palletsService.getInTransitOff(state, pallet);
-    const ons = this.palletsService.getInTransitOn(state, pallet);
-    const owed = this.palletsService.getPalletsOwedToBranch(state, pallet, date);
+    const offs = this.palletsService.getInTransitOff(branch, pallet);
+    const ons = this.palletsService.getInTransitOn(branch, pallet);
+    const owed = this.palletsService.getPalletsOwedToBranch(branch, pallet, date);
     combineLatest([offs, ons, owed]).subscribe(([a, b, c]) => {
       this.palletRecForm.patchValue({
         inTransitOff: a,
