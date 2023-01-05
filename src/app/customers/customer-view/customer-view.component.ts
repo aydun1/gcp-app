@@ -39,14 +39,15 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
   private cagesSubject$ = new Subject<string>();
   private customer!: Customer;
   private branch_!: string;
-  public pallets = ['Loscam', 'Chep', 'Plain']
+  public pallets = [
+    {name: 'Loscam', image: 'assets/loscam.png'},
+    {name: 'Chep', image: 'assets/chep.png'},
+    {name: 'Plain', image: 'assets/pallet.png'}
+  ]
   public customer$!: Observable<Customer>;
   public site!: string;
   public sites!: Array<Site>;
   public palletsOwing!: PalletQuantities | null;
-  public loscams!: number;
-  public cheps!: number;
-  public plains!: number;
   public cages!: {count: number, weight: number} | null;
   public addresses: Array<Address> = [];
 
@@ -185,8 +186,8 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe();
   }
 
-  openPalletHistory(customer: Customer): void {
-    const data = {customer, addresses: this.addresses, site: this.site};
+  openPalletHistory(customer: Customer, pallet = ''): void {
+    const data = {customer, pallet, addresses: this.addresses, site: this.site};
     const dialogRef = this.dialog.open(PalletCustomerListDialogComponent, {panelClass: 'printable', width: '800px', data, autoFocus: false});
     dialogRef.afterClosed().subscribe();
   }
