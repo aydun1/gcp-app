@@ -26,18 +26,22 @@ export class PalletCustomerListDialogComponent implements OnInit, OnDestroy {
   public palletTypes = ['Loscam', 'Chep', 'Plain'];
   public palletType!: string;
   public displayedColumns = ['date', 'notes', 'pallet', 'in', 'out', 'docket'];
+  public date = new Date();
 
-
+  get filteredPalletTypes() {
+    return this.palletType ? this.displayedColumns.filter(_ => _ !== 'pallet') : this.displayedColumns;
+  }
   constructor(
     private renderer: Renderer2,
     public dialogRef: MatDialogRef<PalletCustomerListDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>, site: string},
+    @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>, site: string, pallet: string},
     private palletsService: PalletsService,
     private sharedService: SharedService
   ) { }
 
   ngOnInit(): void {
     this.renderer.addClass(document.body, 'print-dialog');
+    if (this.data.pallet) this.palletType = this.data.pallet;
     this.getCustomerPallets();
   }
 
