@@ -6,7 +6,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { SwUpdate, VersionEvent } from '@angular/service-worker';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { InteractionStatus, EventMessage, EventType, AccountInfo, RedirectRequest } from '@azure/msal-browser';
-import { filter, interval, map, Observable, Subject, takeUntil, tap, withLatestFrom } from 'rxjs';
+import { filter, interval, map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { authentication } from '@microsoft/teams-js';
 
 import { SharedService } from './shared.service';
@@ -53,7 +53,7 @@ export class AppComponent implements OnInit, OnDestroy {
       const darkClass = 'dark-theme';
       _ ? this.renderer.addClass(document.body, darkClass) : this.renderer.removeClass(document.body, darkClass)
     });
-    //this.automateService.getAndSet().subscribe();
+    //this.automateService.changePalletTypes('Plain', 'GCP').subscribe();
     this.authService.instance.handleRedirectPromise().then(authResult => {
       const account = this.authService.instance.getActiveAccount();
       if (!account) this.checkAndSetActiveAccount();

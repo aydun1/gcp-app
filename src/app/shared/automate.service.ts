@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { combineLatest, map, Observable, of, switchMap, tap, timer } from 'rxjs';
+import { combineLatest, lastValueFrom, map, Observable, of, switchMap, tap, timer } from 'rxjs';
 
 import { SharedService } from '../shared.service';
 import { Pallet } from '../pallets/shared/pallet';
@@ -76,6 +76,41 @@ export class AutomateService {
       tap(() => this.i += 1),
       map(_ => this.i)
     )
+  }
+
+  changePalletTypes(oldPallet: string, newPallet: string): Observable<any> {
+    const shouldRun = 0;
+    let delay = 0;
+    const delayIncrement = 3000;
+    const branch = 'QLD';
+    if (shouldRun) return of();
+    const filters = [
+      `fields/CustomerNumber eq '3Q09778'`,
+      `fields/Branch eq '${branch}'`,
+      `fields/CustomerNumber ne null`,
+      `fields/Pallet eq '${oldPallet}'`
+    ];
+    const url = `${this.palletTrackerUrl}/items?expand=fields(select=Title,Branch,CustomerNumber,Site,From,To,In,Out,Pallet,Quantity,Date,Notes)&filter=${filters.join(' and ')}&top=2000`;
+    return this.http.get(url).pipe(
+      map((res: any) => res.value as Pallet[]),
+      tap(_ => console.log(`Got ${_.length} items.`)),
+      switchMap(_ => {
+        return _.map(async pallet => {
+          delay += delayIncrement;
+          return new Promise(resolve => setTimeout(resolve, delay)).then(() => {
+            const fields = {...pallet['fields'], Pallet: newPallet};
+            delete fields['@odata.etag'];
+            const actionObs = this.http.post<Pallet>(`${this.palletTrackerUrl}/items`, {fields}).pipe(
+              switchMap(() => {
+                const fields = {In: 0, Out: 0, Quantity: 0};
+                return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${pallet.id}')`, {fields});
+              })
+            );
+            return lastValueFrom(actionObs);
+          });
+        });
+      })
+    );
   }
 
   getAll(): Observable<any> {
