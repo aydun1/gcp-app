@@ -376,7 +376,7 @@ export class PalletsService {
       `fields/From eq '${branch}'`,
       `fields/Title eq null`,
     ];
-    url += filters.join(' and ');
+    url += filters.join(' and ') + '&top=2000';
     return this.http.get(url).pipe(map(_ => _['value'].reduce((acc: number, val: Pallet) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
 
@@ -390,7 +390,7 @@ export class PalletsService {
       `fields/To eq '${branch}'`,
       `fields/Title eq null`,
     ];
-    url += filters.join(' and ');
+    url += filters.join(' and ') + '&top=2000';
     return this.http.get(url).pipe(map(_ => _['value'].reduce((acc: number, val: Pallet) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
 
