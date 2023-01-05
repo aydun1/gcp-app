@@ -30,16 +30,19 @@
           </h3>
           <button mat-stroked-button (click)="openPalletHistory(customer)" type="button">History</button>
         </div>
-        <dl>
-          <ng-container *ngFor="let pallet of pallets">
-            <dt>{{pallet}}s</dt>
-            <dd *ngIf="palletsOwing; else loadingDots">
-              <span class="pallet-total">{{ palletsOwing[pallet]['total'] }}</span>
-              <span>&nbsp;</span>
-              <span *ngIf="palletsOwing[pallet]['states'].length > 1" class="pallet-summary"><span *ngFor="let branch of palletsOwing[pallet]['states']; let isLast=last">{{branch}}: {{palletsOwing[pallet]['stateCounts'][branch]}}<span *ngIf="!isLast">, </span></span></span>
-            </dd>
-          </ng-container>
-        </dl>
+        <mat-nav-list>
+          <mat-list-item *ngFor="let pallet of pallets" (click)="openPalletHistory(customer, pallet.name)">
+            <img matListItemAvatar [src]="pallet.image">
+            <div matListItemTitle>
+              <span *ngIf="palletsOwing; else loadingDots">
+                <span class="pallet-total">{{ palletsOwing[pallet.name]['total'] }}</span>
+                <span>&nbsp;</span>
+                <span *ngIf="palletsOwing[pallet.name]['states'].length > 1" class="pallet-summary"><span *ngFor="let branch of palletsOwing[pallet.name]['states']; let isLast=last">{{branch}}: {{palletsOwing[pallet.name]['stateCounts'][branch]}}<span *ngIf="!isLast">, </span></span></span>
+              </span>
+            </div>
+            <div matListItemLine>{{pallet.name}}</div>
+          </mat-list-item>
+        </mat-nav-list>
       </div>
       <mat-divider></mat-divider>
       <div class="status-card">
@@ -49,12 +52,20 @@
           </h3>
           <button mat-stroked-button (click)="openCageHistory(customer)" type="button">History</button>
         </div>
-        <dl>
-          <dt>Active</dt>
-          <dd *ngIf="cages; else loadingDots">{{ cages.count }}</dd>
-          <dt>All time weight</dt>
-          <dd *ngIf="cages; else loadingDots">{{ cages.weight }} kg</dd>
-        </dl>
+        <mat-list>
+          <mat-list-item>
+            <div matListItemTitle>
+              <span *ngIf="cages; else loadingDots">{{ cages.count }}</span>
+            </div>
+            <div matListItemLine>Active</div>
+          </mat-list-item>
+          <mat-list-item>
+            <div matListItemTitle>
+              <span *ngIf="cages; else loadingDots">{{ cages.weight }} kg</span>
+            </div>
+            <div matListItemLine>All time weight</div>
+          </mat-list-item>
+        </mat-list>
       </div>
       <mat-divider></mat-divider>
       <div class="status-card">
@@ -108,9 +119,7 @@
 </ng-template>
 
 <ng-template #loadingDots>
-  <dd class="dots">
-    <gcp-loading-dots></gcp-loading-dots>
-  </dd>
+    Loading...
 </ng-template>
 
 <router-outlet></router-outlet>
