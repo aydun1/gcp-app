@@ -37,7 +37,6 @@ export class PalletReconciliationNewComponent implements OnInit {
   public stocktakeResult = 0;
   public pallets = ['Loscam', 'Chep', 'Plain'];
   public states = this.sharedService.branches;
-  public state!: string;
   public loading = false;
   public id: string | null = null;
 
@@ -65,7 +64,7 @@ export class PalletReconciliationNewComponent implements OnInit {
     const date = new Date();
     this.palletRecForm = this.fb.group({
       date: [date, [Validators.required]],
-      branch: new FormControl({value: this.state, disabled: true}, [Validators.required]),
+      branch: new FormControl({value: '', disabled: true}, [Validators.required]),
       name: new FormControl({value: name, disabled: true}, [Validators.required]),
       pallet: ['', [Validators.required]],
       currentBalance: ['', [Validators.required, Validators.min(0)]],
@@ -102,8 +101,7 @@ export class PalletReconciliationNewComponent implements OnInit {
     } else {
       this.sharedService.getBranch().pipe(
         tap(_ => {
-          this.state = _;
-          if (this.palletRecForm) this.palletRecForm.patchValue({branch: _});
+          if (this.palletRecForm) this.palletRecForm.patchValue({branch: 'VIC'});
         })
       ).subscribe();
       this.palletRecForm.get('date')?.valueChanges.subscribe(() => this.updateTransits());
@@ -124,11 +122,12 @@ export class PalletReconciliationNewComponent implements OnInit {
   updateTransits(): void {
     const date = this.palletRecForm.get('date')?.value;
     const pallet = this.palletRecForm.get('pallet')?.value;
-    if (!pallet || !date) return;
+    const state = this.palletRecForm.get('state')?.value;
+    if (!pallet || !date || !state) return;
     this.loading = true;
-    const offs = this.palletsService.getInTransitOff(this.state, pallet);
-    const ons = this.palletsService.getInTransitOn(this.state, pallet);
-    const owed = this.palletsService.getPalletsOwedToBranch(this.state, pallet, date);
+    const offs = this.palletsService.getInTransitOff(state, pallet);
+    const ons = this.palletsService.getInTransitOn(state, pallet);
+    const owed = this.palletsService.getPalletsOwedToBranch(state, pallet, date);
     combineLatest([offs, ons, owed]).subscribe(([a, b, c]) => {
       this.palletRecForm.patchValue({
         inTransitOff: a,
