@@ -23,6 +23,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
   public transferReference!: string;
   public loscamQuantity!: number;
   public chepQuantity!: number;
+  public gcpQuantity!: number;
   public plainQuantity!: number;
   public sender!: boolean;
   public receiver!: boolean;
@@ -47,6 +48,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
         this.transferReference = transfer.summary.reference;
         this.loscamQuantity = transfer.summary.loscam;
         this.chepQuantity = transfer.summary.chep;
+        this.gcpQuantity = transfer.summary.gcp;
         this.plainQuantity = transfer.summary.plain;
         this.sender = transfer.summary.from === state;
         this.receiver = transfer.summary.to === state;
@@ -98,9 +100,9 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     ).subscribe();
   }
 
-  setQuantity(id: string, referenceOld: string, loscamOld: number, chepOld: number, plainOld: number): void {
+  setQuantity(id: string, referenceOld: string, loscamOld: number, chepOld: number, gcpOld: number, plainOld: number): void {
     this.loading = true;
-    const sameCounts = loscamOld === this.loscamQuantity && chepOld === this.chepQuantity && plainOld === this.plainQuantity;
+    const sameCounts = loscamOld === this.loscamQuantity && chepOld === this.chepQuantity && gcpOld === this.gcpQuantity && plainOld === this.plainQuantity;
     const sameRef = referenceOld === this.transferReference;
     if (sameCounts && sameRef) {
       this.snackBar.open('Nothing changed', '', {duration: 3000});
@@ -109,7 +111,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
       return;
     }
     const action = sameCounts ? this.palletsService.editInterstatePalletTransferReference(id, this.transferReference) :
-    this.palletsService.editInterstatePalletTransferQuantity(id, this.transferReference, this.loscamQuantity, this.chepQuantity, this.plainQuantity);
+    this.palletsService.editInterstatePalletTransferQuantity(id, this.transferReference, this.loscamQuantity, this.chepQuantity, this.gcpQuantity, this.plainQuantity);
 
     action.pipe(
       tap(() => {
@@ -122,10 +124,11 @@ export class PalletInterstateTransferViewComponent implements OnInit {
     ).subscribe()
   }
 
-  cancelEditQuantity(reference: string, loscam: number, chep: number, plain: number): void {
+  cancelEditQuantity(reference: string, loscam: number, chep: number, gcp: number, plain: number): void {
     this.transferReference = reference;
     this.loscamQuantity = loscam;
     this.chepQuantity = chep;
+    this.gcpQuantity = gcp;
     this.plainQuantity = plain;
     this.editQuantity = false
   }

@@ -23,6 +23,7 @@ interface PalletQuantity {stateCounts: Array<{name: string, count: number}>, sta
 interface PalletQuantities {
   Loscam: PalletQuantity,
   Chep: PalletQuantity,
+  GCP: PalletQuantity,
   Plain: PalletQuantity,
 };
 
@@ -42,6 +43,7 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
   public pallets = [
     {name: 'Loscam', image: 'assets/loscam.png'},
     {name: 'Chep', image: 'assets/chep.png'},
+    {name: 'GCP', image: 'assets/pallet.png'},
     {name: 'Plain', image: 'assets/pallet.png'}
   ]
   public customer$!: Observable<Customer>;
