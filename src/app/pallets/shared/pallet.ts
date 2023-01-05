@@ -1,13 +1,5 @@
 export interface Pallet {
   id: string;
-  lastModifiedDateTime: string | Date;
-  lastModifiedBy: {
-    user: {
-      displayName: string;
-      email: string;
-      id: string;
-    }
-  }
   fields: {
     id: string;
     Title: string;
@@ -27,5 +19,21 @@ export interface Pallet {
     Status: string;
     CustomerNumber: string;
     Site: string;
-  }
+  };
+  createdDateTime: string | Date;
+  createdBy: {
+    user: {
+      displayName: string;
+      email: string;
+      id: string;
+    }
+  };
+  lastModifiedDateTime: string | Date;
+  lastModifiedBy: {
+    user: {
+      displayName: string;
+      email: string;
+      id: string;
+    }
+  };
 }
