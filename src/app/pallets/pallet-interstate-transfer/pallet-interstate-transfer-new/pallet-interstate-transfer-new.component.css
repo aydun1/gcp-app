@@ -19,7 +19,10 @@ h2 {
 }
 
 img {
-  height: 25px;
+  height: auto;
+  width: 50px;
+  padding-right: 16px;
+  padding-left: 8px;
 }
 
 .mat-mdc-card {
@@ -28,14 +31,6 @@ img {
 
 .full-width {
   width: 100%;
-}
-
-.pallets > .mat-mdc-form-field {
-  flex: 1;
-}
-
-.spacer {
-  margin-bottom: 20px;
 }
 
 .buttons {
@@ -47,4 +42,10 @@ img {
 .arrow {
   margin: 0 12px;
   padding-top: 18px;
+}
+
+@media (max-width: 800px) {
+  .pallets {
+    flex-direction: column;
+  }
 }
