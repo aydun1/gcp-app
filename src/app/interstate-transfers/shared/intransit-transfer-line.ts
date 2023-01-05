@@ -19,4 +19,4 @@ export interface IntransitTransferLine {
   FromSite: string;
   ToSite: string;
   UOFM: string;
-};
+}

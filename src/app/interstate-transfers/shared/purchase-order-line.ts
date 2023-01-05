@@ -12,4 +12,4 @@ export interface PurchaseOrderLine {
   OrderQty: number;
   QtyOnHand: number;
   QtyAvailable: number;
-};
+}

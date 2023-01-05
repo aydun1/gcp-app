@@ -1,9 +1,9 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, combineLatest, map, Observable, switchMap, tap } from 'rxjs';
-import { SharedService } from 'src/app/shared.service';
+import { BehaviorSubject, combineLatest, Observable, switchMap, tap } from 'rxjs';
 
+import { SharedService } from '../../shared.service';
 import { NavigationService } from '../../navigation.service';
 import { Chemical } from '../chemical';
 import { SdsService } from '../sds.service';

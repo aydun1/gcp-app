@@ -27,4 +27,4 @@ export interface SuggestedItem {
   OnHandWA: number;
   Notes: string;
   ToTransfer?: number;
-};
+}
