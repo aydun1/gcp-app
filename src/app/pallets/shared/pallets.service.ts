@@ -13,6 +13,7 @@ interface PalletQuantity {stateCounts: Array<{name: string, count: number}>, sta
 interface PalletQuantities {
   Loscam: PalletQuantity,
   Chep: PalletQuantity,
+  GCP: PalletQuantity,
   Plain: PalletQuantity,
 };
 
@@ -212,15 +213,16 @@ export class PalletsService {
   }
 
   createInterstatePalletTransfer(v: any): Observable<Pallet> {
-    const pallets = [v.loscam ? 'Loscam' : '', v.chep ? 'Chep' : '', v.plain ? 'Plain' : ''].filter(_ => _);
+    const pallets = [v.loscam ? 'Loscam' : '', v.chep ? 'Chep' : '', v.gcp ? 'GCP' : '', v.plain ? 'Plain' : ''].filter(_ => _);
     const pallet = pallets.length > 1 ? 'Mixed' : pallets.length === 1 ? pallets[0] : 'None';
     const payload = {fields: {
       From: v.from,
       To: v.to,
       Pallet: pallet,
-      Quantity: +v.loscam + +v.plain + +v.chep,
+      Quantity: +v.loscam + +v.chep + +v.gcp + +v.plain,
       Loscam: +v.loscam,
       Chep: +v.chep,
+      GCP: +v.gcp,
       Plain: +v.plain,
       Date: new Date().toISOString(),
       Reference: v.reference,
@@ -272,14 +274,15 @@ export class PalletsService {
     );
   }
 
-  editInterstatePalletTransferQuantity(id: string, reference: string, loscam: number, chep: number, plain: number): Observable<Pallet> {
-    const pallets = [loscam ? 'Loscam' : '', chep ? 'Chep' : '', plain ? 'Plain' : ''].filter(_ => _);
+  editInterstatePalletTransferQuantity(id: string, reference: string, loscam: number, chep: number, gcp: number, plain: number): Observable<Pallet> {
+    const pallets = [loscam ? 'Loscam' : '', chep ? 'Chep' : '', gcp ? 'GCP' : '', plain ? 'Plain' : ''].filter(_ => _);
     const pallet = pallets.length > 1 ? 'Mixed' : pallets.length === 1 ? pallets[0] : 'None';
     const payload = {fields: {
       Pallet: pallet,
-      Quantity: +loscam + +plain + +chep,
+      Quantity: +loscam + +chep + +gcp + +plain,
       Loscam: +loscam,
       Chep: +chep,
+      GCP: +gcp,
       Plain: +plain,
       Reference: reference,
       Notify: true,
@@ -349,7 +352,7 @@ export class PalletsService {
     const prevMonths: Observable<PalletTotals[]> = this.http.get(url).pipe(map(_ => _['value']));
 
     return combineLatest([prevMonths, currMonth]).pipe(
-      map(([pastMonths, currentMonth]) => ['Loscam', 'Chep', 'Plain'].reduce((acc, pallet) => {
+      map(([pastMonths, currentMonth]) => ['Loscam', 'Chep', 'GCP', 'Plain'].reduce((acc, pallet) => {
         const currentPallets = Object.values(currentMonth).filter(_ => _.fields.Pallet === pallet).map(_ => {return {branch: _.fields.Branch, pallets: _.fields.Out - _.fields.In }});
         const pastPallets = Object.values(pastMonths).filter(_ => _.fields.Pallet === pallet).map(_ => {return {branch: _.fields.Branch, pallets: _.fields.Owing }});
         const totals: PalletQuantity = [...currentPallets, ...pastPallets].reduce((acc, qty) => {
@@ -402,8 +405,9 @@ export class PalletsService {
                 acc['quantity'] = curr.fields.Quantity;
                 acc['loscam'] = curr.fields.Loscam;
                 acc['chep'] = curr.fields.Chep;
+                acc['gcp'] = curr.fields.GCP;
                 acc['plain'] = curr.fields.Plain;
-                if (['Loscam', 'Chep', 'Plain'].includes(curr.fields.Pallet)) acc[curr.fields.Pallet.toLowerCase()] = curr.fields.Quantity;
+                if (['Loscam', 'Chep', 'GCP', 'Plain'].includes(curr.fields.Pallet)) acc[curr.fields.Pallet.toLowerCase()] = curr.fields.Quantity;
               }
             } else if (!acc['transferred']) {
               if (curr.fields.Status === 'Transferred') {
@@ -418,6 +422,7 @@ export class PalletsService {
               acc['quantity'] = curr.fields.Quantity;
               acc['loscam'] = curr.fields.Loscam;
               acc['chep'] = curr.fields.Chep;
+              acc['gcp'] = curr.fields.GCP;
               acc['plain'] = curr.fields.Plain;
             }
 
