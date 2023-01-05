@@ -42,7 +42,7 @@
   flex: 1 1 120px;
 }
 
-.mat-column-new_pallets_loscam, .mat-column-new_pallets_chep, .mat-column-new_pallets_plain {
+.mat-column-new_pallets_loscam, .mat-column-new_pallets_chep, .mat-column-new_pallets_gcp, .mat-column-new_pallets_plain {
   flex: 0 1 90px;
   justify-content: center;
 }

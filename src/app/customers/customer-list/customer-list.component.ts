@@ -28,11 +28,12 @@ export class CustomerListComponent implements OnInit {
   public territories$!: Observable<Territory[]>;
   public get territories(): Array<string> {return this.sharedService.territoryNames};
   public loading = this.customersService.loading;
-  public displayedColumns = ['name', 'custNmbr', 'loscam', 'chep', 'plain'];
+  public displayedColumns = ['name', 'custNmbr', 'loscam', 'chep', 'gcp', 'plain'];
   public sortSort!: string;
   public sortOrder!: 'asc' | 'desc';
   public loscams!: number;
   public cheps!: number;
+  public gcps!: number;
   public plains!: number;
 
   constructor(
@@ -70,6 +71,7 @@ export class CustomerListComponent implements OnInit {
       tap(customers => {
         this.loscams = customers.map(_ => _.loscam).filter(_ => _).reduce((acc, val) => acc + val, 0);
         this.cheps = customers.map(_ => _.chep).filter(_ => _).reduce((acc, val) => acc + val, 0);
+        this.gcps = customers.map(_ => _.gcp).filter(_ => _).reduce((acc, val) => acc + val, 0);
         this.plains = customers.map(_ => _.plain).filter(_ => _).reduce((acc, val) => acc + val, 0);
       })
     )
