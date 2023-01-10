@@ -28,8 +28,8 @@ export class AutomateService {
     private shared: SharedService
   ) { }
 
-  updateGP(): Observable<number> {
-    let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created)&filter=fields/CustomerNumber ne null &top=2000`;
+  updateGP(custNmbr: string): Observable<number> {
+    let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created)&filter=fields/CustomerNumber eq '${custNmbr}' &top=2000`;
     const a$: Observable<string[]> = this.http.get(url).pipe(
       map((res: any) => res.value as Pallet[]),
       map(_ => _.map(p => p.id))
@@ -111,6 +111,7 @@ export class AutomateService {
               {id: 2, method: 'POST', url, headers, body: {fields: postPayload}}
             ];
             const actionObs = this.http.post(`${environment.endpoint}/$batch`, {requests});
+            console.log(delay / delayIncrement)
             return lastValueFrom(actionObs);
           });
         });

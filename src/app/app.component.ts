@@ -53,7 +53,7 @@ export class AppComponent implements OnInit, OnDestroy {
       const darkClass = 'dark-theme';
       _ ? this.renderer.addClass(document.body, darkClass) : this.renderer.removeClass(document.body, darkClass)
     });
-    this.automateService.changePalletTypes('GCP', 'Plain').subscribe();
+    //this.automateService.changePalletTypes('Chep', 'Loscam').subscribe();
     this.authService.instance.handleRedirectPromise().then(authResult => {
       const account = this.authService.instance.getActiveAccount();
       if (!account) this.checkAndSetActiveAccount();
