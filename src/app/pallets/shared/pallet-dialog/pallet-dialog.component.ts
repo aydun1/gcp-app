@@ -29,18 +29,11 @@ interface PalletForm {
 })
 export class PalletDialogComponent implements OnInit {
   private _state!: string;
-  private palletImages = {
-    Loscam: 'assets/loscam.png',
-    Chep: 'assets/chep.png',
-    GCP:'assets/pallet.png',
-    Plain: 'assets/pallet.png'
-  };
-  public palletTypes!: Array<{name: string, image: string}>;
+  public palletTypes = this.sharedService.palletDetails;
   public palletForm!: FormGroup<PalletForm>;
   public loading = false;
   public siteNames!: Array<string>;
   public direction = [{name: 'Sent', controlName: 'outQty'}, {name: 'Returned', controlName: 'inQty'}];
-  public pallets = ['Loscam', 'Chep', 'GCP', 'Plain'];
   public vertical = true;
 
   constructor(
@@ -56,7 +49,6 @@ export class PalletDialogComponent implements OnInit {
     this.sharedService.getBranch().subscribe(state => this._state = state);
     const requireSite = this.data.site || this.data.sites?.length;
     this.siteNames = this.data.sites ? this.data.sites.map(_ => _.fields.Title) : [this.data.site].filter(_ => _);
-    this.palletTypes = this.pallets.map(_ => {return {name: _, image: this.palletImages[_]}});
     this.palletForm = this.fb.group({
       site: [this.data.site, requireSite ? Validators.required : ''],
       date: [new Date(), Validators.required],

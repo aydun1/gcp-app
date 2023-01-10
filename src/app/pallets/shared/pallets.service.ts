@@ -28,7 +28,7 @@ export class PalletsService {
   private _loadingPallets!: boolean;
   private _nextPage!: string;
   private _palletsSubject$ = new BehaviorSubject<Pallet[]>([]);
-
+  private _pallets = this.shared.palletDetails;
   public loading = new BehaviorSubject<boolean>(false);
 
   constructor(
@@ -242,25 +242,42 @@ export class PalletsService {
   }
 
   createInterstatePalletTransfer(v: any): Observable<Pallet> {
-    const pallets = [v.loscam ? 'Loscam' : '', v.chep ? 'Chep' : '', v.gcp ? 'GCP' : '', v.plain ? 'Plain' : ''].filter(_ => _);
+    const pallets = this._pallets.map(p => v[p.key] ? p.name : '').filter(_ => _);
     const pallet = pallets.length > 1 ? 'Mixed' : pallets.length === 1 ? pallets[0] : 'None';
     const payload = {fields: {
       From: v.from,
       To: v.to,
       Pallet: pallet,
-      Quantity: +v.loscam + +v.chep + +v.gcp + +v.plain,
-      Loscam: +v.loscam,
-      Chep: +v.chep,
-      GCP: +v.gcp,
-      Plain: +v.plain,
+      Quantity: +v['loscam'] + +v['chep'] + +v['gcp'] + +v['plain'],
+      Loscam: +v['loscam'],
+      Chep: +v['chep'],
+      GCP: +v['gcp'],
+      Plain: +v['plain'],
       Date: new Date().toISOString(),
       Reference: v.reference,
       Status: 'Pending',
       Notify: true
     }};
-    return this.http.post<Pallet>(`${this._palletTrackerUrl}/items`, payload).pipe(
-      switchMap(_ => this.updateList(_))
-    );
+    const action = this.http.post<Pallet>(`${this._palletTrackerUrl}/items`, payload);
+    return action.pipe(switchMap(res => this.updateList(res)));
+  }
+
+  editInterstatePalletTransferQuantity(id: string, reference: string, v: any): Observable<Pallet> {
+    const pallets = this._pallets.map(p => v[p.key] ? p.name : '').filter(_ => _);
+    const pallet = pallets.length > 1 ? 'Mixed' : pallets.length === 1 ? pallets[0] : 'None';
+    const payload = {fields: {
+      Pallet: pallet,
+      Quantity: +v['loscam'] + +v['chep'] + +v['gcp'] + +v['plain'],
+      Loscam: +v['loscam'],
+      Chep: +v['chep'],
+      GCP: +v['gcp'],
+      Plain: +v['plain'],
+      Reference: reference,
+      Notify: true,
+      Status: 'Edited'
+    }};
+    const action = this.http.patch<Pallet>(`${this._palletTrackerUrl}/items('${id}')`, payload);
+    return action.pipe(switchMap(res => this.updateList(res)));
   }
 
   approveInterstatePalletTransfer(id: string, approval: boolean): Observable<Pallet> {
@@ -297,25 +314,6 @@ export class PalletsService {
     const payload = {fields: {
       Status: 'Transferred',
       Notify: true
-    }};
-    return this.http.patch<Pallet>(`${this._palletTrackerUrl}/items('${id}')`, payload).pipe(
-      switchMap(res => this.updateList(res))
-    );
-  }
-
-  editInterstatePalletTransferQuantity(id: string, reference: string, loscam: number, chep: number, gcp: number, plain: number): Observable<Pallet> {
-    const pallets = [loscam ? 'Loscam' : '', chep ? 'Chep' : '', gcp ? 'GCP' : '', plain ? 'Plain' : ''].filter(_ => _);
-    const pallet = pallets.length > 1 ? 'Mixed' : pallets.length === 1 ? pallets[0] : 'None';
-    const payload = {fields: {
-      Pallet: pallet,
-      Quantity: +loscam + +chep + +gcp + +plain,
-      Loscam: +loscam,
-      Chep: +chep,
-      GCP: +gcp,
-      Plain: +plain,
-      Reference: reference,
-      Notify: true,
-      Status: 'Edited'
     }};
     return this.http.patch<Pallet>(`${this._palletTrackerUrl}/items('${id}')`, payload).pipe(
       switchMap(res => this.updateList(res))
@@ -381,7 +379,7 @@ export class PalletsService {
     const prevMonths: Observable<PalletTotals[]> = this.http.get(url).pipe(map(_ => _['value']));
 
     return combineLatest([prevMonths, currMonth]).pipe(
-      map(([pastMonths, currentMonth]) => ['Loscam', 'Chep', 'GCP', 'Plain'].reduce((acc, pallet) => {
+      map(([pastMonths, currentMonth]) => this.shared.pallets.reduce((acc, pallet) => {
         const currentPallets = Object.values(currentMonth).filter(_ => _.fields.Pallet === pallet).map(_ => {return {branch: _.fields.Branch, pallets: _.fields.Out - _.fields.In }});
         const pastPallets = Object.values(pastMonths).filter(_ => _.fields.Pallet === pallet).map(_ => {return {branch: _.fields.Branch, pallets: _.fields.Owing || 0 }});
         const totals: PalletQuantity = [...currentPallets, ...pastPallets].reduce((acc, qty) => {
@@ -443,11 +441,11 @@ export class PalletsService {
                 acc['approver'] = curr.lastModifiedBy.user;
               } else {
                 acc['quantity'] = curr.fields.Quantity;
-                acc['loscam'] = curr.fields.Loscam;
-                acc['chep'] = curr.fields.Chep;
-                acc['gcp'] = curr.fields.GCP;
-                acc['plain'] = curr.fields.Plain;
-                if (['Loscam', 'Chep', 'GCP', 'Plain'].includes(curr.fields.Pallet)) acc[curr.fields.Pallet.toLowerCase()] = curr.fields.Quantity;
+                acc['loscam'] = curr.fields['Loscam'];
+                acc['chep'] = curr.fields['Chep'];
+                acc['gcp'] = curr.fields['GCP'];
+                acc['plain'] = curr.fields['Plain'];
+                if (this.shared.pallets.includes(curr.fields.Pallet)) acc[curr.fields.Pallet.toLowerCase()] = curr.fields.Quantity;
               }
             } else if (!acc['transferred']) {
               if (curr.fields.Status === 'Transferred') {
@@ -460,10 +458,10 @@ export class PalletsService {
               delete acc['approved'];
               delete acc['approver'];
               acc['quantity'] = curr.fields.Quantity;
-              acc['loscam'] = curr.fields.Loscam;
-              acc['chep'] = curr.fields.Chep;
-              acc['gcp'] = curr.fields.GCP;
-              acc['plain'] = curr.fields.Plain;
+              acc['loscam'] = curr.fields['Loscam'];
+              acc['chep'] = curr.fields['Chep'];
+              acc['gcp'] = curr.fields['GCP'];
+              acc['plain'] = curr.fields['Plain'];
             }
 
             if (curr.fields.Status === 'Cancelled') {

@@ -15,7 +15,6 @@ import { Site } from '../../../customers/shared/site';
   styleUrls: ['./recycling-docket-dialog.component.css']
 })
 export class RecyclingDocketDialogComponent implements OnDestroy, OnInit {
-  public quantities!: {Loscam: number, Chep: number, Plain: number}
   public address!: Address | undefined;
   public site!: Site | undefined;
   public date!: Date;

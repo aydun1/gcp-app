@@ -22,10 +22,7 @@
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="pallet-filter">
       <mat-label>Pallets</mat-label>
       <mat-select [formControl]="palletsFilter" multiple (selectionChange)="setPallets($event)">
-        <mat-option value="loscam">Loscam</mat-option>
-        <mat-option value="chep">Chep</mat-option>
-        <mat-option value="gcp">GCP</mat-option>
-        <mat-option value="plain">Plain</mat-option>
+        <mat-option *ngFor="let p of pallets" [value]="p.key">{{ p.name }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
@@ -39,25 +36,10 @@
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
       </ng-container>
-      <ng-container matColumnDef="loscam">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Loscams </mat-header-cell>
-        <mat-cell *matCellDef="let customer"> {{customer.loscam || 0}} </mat-cell>
-        <mat-footer-cell *matFooterCellDef>{{ loscams }}</mat-footer-cell>
-      </ng-container>
-      <ng-container matColumnDef="chep">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Cheps </mat-header-cell>
-        <mat-cell *matCellDef="let customer"> {{customer.chep || 0}} </mat-cell>
-        <mat-footer-cell *matFooterCellDef>{{ cheps }}</mat-footer-cell>
-      </ng-container>
-      <ng-container matColumnDef="gcp">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> GCPs </mat-header-cell>
-        <mat-cell *matCellDef="let customer"> {{customer.gcp || 0}} </mat-cell>
-        <mat-footer-cell *matFooterCellDef>{{ gcps }}</mat-footer-cell>
-      </ng-container>
-      <ng-container matColumnDef="plain">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Plains </mat-header-cell>
-        <mat-cell *matCellDef="let customer"> {{customer.plain || 0}} </mat-cell>
-        <mat-footer-cell *matFooterCellDef>{{ plains }}</mat-footer-cell>
+      <ng-container *ngFor="let p of pallets" [matColumnDef]="p.key">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> {{ p.name }} </mat-header-cell>
+        <mat-cell *matCellDef="let customer"> {{customer[p.key] || 0}} </mat-cell>
+        <mat-footer-cell *matFooterCellDef>{{ palletTotals[p.key] }}</mat-footer-cell>
       </ng-container>
       <ng-container matColumnDef="custNmbr">
         <mat-header-cell *matHeaderCellDef> Account number </mat-header-cell>
