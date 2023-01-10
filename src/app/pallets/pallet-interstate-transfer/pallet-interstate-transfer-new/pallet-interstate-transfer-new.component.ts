@@ -16,6 +16,7 @@ interface PalletTransferForm {
   reference: FormControl<string | null>;
   loscam: FormControl<string | null>;
   chep: FormControl<string | null>;
+  gcp: FormControl<string | null>;
   plain: FormControl<string | null>;
 }
 
@@ -69,6 +70,7 @@ export class PalletInterstateTransferNewComponent implements OnInit {
       reference: ['', [Validators.required]],
       loscam: ['', [Validators.min(0)]],
       chep: ['', [Validators.min(0)]],
+      gcp: ['', [Validators.min(0)]],
       plain: ['', [Validators.min(0)]]
     });
 
