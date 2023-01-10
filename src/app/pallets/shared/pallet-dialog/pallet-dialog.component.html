@@ -1,16 +1,13 @@
 <h2 mat-dialog-title>Transferring pallets for {{ data.customer.name }} ({{ data.customer.custNmbr }})</h2>
 <form (ngSubmit)="addPallets()" [formGroup]="palletForm">
   <mat-dialog-content>
-    <div class="pallet-grid" formArrayName="quantities">
+    <div class="vertical pallet-grid" [ngClass]="{ vertical: vertical }" formArrayName="quantities">
       <div *ngFor="let pallet of palletTypes; index as i" class="pallet-column" [formGroupName]="i">
         <div class="pallet-cell head">
           <img [src]="pallet.image" alt="{{ pallet.name }} pallet"><span class="name">{{ pallet.name }}</span>
         </div>
-        <div class="pallet-cell">
-          <input class="pallet-input" type="number" formControlName="outQty" autocomplete="off" placeholder="Sent" min="0" max="1000">
-        </div>
-        <div class="pallet-cell">
-          <input class="pallet-input" type="number" formControlName="inQty" autocomplete="off" placeholder="Received" min="0" max="1000">
+        <div *ngFor="let d of direction" class="pallet-cell">
+          <input class="pallet-input" type="number" [formControlName]="d.controlName" autocomplete="off" [placeholder]="d.name" min="0" max="1000">
         </div>
       </div>
     </div>

@@ -38,12 +38,11 @@
 .pallet-input {
   background: none;
   border: none;
-  color: inherit;
+  box-sizing: border-box;
   font-family: inherit;
   font-size: 16px;
   padding: 12px 5px;
   width: 100%;
-  box-sizing: border-box;
 }
 
 .pallet-input:focus-visible {

@@ -384,11 +384,8 @@ export class PalletsService {
       map(([pastMonths, currentMonth]) => ['Loscam', 'Chep', 'GCP', 'Plain'].reduce((acc, pallet) => {
         const currentPallets = Object.values(currentMonth).filter(_ => _.fields.Pallet === pallet).map(_ => {return {branch: _.fields.Branch, pallets: _.fields.Out - _.fields.In }});
         const pastPallets = Object.values(pastMonths).filter(_ => _.fields.Pallet === pallet).map(_ => {return {branch: _.fields.Branch, pallets: _.fields.Owing || 0 }});
-        console.log(currentPallets)
         const totals: PalletQuantity = [...currentPallets, ...pastPallets].reduce((acc, qty) => {
           const stateCounts = {...acc['stateCounts'], [qty.branch]: (acc['stateCounts'][qty.branch] || 0) + qty.pallets};
-
-
           const total = acc['total'] + qty.pallets;
           const states = (acc['states'].includes(qty.branch) ? acc['states'] : [...acc['states'], qty.branch]).sort();
           return {stateCounts, total, states} as PalletQuantity;
