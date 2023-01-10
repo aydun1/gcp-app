@@ -1,12 +1,19 @@
 <h2 mat-dialog-title>Transferring pallets for {{ data.customer.name }} ({{ data.customer.custNmbr }})</h2>
 <form (ngSubmit)="addPallets()" [formGroup]="palletForm">
   <mat-dialog-content>
-    <mat-button-toggle-group formControlName="palletType" aria-label="Pallet type">
-      <mat-button-toggle value="Loscam"><img src="assets/loscam.png" alt="Loscam pallet"><span class="name">Loscam</span></mat-button-toggle>
-      <mat-button-toggle value="Chep"><img src="assets/chep.png" alt="Chep pallet"><span class="name">Chep</span></mat-button-toggle>
-      <mat-button-toggle value="GCP"><img src="assets/pallet.png" alt="GCP pallet"><span class="name">GCP</span></mat-button-toggle>
-      <mat-button-toggle value="Plain"><img src="assets/pallet.png" alt="Plain pallet"><span class="name">Plain</span></mat-button-toggle>      
-    </mat-button-toggle-group>
+    <div class="pallet-grid" formArrayName="quantities">
+      <div *ngFor="let pallet of palletTypes; index as i" class="pallet-column" [formGroupName]="i">
+        <div class="pallet-cell head">
+          <img [src]="pallet.image" alt="{{ pallet.name }} pallet"><span class="name">{{ pallet.name }}</span>
+        </div>
+        <div class="pallet-cell">
+          <input class="pallet-input" type="number" formControlName="outQty" autocomplete="off" placeholder="Sent" min="0" max="1000">
+        </div>
+        <div class="pallet-cell">
+          <input class="pallet-input" type="number" formControlName="inQty" autocomplete="off" placeholder="Received" min="0" max="1000">
+        </div>
+      </div>
+    </div>
     <mat-form-field appearance="outline">
       <mat-label>Date</mat-label>
       <input matInput [matDatepicker]="picker" formControlName="date" placeholder="Pallet delivery/collection date">
@@ -19,15 +26,7 @@
         <mat-option *ngFor="let site of siteNames" [value]="site">{{ site }}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>Pallets delivered</mat-label>
-      <input matInput type="number" formControlName="outQty" autocomplete="off" placeholder="Pallets delivered to customer" min="0" max="1000">
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>Pallets collected</mat-label>
-      <input matInput type="number" formControlName="inQty" autocomplete="off" placeholder="Pallets collected from customer" min="0" max="1000">
-    </mat-form-field>
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>Notes</mat-label>
       <input matInput type="text" formControlName="notes" autocomplete="off" placeholder="Optional">
     </mat-form-field>

@@ -165,6 +165,35 @@ export class PalletsService {
     return this.http.post(`${this._palletTrackerUrl}/items`, payload);
   }
 
+  customerPalletTransferMulti(customerName: string, customer: string, branch: string, site: string, date: Date, notes: string, transfers: any): Observable<any> {
+    let i = 0;
+    const url = `${environment.siteUrl}/${this._palletListUrl}/items`;
+    const headers = {'Content-Type': 'application/json'};
+    const requests: any = [];
+    transfers.filter((_: any) => (_.outQty || 0) > 0 || (_.inQty || 0) > 0)
+    .map((v: any) => {
+      const inQty = v.inQty || 0;
+      const outQty = v.outQty || 0;
+      const inbound = inQty > outQty;
+      const payload = {fields: {
+        Title: customerName,
+        Branch: branch,
+        CustomerNumber: customer,
+        From: inbound ? customer : branch,
+        To: inbound ? branch : customer,
+        In: inQty,
+        Out: outQty,
+        Pallet: v.pallet,
+        Quantity: Math.abs(inQty - outQty),
+        Date: date,
+        Notes: notes
+      }};
+      if (site) payload['fields']['Site'] = site;
+      requests.push({id: i += 1, method: 'POST', url, headers, body: payload});
+    });
+    return requests.length > 0 ? this.http.post(`${environment.endpoint}/$batch`, {requests}) : of(1);
+  }
+
   siteTransfer(custName: string, custNmbr: string, oldSite: string, newSite: string, pallets: PalletQuantities) {
     const url = `${environment.siteUrl}/${this._palletListUrl}/items`;
     const headers = {'Content-Type': 'application/json'};
@@ -354,9 +383,12 @@ export class PalletsService {
     return combineLatest([prevMonths, currMonth]).pipe(
       map(([pastMonths, currentMonth]) => ['Loscam', 'Chep', 'GCP', 'Plain'].reduce((acc, pallet) => {
         const currentPallets = Object.values(currentMonth).filter(_ => _.fields.Pallet === pallet).map(_ => {return {branch: _.fields.Branch, pallets: _.fields.Out - _.fields.In }});
-        const pastPallets = Object.values(pastMonths).filter(_ => _.fields.Pallet === pallet).map(_ => {return {branch: _.fields.Branch, pallets: _.fields.Owing }});
+        const pastPallets = Object.values(pastMonths).filter(_ => _.fields.Pallet === pallet).map(_ => {return {branch: _.fields.Branch, pallets: _.fields.Owing || 0 }});
+        console.log(currentPallets)
         const totals: PalletQuantity = [...currentPallets, ...pastPallets].reduce((acc, qty) => {
           const stateCounts = {...acc['stateCounts'], [qty.branch]: (acc['stateCounts'][qty.branch] || 0) + qty.pallets};
+
+
           const total = acc['total'] + qty.pallets;
           const states = (acc['states'].includes(qty.branch) ? acc['states'] : [...acc['states'], qty.branch]).sort();
           return {stateCounts, total, states} as PalletQuantity;
