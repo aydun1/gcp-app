@@ -385,7 +385,7 @@ export class PalletsService {
       `(fields/Status eq 'Approved' or (fields/Status eq 'Transferred' and fields/Modified gt '${melbourneMidnight}'))`,
       `(fields/Pallet eq '${pallet}' or fields/${pallet} gt 0)`,
       `fields/To eq '${branch}'`,
-      `fields/Title eq null`,
+      `fields/Title eq null`
     ];
     url += filters.join(' and ');
     return this.http.get(url).pipe(map(_ => _['value'].reduce((acc: number, val: Pallet) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));

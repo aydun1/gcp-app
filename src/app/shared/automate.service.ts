@@ -4,12 +4,13 @@ import { combineLatest, lastValueFrom, map, Observable, of, switchMap, tap, time
 
 import { SharedService } from '../shared.service';
 import { Pallet } from '../pallets/shared/pallet';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AutomateService {
-  private endpoint = 'https://graph.microsoft.com/v1.0/sites/c63a4e9a-0d76-4cc0-a321-b2ce5eb6ddd4';
+  private endpoint = `${environment.endpoint}/${environment.siteUrl}`;
   private palletsUrl = 'lists/38f14082-02e5-4978-bf92-f42be2220166';
   private palletsOwedUrl = 'lists/8ed9913e-a20e-41f1-9a2e-0142c09f2344';
   private palletTrackerUrl = `${this.endpoint}/${this.palletsUrl}`;
@@ -98,15 +99,18 @@ export class AutomateService {
         return _.map(async pallet => {
           delay += delayIncrement;
           return new Promise(resolve => setTimeout(resolve, delay)).then(() => {
-            const fields = {...pallet['fields'], Pallet: newPallet};
-            delete fields['@odata.etag'];
-            const actionObs = this.http.post<Pallet>(`${this.palletTrackerUrl}/items`, {fields}).pipe(
-              switchMap(() => {
-                const fields = {In: 0, Out: 0, Quantity: 0};
-                return this.http.patch<Pallet>(`${this.palletTrackerUrl}/items('${pallet.id}')`, {fields});
-              })
-            );
-            return lastValueFrom(actionObs);
+            const postPayload = {...pallet['fields'], Pallet: newPallet};
+            delete postPayload['@odata.etag'];
+            const patchPayload = {In: 0, Out: 0, Quantity: 0};
+            const headers = {'Content-Type': 'application/json'};
+            const url = `${environment.siteUrl}/${this.palletsUrl}/items`;
+            const requests = [
+              {id: 1, method: 'PATCH', url: `${url}/${pallet.id}`, headers, body: {fields: patchPayload}},
+              {id: 2, method: 'POST', url, headers, body: {fields: postPayload}}
+            ];
+            console.log(requests)
+            const actionObs = this.http.post(`${environment.endpoint}/$batch`, {requests});
+            return of(1) //lastValueFrom(actionObs);
           });
         });
       })
