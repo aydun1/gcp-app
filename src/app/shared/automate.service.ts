@@ -95,6 +95,8 @@ export class AutomateService {
     return this.http.get(url).pipe(
       map((res: any) => res.value as Pallet[]),
       tap(_ => console.log(`Got ${_.length} items.`)),
+      map(_ => _.filter(p => p.fields.In > 0 || p.fields.Out > 0)),
+      tap(_ => console.log(`${_.length} are non-zero.`)),
       switchMap(_ => {
         return _.map(async pallet => {
           delay += delayIncrement;
@@ -108,9 +110,8 @@ export class AutomateService {
               {id: 1, method: 'PATCH', url: `${url}/${pallet.id}`, headers, body: {fields: patchPayload}},
               {id: 2, method: 'POST', url, headers, body: {fields: postPayload}}
             ];
-            console.log(requests)
             const actionObs = this.http.post(`${environment.endpoint}/$batch`, {requests});
-            return of(1) //lastValueFrom(actionObs);
+            return lastValueFrom(actionObs);
           });
         });
       })
