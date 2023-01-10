@@ -82,7 +82,7 @@ export class AutomateService {
   changePalletTypes(oldPallet: string, newPallet: string): Observable<any> {
     const shouldRun = 0;
     let delay = 0;
-    const delayIncrement = 3000;
+    const delayIncrement = 0;
     const branch = 'QLD';
     if (shouldRun) return of();
     const filters = [
