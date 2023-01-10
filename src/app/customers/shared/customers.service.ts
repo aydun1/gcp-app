@@ -49,6 +49,7 @@ export class CustomersService {
     if (filters['sort'] === 'loscam' || pallets.includes('loscam')) palletFilter.push('filter=loscam');
     if (filters['sort'] === 'chep' || pallets.includes('chep')) palletFilter.push('filter=chep');
     if (filters['sort'] === 'plain' || pallets.includes('plain')) palletFilter.push('filter=plain');
+    if (filters['sort'] === 'gcp' || pallets.includes('gcp')) palletFilter.push('filter=gcp');
     if (palletFilter.length === 0) filterArray.push('inactive=0');
     if (palletFilter.length > 0) filterArray.push(`${palletFilter.join('&')}`);
     url += `&${filterArray.join('&')}`;
