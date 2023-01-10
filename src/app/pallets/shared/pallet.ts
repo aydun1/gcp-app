@@ -12,6 +12,7 @@ export interface Pallet {
     Quantity: string;
     Loscam: number;
     Chep: number;
+    GCP: number;
     Plain: number;
     Reference: string;
     Notes: string;

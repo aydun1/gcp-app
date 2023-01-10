@@ -24,6 +24,7 @@
       <mat-select [formControl]="palletsFilter" multiple (selectionChange)="setPallets($event)">
         <mat-option value="loscam">Loscam</mat-option>
         <mat-option value="chep">Chep</mat-option>
+        <mat-option value="gcp">GCP</mat-option>
         <mat-option value="plain">Plain</mat-option>
       </mat-select>
     </mat-form-field>
@@ -47,6 +48,11 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header> Cheps </mat-header-cell>
         <mat-cell *matCellDef="let customer"> {{customer.chep || 0}} </mat-cell>
         <mat-footer-cell *matFooterCellDef>{{ cheps }}</mat-footer-cell>
+      </ng-container>
+      <ng-container matColumnDef="gcp">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> GCPs </mat-header-cell>
+        <mat-cell *matCellDef="let customer"> {{customer.gcp || 0}} </mat-cell>
+        <mat-footer-cell *matFooterCellDef>{{ gcps }}</mat-footer-cell>
       </ng-container>
       <ng-container matColumnDef="plain">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Plains </mat-header-cell>

@@ -13,6 +13,7 @@ interface PalletQuantity {stateCounts: Array<{name: string, count: number}>, sta
 interface PalletQuantities {
   Loscam: PalletQuantity,
   Chep: PalletQuantity,
+  GCP: PalletQuantity,
   Plain: PalletQuantity,
 };
 
@@ -164,6 +165,35 @@ export class PalletsService {
     return this.http.post(`${this._palletTrackerUrl}/items`, payload);
   }
 
+  customerPalletTransferMulti(customerName: string, customer: string, branch: string, site: string, date: Date, notes: string, transfers: any): Observable<any> {
+    let i = 0;
+    const url = `${environment.siteUrl}/${this._palletListUrl}/items`;
+    const headers = {'Content-Type': 'application/json'};
+    const requests: any = [];
+    transfers.filter((_: any) => (_.outQty || 0) > 0 || (_.inQty || 0) > 0)
+    .map((v: any) => {
+      const inQty = v.inQty || 0;
+      const outQty = v.outQty || 0;
+      const inbound = inQty > outQty;
+      const payload = {fields: {
+        Title: customerName,
+        Branch: branch,
+        CustomerNumber: customer,
+        From: inbound ? customer : branch,
+        To: inbound ? branch : customer,
+        In: inQty,
+        Out: outQty,
+        Pallet: v.pallet,
+        Quantity: Math.abs(inQty - outQty),
+        Date: date,
+        Notes: notes
+      }};
+      if (site) payload['fields']['Site'] = site;
+      requests.push({id: i += 1, method: 'POST', url, headers, body: payload});
+    });
+    return requests.length > 0 ? this.http.post(`${environment.endpoint}/$batch`, {requests}) : of(1);
+  }
+
   siteTransfer(custName: string, custNmbr: string, oldSite: string, newSite: string, pallets: PalletQuantities) {
     const url = `${environment.siteUrl}/${this._palletListUrl}/items`;
     const headers = {'Content-Type': 'application/json'};
@@ -212,15 +242,16 @@ export class PalletsService {
   }
 
   createInterstatePalletTransfer(v: any): Observable<Pallet> {
-    const pallets = [v.loscam ? 'Loscam' : '', v.chep ? 'Chep' : '', v.plain ? 'Plain' : ''].filter(_ => _);
+    const pallets = [v.loscam ? 'Loscam' : '', v.chep ? 'Chep' : '', v.gcp ? 'GCP' : '', v.plain ? 'Plain' : ''].filter(_ => _);
     const pallet = pallets.length > 1 ? 'Mixed' : pallets.length === 1 ? pallets[0] : 'None';
     const payload = {fields: {
       From: v.from,
       To: v.to,
       Pallet: pallet,
-      Quantity: +v.loscam + +v.plain + +v.chep,
+      Quantity: +v.loscam + +v.chep + +v.gcp + +v.plain,
       Loscam: +v.loscam,
       Chep: +v.chep,
+      GCP: +v.gcp,
       Plain: +v.plain,
       Date: new Date().toISOString(),
       Reference: v.reference,
@@ -272,14 +303,15 @@ export class PalletsService {
     );
   }
 
-  editInterstatePalletTransferQuantity(id: string, reference: string, loscam: number, chep: number, plain: number): Observable<Pallet> {
-    const pallets = [loscam ? 'Loscam' : '', chep ? 'Chep' : '', plain ? 'Plain' : ''].filter(_ => _);
+  editInterstatePalletTransferQuantity(id: string, reference: string, loscam: number, chep: number, gcp: number, plain: number): Observable<Pallet> {
+    const pallets = [loscam ? 'Loscam' : '', chep ? 'Chep' : '', gcp ? 'GCP' : '', plain ? 'Plain' : ''].filter(_ => _);
     const pallet = pallets.length > 1 ? 'Mixed' : pallets.length === 1 ? pallets[0] : 'None';
     const payload = {fields: {
       Pallet: pallet,
-      Quantity: +loscam + +plain + +chep,
+      Quantity: +loscam + +chep + +gcp + +plain,
       Loscam: +loscam,
       Chep: +chep,
+      GCP: +gcp,
       Plain: +plain,
       Reference: reference,
       Notify: true,
@@ -349,9 +381,9 @@ export class PalletsService {
     const prevMonths: Observable<PalletTotals[]> = this.http.get(url).pipe(map(_ => _['value']));
 
     return combineLatest([prevMonths, currMonth]).pipe(
-      map(([pastMonths, currentMonth]) => ['Loscam', 'Chep', 'Plain'].reduce((acc, pallet) => {
+      map(([pastMonths, currentMonth]) => ['Loscam', 'Chep', 'GCP', 'Plain'].reduce((acc, pallet) => {
         const currentPallets = Object.values(currentMonth).filter(_ => _.fields.Pallet === pallet).map(_ => {return {branch: _.fields.Branch, pallets: _.fields.Out - _.fields.In }});
-        const pastPallets = Object.values(pastMonths).filter(_ => _.fields.Pallet === pallet).map(_ => {return {branch: _.fields.Branch, pallets: _.fields.Owing }});
+        const pastPallets = Object.values(pastMonths).filter(_ => _.fields.Pallet === pallet).map(_ => {return {branch: _.fields.Branch, pallets: _.fields.Owing || 0 }});
         const totals: PalletQuantity = [...currentPallets, ...pastPallets].reduce((acc, qty) => {
           const stateCounts = {...acc['stateCounts'], [qty.branch]: (acc['stateCounts'][qty.branch] || 0) + qty.pallets};
           const total = acc['total'] + qty.pallets;
@@ -373,7 +405,7 @@ export class PalletsService {
       `fields/From eq '${branch}'`,
       `fields/Title eq null`,
     ];
-    url += filters.join(' and ');
+    url += filters.join(' and ') + '&top=2000';
     return this.http.get(url).pipe(map(_ => _['value'].reduce((acc: number, val: Pallet) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
 
@@ -387,7 +419,7 @@ export class PalletsService {
       `fields/To eq '${branch}'`,
       `fields/Title eq null`
     ];
-    url += filters.join(' and ');
+    url += filters.join(' and ') + '&top=2000';
     return this.http.get(url).pipe(map(_ => _['value'].reduce((acc: number, val: Pallet) => acc + (val['fields'][pallet] || val['fields']['Quantity']), 0)));
   }
 
@@ -413,8 +445,9 @@ export class PalletsService {
                 acc['quantity'] = curr.fields.Quantity;
                 acc['loscam'] = curr.fields.Loscam;
                 acc['chep'] = curr.fields.Chep;
+                acc['gcp'] = curr.fields.GCP;
                 acc['plain'] = curr.fields.Plain;
-                if (['Loscam', 'Chep', 'Plain'].includes(curr.fields.Pallet)) acc[curr.fields.Pallet.toLowerCase()] = curr.fields.Quantity;
+                if (['Loscam', 'Chep', 'GCP', 'Plain'].includes(curr.fields.Pallet)) acc[curr.fields.Pallet.toLowerCase()] = curr.fields.Quantity;
               }
             } else if (!acc['transferred']) {
               if (curr.fields.Status === 'Transferred') {
@@ -429,6 +462,7 @@ export class PalletsService {
               acc['quantity'] = curr.fields.Quantity;
               acc['loscam'] = curr.fields.Loscam;
               acc['chep'] = curr.fields.Chep;
+              acc['gcp'] = curr.fields.GCP;
               acc['plain'] = curr.fields.Plain;
             }
 

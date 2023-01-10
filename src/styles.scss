@@ -196,6 +196,14 @@ input {
   color: white;
 }
 
+.pallet-input {
+  color: black;
+}
+
+.dark-theme .pallet-input {
+  color: white;
+}
+
 .dark-theme .mat-mdc-table,
 .dark-theme gcp-big-button > .link {
   border-color: rgba(255, 255, 255, 0.12) !important;
@@ -222,6 +230,7 @@ gcp-big-button > .link,
   position: fixed !important;
   width: auto !important;
 }
+
 
 @media (max-width: 800px) {
   .home-cards {
