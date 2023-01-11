@@ -23,7 +23,7 @@ export class CustomersService {
   private _customersSubject$ = new BehaviorSubject<Customer[]>([]);
   private _loadingCustomers!: boolean;
   private pageSize = 50;
-
+  private pallets = this.shared.palletDetails;
   public loading = new BehaviorSubject<boolean>(false);
 
   constructor(
@@ -43,12 +43,8 @@ export class CustomersService {
         filterArray.push(`branch=${filters['territory']}`);
       }
     }
-    const palletFilter = []
-    const pallets = Array.isArray(filters['pallets']) ? filters['pallets'] : [filters['pallets']];
-
-    if (filters['sort'] === 'loscam' || pallets.includes('loscam')) palletFilter.push('filter=loscam');
-    if (filters['sort'] === 'chep' || pallets.includes('chep')) palletFilter.push('filter=chep');
-    if (filters['sort'] === 'plain' || pallets.includes('plain')) palletFilter.push('filter=plain');
+    const palletFilters = Array.isArray(filters['pallets']) ? filters['pallets'] : [filters['pallets']];
+    const palletFilter = this.pallets.filter(p => filters['sort'] === p.key || palletFilters.includes(p.key)).map(p => `filter=${p.key}`)
     if (palletFilter.length === 0) filterArray.push('inactive=0');
     if (palletFilter.length > 0) filterArray.push(`${palletFilter.join('&')}`);
     url += `&${filterArray.join('&')}`;

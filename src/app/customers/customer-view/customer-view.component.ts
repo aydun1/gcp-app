@@ -21,9 +21,10 @@ import { RecyclingCustomerListDialogComponent } from '../../recycling/shared/rec
 
 interface PalletQuantity {stateCounts: Array<{name: string, count: number}>, states: Array<string>, total: number};
 interface PalletQuantities {
-  Loscam: PalletQuantity,
-  Chep: PalletQuantity,
-  Plain: PalletQuantity,
+  Loscam: PalletQuantity;
+  Chep: PalletQuantity;
+  GCP: PalletQuantity;
+  Plain: PalletQuantity;
 };
 
 @Component({
@@ -39,11 +40,7 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
   private cagesSubject$ = new Subject<string>();
   private customer!: Customer;
   private branch_!: string;
-  public pallets = [
-    {name: 'Loscam', image: 'assets/loscam.png'},
-    {name: 'Chep', image: 'assets/chep.png'},
-    {name: 'Plain', image: 'assets/pallet.png'}
-  ]
+  public pallets = this.sharedService.palletDetails;
   public customer$!: Observable<Customer>;
   public site!: string;
   public sites!: Array<Site>;

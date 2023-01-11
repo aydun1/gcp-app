@@ -2,45 +2,103 @@
   width: 100%;
 }
 
-.mat-button-toggle-group {
-  margin-bottom: 29.5px;
+.name {
+  background: rgb(255 255 255 / 68%);
+  border-radius: 4px;
+  bottom: 0;
+  color: black;
+  font-weight: bold;
+  left: 0;
+  line-height: 20px;
+  padding: 4px 6px;
+  position: absolute;
 }
 
-.mat-button-toggle-button {
-  align-items: stretch;
+.pallet-grid {
+  border: 1px solid;
+  border-radius: 4px;
   display: flex;
+  margin-bottom: 22px;
 }
 
-.mat-button-toggle {
+.pallet-column {
   display: flex;
   flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  border-right: 1px solid;
 }
 
-
-.name {
-  position: absolute;
-  right: 3px;
-  top: 3px;
-  background: rgb(0 0 0 / 40%);
-  color: white;
-  line-height: 20px;
-  padding: 1px 6px;
-  border-radius: 20px;
+.pallet-cell {
+  flex: 1;
+  position: relative;
+  border-bottom: 1px solid;
 }
 
-.mat-button-toggle-checked .name {
-  background: rgb(0 0 0 / 90%);
-
+.pallet-input {
+  background: none;
+  border: none;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 16px;
+  padding: 12px 5px;
+  width: 100%;
 }
 
-img {
-  height: 100%;
+.pallet-input:focus-visible {
+  outline: 1px solid;
+  outline-offset: -1px;
+}
+
+.pallet-column:last-child {
+  border-right-width: 0;
+}
+
+.pallet-cell:last-child {
+  border-bottom-width: 0;
+}
+
+.pallet-grid img {
+  height: 50px;
   object-fit: contain;
   width: 100%;
 }
 
-.ng-submitted .mat-button-toggle-group.ng-invalid {
-  border: red 1px solid;
+.vertical img {
+  height: 100%;
+  max-width: 80px;
+  margin-left: 5px;
+}
+
+.vertical .name {
+  background: none;
+  color: inherit;
+  line-height: 43px;
+  padding: 0 5px;
+  right: 0;
+  text-align: right;
+}
+
+.vertical.pallet-grid {
+  flex-direction: column;
+}
+
+.vertical > .pallet-column {
+  border-right-width: 0;
+  flex-direction: row;
+}
+
+.vertical .pallet-cell {
+  border-right: 1px solid;
+}
+
+.vertical .pallet-column:last-child > .pallet-cell {
+  border-bottom-width: 0;
+}
+
+.vertical .pallet-cell:last-child {
+  border-bottom-width: 1px;
+  border-right-width: 0;
 }
 
 .close-button {
