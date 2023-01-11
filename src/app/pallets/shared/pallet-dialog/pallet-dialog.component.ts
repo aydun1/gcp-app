@@ -29,18 +29,11 @@ interface PalletForm {
 })
 export class PalletDialogComponent implements OnInit {
   private _state!: string;
-  private palletImages = {
-    Loscam: 'assets/loscam.png',
-    Chep: 'assets/chep.png',
-    GCP:'assets/pallet.png',
-    Plain: 'assets/pallet.png'
-  };
-  public palletTypes!: Array<{name: string, image: string}>;
+  public palletTypes = this.sharedService.palletDetails;
   public palletForm!: FormGroup<PalletForm>;
   public loading = false;
   public siteNames!: Array<string>;
   public direction = [{name: 'Sent', controlName: 'outQty'}, {name: 'Returned', controlName: 'inQty'}];
-  public pallets = ['Loscam', 'Chep', 'GCP', 'Plain'];
   public vertical = true;
 
   constructor(

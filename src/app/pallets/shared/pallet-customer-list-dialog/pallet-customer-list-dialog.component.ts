@@ -23,7 +23,7 @@ export class PalletCustomerListDialogComponent implements OnInit, OnDestroy {
   public totalOut = 0;
   public totalIn = 0;
   public states = this.sharedService.branches;
-  public palletTypes = ['Loscam', 'Chep', 'Plain'];
+  public palletTypes = this.sharedService.pallets;
   public palletType!: string;
   public displayedColumns = ['date', 'notes', 'pallet', 'in', 'out', 'docket'];
   public date = new Date();

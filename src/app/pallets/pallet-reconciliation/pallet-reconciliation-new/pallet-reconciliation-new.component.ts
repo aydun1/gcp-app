@@ -31,11 +31,11 @@ interface PalletRecForm {
 export class PalletReconciliationNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';
 
+  private _stocktakeResult = 0;
   public loadingData = new BehaviorSubject<boolean>(false);
   public palletRecForm!: FormGroup<PalletRecForm>;
   public adjBalance = 0;
-  public stocktakeResult = 0;
-  public pallets = ['Loscam', 'Chep', 'Plain'];
+  public pallets = this.sharedService.pallets;
   public states = this.sharedService.branches;
   public loading = false;
   public id: string | null = null;
@@ -52,11 +52,11 @@ export class PalletReconciliationNewComponent implements OnInit {
   ) { }
 
   get surplus(): number | null {
-    return this.stocktakeResult > 0 ? this.stocktakeResult : this.stocktakeResult === 0 ? 0 : null;
+    return this._stocktakeResult > 0 ? this._stocktakeResult : this._stocktakeResult === 0 ? 0 : null;
   }
 
   get deficit(): number | null {
-    return this.stocktakeResult < 0 ? Math.abs(this.stocktakeResult) : this.stocktakeResult === 0 ? 0 : null;
+    return this._stocktakeResult < 0 ? Math.abs(this._stocktakeResult) : this._stocktakeResult === 0 ? 0 : null;
   }
 
   ngOnInit(): void {
@@ -113,7 +113,7 @@ export class PalletReconciliationNewComponent implements OnInit {
       tap(_ => {
         const v = this.palletRecForm.getRawValue();
         this.adjBalance = +(v.onSite || 0) + +(v.offSite || 0) + +(v.toBeCollected|| 0) - +(v.toBeRepaid || 0) + +(v.inTransitOff || 0) - +(v.inTransitOn || 0);
-        this.stocktakeResult = this.adjBalance - +(v.currentBalance || 0);
+        this._stocktakeResult = this.adjBalance - +(v.currentBalance || 0);
       })
     ).subscribe();
 
@@ -142,7 +142,7 @@ export class PalletReconciliationNewComponent implements OnInit {
   onSubmit(): void {
     if (this.palletRecForm.invalid) return;
     this.loading = true;
-    const payload = {...this.palletRecForm.getRawValue(), surplus: this.surplus, deficit: this.deficit, result: this.stocktakeResult};
+    const payload = {...this.palletRecForm.getRawValue(), surplus: this.surplus, deficit: this.deficit, result: this._stocktakeResult};
     const action = this.id ? this.palletsReconciliationService.updateReconciliation(this.id, payload) :
                              this.palletsReconciliationService.addReconciliation(payload);
     action.pipe(
