@@ -19,7 +19,13 @@ export class SharedService {
     'VIC': ['ACT', 'HEATH', 'MISC', 'NT', 'NZ', 'OTHER', 'PRIMARY', 'TAS', 'VIC', 'VICSALES'],
     'WA': ['WA']
   };
-  private warehouseStaff = ['michael.johnson@gardencityplastics.com'];
+  private _pallets = [
+    {key: 'loscam', name: 'Loscam', image: 'assets/loscam.png'},
+    {key: 'chep', name: 'Chep', image: 'assets/chep.png'},
+    {key: 'gcp', name: 'GCP', image: 'assets/pallet.png'},
+    {key: 'plain', name: 'Plain', image: 'assets/pallet.png'}
+  ];
+  private _warehouseStaff = ['michael.johnson@gardencityplastics.com'];
   private _state$ = new BehaviorSubject<string>('');
   private appTitle = this.titleService.getTitle();
   public branches = Object.keys(this.territories);
@@ -53,6 +59,14 @@ export class SharedService {
     ['Forrestfield', 'WA']
   ]);
 
+  get pallets(): string[] {
+    return this._pallets.map(_ => _.name);
+  }
+
+  get palletDetails() {
+    return this._pallets;
+  }
+
   constructor(
     private http: HttpClient,
     private dom: DomSanitizer,
@@ -61,7 +75,7 @@ export class SharedService {
   ) { }
 
   checkIfWarehouse(accounts: Array<any>) {
-    this.isWarehouse = this.warehouseStaff.includes(accounts[0]?.username);
+    this.isWarehouse = this._warehouseStaff.includes(accounts[0]?.username);
   }
 
   getPhoto(): Observable<SafeUrl> {

@@ -28,12 +28,11 @@ export class CustomerListComponent implements OnInit {
   public territories$!: Observable<Territory[]>;
   public get territories(): Array<string> {return this.sharedService.territoryNames};
   public loading = this.customersService.loading;
-  public displayedColumns = ['name', 'custNmbr', 'loscam', 'chep', 'plain'];
   public sortSort!: string;
   public sortOrder!: 'asc' | 'desc';
-  public loscams!: number;
-  public cheps!: number;
-  public plains!: number;
+  public pallets = this.sharedService.palletDetails;
+  public palletTotals = this.pallets.reduce((acc, curr) => (acc[curr.key]='',acc),{});
+  public displayedColumns = ['name', 'custNmbr', ...this.pallets.map(_ => _.key)];
 
   constructor(
     private el: ElementRef,
@@ -62,15 +61,11 @@ export class CustomerListComponent implements OnInit {
       switchMap(_ => state$.pipe(map(state => !_['territory'] ? {..._, territory: state} : _))),
       tap(_ => {
         this.parseParams(_);
-        this.loscams = 0;
-        this.cheps = 0;
-        this.plains = 0;
+        this.pallets.forEach(p => this.palletTotals[p.key] = 0);
       }),
       switchMap(_ => this.loadList ? this.getFirstPage(_) : []),
       tap(customers => {
-        this.loscams = customers.map(_ => _.loscam).filter(_ => _).reduce((acc, val) => acc + val, 0);
-        this.cheps = customers.map(_ => _.chep).filter(_ => _).reduce((acc, val) => acc + val, 0);
-        this.plains = customers.map(_ => _.plain).filter(_ => _).reduce((acc, val) => acc + val, 0);
+        this.pallets.forEach(p => this.palletTotals[p.key] = customers.map(_ => _[p.key]).filter(_ => _).reduce((acc, val) => acc + val, 0));
       })
     )
 

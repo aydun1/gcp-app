@@ -25,7 +25,7 @@ export class PalletListComponent implements OnInit {
   public totalOut = 0;
   public totalIn = 0;
   public states = this.sharedService.branches;
-  public pallets = ['Loscam', 'Chep', 'Plain'];
+  public pallets = this.sharedService.pallets;
   public displayedColumns = ['date', 'notes', 'recepient', 'pallet', 'out', 'in', 'docket'];
 
   constructor(

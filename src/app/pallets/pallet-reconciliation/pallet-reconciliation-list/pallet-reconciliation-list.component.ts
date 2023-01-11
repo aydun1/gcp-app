@@ -22,7 +22,7 @@ export class PalletReconciliationListComponent implements OnInit {
   public total!: number;
   public displayedColumns = ['date', 'reference', 'branch', 'pallet', 'surplus', 'deficit'];
   public states = this.sharedService.branches;
-  public pallets = ['Loscam', 'Chep', 'Plain']
+  public pallets = this.sharedService.pallets;
 
   constructor(
     private el: ElementRef,

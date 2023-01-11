@@ -14,9 +14,10 @@ interface PalletTransferForm {
   from: FormControl<string | null>;
   to: FormControl<string | null>;
   reference: FormControl<string | null>;
-  loscam: FormControl<string | null>;
-  chep: FormControl<string | null>;
-  plain: FormControl<string | null>;
+  loscam: FormControl<number | null>;
+  chep: FormControl<number | null>;
+  gcp: FormControl<number | null>;
+  plain: FormControl<number | null>;
 }
 
 @Component({
@@ -31,6 +32,7 @@ export class PalletInterstateTransferNewComponent implements OnInit {
   public states = this.sharedService.branches;
   public state!: string;
   public loading!: boolean;
+  public pallets = this.sharedService.palletDetails;
   get targetStates(): Array<string> {
     const from = this.palletTransferForm.get('from')?.value;
     const states = this.states.filter(_ => _ !== from);
@@ -61,15 +63,16 @@ export class PalletInterstateTransferNewComponent implements OnInit {
       if (this.palletTransferForm) this.palletTransferForm.patchValue({from: state});
     });
 
-    this.palletTransferForm = this.fb.group({
+    this.palletTransferForm = this.fb.group<PalletTransferForm>({
       date: new FormControl({value: date, disabled: true}, Validators.required),
       name: new FormControl({value: name, disabled: true}, Validators.required),
-      from: [this.state, Validators.required],
-      to: ['', Validators.required],
-      reference: ['', [Validators.required]],
-      loscam: ['', [Validators.min(0)]],
-      chep: ['', [Validators.min(0)]],
-      plain: ['', [Validators.min(0)]]
+      from: new FormControl(this.state, [Validators.required]),
+      to: new FormControl('', [Validators.required]),
+      reference: new FormControl('', [Validators.required]),
+      loscam: new FormControl(null, [Validators.min(0)]),
+      chep: new FormControl(null, [Validators.min(0)]),
+      gcp: new FormControl(null, [Validators.min(0)]),
+      plain: new FormControl(null, [Validators.min(0)]),
     });
 
     this.palletTransferForm.get('from')?.valueChanges.subscribe(
