@@ -79,26 +79,61 @@ export class AutomateService {
     )
   }
 
-  changePalletTypes(oldPallet: string, newPallet: string): Observable<any> {
+  removeZeroPallets(): Observable<any> {
+    const palletType = 'GCP';
+    const branch = 'VIC';
+    const shouldRun = 0;
+    let delay = 0;
+    const delayIncrement = 1000;
+    if (!shouldRun) return of();
+    const filters = [
+      'fields/Quantity eq 0',
+      'fields/In eq 0',
+      'fields/Out eq 0',
+      `fields/CustomerNumber ne null`,
+      `fields/Pallet eq '${palletType}'`,
+      `fields/Branch eq '${branch}'`,
+    ];
+    const headers = {Prefer: 'HonorNonIndexedQueriesWarningMayFailRandomly'};
+    const url = `${this.palletTrackerUrl}/items?expand=fields(select=Title,Branch,CustomerNumber,Site,From,To,In,Out,Pallet,Quantity,Date,Notes)&filter=${filters.join(' and ')}&top=2000`;
+    return this.http.get(url, {headers}).pipe(
+      map((res: any) => res.value as Pallet[]),
+      tap(_ => console.log(`Got ${_.length} items.`)),
+      switchMap(_ => {
+        return _.map(async pallet => {
+          delay += delayIncrement;
+          return new Promise(resolve => setTimeout(resolve, delay)).then(() =>{
+            console.log(pallet.id, pallet.fields.In, pallet.fields.Out, pallet.fields.CustomerNumber);
+            return lastValueFrom(this.http.delete(`${this.palletTrackerUrl}/items('${pallet.id}')`));
+          });
+        });
+      })
+    )
+  }
+
+
+  changePalletTypes(): Observable<any> {
+    const custNmbr = '3Q04304';
+    const oldPallet = 'Plain';
+    const newPallet = 'GCP';
+    const branch = 'QLD';
     const shouldRun = 0;
     let delay = 0;
     const delayIncrement = 0;
-    const branch = 'QLD';
-    if (shouldRun) return of();
+    if (!shouldRun) return of();
     const filters = [
-      `fields/CustomerNumber eq '3Q09778'`,
-      `fields/Branch eq '${branch}'`,
-      `fields/CustomerNumber ne null`,
-      `fields/Pallet eq '${oldPallet}'`
+      `fields/CustomerNumber eq '${custNmbr}'`,
+      `fields/Pallet eq '${oldPallet}'`,
+      `fields/Branch eq '${branch}'`
     ];
     const url = `${this.palletTrackerUrl}/items?expand=fields(select=Title,Branch,CustomerNumber,Site,From,To,In,Out,Pallet,Quantity,Date,Notes)&filter=${filters.join(' and ')}&top=2000`;
     return this.http.get(url).pipe(
       map((res: any) => res.value as Pallet[]),
       tap(_ => console.log(`Got ${_.length} items.`)),
       map(_ => _.filter(p => p.fields.In > 0 || p.fields.Out > 0)),
-      tap(_ => console.log(`${_.length} are non-zero.`)),
+      tap(_ => console.log(`${_.filter(p => p.fields.In > 0 || p.fields.Out > 0).length} are non-zero.`)),
       switchMap(_ => {
-        return _.map(async pallet => {
+        const a = _.map(async pallet => {
           delay += delayIncrement;
           return new Promise(resolve => setTimeout(resolve, delay)).then(() => {
             const postPayload = {...pallet['fields'], Pallet: newPallet};
@@ -110,12 +145,15 @@ export class AutomateService {
               {id: 1, method: 'PATCH', url: `${url}/${pallet.id}`, headers, body: {fields: patchPayload}},
               {id: 2, method: 'POST', url, headers, body: {fields: postPayload}}
             ];
-            const actionObs = this.http.post(`${environment.endpoint}/$batch`, {requests});
-            console.log(delay / delayIncrement)
+            const actionObs = (pallet.fields.In > 0 || pallet.fields.Out > 0) ?
+            this.http.post(`${environment.endpoint}/$batch`, {requests}) :
+            this.http.delete(`${this.palletTrackerUrl}/items('${pallet.id}')`);
             return lastValueFrom(actionObs);
           });
         });
-      })
+        return Promise.all(a);
+      }),
+      tap(_ => console.log('Done'))
     );
   }
 

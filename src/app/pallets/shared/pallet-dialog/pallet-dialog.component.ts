@@ -49,7 +49,6 @@ export class PalletDialogComponent implements OnInit {
     this.sharedService.getBranch().subscribe(state => this._state = state);
     const requireSite = this.data.site || this.data.sites?.length;
     this.siteNames = this.data.sites ? this.data.sites.map(_ => _.fields.Title) : [this.data.site].filter(_ => _);
-    this.palletTypes = this.pallets.map(_ => {return {name: _, image: this.palletImages[_]}});
     this.palletForm = this.fb.group({
       site: [this.data.site, requireSite ? Validators.required : ''],
       date: [new Date(), Validators.required],
