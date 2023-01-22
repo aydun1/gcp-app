@@ -174,7 +174,7 @@ export class PanListComponent implements OnInit {
   }
 
   calculateSpaces(palQty: number, palHeight: number, toTransfer: number | undefined): number {
-    return palQty && palQty !== 500 ? ((toTransfer || 0) / palQty * (Math.trunc(palHeight / 1000) / 2)) : 0;
+    return palQty && palQty !== 1 && palQty !== 500 ? ((toTransfer || 0) / palQty * (Math.trunc(palHeight / 1000) / 2)) : 0;
   }
 
   formMapper(_: SuggestedItem): any {
