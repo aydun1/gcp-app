@@ -5,8 +5,8 @@ import { BehaviorSubject, combineLatest, Observable, switchMap, tap } from 'rxjs
 
 import { SharedService } from '../../shared.service';
 import { NavigationService } from '../../navigation.service';
-import { Chemical } from '../chemical';
-import { SdsService } from '../sds.service';
+import { Chemical } from '../shared/chemical';
+import { SdsService } from '../shared/sds.service';
 import { SdsBackpackDialogComponent } from '../shared/sds-backpack-dialog/sds-backpack-dialog.component';
 
 @Component({
@@ -35,8 +35,8 @@ export class SdsViewComponent implements OnInit {
     this.item$ = combineLatest([this.route.paramMap, this.sharedService.getBranch(), this.refresh]).pipe(
       tap(([params, _]) => this.itemNumber = params.get('id')),
       switchMap(([params, _]) => this.getItem(params.get('id'), _)),
-      tap(_ => {
-        if (!_.sdsExists && !this.opened) this.openBackpack();
+      tap(chemical => {
+        if (!chemical.sdsExists && !this.opened) this.openBackpack(chemical);
       })
     );
     this.refresh.next(true);
@@ -46,12 +46,11 @@ export class SdsViewComponent implements OnInit {
     return this.sdsService.getChemical(branch, itemNumber || '');
   }
 
-  openBackpack(): void {
+  openBackpack(chemical: Chemical): void {
     this.opened = true;
     const dialogRef = this.dialog.open(SdsBackpackDialogComponent, {
-      autoFocus: false,
       width: '800px',
-      data: {itemNumber: this.itemNumber}
+      data: {chemical}
     });
     dialogRef.afterClosed().subscribe(() => {
       this.refresh.next(true);

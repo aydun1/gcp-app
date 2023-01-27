@@ -14,3 +14,9 @@
 .card {
   margin-top: 20px;
 }
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 0;
+}

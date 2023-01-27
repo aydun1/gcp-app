@@ -5,8 +5,8 @@ import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
-import { Chemical } from '../chemical';
-import { SdsService } from '../sds.service';
+import { Chemical } from '../shared/chemical';
+import { SdsService } from '../shared/sds.service';
 
 @Component({
   selector: 'gcp-sds-list',
@@ -19,12 +19,12 @@ export class SdsListComponent implements OnInit {
 
   public textFilter = new FormControl(this.route.snapshot.paramMap.get('search'));
   public groupFilter = new FormControl(this.route.snapshot.paramMap.get('groupby'));
-  public loading = false;
+  public loading = this.sdsService.loading;
   public displayedColumns = ['sds', 'bin', 'product', 'onHand', 'packingGroup', 'class', 'hazardRating'];
   public chemicals$!: Observable<Chemical[]>;
   public branchFilter = new FormControl({value: this.ownState, disabled: false});
   public states = this.shared.branches;
-  public classes = ['9'];
+  public classes = ['5.1', '8', '9'];
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -98,10 +98,10 @@ export class SdsListComponent implements OnInit {
     return lines.reduce((acc, cur) => acc + 1, 0);
   }
 
-  getChemicals(search: string, branch: string): Promise<Chemical[]> {
+  getChemicals(search: string, branch: string): Observable<Chemical[]> {
     search = (search || '').toLowerCase();
-    return this.sdsService.getOnHandChemicals(branch).then(_ =>
-      _.filter(c => c.ItemNmbr?.toLowerCase()?.includes(search))
+    return this.sdsService.getOnHandChemicals(branch).pipe(
+      map(_ => _.filter(c => c.ItemNmbr?.toLowerCase()?.includes(search)))
     )
   }
 

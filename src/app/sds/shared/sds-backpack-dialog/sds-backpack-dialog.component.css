@@ -12,3 +12,15 @@
 .syncer > .mat-mdc-button {
   margin: 0 10px;
 }
+
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.buttons {
+  margin-left: auto;
+}
+
+.selected {
+  margin: 0 16px;
+}

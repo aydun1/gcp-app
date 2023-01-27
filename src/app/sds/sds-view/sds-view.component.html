@@ -6,8 +6,10 @@
     <div class="title">{{ itemNumber }}</div>
   </ng-container>
 </mat-toolbar>
-
 <div *ngIf="item$ | async as item" class="content">
+  <div *ngIf="item.sdsExists" class="actions">
+    <button mat-button (click)="openBackpack(item)">Edit</button>
+  </div>
   <mat-card *ngIf="item.sdsExists">
     <mat-card-header>
       <mat-card-title>
@@ -19,16 +21,19 @@
         <span matListItemTitle>{{ item.Name }}</span>
         <span>Name</span>
       </mat-list-item>
+    </mat-list>
+    <mat-nav-list>
       <a [href]="getPdfPath(item.ItemNmbr)" target="_blank" class="">
         <mat-list-item>
+          <img src="assets/pdf.svg" alt="File type icon" matListItemIcon>
           <span matListItemTitle>{{ item.docNo }}</span>
           <span>PDF</span>
         </mat-list-item>
       </a>
-    </mat-list>
+    </mat-nav-list>
   </mat-card>
 
-  <mat-card *ngIf="item.hCodes.length > 0" class="card">
+  <mat-card *ngIf="item.hCodes && item.hCodes.length > 0" class="card">
     <mat-card-header>
       <mat-card-title>
         H codes
@@ -42,6 +47,6 @@
     </mat-list>
   </mat-card>
   <div *ngIf="!item.sdsExists" class="add-sds">
-    <button mat-button (click)="openBackpack()">Assign an SDS</button>
+    <button mat-button (click)="openBackpack(item)">Assign an SDS</button>
   </div>
 </div>

@@ -1,16 +1,19 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, lastValueFrom, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, lastValueFrom, map, Observable, startWith, switchMap, take, tap } from 'rxjs';
 
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 import { Chemical } from './chemical';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SdsService {
+  private _chemicalListSubject$ = new BehaviorSubject<Chemical[]>([]);
+
   public loading = new BehaviorSubject<boolean>(false);
   public defs = {
+    'H290': 'May be corrosive to metals',
     'H300': 'Fatal if swallowed',
     'H301': 'Toxic if swallowed',
     'H302': 'Harmful if swallowed',
@@ -80,10 +83,10 @@ export class SdsService {
   ) { }
 
   getChemical(branch: string, itemNumber: string): Promise<Chemical> {
-    const request = this.http.get<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/chemicals?branch=${branch}&itemNmbr=${itemNumber}`).pipe(
+    const request = this.http.get<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/chemicals?branch=&itemNmbr=${itemNumber}`).pipe(
       map(res => res.chemicals[0]),
       tap(_ => {
-        const codes = _.hCodes;
+        const codes = _.hCodes || [];
         ['0', '1', '2', '3'].forEach(v => {
           const first = codes.indexOf(`H30${v}`);
           const second = codes.indexOf(`H31${v}`);
@@ -102,11 +105,16 @@ export class SdsService {
     return lastValueFrom(request);
   }
 
-  getOnHandChemicals(branch: string): Promise<Chemical[]> {
+  getOnHandChemicals(branch: string): Observable<Chemical[]> {
+    this.loading.next(true);
     const request = this.http.get<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/chemicals?branch=${branch}`).pipe(
-      map(res => res.chemicals)
+      map(res => res.chemicals),
+      tap(() => this.loading.next(false)),
+      startWith([]),
+      tap(_ => this._chemicalListSubject$.next(_)),
+      switchMap(() => this._chemicalListSubject$)
     );
-    return lastValueFrom(request);
+    return request;
   }
 
   getSavedChemicals(): any {
@@ -114,6 +122,22 @@ export class SdsService {
       map(res => res.chemicals)
     );
     return lastValueFrom(request);
+  }
+
+  private updateList(res: Chemical): Observable<Chemical> {
+    delete res['Bin'];
+    delete res['QtyOnHand'];
+    return this._chemicalListSubject$.pipe(
+      take(1),
+      map(_ => {
+        const chemicals = _.map(pallet => pallet);
+        const i = chemicals.findIndex(pallet => pallet.ItemNmbr === res.ItemNmbr);
+        if (i > -1) chemicals[i] = {...chemicals[i], ...res}
+        else chemicals.unshift(res);
+        this._chemicalListSubject$.next(chemicals);
+        return res
+      })
+    );
   }
 
   getPdf(itemNmbr: string): void {
@@ -135,17 +159,23 @@ export class SdsService {
 
   getSyncedChemicals(): Observable<Chemical[]> {
     return this.http.get<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/synced-materials`).pipe(
-      map(res => res.chemicals)
+      map(res => res.chemicals.map(
+        c => {
+          return {...c, key: c.Name.toLocaleLowerCase()}
+        }
+      ))
     );
   }
 
-  syncFromChemwatch() {
+  syncFromChemwatch(): Promise<any> {
     const request = this.http.get<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/sync-from-cw`);
     return lastValueFrom(request);
   }
 
   linkChemicalToItem(itemNmbr: string, cwNo: string) {
-    const request = this.http.get<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/link-material?itemNmbr=${itemNmbr}&cwNo=${cwNo}`);
+    const request = this.http.get<Chemical>(`${environment.gpEndpoint}/link-material?itemNmbr=${itemNmbr}&cwNo=${cwNo}`).pipe(
+      switchMap(_ => this.updateList(_))
+    );
     return lastValueFrom(request);
   }
 }

@@ -2,17 +2,36 @@
   <h2 mat-dialog-title>Pick an SDS</h2>
   <div class="syncer">
     <mat-spinner *ngIf="loading" diameter="24"></mat-spinner>
-    <button mat-button (click)="syncFromChemwatch()" [disabled]="loading">Sync</button>
+    <button mat-button (click)="syncFromChemwatch()" [disabled]="loading" tabindex="-1">Sync</button>
   </div>
 </div>
 <mat-dialog-content>
-  <mat-selection-list [disabled]="loading" [multiple]="false" (selectionChange)="setItem($event)">
-    <mat-list-option *ngFor="let c of chemicals$ | async" [value]="c">
+  <p>For: {{ data.chemical.ItemDesc }}</p>
+  <mat-form-field appearance="fill" subscriptSizing="dynamic" class="name-filter">
+    <mat-label>Search</mat-label>
+    <input matInput type="text" autocomplete="off" placeholder="Type to search..." [formControl]="searchControl">
+    <button *ngIf="!searchControl.value" matSuffix mat-icon-button type="button" disabled>
+      <mat-icon>search</mat-icon>
+    </button>
+    <button *ngIf="searchControl.value" (click)="clearSearch()" matSuffix mat-icon-button aria-label="Clear" type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+  <mat-selection-list *ngIf="chemicals$ | async as chemicals" [disabled]="loading" [multiple]="false" (selectionChange)="setItem($event)">
+    <mat-list-option *ngFor="let c of chemicals" [value]="c">
       <div>{{ c.Name }}</div>
     </mat-list-option>
+    <mat-list-option *ngIf="chemicals.length === 0" [disabled]="true">
+      No safety data sheets to show...
+    </mat-list-option>
+
   </mat-selection-list>
-  <mat-dialog-actions align="end">
-    <button type="button" mat-button mat-dialog-close tabindex=-1>Cancel</button>
-    <button type="submit" mat-raised-button color="primary" [disabled]="!this.selected?.CwNo || saving" (click)="linkMaterial()">Save</button>
-  </mat-dialog-actions>
+
 </mat-dialog-content>
+<mat-dialog-actions>
+  <div class="selected">{{ selected?.Name }}</div>
+  <div class="buttons">
+    <button type="button" mat-button mat-dialog-close tabindex=-1>Cancel</button>
+    <button type="submit" mat-raised-button color="primary" [disabled]="!selected?.CwNo || saving" (click)="linkMaterial()">Save</button>  
+  </div>
+</mat-dialog-actions>
