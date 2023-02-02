@@ -346,19 +346,23 @@ export class PalletsService {
   getPalletsOwedToBranch(branch: string, pallet: string, date: Date): Observable<number> {
     const startOfMonth = `${date.getFullYear()}-${date.getMonth() + 1}-1`;
     const dateInt = this.dateInt(date);
+    const year = date.getUTCFullYear();
     const eod = new Date(date.setHours(23,59,59,999)).toISOString();
+    
+    let prevYearsUrl = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}/items?expand=fields(select=Owing)&filter=fields/DateInt eq null and fields/Year lt '${year}' and fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}'&top=2000`;
+    let prevMonthsUrl = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}/items?expand=fields(select=Owing)&filter=fields/Year eq '${year}' and fields/DateInt lt ${dateInt} and fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}'&top=2000`;
+    let currentMonthUrl = `${this._palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Date ge '${startOfMonth}' and fields/Date lt '${eod}' and fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null&top=2000`;
 
-    let url = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}/items?expand=fields(select=Owing)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/DateInt lt '${dateInt}'&top=2000`;
-    let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Date ge '${startOfMonth}' and fields/Date lt '${eod}' and fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null&top=2000`;
+    const prevYears: Observable<PalletTotals[]> = this.http.get(prevYearsUrl).pipe(map(_ => _['value']));
+    const prevMonths: Observable<PalletTotals[]> = this.http.get(prevMonthsUrl).pipe(map(_ => _['value']));
+    const currMonth: Observable<Pallet[]> = this.http.get(currentMonthUrl).pipe(map(_ => _['value']));
 
-    const prevMonths: Observable<PalletTotals[]> = this.http.get(url).pipe(map(_ => _['value']));
-    const currMonth: Observable<Pallet[]> = this.http.get(url2).pipe(map(_ => _['value']));
-
-    return combineLatest([prevMonths, currMonth]).pipe(
-      map(([pastMonths, thisMonth]) => {
-        const count1 = pastMonths.reduce((subtotal, qty) => subtotal + qty.fields.Owing, 0);
-        const count2 = thisMonth.reduce((subtotal, qty) => subtotal + qty.fields.Out - qty.fields.In, 0);
-        return count1 + count2;
+    return combineLatest([prevYears, prevMonths, currMonth]).pipe(
+      map(([pastYears, pastMonths, thisMonth]) => {
+        const count1 = pastYears.reduce((subtotal, qty) => subtotal + qty.fields.Owing, 0);
+        const count2 = pastMonths.reduce((subtotal, qty) => subtotal + qty.fields.Owing, 0);
+        const count3 = thisMonth.reduce((subtotal, qty) => subtotal + qty.fields.Out - qty.fields.In, 0);
+        return count1 + count2 + count3;
       })
     )
   }
