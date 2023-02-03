@@ -54,7 +54,7 @@ export class AppComponent implements OnInit, OnDestroy {
       _ ? this.renderer.addClass(document.body, darkClass) : this.renderer.removeClass(document.body, darkClass)
     });
 
-    this.automateService.removeZeroPallets().subscribe();
+    // this.automateService.updateYearlies().subscribe();
 
     this.authService.instance.handleRedirectPromise().then(authResult => {
       const account = this.authService.instance.getActiveAccount();

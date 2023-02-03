@@ -14,21 +14,23 @@ export class AutomateService {
   private palletsUrl = 'lists/38f14082-02e5-4978-bf92-f42be2220166';
   private palletsOwedUrl = 'lists/8ed9913e-a20e-41f1-9a2e-0142c09f2344';
   private palletTrackerUrl = `${this.endpoint}/${this.palletsUrl}`;
-  private i = 0;
 
   private toUpdate: Array<Pallet> = [
   ] as unknown as Array<Pallet>;
 
-  private month = 12;
-  private year = 2021
-  private branch = 'VIC';
 
   constructor(
     private http: HttpClient,
     private shared: SharedService
   ) { }
 
+
+  private updates: Array<[string, string, string, string, number, number]> = [
+
+  ];
+
   updateGP(custNmbr: string): Observable<number> {
+    let i = 0;
     let url = `${this.palletTrackerUrl}/items?expand=fields(select=Created)&filter=fields/CustomerNumber eq '${custNmbr}' &top=2000`;
     const a$: Observable<string[]> = this.http.get(url).pipe(
       map((res: any) => res.value as Pallet[]),
@@ -37,9 +39,9 @@ export class AutomateService {
 
     const b$ = timer(1000, 4000);
     return combineLatest([a$, b$]).pipe(
-      switchMap(([a, b]) => this.removeId(a[this.i])),
-      tap(() => this.i += 1),
-      map(_ => this.i)
+      switchMap(([a, b]) => this.removeId(a[i])),
+      tap(() => i += 1),
+      map(_ => i)
     )
   }
 
@@ -62,6 +64,7 @@ export class AutomateService {
   }
 
   getAndSet(): Observable<number> {
+    let i = 0;
     const date = new Date('2022/07/01').toISOString();
     const branch = 'VIC'
     const top = 2000;
@@ -73,9 +76,9 @@ export class AutomateService {
     const a$ = of(this.toUpdate)
     const b$ = timer(1000, 2000);
     return combineLatest([a$, b$]).pipe(
-      switchMap(([a, b]) => this.setReference(a[this.i])),
-      tap(() => this.i += 1),
-      map(_ => this.i)
+      switchMap(([a, b]) => this.setReference(a[i])),
+      tap(() => i += 1),
+      map(_ => i)
     )
   }
 
@@ -158,12 +161,12 @@ export class AutomateService {
   }
 
   getAll(): Observable<any> {
-    const nextMonth = this.month < 12 ? this.month + 1 : 1;
-    const nextYear = this.month < 12 ? this.year : this.year + 1;
-
-    const filters = `fields/CustomerNumber ne null and fields/Created ge '${this.year}-${this.month}-01T00:00:00Z' and fields/Created lt '${nextYear}-${nextMonth}-01T00:00:00Z'`;
+    const month = 11;
+    const year = 2022;
+    const nextMonth = month < 12 ? month + 1 : 1;
+    const nextYear = month < 12 ? year : year + 1;
+    const filters = `fields/CustomerNumber ne null and fields/Created ge '${year}-${month}-01T00:00:00Z' and fields/Created lt '${nextYear}-${nextMonth}-01T00:00:00Z'`;
     const url = `${this.palletTrackerUrl}/items?expand=fields(select=CustomerNumber,Created,Pallet,Out,In,Branch,Site)&filter=${filters}&top=2000`;
-
     return this.http.get(url).pipe(
       map((res: any) => res.value as Pallet[]),
       tap(_ => console.log(`Got ${_.length} items.`)),
@@ -185,30 +188,35 @@ export class AutomateService {
     );
   }
 
-  doAction() {
+  updateMonthlies() {
+    let i = 0
+    const year = 2023;
+    const month = 11;
     const a$ = this.getAll();
     const b$ = timer(1000, 1000);
     return combineLatest([a$, b$]).pipe(
-      switchMap(([a, b]) => this.updateTotals(a[this.i])),
-      tap(() => this.i += 1),
-      tap(_ => console.log(this.i, _['fields'].Title)),
-      map(_ => this.i)
+      switchMap(([a, b]) => {
+        const parts: Array<string> = a[i]['k'].split(',');
+        const branch = parts[0];
+        const pallet = parts[1];
+        const customer = parts[2];
+        const site = parts[3];
+        const owing = a[i]['v'];
+        return this.updateMonthlyTotal(customer, site, branch, pallet, owing, year, month);
+      }),
+      tap(() => i += 1),
+      tap(_ => console.log(i, _['fields'].Title)),
+      map(_ => i)
     )
   }
 
-  updateTotals(a: any) {
+  private updateMonthlyTotal(customer: string, site: string, branch: string, pallet: string, owing: string, year: number, month: number): Observable<any> {
     const url = `${this.endpoint}/${this.palletsOwedUrl}`
-    const parts = a['k'].split(',');
-    const branch = parts[0];
-    const pallet = parts[1];
-    const customer = parts[2];
-    const dateInt = parseInt(`${this.year}${this.month}`);
-  
-    const site = parts[3];
+    const dateInt = parseInt(`${year}${month}`);
     return this.http.get(url + `/items?filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/Title eq '${this.shared.sanitiseName(customer)}' and fields/DateInt eq '${dateInt}'` + (site ? ` and fields/Site eq '${site}'` : '')).pipe(
       map(res => res['value']),
       switchMap(res => {
-        const payload = {fields: {Title: customer, Branch: branch, Owing: a['v'], Site: site, Pallet: pallet, Year: this.year, Month: this.month, DateInt: dateInt}};
+        const payload = {fields: {Title: customer, Branch: branch, Owing: owing, Site: site, Pallet: pallet, Year: year, Month: month, DateInt: dateInt}};
         if (res.length > 0) {
           const id = res[0]['id'];
           return this.http.patch(`${url}/items('${id}')`, payload);
@@ -218,6 +226,44 @@ export class AutomateService {
       })
     );
   }
+
+  updateYearlies() {
+    let i = 0;
+    const b$ = timer(1000, 1000);
+    return b$.pipe(
+      switchMap(() => {
+        const details = this.updates[i];
+        return this.updateAnnualTotal(details[0], details[2], details[1], details[3], details[5], details[4]);
+      }),
+      tap(() => i += 1),
+      map(_ => i)
+    )
+  }
+
+  private updateAnnualTotal(customer: string, site: string, branch: string, pallet: string, owing: number, year: number) {
+    const url = `${this.endpoint}/${this.palletsOwedUrl}`
+    return this.http.get(url + `/items?filter=fields/Title eq '${this.shared.sanitiseName(customer)}' and fields/Branch eq '${branch}' and fields/Site eq ${site ? '\'' + site + '\'' : null} and fields/Pallet eq '${pallet}' and fields/DateInt eq null and fields/Year eq '${year}'`).pipe(
+      map(res => res['value']),
+      switchMap(res => {
+        const payload = {fields: {Title: customer, Branch: branch, Owing: owing, Site: site, Pallet: pallet, Year: year}};
+        if (res.length === 0) {
+          console.log('Adding.')
+          return this.http.post(`${url}/items`, payload);
+        } else if (res.length === 1) {
+          console.log('Already there.')
+          return of(1);
+        } else {
+          console.log('Too many!')
+          return of(1);
+        }
+      }),
+      tap(() => console.log(`${customer} ${site ? site + ' '  : ''}owes ${owing} ${pallet} pallets for ${year}`))
+    );
+  }
+
+
+
+
 
   updateCrm(accountNumber: string, palletType: string, palletCount: number) {
     const url = 'https://gardencityplastics.crm6.dynamics.com/api/data/v9.2/accounts';
