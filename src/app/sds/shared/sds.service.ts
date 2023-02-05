@@ -161,7 +161,7 @@ export class SdsService {
     return this.http.get<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/synced-materials`).pipe(
       map(res => res.chemicals.map(
         c => {
-          return {...c, key: c.Name.toLocaleLowerCase()}
+          return {...c, key: c.Name?.toLocaleLowerCase()}
         }
       ))
     );

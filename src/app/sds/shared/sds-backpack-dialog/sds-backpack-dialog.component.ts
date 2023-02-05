@@ -44,8 +44,14 @@ export class SdsBackpackDialogComponent implements OnInit {
   syncFromChemwatch(): void {
     this.loading = true;
     this.sdsService.syncFromChemwatch().then(
-      () => this.subject.next(true)
-    );
+      () => {
+        this.loading = false;
+        this.subject.next(true);
+      }
+    ).catch(e => {
+      console.log(e);
+      this.loading = false;
+    });
   }
 
   linkMaterial(): void {

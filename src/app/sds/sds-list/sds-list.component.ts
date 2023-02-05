@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
@@ -11,7 +11,8 @@ import { SdsService } from '../shared/sds.service';
 @Component({
   selector: 'gcp-sds-list',
   templateUrl: './sds-list.component.html',
-  styleUrls: ['./sds-list.component.css']
+  styleUrls: ['./sds-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SdsListComponent implements OnInit {
   private ownState = this.shared.branch;
@@ -24,7 +25,15 @@ export class SdsListComponent implements OnInit {
   public chemicals$!: Observable<Chemical[]>;
   public branchFilter = new FormControl({value: this.ownState, disabled: false});
   public states = this.shared.branches;
-  public classes = ['5.1', '8', '9'];
+  public address$ = this.shared.getAddress();
+  public date = new Date();
+  public classes = {
+    3: 'Flammable',
+    5.1: 'Oxidiser',
+    6.1: 'Poison',
+    8: 'Corrosive',
+    9: 'Miscellaneous'
+  };
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -42,7 +51,7 @@ export class SdsListComponent implements OnInit {
         map(() => _)
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
-      switchMap(_ => branch$.pipe(map(branch => !_['branch'] ? {..._, branch} : _))),
+      switchMap(_ => branch$.pipe(map(branch => _['branch'] === undefined ? {..._, branch} : _))),
       tap(_ => {
         this.parseParams(_);
       }),
@@ -113,11 +122,16 @@ export class SdsListComponent implements OnInit {
     return lines.reduce((acc, cur) => acc + cur[key], 0);
   }
 
+  getTotalWeight(lines: Array<any>, key: string, uofm: string): number {
+    return lines.filter(_ => _['uofm'] === uofm).reduce((acc, cur) => acc + cur[key], 0);
+  }
+
   trackByGroupsFn(index: number, item: any): string {
     return item.key;
   }
 
   trackByFn(index: number, item: Chemical): string {
+    console.log(item.ItemNmbr)
     return item.ItemNmbr;
   }
 

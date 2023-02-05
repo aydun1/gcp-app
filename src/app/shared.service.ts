@@ -27,6 +27,7 @@ export class SharedService {
   ];
   private _warehouseStaff = ['michael.johnson@gardencityplastics.com'];
   private _state$ = new BehaviorSubject<string>('');
+  private _address$ = new BehaviorSubject<string>('');
   private appTitle = this.titleService.getTitle();
   public branches = Object.keys(this.territories);
   public branch!: string;
@@ -94,6 +95,19 @@ export class SharedService {
         tap(_ => {
           this.branch = _;
           this._state$.next(_);
+        })
+      ))
+    )
+  }
+
+  getAddress(): Observable<{street: string, city: string, state: string, postalCode: string}> {
+    const url = `${environment.betaEndpoint}/me/profile/positions`;
+    return this._address$.pipe(
+      switchMap(cur => cur ? of(cur) : this.http.get(url).pipe(
+        map(_ => _['value'] ? _['value'][0]?.detail?.company?.address || {} : {}),
+        tap(_ => {
+          this.branch = _;
+          this._address$.next(_);
         })
       ))
     )
