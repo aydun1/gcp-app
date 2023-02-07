@@ -25,6 +25,7 @@ export class PalletsService {
   private _palletsOwedListUrl = 'lists/8ed9913e-a20e-41f1-9a2e-0142c09f2344';
   private _columns$ = new BehaviorSubject<any>(null);
   private _palletTrackerUrl = `${environment.endpoint}/${environment.siteUrl}/${this._palletListUrl}`;
+  private _palletTrackerOwedUrl = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}`;
   private _loadingPallets!: boolean;
   private _nextPage!: string;
   private _palletsSubject$ = new BehaviorSubject<Pallet[]>([]);
@@ -108,8 +109,8 @@ export class PalletsService {
     );
   }
 
-  private dateInt(date: Date): string {
-    return `${date.getUTCFullYear()}${('00' + (date.getUTCMonth() + 1)).slice(-2)}`;
+  private dateInt(date: Date): number {
+    return parseInt(`${date.getUTCFullYear()}${('00' + (date.getUTCMonth() + 1)).slice(-2)}`);
   }
 
   getColumns(): BehaviorSubject<any> {
@@ -345,29 +346,37 @@ export class PalletsService {
 
   getPalletsOwedToBranch(branch: string, pallet: string, date: Date): Observable<number> {
     const startOfMonth = `${date.getFullYear()}-${date.getMonth() + 1}-1`;
-    const dateInt = this.dateInt(date);
     const eod = new Date(date.setHours(23,59,59,999)).toISOString();
+    const dateInt = this.dateInt(date);
+    let dateIntArray: Array<number> = [this.dateInt(new Date('2021-11-15'))];
+    while (dateIntArray[dateIntArray?.length - 1] < dateInt) {
+      const lastDate = dateIntArray[dateIntArray?.length - 1].toString(10);
+      const year = parseInt(lastDate.slice(0, 4), 10);
+      const month = parseInt(lastDate.slice(-2), 10);
+      const yearMonth = parseInt(month < 12 ? `${year}${('00' + (month + 1)).slice(-2)}` : `${year + 1}${('0001').slice(-2)}`);
+      dateIntArray.push(yearMonth);
+    }
+    dateIntArray = dateIntArray.filter(_ => _ !== dateInt);
+    const pastDateValues$ = dateIntArray.map(dateInt => {
+      const url = `${this._palletTrackerOwedUrl}/items?expand=fields(select=Owing)&filter=fields/DateInt eq ${dateInt} and fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}'&top=2000`;
+      return this.http.get<{value: PalletTotals[]}>(url).pipe(
+        map(_ => _['value'].reduce((subtotal, qty) => subtotal + qty.fields.Owing, 0))
+      )
+    });
+    const currentMonthUrl = `${this._palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Date ge '${startOfMonth}' and fields/Date lt '${eod}' and fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null&top=2000`;
+    const currMonth$ = this.http.get<{value:Pallet[]}>(currentMonthUrl).pipe(map(_ => _['value'].reduce((subtotal, qty) => subtotal + qty.fields.Out - qty.fields.In, 0)));
 
-    let url = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}/items?expand=fields(select=Owing)&filter=fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/DateInt lt '${dateInt}'&top=2000`;
-    let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Date ge '${startOfMonth}' and fields/Date lt '${eod}' and fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null&top=2000`;
-
-    const prevMonths: Observable<PalletTotals[]> = this.http.get(url).pipe(map(_ => _['value']));
-    const currMonth: Observable<Pallet[]> = this.http.get(url2).pipe(map(_ => _['value']));
-
-    return combineLatest([prevMonths, currMonth]).pipe(
-      map(([pastMonths, thisMonth]) => {
-        const count1 = pastMonths.reduce((subtotal, qty) => subtotal + qty.fields.Owing, 0);
-        const count2 = thisMonth.reduce((subtotal, qty) => subtotal + qty.fields.Out - qty.fields.In, 0);
-        return count1 + count2;
-      })
+    return combineLatest([...pastDateValues$, currMonth$]).pipe(
+      tap(_ => console.log(_)),
+      map(_ => _.reduce((acc, val) => acc + val, 0))
+      
     )
   }
-
   getPalletsOwedByCustomer(custnmbr: string, site?: string | undefined): Observable<PalletQuantities> {
     const date = new Date();
     const startOfMonth = `${date.getFullYear()}-${date.getMonth() + 1}-1`;
     const dateInt = this.dateInt(date);
-    let url = `${environment.endpoint}/${environment.siteUrl}/${this._palletsOwedListUrl}/items?expand=fields(select=Title,Pallet,Owing,Branch)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt lt '${dateInt}'`;
+    let url = `${this._palletTrackerOwedUrl}/items?expand=fields(select=Title,Pallet,Owing,Branch)&filter=fields/Title eq '${this.shared.sanitiseName(custnmbr)}' and fields/DateInt lt '${dateInt}'`;
     let url2 = `${this._palletTrackerUrl}/items?expand=fields(select=Title,Pallet,Out,In,Branch)&filter=fields/Date ge '${startOfMonth}' and fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
     if (site !== undefined) {
       const filter = 'and fields/Site eq ' + (site ? `'${this.shared.sanitiseName(site)}'` : 'null');
