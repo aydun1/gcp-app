@@ -9,8 +9,18 @@
   max-width: 1024px;
 }
 
-h2 {
+.doc-header {
+  position: relative;
+}
+
+.doc-header > h2 {
   margin-left: 10px;
+}
+
+.doc-header > button {
+  position: absolute;
+  right: 10px;
+  top: -9px;
 }
 
 .options {
@@ -24,6 +34,10 @@ h2 {
 
 .mat-mdc-form-field {
   margin-right: 10px;
+}
+
+.mat-mdc-form-field:last-child {
+  margin-right: 0;
 }
 
 .branch-filter {

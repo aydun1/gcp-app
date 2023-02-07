@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
@@ -17,6 +18,7 @@ import { SdsService } from '../shared/sds.service';
 export class SdsListComponent implements OnInit {
   private ownState = this.shared.branch;
   private loadList!: boolean;
+  private chemicals!: Chemical[];
 
   public textFilter = new FormControl(this.route.snapshot.paramMap.get('search'));
   public groupFilter = new FormControl(this.route.snapshot.paramMap.get('groupby'));
@@ -37,6 +39,7 @@ export class SdsListComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private snackBar: MatSnackBar,
     private shared: SharedService,
     private sdsService: SdsService
   ) { }
@@ -52,10 +55,9 @@ export class SdsListComponent implements OnInit {
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       switchMap(_ => branch$.pipe(map(branch => _['branch'] === undefined ? {..._, branch} : _))),
-      tap(_ => {
-        this.parseParams(_);
-      }),
-      switchMap(_ => this.loadList ? this.getChemicals(_['search'], _['branch']) : [])
+      tap(_ => this.parseParams(_)),
+      switchMap(_ => this.loadList ? this.getChemicals(_['search'], _['branch']) : []),
+      tap(_ => this.chemicals = _)
     );
 
     this.textFilter.valueChanges.pipe(
@@ -114,7 +116,7 @@ export class SdsListComponent implements OnInit {
     )
   }
 
-  clearTextFilter() {
+  clearTextFilter(): void {
     this.textFilter.patchValue('');
   }
 
@@ -124,6 +126,14 @@ export class SdsListComponent implements OnInit {
 
   getTotalWeight(lines: Array<any>, key: string, uofm: string): number {
     return lines.filter(_ => _['uofm'] === uofm).reduce((acc, cur) => acc + cur[key], 0);
+  }
+
+  exportChemicals(): void {
+    if (!this.chemicals || this.chemicals.length === 0) this.snackBar.open('Nothing to export', '', {duration: 3000})
+    const now = new Date();
+    const branch = this.branchFilter.value;
+    const fileName = `GCP_${branch ? branch + '_' : ''}chemicals_${now.toLocaleString( 'sv', { timeZoneName: 'short' } ).split(' ', 2).join('_')}.csv`
+    this.sdsService.exportToCsv(fileName, this.chemicals);
   }
 
   trackByGroupsFn(index: number, item: any): string {
