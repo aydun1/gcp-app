@@ -54,11 +54,11 @@
     </div>
   </div>
 
-  <div *ngIf="chemicals$ | async as chemicals">
-    <div *ngFor="let c of chemicals | groupByProperty:(groupFilter.value || '')">
+  <div>
+    <div *ngFor="let c of (chemicals$ | async) || [] | groupByProperty:(groupFilter.value || '')">
       <div *ngIf="c" class="inner">
         <div *ngIf="c.key !== 'undefined'" class="section-head">
-          <h3>{{ c.key !== 'null' ? c.key : 'Other' }}</h3>
+          <h3>{{ c.key !== 'null' && c.key !== '' ? c.key : 'Unknown' }}</h3>
         </div>
         <mat-card appearance="outlined">
           <mat-table #table [dataSource]="c.value" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
@@ -111,25 +111,37 @@
         
             <ng-container matColumnDef="onHand">
               <mat-header-cell *matHeaderCellDef mat-sort-header>
-                <div class="loadDetails">
-                  On hand
-                </div>
+                Units
               </mat-header-cell>
               <mat-cell *matCellDef="let line">
                 <div class="loadDetails">
                   <div>{{ line['onHand'] | number }}</div>
-                  <div>{{ line['size'] * line['onHand'] | number }} {{ line['uofm'] }}</div>  
                 </div>
               </mat-cell>
               <mat-footer-cell *matFooterCellDef>
                 <div class="loadDetails">
-                  <div>{{ getTotalRequestedQty(c.value, 'onHand') | number }}</div>
-                  <div *ngIf="getTotalWeight(c.value, 'size', 'L') as volume">{{ volume | number }} L </div>
-                  <div *ngIf="getTotalWeight(c.value, 'size', 'kg') as weight"> {{ weight | number }} kg</div>
+                  <div>{{ getTotalRequestedQty(c.value, 'onHand') | number: '1.0-0' }}</div>
                 </div>
               </mat-footer-cell>
             </ng-container>
-      
+
+            <ng-container matColumnDef="quantity">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Quantity
+              </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div class="loadDetails">
+                  <div>{{ line['quantity'] | number: '1.0-0' }} {{ line['uofm'] }}</div>  
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef>
+                <div class="loadDetails">
+                  <div *ngIf="getTotalWeight(c.value, 'quantity', 'L') as volume">{{ volume | number: '1.0-0' }} L </div>
+                  <div *ngIf="getTotalWeight(c.value, 'quantity', 'kg') as weight"> {{ weight | number: '1.0-0' }} kg</div>
+                </div>
+              </mat-footer-cell>
+            </ng-container>
+
             <ng-container matColumnDef="packingGroup">
               <mat-header-cell *matHeaderCellDef>
                 <div class="loadDetails">
@@ -167,12 +179,12 @@
               </mat-header-cell>
               <mat-cell *matCellDef="let line">
                 <div class="loadDetails">
-                  <mat-icon *ngIf="line['hazardRating'] === -1" class="hazard hazard-unknown">question_mark</mat-icon>
-                  <mat-icon *ngIf="line['hazardRating'] === 0" class="hazard hazard-0">warning</mat-icon>
-                  <mat-icon *ngIf="line['hazardRating'] === 1" class="hazard hazard-1">warning</mat-icon>
-                  <mat-icon *ngIf="line['hazardRating'] === 2" class="hazard hazard-2">warning</mat-icon>
-                  <mat-icon *ngIf="line['hazardRating'] === 3" class="hazard hazard-3">warning</mat-icon>
-                  <mat-icon *ngIf="line['hazardRating'] === 4" class="hazard hazard-4">warning</mat-icon>
+                  <mat-icon *ngIf="line['hazardRating'] === '-1'" class="hazard hazard-unknown">question_mark</mat-icon>
+                  <mat-icon *ngIf="line['hazardRating'] === '0'" class="hazard hazard-0">warning</mat-icon>
+                  <mat-icon *ngIf="line['hazardRating'] === '1'" class="hazard hazard-1">warning</mat-icon>
+                  <mat-icon *ngIf="line['hazardRating'] === '2'" class="hazard hazard-2">warning</mat-icon>
+                  <mat-icon *ngIf="line['hazardRating'] === '3'" class="hazard hazard-3">warning</mat-icon>
+                  <mat-icon *ngIf="line['hazardRating'] === '4'" class="hazard hazard-4">warning</mat-icon>
                 </div>
               </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
@@ -193,7 +205,7 @@
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
             <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) ? false : true"></mat-footer-row>
-            <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(chemicals)"></mat-footer-row>
+            <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(c)"></mat-footer-row>
             <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
           </mat-table>  
         </mat-card>

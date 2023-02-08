@@ -60,6 +60,10 @@
   flex: 0 1 120px;
 }
 
+.mat-column-quantity {
+  flex: 0 1 120px;
+}
+
 .mat-column-packingGroup {
   flex: 0 1 90px;
 }

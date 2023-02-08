@@ -58,12 +58,17 @@ export class CustomersService {
     return this.http.get(url).pipe(map(_ => _['customer'])) as Observable<Customer>;
   }
 
-  getFirstPage(filters: Params): BehaviorSubject<Customer[]> {
+  getFirstPage(filters: Params): Observable<Customer[]> {
     this._nextPage = 1;
     this._loadingCustomers = false;
     this._currentUrl = this.createUrl(filters);
-    this.getCustomers(this._currentUrl).subscribe(_ => this._customersSubject$.next(_));
-    return this._customersSubject$;
+
+    return this._customersSubject$.pipe(
+      take(1),
+      switchMap(() => this.getCustomers(this._currentUrl)),
+      tap(_ => this._customersSubject$.next(_)),
+      switchMap(() => this._customersSubject$)
+    );
   }
 
   getNextPage(): void {

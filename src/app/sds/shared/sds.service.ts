@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, lastValueFrom, map, Observable, startWith, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, lastValueFrom, map, Observable, startWith, switchMap, take, tap, withLatestFrom } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { Chemical } from './chemical';
@@ -108,14 +108,21 @@ export class SdsService {
   getOnHandChemicals(branch: string, sort: string, order: string): Observable<Chemical[]> {
     this.loading.next(true);
     const url = `${environment.gpEndpoint}/chemicals?branch=${branch}&orderby=${sort || 'product'}&order=${order || 'asc'}`;
-    const request = this.http.get<{chemicals: Chemical[]}>(url).pipe(
-      map(res => res.chemicals),
-      tap(() => this.loading.next(false)),
-      startWith([]),
-      tap(_ => this._chemicalListSubject$.next(_)),
-      switchMap(() => this._chemicalListSubject$)
+    return this._chemicalListSubject$.pipe(
+      take(1),
+      switchMap(() => this.http.get<{chemicals: Chemical[]}>(url)),
+      tap(_ => this._chemicalListSubject$.next(_['chemicals'])),
+      switchMap(() => this._chemicalListSubject$),
+      tap(() => this.loading.next(false))
     );
-    return request;
+  }
+
+  reorder(key: string, order: string): void {
+    firstValueFrom(this._chemicalListSubject$).then(
+      _ => this._chemicalListSubject$.next(
+        _.sort((a, b) => (a[key] || 0) - (b[key] || 0))
+      )
+    )
   }
 
   getSavedChemicals(): any {

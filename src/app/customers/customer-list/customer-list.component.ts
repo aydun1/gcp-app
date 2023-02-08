@@ -85,7 +85,7 @@ export class CustomerListComponent implements OnInit {
     );
   }
 
-  getFirstPage(_: Params): BehaviorSubject<Customer[]> {
+  getFirstPage(_: Params): Observable<Customer[]> {
     return this.customersService.getFirstPage(_);
   }
 
