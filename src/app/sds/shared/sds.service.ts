@@ -105,9 +105,10 @@ export class SdsService {
     return lastValueFrom(request);
   }
 
-  getOnHandChemicals(branch: string): Observable<Chemical[]> {
+  getOnHandChemicals(branch: string, sort: string, order: string): Observable<Chemical[]> {
     this.loading.next(true);
-    const request = this.http.get<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/chemicals?branch=${branch}`).pipe(
+    const url = `${environment.gpEndpoint}/chemicals?branch=${branch}&orderby=${sort || 'product'}&order=${order || 'asc'}`;
+    const request = this.http.get<{chemicals: Chemical[]}>(url).pipe(
       map(res => res.chemicals),
       tap(() => this.loading.next(false)),
       startWith([]),

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Sort, SortDirection } from '@angular/material/sort';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
@@ -29,6 +30,8 @@ export class SdsListComponent implements OnInit {
   public states = this.shared.branches;
   public address$ = this.shared.getAddress();
   public date = new Date();
+  public sortSort = this.route.snapshot.queryParamMap.get('sort') || '';
+  public sortOrder = this.route.snapshot.queryParamMap.get('order') as SortDirection;
   public classes = {
     3: 'Flammable',
     5.1: 'Oxidiser',
@@ -56,7 +59,7 @@ export class SdsListComponent implements OnInit {
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       switchMap(_ => branch$.pipe(map(branch => _['branch'] === undefined ? {..._, branch} : _))),
       tap(_ => this.parseParams(_)),
-      switchMap(_ => this.loadList ? this.getChemicals(_['search'], _['branch']) : []),
+      switchMap(_ => this.loadList ? this.getChemicals(_['search'], _['branch'], _['sort'], _['order']) : []),
       tap(_ => this.chemicals = _)
     );
 
@@ -78,6 +81,13 @@ export class SdsListComponent implements OnInit {
     } else {
       if (this.textFilter.value) this.textFilter.patchValue('');
     }
+    if ('sort' in params) {
+      this.sortSort = params['sort'];
+      this.sortOrder = params['order'];
+    } else {
+      this.sortSort = '';
+      this.sortOrder = '';
+    }
     if ('groupby' in params) {
       this.groupFilter.patchValue(params['groupby']);
     } else {
@@ -94,7 +104,9 @@ export class SdsListComponent implements OnInit {
     if (this.route.firstChild != null) return true;
     const sameBranch = prev['branch'] === curr['branch'];
     const sameSearch = prev['search'] === curr['search'];
-    return this.loadList && sameBranch && sameSearch;
+    const sameSort = prev['sort'] === curr['sort'];
+    const sameOrder = prev['order'] === curr['order'];
+    return this.loadList && sameBranch && sameSearch && sameSort && sameOrder;
   }
 
   setBranch(branch: MatSelectChange): void {
@@ -109,9 +121,9 @@ export class SdsListComponent implements OnInit {
     return lines.reduce((acc, cur) => acc + 1, 0);
   }
 
-  getChemicals(search: string, branch: string): Observable<Chemical[]> {
+  getChemicals(search: string, branch: string, sort: string, order: string): Observable<Chemical[]> {
     search = (search || '').toLowerCase();
-    return this.sdsService.getOnHandChemicals(branch).pipe(
+    return this.sdsService.getOnHandChemicals(branch, sort, order).pipe(
       map(_ => _.filter(c => c.ItemNmbr?.toLowerCase()?.includes(search)))
     )
   }
@@ -136,12 +148,17 @@ export class SdsListComponent implements OnInit {
     this.sdsService.exportToCsv(fileName, this.chemicals);
   }
 
+  announceSortChange(e: Sort): void {
+    const sort = e.direction ? e.active : null;
+    const order = e.direction || null;
+    this.router.navigate([], { queryParams: {sort, order}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
   trackByGroupsFn(index: number, item: any): string {
     return item.key;
   }
 
   trackByFn(index: number, item: Chemical): string {
-    console.log(item.ItemNmbr)
     return item.ItemNmbr;
   }
 

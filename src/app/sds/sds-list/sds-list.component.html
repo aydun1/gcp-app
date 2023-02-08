@@ -17,9 +17,11 @@
   </div>
   <div class="doc-header">
     <h2>Chemicals</h2>
-    <button mat-icon-button [matMenuTriggerFor]="actionsMenu" type="button">
-      <mat-icon>more_vert</mat-icon>
-    </button>
+    <div class="buttons">
+      <button mat-stroked-button type="button" (click)="exportChemicals()">
+        <mat-icon>download_file</mat-icon>Export
+      </button>
+    </div>
     <div class="options inner">
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch-filter">
         <mat-label>Branch</mat-label>
@@ -59,7 +61,7 @@
           <h3>{{ c.key !== 'null' ? c.key : 'Other' }}</h3>
         </div>
         <mat-card appearance="outlined">
-          <mat-table #table [dataSource]="c.value" [trackBy]="trackByFn">
+          <mat-table #table [dataSource]="c.value" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
             <ng-container matColumnDef="sds">
               <mat-header-cell *matHeaderCellDef>
                 <div>
@@ -79,7 +81,7 @@
             </ng-container>
       
             <ng-container matColumnDef="bin">
-              <mat-header-cell *matHeaderCellDef>
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
                 <div>
                   Bin
                 </div>
@@ -93,7 +95,7 @@
             </ng-container>
       
             <ng-container matColumnDef="product">
-              <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Item </mat-header-cell>
               <mat-cell *matCellDef="let line">
                 <div class="details">
                   <a [routerLink]="[line['ItemNmbr']]">
@@ -108,20 +110,20 @@
             </ng-container>
         
             <ng-container matColumnDef="onHand">
-              <mat-header-cell *matHeaderCellDef>
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
                 <div class="loadDetails">
                   On hand
                 </div>
               </mat-header-cell>
               <mat-cell *matCellDef="let line">
                 <div class="loadDetails">
-                  <div>{{ line['QtyOnHand'] | number }}</div>
-                  <div>{{ line['size'] * line['QtyOnHand'] | number }} {{ line['uofm'] }}</div>  
+                  <div>{{ line['onHand'] | number }}</div>
+                  <div>{{ line['size'] * line['onHand'] | number }} {{ line['uofm'] }}</div>  
                 </div>
               </mat-cell>
               <mat-footer-cell *matFooterCellDef>
                 <div class="loadDetails">
-                  <div>{{ getTotalRequestedQty(c.value, 'QtyOnHand') | number }}</div>
+                  <div>{{ getTotalRequestedQty(c.value, 'onHand') | number }}</div>
                   <div *ngIf="getTotalWeight(c.value, 'size', 'L') as volume">{{ volume | number }} L </div>
                   <div *ngIf="getTotalWeight(c.value, 'size', 'kg') as weight"> {{ weight | number }} kg</div>
                 </div>

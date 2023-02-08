@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
-import { Sort } from '@angular/material/sort';
+import { Sort, SortDirection } from '@angular/material/sort';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
@@ -28,8 +28,8 @@ export class CustomerListComponent implements OnInit {
   public territories$!: Observable<Territory[]>;
   public get territories(): Array<string> {return this.sharedService.territoryNames};
   public loading = this.customersService.loading;
-  public sortSort!: string;
-  public sortOrder!: 'asc' | 'desc';
+  public sortSort = this.route.snapshot.queryParamMap.get('sort') || '';
+  public sortOrder = this.route.snapshot.queryParamMap.get('order') as SortDirection;
   public pallets = this.sharedService.palletDetails;
   public palletTotals = this.pallets.reduce((acc, curr) => (acc[curr.key]='',acc),{});
   public displayedColumns = ['name', 'custNmbr', ...this.pallets.map(_ => _.key)];
@@ -49,6 +49,7 @@ export class CustomerListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log()
     const state$ = this.sharedService.getBranch();
     this.customers$ = this.route.queryParams.pipe(
       startWith({}),
@@ -141,7 +142,7 @@ export class CustomerListComponent implements OnInit {
     this.nameFilter.patchValue('');
   }
 
-  announceSortChange(e: Sort) {
+  announceSortChange(e: Sort): void {
     const sort = e.direction ? e.active : null;
     const order = e.direction || null;
     this.router.navigate([], { queryParams: {sort, order}, queryParamsHandling: 'merge', replaceUrl: true});

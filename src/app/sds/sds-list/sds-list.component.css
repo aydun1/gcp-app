@@ -17,10 +17,10 @@
   margin-left: 10px;
 }
 
-.doc-header > button {
+.doc-header > .buttons {
   position: absolute;
   right: 10px;
-  top: -9px;
+  top: 0px;
 }
 
 .options {
