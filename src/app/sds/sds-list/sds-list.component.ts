@@ -124,7 +124,7 @@ export class SdsListComponent implements OnInit {
   getChemicals(search: string, branch: string, sort: string, order: string): Observable<Chemical[]> {
     search = (search || '').toLowerCase();
     return this.sdsService.getOnHandChemicals(branch, sort, order).pipe(
-      map(_ => _.filter(c => c.ItemNmbr?.toLowerCase()?.includes(search)))
+      map(_ => _.filter(c => c.ItemNmbr?.toLowerCase()?.includes(search) || c.ItemDesc?.toLowerCase()?.includes(search)))
     )
   }
 
