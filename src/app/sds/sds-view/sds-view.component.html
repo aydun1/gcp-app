@@ -8,6 +8,7 @@
 </mat-toolbar>
 <div *ngIf="item$ | async as item" class="content">
   <div *ngIf="item.sdsExists" class="actions">
+    <button mat-button (click)="unlinkChemical(item)">Unlink</button>
     <button mat-button (click)="openBackpack(item)">Edit</button>
   </div>
   <mat-card *ngIf="item.sdsExists">

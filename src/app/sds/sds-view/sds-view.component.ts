@@ -57,6 +57,10 @@ export class SdsViewComponent implements OnInit {
     });
   }
 
+  unlinkChemical(chemical: Chemical) {
+    this.sdsService.unlinkChemicalFromItem(chemical.ItemNmbr).then(() => this.refresh.next(true));
+  }
+
   getPdf(docNo: string): void {
     this.sdsService.getPdf(docNo);
   }

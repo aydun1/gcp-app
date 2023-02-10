@@ -108,7 +108,17 @@
               </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
-        
+
+            <ng-container matColumnDef="issueDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Issue date
+              </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div>{{ line['IssueDate'] | date:'dd/MM/yyyy'}}</div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+
             <ng-container matColumnDef="onHand">
               <mat-header-cell *matHeaderCellDef mat-sort-header>
                 Units

@@ -1,4 +1,5 @@
 export interface Chemical {
+  IssueDate: string;
   ItemNmbr: string;
   ItemDesc: string;
   CwNo: string;

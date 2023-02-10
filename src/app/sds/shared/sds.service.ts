@@ -132,18 +132,18 @@ export class SdsService {
     return lastValueFrom(request);
   }
 
-  private updateList(res: Chemical): Observable<Chemical> {
-    delete res['Bin'];
-    delete res['QtyOnHand'];
+  private updateList(chemical: Chemical): Observable<Chemical> {
+    delete chemical['Bin'];
+    delete chemical['QtyOnHand'];
     return this._chemicalListSubject$.pipe(
       take(1),
       map(_ => {
         const chemicals = _.map(pallet => pallet);
-        const i = chemicals.findIndex(pallet => pallet.ItemNmbr === res.ItemNmbr);
-        if (i > -1) chemicals[i] = {...chemicals[i], ...res}
-        else chemicals.unshift(res);
+        const i = chemicals.findIndex(pallet => pallet.ItemNmbr === chemical.ItemNmbr);
+        if (i > -1) chemicals[i] = {...chemicals[i], ...chemical}
+        else chemicals.unshift(chemical);
         this._chemicalListSubject$.next(chemicals);
-        return res
+        return chemical;
       })
     );
   }
@@ -187,21 +187,28 @@ export class SdsService {
     return lastValueFrom(request);
   }
 
-exportToCsv(filename: string, rows: Array<object>): void {
-  if (!rows || rows.length === 0) return;
-  const separator = ',';
-  const keys = Object.keys(rows[0]);
-  const csvContent =
-    keys.join(separator) +
-    '\n' +
-    rows.map(row => {
-      return keys.map(k => {
-        let cell = row[k] === null || row[k] === undefined ? '' : row[k];
-        cell = cell instanceof Date ? cell.toLocaleString() : cell.toString().replace(/"/g, '""');
-        if (cell.search(/("|,|\n)/g) >= 0) cell = `"${cell}"`;
-        return cell;
-      }).join(separator);
-    }).join('\n');
+  unlinkChemicalFromItem(itemNmbr: string): Promise<Chemical> {
+    const request = this.http.get<Chemical>(`${environment.gpEndpoint}/unlink-material?itemNmbr=${itemNmbr}`).pipe(
+      switchMap(_ => this.updateList(_))
+    );
+    return lastValueFrom(request);
+  }
+
+  exportToCsv(filename: string, rows: Array<object>): void {
+    if (!rows || rows.length === 0) return;
+    const separator = ',';
+    const keys = Object.keys(rows[0]);
+    const csvContent =
+      keys.join(separator) +
+      '\n' +
+      rows.map(row => {
+        return keys.map(k => {
+          let cell = row[k] === null || row[k] === undefined ? '' : row[k];
+          cell = cell instanceof Date ? cell.toLocaleString() : cell.toString().replace(/"/g, '""');
+          if (cell.search(/("|,|\n)/g) >= 0) cell = `"${cell}"`;
+          return cell;
+        }).join(separator);
+      }).join('\n');
     const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
     const link = document.createElement('a');
     if (link.download !== undefined) {
