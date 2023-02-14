@@ -1,8 +1,8 @@
 <div class="header">
   <h2 mat-dialog-title>Pick an SDS</h2>
   <div class="syncer">
-    <mat-spinner *ngIf="loading" diameter="24"></mat-spinner>
-    <button mat-button (click)="syncFromChemwatch()" [disabled]="loading" tabindex="-1">Sync</button>
+    <mat-spinner *ngIf="loading || saving" diameter="24"></mat-spinner>
+    <button mat-button (click)="syncFromChemwatch()" [disabled]="loading || saving" tabindex="-1">Sync</button>
   </div>
 </div>
 <mat-dialog-content>
@@ -13,7 +13,7 @@
     <button *ngIf="!searchControl.value" matSuffix mat-icon-button type="button" disabled>
       <mat-icon>search</mat-icon>
     </button>
-    <button *ngIf="searchControl.value" (click)="clearSearch()" matSuffix mat-icon-button aria-label="Clear" type="button">
+    <button *ngIf="searchControl.value" (click)="clearSearch()" matSuffix mat-icon-button aria-label="Clear" type="button" [disabled]="loading">
       <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
@@ -29,9 +29,8 @@
 
 </mat-dialog-content>
 <mat-dialog-actions>
-  <div class="selected">{{ selected?.Name }}</div>
   <div class="buttons">
     <button type="button" mat-button mat-dialog-close tabindex=-1>Cancel</button>
-    <button type="submit" mat-raised-button color="primary" [disabled]="!selected?.CwNo || saving" (click)="linkMaterial()">Save</button>  
+    <button type="submit" mat-raised-button color="primary" [disabled]="!selected?.CwNo || saving || loading" (click)="linkMaterial()">Save</button>  
   </div>
 </mat-dialog-actions>

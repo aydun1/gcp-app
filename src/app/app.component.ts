@@ -65,7 +65,7 @@ export class AppComponent implements OnInit, OnDestroy {
       _ => this.token = _
     ).catch(
       _ => console.log(_)
-    )
+    );
     
     // Enables auto login/logout in other open windows/tabs
     this.msalBroadcastService.msalSubject$.pipe(

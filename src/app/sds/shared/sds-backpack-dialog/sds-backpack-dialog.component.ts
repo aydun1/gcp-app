@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectionListChange } from '@angular/material/list';
-import { combineLatest, map, Observable, startWith, Subject, tap } from 'rxjs';
+import { combineLatest, distinctUntilChanged, map, Observable, startWith, Subject, tap } from 'rxjs';
 import { Chemical } from '../chemical';
 import { SdsService } from '../sds.service';
 
@@ -28,6 +28,7 @@ export class SdsBackpackDialogComponent implements OnInit {
   ngOnInit(): void {
     const query = this.searchControl.valueChanges.pipe(
       startWith(''),
+      distinctUntilChanged(),
       map(_ => _?.toLocaleLowerCase())
     )
     this.chemicals$ = combineLatest([this.sdsService.getSyncedChemicals(), query]).pipe(
@@ -43,13 +44,16 @@ export class SdsBackpackDialogComponent implements OnInit {
 
   syncFromChemwatch(): void {
     this.loading = true;
+    this.searchControl.disable();
     this.sdsService.syncFromChemwatch().then(
       () => {
+        this.searchControl.enable();
         this.loading = false;
         this.subject.next(true);
       }
     ).catch(e => {
       console.log(e);
+      this.searchControl.enable();
       this.loading = false;
     });
   }
