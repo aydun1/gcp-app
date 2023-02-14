@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Sort, SortDirection } from '@angular/material/sort';
@@ -8,6 +9,7 @@ import { distinctUntilChanged, filter, map, Observable, startWith, switchMap, ta
 
 import { SharedService } from '../../shared.service';
 import { Chemical } from '../shared/chemical';
+import { SdsManifestDialogComponent } from '../shared/sds-manifest-dialog/sds-manifest-dialog.component';
 import { SdsService } from '../shared/sds.service';
 
 @Component({
@@ -42,6 +44,7 @@ export class SdsListComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private shared: SharedService,
     private sdsService: SdsService
@@ -152,6 +155,10 @@ export class SdsListComponent implements OnInit {
     const sort = e.direction ? e.active : null;
     const order = e.direction || null;
     this.router.navigate([], { queryParams: {sort, order}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  openChemicalManifest(): void {
+    this.dialog.open(SdsManifestDialogComponent, {panelClass: 'printable', width: '600px', autoFocus: false});
   }
 
   trackByGroupsFn(index: number, item: any): string {

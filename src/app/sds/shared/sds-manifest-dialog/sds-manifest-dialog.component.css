@@ -1,0 +1,48 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.date {
+  margin-top: 12px;
+}
+
+.row-head {
+  font-weight: bold;
+}
+
+.row {
+  display: flex;
+  padding: 10px;
+  border-bottom: 1px solid rgb(128 128 128 / 39%);
+}
+
+.title {
+  flex: 1;
+}
+
+.quantity {
+  flex: 0 0 200px;
+  text-align: right;
+}
+
+@media print {
+  @page {
+    size: portrait;
+  }
+
+  .buttons {
+    display: none;
+  }
+
+  .mat-mdc-dialog-content {
+    height: calc(100vh - 158px);
+    max-height: none;
+    padding: 0;
+  }
+}

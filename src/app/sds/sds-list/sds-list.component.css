@@ -23,6 +23,10 @@
   top: 0px;
 }
 
+.doc-header > .buttons > .mdc-button {
+  margin-left: 10px;
+}
+
 .options {
   display: flex;
 }

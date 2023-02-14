@@ -179,6 +179,17 @@ export class SdsService {
     );
   }
 
+  getChemicalManifest() {
+    return this._chemicalListSubject$.pipe(
+      map(chemicals => {
+        return chemicals.filter(_ => _['class'] !== 'None' && _['class'] !== '').reduce((acc: any, val: any) => ({ ...acc, [val.class]: {
+          'l': (acc[val.class]?.l || 0) + (val['uofm'] === 'L' ? val['quantity'] : 0),
+          'kg': (acc[val.class]?.kg || 0) + (val['uofm'] === 'kg' ? val['quantity'] : 0),
+        }}), {})
+      })
+    );
+  }
+
   syncFromChemwatch(): Promise<any> {
     const request = this.http.get<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/sync-from-cw`);
     return lastValueFrom(request);

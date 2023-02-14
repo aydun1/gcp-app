@@ -1,0 +1,35 @@
+<mat-dialog-content>
+  <div class="header">
+    <gcp-letterhead>Chemical Manifest</gcp-letterhead>
+    <div>
+      <div class="buttons">
+        <button mat-icon-button type="button" (click)="print()">
+          <mat-icon>print</mat-icon>
+        </button>
+      </div>
+      <div class="date">
+        <strong>Date: </strong>
+        <span>{{ date | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <div *ngIf="address$ | async as address" class="address">
+        <strong>Address:</strong>
+        <div>
+          <div>{{address.street}}</div>
+          <div>{{address.city}} {{address.state}} {{address.postalCode}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="summary-table" *ngIf="manifest | async | keyvalue as m">
+    <div class="row-head row">
+      <div class="title">Class</div>
+      <div class="quantity">Solids (kg)</div>
+      <div class="quantity">Liquids (L)</div>
+    </div>
+    <div *ngFor="let item of m" class="row">
+      <div class="title">{{ item.key }}</div>
+      <div class="quantity">{{ item.value ? (item.value['kg'] | number:'1.0-0') : 0 }} kg</div>
+      <div class="quantity">{{ item.value ? (item.value['l'] | number:'1.0-0') : 0 }} L</div>
+    </div>
+  </div>  
+</mat-dialog-content>
