@@ -13,6 +13,9 @@ export class SdsService {
 
   public loading = new BehaviorSubject<boolean>(false);
   public defs = {
+    'H225': 'Highly flammable liquid and vapour',
+    'H227': 'Combustible liquid',
+    'H272': 'May intensify fire; oxidiser',
     'H290': 'May be corrosive to metals',
     'H300': 'Fatal if swallowed',
     'H301': 'Toxic if swallowed',
@@ -76,6 +79,7 @@ export class SdsService {
     'H420': 'Harms public health and the environment by destroying ozone in the upper atmosphere',
     'H422': 'Hazardous to soil organisms',
     'H441': 'Very toxic to terrestrial invertebrates',
+    'non-hazardous': 'Non-hazardous'
   };
 
   constructor(
