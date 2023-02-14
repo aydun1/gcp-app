@@ -18,7 +18,6 @@ import { HomeComponent } from './home/home.component';
 import { SharedModule } from './shared/shared.module';
 import { LogoutComponent } from './logout/logout.component';
 import { environment } from '../environments/environment';
-import { AuthGuard } from './auth-guard';
 import { ThemingService } from './theming.service';
 
 class CustomDateAdapter extends NativeDateAdapter {
@@ -108,27 +107,13 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
   providers: [
     {provide: MAT_DATE_LOCALE, useValue: 'en-AU'},
     {provide: DateAdapter, useClass: CustomDateAdapter, deps: [MAT_DATE_LOCALE, Platform]},
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: MsalInterceptor,
-      multi: true
-    },
-    {
-      provide: MSAL_INSTANCE,
-      useFactory: MSALInstanceFactory
-    },
-    {
-      provide: MSAL_GUARD_CONFIG,
-      useFactory: MSALGuardConfigFactory
-    },
-    {
-      provide: MSAL_INTERCEPTOR_CONFIG,
-      useFactory: MSALInterceptorConfigFactory
-    },
+    {provide: HTTP_INTERCEPTORS, useClass: MsalInterceptor, multi: true},
+    {provide: MSAL_INSTANCE, useFactory: MSALInstanceFactory},
+    {provide: MSAL_GUARD_CONFIG, useFactory: MSALGuardConfigFactory},
+    {provide: MSAL_INTERCEPTOR_CONFIG, useFactory: MSALInterceptorConfigFactory},
     MsalService,
     MsalGuard,
     MsalBroadcastService,
-    AuthGuard,
     ThemingService
   ],
   bootstrap: [AppComponent]
