@@ -13,6 +13,7 @@ export class SdsManifestDialogComponent implements OnDestroy, OnInit {
   public manifest = this.sdsService.getChemicalManifest();
   public date = new Date();
   public address = this.shared.getBranchAddress(this.data.branch);
+  public classes = this.sdsService.classes;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: {branch: string},

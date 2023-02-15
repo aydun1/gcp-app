@@ -26,8 +26,13 @@
   flex: 1;
 }
 
+.key {
+  width: 30px;
+  display: inline-block;
+}
+
 .quantity {
-  flex: 0 0 200px;
+  flex: 0 1 150px;
   text-align: right;
 }
 

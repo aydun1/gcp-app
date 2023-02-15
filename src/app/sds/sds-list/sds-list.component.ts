@@ -41,13 +41,7 @@ export class SdsListComponent implements OnInit {
     return this.shared.getBranchAddress(this.branchFilter.value || '');
   }
 
-  public classes = {
-    3: 'Flammable',
-    5.1: 'Oxidiser',
-    6.1: 'Poison',
-    8: 'Corrosive',
-    9: 'Miscellaneous'
-  };
+  public classes = this.sdsService.classes;
   public groups = [
     {key: '', value: 'Ungrouped'},
     {key: 'class', value: 'Class'},

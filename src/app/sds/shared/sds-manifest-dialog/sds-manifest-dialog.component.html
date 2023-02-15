@@ -39,7 +39,7 @@
       <div class="quantity">Liquids (L)</div>
     </div>
     <div *ngFor="let item of m" class="row">
-      <div class="title">{{ item.key }}</div>
+      <div class="title"><strong class="key">{{ item.key }}</strong> {{ classes[item.key] }}</div>
       <div class="quantity">{{ item.value ? (item.value['kg'] | number:'1.0-0') : 0 }} kg</div>
       <div class="quantity">{{ item.value ? (item.value['l'] | number:'1.0-0') : 0 }} L</div>
     </div>

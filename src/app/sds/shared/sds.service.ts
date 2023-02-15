@@ -82,6 +82,15 @@ export class SdsService {
     'non-hazardous': 'Non-hazardous'
   };
 
+  public classes = {
+    3: 'Flammable liquids',
+    4: 'Flammable solids',
+    5.1: 'Oxidising substances',
+    6.1: 'Toxic substances',
+    8: 'Corrosives',
+    9: 'Miscellaneous'
+  };
+
   constructor(
     private http: HttpClient
   ) { }
@@ -179,7 +188,7 @@ export class SdsService {
     );
   }
 
-  getChemicalManifest() {
+  getChemicalManifest(): Observable<{[key: string]: {L: number, kg: number}}> {
     return this._chemicalListSubject$.pipe(
       map(chemicals => {
         return chemicals.filter(_ => _['class'] !== 'None' && _['class'] !== '').reduce((acc: any, val: any) => ({ ...acc, [val.class]: {
