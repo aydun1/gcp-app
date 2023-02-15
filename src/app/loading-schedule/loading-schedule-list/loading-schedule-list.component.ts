@@ -61,7 +61,6 @@ export class LoadingScheduleListComponent implements OnInit {
         this.displayedColumns = _['view'] === 'grouped' ?
           ['reference', 'loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'notes', 'menu'] :
           ['reference', 'loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'status', 'notes', 'menu'];
-
       }),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
       tap(_ => this._loadingScheduleSubject$.next(_)),

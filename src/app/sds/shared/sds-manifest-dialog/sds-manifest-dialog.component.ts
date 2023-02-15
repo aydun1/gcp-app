@@ -1,6 +1,7 @@
-import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { tap } from 'rxjs';
-import { SharedService } from 'src/app/shared.service';
+import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+import { SharedService } from '../../../shared.service';
 import { SdsService } from '../sds.service';
 
 @Component({
@@ -11,9 +12,10 @@ import { SdsService } from '../sds.service';
 export class SdsManifestDialogComponent implements OnDestroy, OnInit {
   public manifest = this.sdsService.getChemicalManifest();
   public date = new Date();
-  public address$ = this.shared.getAddress();
+  public address = this.shared.getBranchAddress(this.data.branch);
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data: {branch: string},
     private renderer: Renderer2,
     private shared: SharedService,
     private sdsService: SdsService

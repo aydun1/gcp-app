@@ -11,14 +11,26 @@
         <strong>Date: </strong>
         <span>{{ date | date:'dd/MM/yyyy' }}</span>
       </div>
-      <div *ngIf="address$ | async as address" class="address">
+      <div *ngIf="address" class="address">
         <strong>Address:</strong>
         <div>
-          <div>{{address.street}}</div>
-          <div>{{address.city}} {{address.state}} {{address.postalCode}}</div>
+          <div>{{address.address}}</div>
+          <div>{{address.suburb}} {{address.state}} {{address.postalCode}}</div>
         </div>
       </div>
     </div>
+  </div>
+  <div class="contacts">
+    <mat-card *ngFor="let i of [1, 2]">
+      <mat-card-header>
+        <mat-card-title>Contact {{ i }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content  class="contact">
+        <label class="contact-label">Emergency contact: <input type="text"></label>
+        <label class="mobile-label">Phone: <input type="text" class="mobile"></label>
+        <label class="mobile-label">After-hours: <input type="text" class="mobile"></label>
+      </mat-card-content>
+    </mat-card>
   </div>
   <div class="summary-table" *ngIf="manifest | async | keyvalue as m">
     <div class="row-head row">

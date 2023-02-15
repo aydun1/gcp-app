@@ -261,8 +261,9 @@ gcp-big-button > .link,
     position: absolute;
   }
 
-  .mat-mdc-drawer-container {
+  .mat-drawer-container {
     background: none;
+    overflow: visible !important;
   }
 
   .mat-mdc-card {

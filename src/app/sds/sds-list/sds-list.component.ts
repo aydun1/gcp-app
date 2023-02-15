@@ -22,18 +22,25 @@ export class SdsListComponent implements OnInit {
   private ownState = this.shared.branch;
   private loadList!: boolean;
   private chemicals!: Chemical[];
+  private defaultColumns = ['sds', 'bin', 'product', 'issueDate', 'onHand', 'quantity', 'packingGroup', 'class', 'hazardRating'];
 
   public textFilter = new FormControl(this.route.snapshot.paramMap.get('search'));
   public groupFilter = new FormControl(this.route.snapshot.paramMap.get('groupby'));
   public loading = this.sdsService.loading;
-  public displayedColumns = ['sds', 'bin', 'product', 'issueDate', 'onHand', 'quantity', 'packingGroup', 'class', 'hazardRating'];
+  public displayedColumns = [...this.defaultColumns];
   public chemicals$!: Observable<Chemical[]>;
   public branchFilter = new FormControl({value: this.ownState, disabled: false});
   public states = this.shared.branches;
-  public address$ = this.shared.getAddress();
+  public address$ = this.shared.getOwnAddress();
   public date = new Date();
   public sortSort = this.route.snapshot.queryParamMap.get('sort') || '';
   public sortOrder = this.route.snapshot.queryParamMap.get('order') as SortDirection;
+  public groupName!: string;
+
+  get address() {
+    return this.shared.getBranchAddress(this.branchFilter.value || '');
+  }
+
   public classes = {
     3: 'Flammable',
     5.1: 'Oxidiser',
@@ -41,6 +48,13 @@ export class SdsListComponent implements OnInit {
     8: 'Corrosive',
     9: 'Miscellaneous'
   };
+  public groups = [
+    {key: '', value: 'Ungrouped'},
+    {key: 'class', value: 'Class'},
+    {key: 'packingGroup', value: 'Packing group'},
+    {key: 'hazardRating', value: 'Hazard'},
+  ];
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -96,6 +110,7 @@ export class SdsListComponent implements OnInit {
     } else {
       this.groupFilter.patchValue('');
     }
+    this.doGroupLabels(params['groupby']);
   }
 
   compareQueryStrings(prev: Params, curr: Params): boolean {
@@ -117,7 +132,14 @@ export class SdsListComponent implements OnInit {
   }
 
   setGroup(view: MatSelectChange): void {
+    this.doGroupLabels(view.value);
     this.router.navigate([], { queryParams: {groupby: view.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  doGroupLabels(name: string): void {
+    console.log(this.groups.find(_ => _.key === name)?.value || '')
+    this.groupName = this.groups.find(_ => _.key === name)?.value || '';
+    this.displayedColumns = this.defaultColumns.filter( _ => _ !==  name);
   }
 
   getTotalRequestedLines(lines: Array<any>): number {
@@ -158,7 +180,8 @@ export class SdsListComponent implements OnInit {
   }
 
   openChemicalManifest(): void {
-    this.dialog.open(SdsManifestDialogComponent, {panelClass: 'printable', width: '600px', autoFocus: false});
+    const data = {branch: this.branchFilter.value};
+    this.dialog.open(SdsManifestDialogComponent, {panelClass: 'printable', width: '600px', autoFocus: false, data});
   }
 
   trackByGroupsFn(index: number, item: any): string {

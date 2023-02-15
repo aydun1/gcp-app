@@ -7,6 +7,13 @@ import { BehaviorSubject, lastValueFrom, map, Observable, of, switchMap, tap } f
 
 import { environment } from '../environments/environment';
 
+interface Address {
+  state: string;
+  suburb: string;
+  address: string;
+  postalCode: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -51,14 +58,14 @@ export class SharedService {
     ['VIC', ['melb.dispatch@gardencityplastics.com']]
   ]);
 
-  public officesMap = new Map<string, string>([
-    ['Stapylton', 'QLD'],
-    ['Heatherton','HEA'],
-    ['Somersby', 'NSW'],
-    ['Wingfield', 'SA'],
-    ['Dandenong South', 'VIC'],
-    ['Forrestfield', 'WA']
-  ]);
+  public offices = [
+    {state: 'QLD', suburb: 'Stapylton', address: '19 Eastern Service Road', postalCode: '4207'},
+    {state: 'HEA', suburb: 'Heatherton', address: '6 Madden Road', postalCode: '3202'},
+    {state: 'NSW', suburb: 'Somersby', address: '4 - 6 Pinnacle Place', postalCode: '2250'},
+    {state: 'SA', suburb: 'Wingfield', address: '10-12 Hakkinen Road', postalCode: '5013'},
+    {state: 'VIC', suburb: 'Dandenong South', address: 'EJ Court (off Assembly Drive)', postalCode: '3175'},
+    {state: 'WA', suburb: 'Forrestfield', address: 'Facility 4, 271 Berkshire Rd', postalCode: '6058'}
+  ];
 
   get pallets(): string[] {
     return this._pallets.map(_ => _.name);
@@ -91,7 +98,7 @@ export class SharedService {
     const url = `${environment.endpoint}/me/officeLocation`;
     return this._state$.pipe(
       switchMap(cur => cur ? of(cur) : this.http.get(url).pipe(
-        map(_ => _['value'] ? this.officesMap.get(_['value']) || 'NA' : 'NA'),
+        map(_ => this.offices.find(o => o.suburb === _['value'])?.state || 'NA'),
         tap(_ => {
           this.branch = _;
           this._state$.next(_);
@@ -100,7 +107,11 @@ export class SharedService {
     )
   }
 
-  getAddress(): Observable<{street: string, city: string, state: string, postalCode: string}> {
+  getBranchAddress(branch: string): Address {
+    return this.offices.find(o => o.state === branch) || {} as Address;
+  }
+
+  getOwnAddress(): Observable<{street: string, city: string, state: string, postalCode: string}> {
     const url = `${environment.betaEndpoint}/me/profile/positions`;
     return this._address$.pipe(
       switchMap(cur => cur ? of(cur) : this.http.get(url).pipe(
