@@ -20,10 +20,10 @@ interface Address {
 export class SharedService {
   public territories = {
     'HEA': ['HEA'],
-    'NSW': ['NSW', 'NSWSALES'],
+    'NSW': ['NSW'],
     'QLD': ['QLD'],
     'SA': ['SA'],
-    'VIC': ['ACT', 'HEATH', 'MISC', 'NT', 'NZ', 'OTHER', 'PRIMARY', 'TAS', 'VIC', 'VICSALES'],
+    'VIC': ['ACT', 'MISC', 'NT', 'OTHER', 'TAS', 'VIC'],
     'WA': ['WA']
   };
   private _pallets = [
@@ -37,7 +37,6 @@ export class SharedService {
   private _address$ = new BehaviorSubject<string>('');
   private appTitle = this.titleService.getTitle();
   public branches = Object.keys(this.territories);
-  public branch!: string;
   public territoryNames = this.branches.concat(['INT', 'NATIONAL']);
   public isWarehouse!: boolean;
 
@@ -99,10 +98,7 @@ export class SharedService {
     return this._state$.pipe(
       switchMap(cur => cur ? of(cur) : this.http.get(url).pipe(
         map(_ => this.offices.find(o => o.suburb === _['value'])?.state || 'NA'),
-        tap(_ => {
-          this.branch = _;
-          this._state$.next(_);
-        })
+        tap(_ => this._state$.next(_))
       ))
     )
   }
@@ -116,10 +112,7 @@ export class SharedService {
     return this._address$.pipe(
       switchMap(cur => cur ? of(cur) : this.http.get(url).pipe(
         map(_ => _['value'] ? _['value'][0]?.detail?.company?.address || {} : {}),
-        tap(_ => {
-          this.branch = _;
-          this._address$.next(_);
-        })
+        tap(_ => this._address$.next(_))
       ))
     )
   }

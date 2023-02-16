@@ -49,7 +49,6 @@ export class CustomerListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log()
     const state$ = this.sharedService.getBranch();
     this.customers$ = this.route.queryParams.pipe(
       startWith({}),
@@ -59,7 +58,7 @@ export class CustomerListComponent implements OnInit {
         map(() => _)
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
-      switchMap(_ => state$.pipe(map(state => !_['territory'] ? {..._, territory: state} : _))),
+      switchMap(params => state$.pipe(map(state => !params['territory'] ? {...params, territory: state} : params))),
       tap(_ => {
         this.parseParams(_);
         this.pallets.forEach(p => this.palletTotals[p.key] = 0);

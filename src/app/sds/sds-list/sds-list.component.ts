@@ -19,7 +19,6 @@ import { SdsService } from '../shared/sds.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SdsListComponent implements OnInit {
-  private ownState = this.shared.branch;
   private loadList!: boolean;
   private chemicals!: Chemical[];
   private defaultColumns = ['sds', 'bin', 'product', 'issueDate', 'onHand', 'quantity', 'packingGroup', 'class', 'hazardRating'];
@@ -29,7 +28,7 @@ export class SdsListComponent implements OnInit {
   public loading = this.sdsService.loading;
   public displayedColumns = [...this.defaultColumns];
   public chemicals$!: Observable<Chemical[]>;
-  public branchFilter = new FormControl({value: this.ownState, disabled: false});
+  public branchFilter = new FormControl({value: '', disabled: false});
   public states = this.shared.branches;
   public address$ = this.shared.getOwnAddress();
   public date = new Date();
@@ -131,7 +130,6 @@ export class SdsListComponent implements OnInit {
   }
 
   doGroupLabels(name: string): void {
-    console.log(this.groups.find(_ => _.key === name)?.value || '')
     this.groupName = this.groups.find(_ => _.key === name)?.value || '';
     this.displayedColumns = this.defaultColumns.filter( _ => _ !==  name);
   }
