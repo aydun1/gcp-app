@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, firstValueFrom, lastValueFrom, map, Observable, startWith, switchMap, take, tap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, lastValueFrom, map, Observable, switchMap, take, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { Chemical } from './chemical';

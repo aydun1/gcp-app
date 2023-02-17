@@ -54,7 +54,7 @@ export class PanListService {
         const toFetch = items.filter(_ => !_.Id && _.ItemNmbr).map(
           item => this.searchItems(branch, item.ItemNmbr).then(items => items.find(_ => _.ItemNmbr === item.ItemNmbr))
         );
-        return combineLatest([of(items), combineLatest(toFetch)]);
+        return combineLatest([of(items), toFetch.length > 0 ? combineLatest(toFetch) : of([])]);
       }),
       map(([a, b]) => {
         b.forEach(item => {
