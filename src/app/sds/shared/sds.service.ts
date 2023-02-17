@@ -88,7 +88,8 @@ export class SdsService {
     5.1: 'Oxidising substances',
     6.1: 'Toxic substances',
     8: 'Corrosives',
-    9: 'Miscellaneous'
+    9: 'Miscellaneous',
+    'None': 'No DG class'
   };
 
   constructor(
@@ -191,7 +192,7 @@ export class SdsService {
   getChemicalManifest(): Observable<{[key: string]: {L: number, kg: number}}> {
     return this._chemicalListSubject$.pipe(
       map(chemicals => {
-        return chemicals.filter(_ => _['class'] !== 'None' && _['class'] !== '').reduce((acc: any, val: any) => ({ ...acc, [val.class]: {
+        return chemicals.filter(_ => _['class'] !== '').reduce((acc: any, val: any) => ({ ...acc, [val.class]: {
           'l': (acc[val.class]?.l || 0) + (val['uofm'] === 'L' ? val['quantity'] : 0),
           'kg': (acc[val.class]?.kg || 0) + (val['uofm'] === 'kg' ? val['quantity'] : 0),
         }}), {})

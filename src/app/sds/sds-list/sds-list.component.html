@@ -58,7 +58,7 @@
     <div *ngFor="let c of (chemicals$ | async) || [] | groupByProperty:(groupFilter.value || '')">
       <div *ngIf="c" class="inner">
         <div *ngIf="c.key !== 'undefined'" class="section-head">
-          <h3>{{ groupName }} {{ c.key !== 'null' && c.key !== '' ? c.key : 'Unknown' }}</h3> <span *ngIf="groupFilter.value === 'class'" class="class-description"> {{ classes[c.key] }}</span>
+          <h3>{{ groupName }} {{ c.key !== 'null' && c.key !== '' ? c.key : 'Unknown' }}</h3> <span *ngIf="groupFilter.value === 'class' && classes[c.key]" class="class-description"> {{ classes[c.key] }}</span>
         </div>
         <mat-card appearance="outlined">
           <mat-table #table [dataSource]="c.value" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
