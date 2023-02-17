@@ -173,8 +173,8 @@
                 </div>
               </mat-header-cell>
               <mat-cell *matCellDef="let line">
-                <div *ngIf="line['class'] && line['class'] !== 'none'" class="loadDetails placard">
-                  <img *ngIf="classes[line['class']];else other_content" [src]="'assets/placards/' + line['class'] + '.png'" alt="Class {{ line['class'] }}" [matTooltip]="classes[line['class']]">
+                <div *ngIf="line['class']" class="loadDetails placard">
+                  <img *ngIf="classes[line['class']] && line['class'] !== 'None';else other_content" [src]="'assets/placards/' + line['class'] + '.png'" alt="Class {{ line['class'] }}" [matTooltip]="classes[line['class']]">
                   <ng-template #other_content>{{ line['class'] }}</ng-template>
                 </div>
               </mat-cell>
