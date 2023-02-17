@@ -304,6 +304,7 @@
       <mat-header-row *matHeaderRowDef="['another']" class="item-adder"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [class.hidden]="
       !row.value.custom &&
+      row.value.toTransfer <= 0 &&
       ((vendorCodes.length > 0 && !vendorCodes.includes(row.value['vendor'])) ||
       (categories.length > 0 && !categories.includes(row.value['category'])) ||
       (row.value['heaOnHand'] <= 0 && hideNoStockHea) ||

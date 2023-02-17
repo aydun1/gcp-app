@@ -55,7 +55,6 @@ export class PanListComponent implements OnInit {
   public categories: Array<string> = [];
   public totals!: object;
   public states = this.shared.branches;
-  public ownState = '';
   public transferForm!: FormGroup;
   public hideNoStockHea = false;
   public hideNoStockVic = false;
@@ -124,10 +123,7 @@ export class PanListComponent implements OnInit {
     this.saving.next('saved');
     this._scheduleId = this.route.snapshot.paramMap.get('id') || '';
     const state$ = this.shared.getBranch();
-    this.transferForm = this.fb.group({
-      lines: this.fb.array([]),
-    });
-
+    this.transferForm = this.initForm([]);
     this.transferForm.valueChanges.pipe(
       tap(_ => {
         this.activeLines.emit(_['lines'].filter((l: any) => l.toTransfer > 0));
@@ -143,12 +139,7 @@ export class PanListComponent implements OnInit {
     this.route.queryParams.pipe(
       startWith({}),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
-      switchMap(params => state$.pipe(
-        map(state => {
-          this.ownState = state;
-          return !params['branch'] ? {...params, branch: state} : {...params};
-        })
-      )),
+      switchMap(params => state$.pipe(map(state => !params['branch'] ? {...params, branch: state} : params))),
       tap(_ => this.parseParams(_)),
       tap(_ => this.loading.next(true)),
       switchMap(_ => this._loadList && this.suggestions ? this.getSuggestedItems(_) : of([] as Array<SuggestedItem>)),
@@ -156,7 +147,8 @@ export class PanListComponent implements OnInit {
       tap(_ => {
         this.loading.next(false);
         this.lines.clear();
-        _.filter(_ => _.value['qtyRequired'] > 0 || _.value['toFill'] > 0 || _.value['suggested'] > 0).forEach(l => this.lines.push(l))
+        const items = _.filter(_ => _.value['qtyRequired'] > 0 || _.value['toFill'] > 0 || _.value['suggested'] > 0 || _.value['toTransfer'] > 0);
+        this.transferForm = this.initForm(items);
         this._matTable?.renderRows();
       }),
       map(_ => true)
@@ -165,12 +157,24 @@ export class PanListComponent implements OnInit {
     this.itemSearch.valueChanges.pipe(
       tap(q => {
         if (!q) return;
+        const index = this.lines.value.findIndex(_ => _.itemNumber === q.ItemNmbr);
+        if (index > -1) {
+          q.ToTransfer = this.lines.value[index]['toTransfer'];
+          q.Notes = this.lines.value[index]['notes'];
+          this.lines.removeAt(index);
+        }
         const newItem = this.makeFormGroup(q, true);
         this.lines.insert(0, newItem);
         this._matTable?.renderRows();
         this.itemSearch.reset();
       })
     ).subscribe();
+  }
+
+  initForm(items: FormGroup<any>[]): FormGroup {
+    return this.fb.group({
+      lines: this.fb.array(items)
+    })
   }
 
   calculateSpaces(palQty: number, palHeight: number, toTransfer: number | undefined): number {
@@ -317,16 +321,12 @@ export class PanListComponent implements OnInit {
     return this._loadList && sameBranch;
   }
 
-  openDialog(itemNmbr: string) {
-    const dialogRef = this.dialog.open(TransactionHistoryDialogComponent, {
+  openDialog(itemNmbr: string): void {
+    this.dialog.open(TransactionHistoryDialogComponent, {
       autoFocus: false,
       width: '800px',
-      data: {itemNmbr, branch: this.ownState}
+      data: {itemNmbr, branch: this.branchFilter.value}
     });
-  }
-
-  getTransactions(itemNmbr: string): Promise<string> {
-    return this.shared.getTransactions(this.ownState, itemNmbr).then(_ => 'eeytsdyh').catch(_ => '');
   }
 
   setBranch(branch: MatSelectChange): void {

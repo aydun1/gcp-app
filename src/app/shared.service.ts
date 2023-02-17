@@ -141,7 +141,7 @@ export class SharedService {
     this.titleService.setTitle(title);
   }
 
-  getTransactions(branch: string | undefined, itemNmbr: string | undefined): Promise<any[]> {
+  getTransactions(branch: string | null, itemNmbr: string | undefined): Promise<any[]> {
     const request = this.http.get<{invoices: any[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/current?branch=${branch}`).pipe(
       map(_ => _.invoices)
     );

@@ -30,18 +30,38 @@ export class PanListService {
   getPanListWithQuantities(branch: string, loadingScheduleId: string, panListId: number): Observable<SuggestedItem[]> {
     return combineLatest([this.getPanList(branch), this.getRequestedQuantitiesOnce(loadingScheduleId, panListId)]).pipe(
       map(([a, b]) => {
-        b.forEach(q => {
-          const thisOne = a.find(_ => _.ItemNmbr === q.fields.ItemNumber);
-          if (thisOne) {
-            thisOne['Notes'] = q.fields.Notes;
-            thisOne['ToTransfer'] = q.fields.Quantity;
+        b.reverse().forEach(requested => {
+          const oldIndex = a.findIndex(_ => _.ItemNmbr === requested.fields.ItemNumber);
+          let suggestedItem: SuggestedItem;
+          if (oldIndex > -1) {
+            suggestedItem = a[oldIndex];
+            suggestedItem['Notes'] = requested.fields.Notes;
+            suggestedItem['ToTransfer'] = requested.fields.Quantity;
+            a[oldIndex] = {} as SuggestedItem;
+          } else {
+            suggestedItem = {
+              ItemNmbr: requested.fields.ItemNumber,
+              ItemDesc: requested.fields.ItemDescription,
+              ToTransfer: requested.fields.Quantity,
+              Notes: requested.fields.Notes,
+            } as unknown as SuggestedItem;
           }
+          a.unshift(suggestedItem);
         });
         return a;
       }),
-      catchError(err => {
-        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
-        return of([]);
+      switchMap(items => {
+        const toFetch = items.filter(_ => !_.Id && _.ItemNmbr).map(
+          item => this.searchItems(branch, item.ItemNmbr).then(items => items.find(_ => _.ItemNmbr === item.ItemNmbr))
+        );
+        return combineLatest([of(items), combineLatest(toFetch)]);
+      }),
+      map(([a, b]) => {
+        b.forEach(item => {
+          const match = a.findIndex(_ => _.ItemNmbr === item?.ItemNmbr);
+          a[match] = {...a[match], ...item};
+        })
+        return a;
       })
     )
   }
@@ -60,7 +80,7 @@ export class PanListService {
   }
 
   getRequestedQuantitiesOnce(loadingScheduleId: string, panListId: number): Observable<RequestLine[]> {
-    const url = `${this._panListLinesUrl}/items?expand=fields(select=ItemNumber,ItemDescription,Quantity, Notes)&filter=fields/Title eq '${loadingScheduleId}' and fields/PanList eq '${panListId}'&orderby=fields/ItemNumber asc`;
+    const url = `${this._panListLinesUrl}/items?expand=fields(select=ItemNumber,ItemDescription,Quantity, Notes)&filter=fields/Title eq '${loadingScheduleId}' and fields/PanList eq '${panListId}'`;
     return this.http.get<{value: RequestLine[]}>(url).pipe(
       map(res => {
         return res.value.filter(_ => _.fields.Quantity > 0 || _.fields.Notes);
