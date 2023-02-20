@@ -123,14 +123,7 @@ export class PanListComponent implements OnInit {
     this.saving.next('saved');
     this._scheduleId = this.route.snapshot.paramMap.get('id') || '';
     const state$ = this.shared.getBranch();
-    this.transferForm = this.initForm([]);
-    this.transferForm.valueChanges.pipe(
-      tap(_ => {
-        this.activeLines.emit(_['lines'].filter((l: any) => l.toTransfer > 0));
-        this.lineCount.emit(this.getLinesToTransfer(_['lines']));
-      })
-    ).subscribe();
-
+    this.initForm([]);
     this.notes.valueChanges.pipe(
       debounceTime(500),
       tap(_ => this.note.next(_))
@@ -148,7 +141,7 @@ export class PanListComponent implements OnInit {
         this.loading.next(false);
         this.lines.clear();
         const items = _.filter(_ => _.value['qtyRequired'] > 0 || _.value['toFill'] > 0 || _.value['suggested'] > 0 || _.value['toTransfer'] > 0);
-        this.transferForm = this.initForm(items);
+        this.initForm(items);
         this._matTable?.renderRows();
       }),
       map(_ => true)
@@ -171,10 +164,16 @@ export class PanListComponent implements OnInit {
     ).subscribe();
   }
 
-  initForm(items: FormGroup<any>[]): FormGroup {
-    return this.fb.group({
+  initForm(items: FormGroup<any>[]): void {
+    this.transferForm = this.fb.group({
       lines: this.fb.array(items)
-    })
+    });
+    this.transferForm.valueChanges.pipe(
+      tap(_ => {
+        this.activeLines.emit(_['lines'].filter((l: any) => l.toTransfer > 0));
+        this.lineCount.emit(this.getLinesToTransfer(_['lines']));
+      })
+    ).subscribe();
   }
 
   calculateSpaces(palQty: number, palHeight: number, toTransfer: number | undefined): number {
