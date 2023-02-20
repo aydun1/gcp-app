@@ -12,7 +12,7 @@ const routes: Routes = [
   { path: 'recycling', canActivate: [MsalGuard], loadChildren: () => import('./recycling/recycling.module').then(m => m.RecyclingModule) },
   { path: 'pallets', canActivate: [MsalGuard], loadChildren: () => import('./pallets/pallets.module').then(m => m.PalletsModule) },
   { path: 'runs', canActivate: [MsalGuard], loadChildren: () => import('./runs/runs.module').then(m => m.RunsModule) },
-  { path: 'chemicals', canActivate: [MsalGuard], loadChildren: () => import('./sds/sds.module').then(m => m.SdsModule) },
+  { path: 'chemicals', canActivate: [MsalGuard], loadChildren: () => import('./chemicals/chemicals.module').then(m => m.ChemicalsModule) },
   { path: 'transfers', canActivate: [MsalGuard], loadChildren: () => import('./interstate-transfers/interstate-transfers.module').then(m => m.InterstateTransfersModule) },
   { path: 'loading-schedule', canActivate: [MsalGuard], loadChildren: () => import('./loading-schedule/loading-schedule.module').then(m => m.LoadingScheduleModule) },
 ];

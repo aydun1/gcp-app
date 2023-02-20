@@ -8,7 +8,7 @@ import { Chemical } from './chemical';
 @Injectable({
   providedIn: 'root'
 })
-export class SdsService {
+export class ChemicalService {
   private _chemicalListSubject$ = new BehaviorSubject<Chemical[]>([]);
 
   public loading = new BehaviorSubject<boolean>(false);

@@ -6,29 +6,29 @@ import { BehaviorSubject, combineLatest, Observable, switchMap, tap } from 'rxjs
 import { SharedService } from '../../shared.service';
 import { NavigationService } from '../../navigation.service';
 import { Chemical } from '../shared/chemical';
-import { SdsService } from '../shared/sds.service';
-import { SdsBackpackDialogComponent } from '../shared/sds-backpack-dialog/sds-backpack-dialog.component';
+import { ChemicalService } from '../shared/chemical.service';
+import { ChemicalBackpackDialogComponent } from '../shared/chemical-backpack-dialog/chemical-backpack-dialog.component';
 
 @Component({
-  selector: 'gcp-sds-view',
-  templateUrl: './sds-view.component.html',
-  styleUrls: ['./sds-view.component.css']
+  selector: 'gcp-chemical-view',
+  templateUrl: './chemical-view.component.html',
+  styleUrls: ['./chemical-view.component.css']
 })
-export class SdsViewComponent implements OnInit {
+export class ChemicalViewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';
   private opened = false;
   public item$!: Observable<Chemical>;
   public itemNumber = this.route.snapshot.paramMap.get('id');
   public branch!: string;
   public refresh = new BehaviorSubject<boolean>(true);
-  public definitions = this.sdsService.defs;
+  public definitions = this.chemicalService.defs;
 
   constructor (
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private sharedService: SharedService,
     private navService: NavigationService,
-    private sdsService: SdsService
+    private chemicalService: ChemicalService
   ) {}
 
   ngOnInit(): void {
@@ -43,12 +43,12 @@ export class SdsViewComponent implements OnInit {
   }
 
   getItem(itemNumber: string | null, branch: string): Promise<Chemical> {
-    return this.sdsService.getChemical(branch, itemNumber || '');
+    return this.chemicalService.getChemical(branch, itemNumber || '');
   }
 
   openBackpack(chemical: Chemical): void {
     this.opened = true;
-    const dialogRef = this.dialog.open(SdsBackpackDialogComponent, {
+    const dialogRef = this.dialog.open(ChemicalBackpackDialogComponent, {
       width: '800px',
       data: {chemical}
     });
@@ -58,15 +58,15 @@ export class SdsViewComponent implements OnInit {
   }
 
   unlinkChemical(chemical: Chemical) {
-    this.sdsService.unlinkChemicalFromItem(chemical.ItemNmbr).then(() => this.refresh.next(true));
+    this.chemicalService.unlinkChemicalFromItem(chemical.ItemNmbr).then(() => this.refresh.next(true));
   }
 
   getPdf(docNo: string): void {
-    this.sdsService.getPdf(docNo);
+    this.chemicalService.getPdf(docNo);
   }
 
   getPdfPath(itemNmbr: string): string {
-    return this.sdsService.pdfPath(itemNmbr);
+    return this.chemicalService.pdfPath(itemNmbr);
   }
 
   goBack(): void {

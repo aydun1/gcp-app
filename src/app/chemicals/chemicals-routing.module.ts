@@ -1,25 +1,25 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { SdsListComponent } from './sds-list/sds-list.component';
-import { SdsViewComponent } from './sds-view/sds-view.component';
-import { SdsComponent } from './sds.component';
+import { ChemicalListComponent } from './chemical-list/chemical-list.component';
+import { ChemicalViewComponent } from './chemical-view/chemical-view.component';
+import { ChemicalsComponent } from './chemicals.component';
 
 
 const routes: Routes = [
   {
     path: '',
-    component: SdsComponent,
+    component: ChemicalsComponent,
     children: [
       {
         path: '',
         data: {title: 'Chemicals'},
-        component: SdsListComponent,
+        component: ChemicalListComponent,
         children: [
           {
             path: ':id',
             data: {title: 'Chemicals'},
-            component: SdsViewComponent,
+            component: ChemicalViewComponent,
           }
         ]
       }
@@ -35,4 +35,4 @@ const routes: Routes = [
     RouterModule
   ]
 })
-export class SdsRoutingModule { }
+export class ChemicalsRoutingModule { }

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SdsListComponent } from './sds-list.component';
+import { ChemicalViewComponent } from './chemical-view.component';
 
-describe('SdsListComponent', () => {
-  let component: SdsListComponent;
-  let fixture: ComponentFixture<SdsListComponent>;
+describe('ChemicalViewComponent', () => {
+  let component: ChemicalViewComponent;
+  let fixture: ComponentFixture<ChemicalViewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SdsListComponent ]
+      declarations: [ ChemicalViewComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SdsListComponent);
+    fixture = TestBed.createComponent(ChemicalViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

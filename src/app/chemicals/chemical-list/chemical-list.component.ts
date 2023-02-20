@@ -9,23 +9,23 @@ import { distinctUntilChanged, filter, map, Observable, startWith, switchMap, ta
 
 import { SharedService } from '../../shared.service';
 import { Chemical } from '../shared/chemical';
-import { SdsManifestDialogComponent } from '../shared/sds-manifest-dialog/sds-manifest-dialog.component';
-import { SdsService } from '../shared/sds.service';
+import { ChemicalManifestDialogComponent } from '../shared/chemical-manifest-dialog/chemical-manifest-dialog.component';
+import { ChemicalService } from '../shared/chemical.service';
 
 @Component({
-  selector: 'gcp-sds-list',
-  templateUrl: './sds-list.component.html',
-  styleUrls: ['./sds-list.component.css'],
+  selector: 'gcp-chemical-list',
+  templateUrl: './chemical-list.component.html',
+  styleUrls: ['./chemical-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SdsListComponent implements OnInit {
+export class ChemicalListComponent implements OnInit {
   private loadList!: boolean;
   private chemicals!: Chemical[];
   private defaultColumns = ['sds', 'bin', 'product', 'issueDate', 'onHand', 'quantity', 'packingGroup', 'class', 'hazardRating'];
 
   public textFilter = new FormControl(this.route.snapshot.paramMap.get('search'));
   public groupFilter = new FormControl(this.route.snapshot.paramMap.get('groupby'));
-  public loading = this.sdsService.loading;
+  public loading = this.chemicalService.loading;
   public displayedColumns = [...this.defaultColumns];
   public chemicals$!: Observable<Chemical[]>;
   public branchFilter = new FormControl({value: '', disabled: false});
@@ -40,7 +40,7 @@ export class SdsListComponent implements OnInit {
     return this.shared.getBranchAddress(this.branchFilter.value || '');
   }
 
-  public classes = this.sdsService.classes;
+  public classes = this.chemicalService.classes;
   public groups = [
     {key: '', value: 'Ungrouped'},
     {key: 'class', value: 'Class'},
@@ -54,7 +54,7 @@ export class SdsListComponent implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private shared: SharedService,
-    private sdsService: SdsService
+    private chemicalService: ChemicalService
   ) { }
 
   ngOnInit(): void {
@@ -140,7 +140,7 @@ export class SdsListComponent implements OnInit {
 
   getChemicals(search: string, branch: string, sort: string, order: string): Observable<Chemical[]> {
     search = (search || '').toLowerCase();
-    return this.sdsService.getOnHandChemicals(branch, sort, order).pipe(
+    return this.chemicalService.getOnHandChemicals(branch, sort, order).pipe(
       map(_ => _.filter(c => c.ItemNmbr?.toLowerCase()?.includes(search) || c.ItemDesc?.toLowerCase()?.includes(search)))
     )
   }
@@ -162,7 +162,7 @@ export class SdsListComponent implements OnInit {
     const now = new Date();
     const branch = this.branchFilter.value;
     const fileName = `GCP_${branch ? branch + '_' : ''}chemicals_${now.toLocaleString( 'sv', { timeZoneName: 'short' } ).split(' ', 2).join('_')}.csv`
-    this.sdsService.exportToCsv(fileName, this.chemicals);
+    this.chemicalService.exportToCsv(fileName, this.chemicals);
   }
 
   announceSortChange(e: Sort): void {
@@ -173,7 +173,7 @@ export class SdsListComponent implements OnInit {
 
   openChemicalManifest(): void {
     const data = {branch: this.branchFilter.value};
-    this.dialog.open(SdsManifestDialogComponent, {panelClass: 'printable', width: '600px', autoFocus: false, data});
+    this.dialog.open(ChemicalManifestDialogComponent, {panelClass: 'printable', width: '600px', autoFocus: false, data});
   }
 
   trackByGroupsFn(index: number, item: any): string {

@@ -4,14 +4,14 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectionListChange } from '@angular/material/list';
 import { combineLatest, distinctUntilChanged, map, Observable, startWith, Subject, tap } from 'rxjs';
 import { Chemical } from '../chemical';
-import { SdsService } from '../sds.service';
+import { ChemicalService } from '../chemical.service';
 
 @Component({
-  selector: 'gcp-sds-backpack-dialog',
-  templateUrl: './sds-backpack-dialog.component.html',
-  styleUrls: ['./sds-backpack-dialog.component.css']
+  selector: 'gcp-chemical-backpack-dialog',
+  templateUrl: './chemical-backpack-dialog.component.html',
+  styleUrls: ['./chemical-backpack-dialog.component.css']
 })
-export class SdsBackpackDialogComponent implements OnInit {
+export class ChemicalBackpackDialogComponent implements OnInit {
   public chemicals$!: Observable<Chemical[]>;
   public saving = false;
   public selected: Chemical | undefined;
@@ -20,9 +20,9 @@ export class SdsBackpackDialogComponent implements OnInit {
   public searchControl = new FormControl('');
 
   constructor (
-    public dialogRef: MatDialogRef<SdsBackpackDialogComponent>,
+    public dialogRef: MatDialogRef<ChemicalBackpackDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {chemical: Chemical},
-    private sdsService: SdsService
+    private chemicalService: ChemicalService
   ) { }
 
   ngOnInit(): void {
@@ -31,7 +31,7 @@ export class SdsBackpackDialogComponent implements OnInit {
       distinctUntilChanged(),
       map(_ => _?.toLocaleLowerCase())
     )
-    this.chemicals$ = combineLatest([this.sdsService.getSyncedChemicals(), query]).pipe(
+    this.chemicals$ = combineLatest([this.chemicalService.getSyncedChemicals(), query]).pipe(
       map(([a, b]) => b ? a.filter(_ => _['key'].includes(b)) : a),
       tap(() => this.loading = false)
     )
@@ -45,7 +45,7 @@ export class SdsBackpackDialogComponent implements OnInit {
   syncFromChemwatch(): void {
     this.loading = true;
     this.searchControl.disable();
-    this.sdsService.syncFromChemwatch().then(
+    this.chemicalService.syncFromChemwatch().then(
       () => {
         this.searchControl.enable();
         this.loading = false;
@@ -61,7 +61,7 @@ export class SdsBackpackDialogComponent implements OnInit {
   linkMaterial(): void {
     if (!this.selected?.CwNo) return;
     this.saving = true;
-    this.sdsService.linkChemicalToItem(this.data.chemical.ItemNmbr, this.selected.CwNo).then(
+    this.chemicalService.linkChemicalToItem(this.data.chemical.ItemNmbr, this.selected.CwNo).then(
       _ =>  this.dialogRef.close()
     ).catch(e => this.saving = false);
   }
