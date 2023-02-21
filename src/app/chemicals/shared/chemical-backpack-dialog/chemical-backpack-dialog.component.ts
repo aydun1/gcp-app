@@ -13,6 +13,7 @@ import { ChemicalService } from '../chemical.service';
 })
 export class ChemicalBackpackDialogComponent implements OnInit {
   public chemicals$!: Observable<Chemical[]>;
+  public chemicalCount!: number;
   public saving = false;
   public selected: Chemical | undefined;
   public loading = true;
@@ -29,11 +30,14 @@ export class ChemicalBackpackDialogComponent implements OnInit {
     const query = this.searchControl.valueChanges.pipe(
       startWith(''),
       distinctUntilChanged(),
-      map(_ => _?.toLocaleLowerCase())
+      map(_ => _?.toLocaleLowerCase().trim())
     )
     this.chemicals$ = combineLatest([this.chemicalService.getSyncedChemicals(), query]).pipe(
       map(([a, b]) => b ? a.filter(_ => _['key'].includes(b)) : a),
-      tap(() => this.loading = false)
+      tap(_ => {
+        this.chemicalCount = _.length;
+        this.loading = false;
+      })
     )
 
   }

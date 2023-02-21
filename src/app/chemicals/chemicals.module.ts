@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatTabsModule } from '@angular/material/tabs';
 
 import { SharedModule } from '../shared/shared.module';
 import { ChemicalsComponent } from './chemicals.component';
@@ -20,7 +21,8 @@ import { ChemicalManifestDialogComponent } from './shared/chemical-manifest-dial
   imports: [
     CommonModule,
     SharedModule,
-    ChemicalsRoutingModule
+    ChemicalsRoutingModule,
+    MatTabsModule
   ],
   providers: [
   ]
