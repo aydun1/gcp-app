@@ -80,8 +80,8 @@ export class LoadingScheduleService {
 
   private parseMultiLine(key: string, arrayKey: string, data: any) {
     const arrayData = data['fields'][key]?.split(/[\r\n]+/);
-    data['fields'][arrayKey] = arrayData?.map((_: string) => {
-      const data = _?.split(',');
+    data['fields'][arrayKey] = arrayData?.map((line: string) => {
+      const data = line?.split(',').map(_ => _.replace(/&#44;/g, ','));
       return data.length === 1 ? data[0] : data;
     });
   }
@@ -124,7 +124,7 @@ export class LoadingScheduleService {
     const url = `${this._loadingScheduleUrl}/items('${id}')`;
     this.http.get<LoadingSchedule>(url).pipe(
       tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _)),
-      tap(_ => this.panLists = _['fields']['PanListsArray'])
+      tap(_ => this.panLists = _['fields']['PanListsArray']),
     ).subscribe(_ => this._loadingScheduleSubject$.next(_));
     return this._loadingScheduleSubject$;
   }
@@ -187,7 +187,7 @@ export class LoadingScheduleService {
     return firstValueFrom(this.getLoadingScheduleEntry(id).pipe(
       switchMap(_ => {
         const toUpdate = _.fields.PanListsArray?.find(p => `${p[0]}` === `${panListId}`) || [];
-        toUpdate[1] = note?.replace(/(?:\r\n|\r|\n)/g, '<br>') || '';
+        toUpdate[1] = note?.replace(/(?:\r\n|\r|\n)/g, '<br>').replace(/,/g, '&#44;') || '';
         const fields = {PanLists: _.fields.PanListsArray?.join('\r\n')};
         return this.http.patch<LoadingSchedule>(url, {fields});
       }),
