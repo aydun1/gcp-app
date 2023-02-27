@@ -117,7 +117,7 @@
               <ng-container matColumnDef="menu">
                 <mat-header-cell *matHeaderCellDef></mat-header-cell>
                 <mat-cell *matCellDef="let delivery">
-                  <button mat-icon-button [matMenuTriggerData]="{delivery}" [matMenuTriggerFor]="menu" class="menu"><mat-icon>more_vert</mat-icon></button>
+                  <button *ngIf="delivery.fields.Status !== 'Delivered'" mat-icon-button [matMenuTriggerData]="{delivery}" [matMenuTriggerFor]="menu" class="menu"><mat-icon>more_vert</mat-icon></button>
                 </mat-cell>
                 <mat-footer-cell *matFooterCellDef></mat-footer-cell>
               </ng-container>
@@ -142,7 +142,10 @@
 
 <mat-menu #menu="matMenu" xPosition="before">
   <ng-template matMenuContent let-delivery="delivery">
-    <button type="button" *ngIf="delivery.fields.Status !== 'Delivered'" mat-menu-item (click)="markDelivered(delivery.id)" [disabled]="delivery.fields.To !== state">
+    <button type="button" *ngIf="delivery.fields.Status !== 'Pan list sent'" mat-menu-item (click)="markPanListSent(delivery.id)" [disabled]="delivery.fields.To !== state">
+      <mat-icon>playlist_add_checked</mat-icon>Pan list sent
+    </button>
+    <button type="button" mat-menu-item (click)="markDelivered(delivery.id)" [disabled]="delivery.fields.To !== state">
       <mat-icon>check</mat-icon>Mark as delivered
     </button>
   </ng-template>

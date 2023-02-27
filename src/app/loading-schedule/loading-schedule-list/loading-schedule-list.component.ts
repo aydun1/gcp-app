@@ -120,12 +120,12 @@ export class LoadingScheduleListComponent implements OnInit {
     this.router.navigate([], { queryParams: {view: view.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  markDelivered(id: string) {
-    this.loadingScheduleService.markDelivered(id).subscribe();
+  markPanListSent(id: string): void {
+    this.loadingScheduleService.markPanSent(id).subscribe();
   }
 
-  deleteEntry(id: string) {
-
+  markDelivered(id: string): void {
+    this.loadingScheduleService.markDelivered(id).subscribe();
   }
 
   trackByFn(index: number, item: LoadingSchedule): string {
