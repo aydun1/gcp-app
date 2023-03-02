@@ -207,7 +207,7 @@ export class PanListComponent implements OnInit {
       qldAlloc: _.AllocQLD,
       saAlloc: _.AllocSA,
       vicAlloc: _.AllocVIC,
-      waAlloc: _.OnHandWA - _.AllocWA,
+      waAlloc: _.AllocWA,
       heaAvail: _.OnHandHEA - _.AllocHEA,
       nswAvail: _.OnHandNSW - _.AllocNSW,
       qldAvail: _.OnHandQLD - _.AllocQLD,
