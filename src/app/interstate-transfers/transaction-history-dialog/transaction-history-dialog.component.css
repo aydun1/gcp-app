@@ -29,3 +29,20 @@
   flex: 0 0 60px;
   text-align: right;
 }
+
+.availability-grid {
+  display: grid;
+  font-size: 14px;
+  grid-template-rows: 28px 28px 28px;
+  grid-template-columns: 72px 72px 72px 72px 72px 72px 72px;
+  gap: 0px;
+  text-align: right;
+}
+
+.grid-heading {
+  font-weight: bold;
+}
+
+.note {
+  text-align: center;
+}

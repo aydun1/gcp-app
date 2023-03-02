@@ -3,6 +3,12 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { SharedService } from '../../../app/shared.service';
 
+interface Data {
+  branch: string;
+  itemNmbr: string;
+  item: any
+}
+
 @Component({
   selector: 'gcp-transaction-history-dialog',
   templateUrl: './transaction-history-dialog.component.html',
@@ -13,7 +19,7 @@ export class TransactionHistoryDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<TransactionHistoryDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: Data,
     private sharedService: SharedService
   ) { }
 

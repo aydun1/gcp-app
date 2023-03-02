@@ -1,21 +1,58 @@
-<h2 mat-dialog-title>Allocations</h2>
+<h2 mat-dialog-title>{{ data.item.itemNumber }}</h2>
+
+
 <mat-dialog-content>
+  <div>
+    {{ data.item.itemDesc}}
+  </div>
+  
+<h3>National availability</h3>
+<div class="availability-grid">
+  <div></div>
+  <div class="grid-heading">HEA</div>
+  <div class="grid-heading">NSW</div>
+  <div class="grid-heading">QLD</div>
+  <div class="grid-heading">SA</div>
+  <div class="grid-heading">VIC</div>
+  <div class="grid-heading">WA</div>
+  <div class="grid-heading">On hand</div>
+  <div>{{ data.item.heaOnHand || 0 | number}}</div>
+  <div>{{ data.item.nswOnHand || 0 | number}}</div>
+  <div>{{ data.item.qldOnHand || 0 | number }}</div>
+  <div>{{ data.item.saOnHand || 0 | number }}</div>
+  <div>{{ data.item.vicOnHand || 0 | number }}</div>
+  <div>{{ data.item.waOnHand || 0 | number }}</div>
+  <div class="grid-heading">Allocated</div>
+  <div>{{ data.item.heaAlloc || 0 | number}}</div>
+  <div>{{ data.item.nswAlloc || 0 | number}}</div>
+  <div>{{ data.item.qldAlloc || 0 | number }}</div>
+  <div>{{ data.item.saAlloc || 0 | number }}</div>
+  <div>{{ data.item.vicAlloc || 0 | number }}</div>
+  <div>{{ data.item.waAlloc || 0 | number }}</div>
+</div>
+<h3>{{data.branch}} allocations</h3>
   <div class="header row">
     <div class="date">Date</div>
     <div class="invoice-number">Doc number</div>
     <div class="customer">Customer</div>
     <div class="quantity">Qty</div>
   </div>
-  <div *ngFor="let h of locationHistory | async; last as last">
-    <div class="row">
-      <div class="date">{{ h.date | date: 'd MMM yyyy' }}</div>
-      <div class="invoice-number">{{ h.sopNmbr }}</div>
-      <div class="customer">{{ h.customer }}</div>
-      <div class="quantity">{{ h.quantity | number }}</div>
+  <div *ngIf="locationHistory | async as lh">
+    <div *ngFor="let h of lh; last as last">
+      <div class="row">
+        <div class="date">{{ h.date | date: 'd MMM yyyy' }}</div>
+        <div class="invoice-number">{{ h.sopNmbr }}</div>
+        <div class="customer">{{ h.customer }}</div>
+        <div class="quantity">{{ h.quantity | number }}</div>
+      </div>
+      <div *ngIf="h.notes" class="notes">
+        {{ h.notes }}
+      </div>
+      <mat-divider *ngIf="!last"></mat-divider>
     </div>
-    <div *ngIf="h.notes" class="notes">
-      {{ h.notes }}
+    <div class="note" *ngIf="lh.length === 0">
+      No allocations
     </div>
-    <mat-divider *ngIf="!last"></mat-divider>
   </div>
+
 </mat-dialog-content>

@@ -202,6 +202,18 @@ export class PanListComponent implements OnInit {
       saOnHand: _.OnHandSA,
       waOnHand: _.OnHandWA,
       nswOnHand: _.OnHandNSW,
+      heaAlloc: _.AllocHEA,
+      nswAlloc: _.AllocNSW,
+      qldAlloc: _.AllocQLD,
+      saAlloc: _.AllocSA,
+      vicAlloc: _.AllocVIC,
+      waAlloc: _.OnHandWA - _.AllocWA,
+      heaAvail: _.OnHandHEA - _.AllocHEA,
+      nswAvail: _.OnHandNSW - _.AllocNSW,
+      qldAvail: _.OnHandQLD - _.AllocQLD,
+      saAvail: _.OnHandSA - _.AllocSA,
+      vicAvail: _.OnHandVIC - _.AllocVIC,
+      waAvail: _.OnHandWA - _.AllocWA,
       qtyOnHand,
       qtyAllocated,
       qtyBackordered: _.QtyBackordered,
@@ -320,11 +332,11 @@ export class PanListComponent implements OnInit {
     return this._loadList && sameBranch;
   }
 
-  openDialog(itemNmbr: string): void {
+  openDialog(item: SuggestedItem): void {
     this.dialog.open(TransactionHistoryDialogComponent, {
       autoFocus: false,
       width: '800px',
-      data: {itemNmbr, branch: this.branchFilter.value}
+      data: {itemNmbr: item['itemNumber'], branch: this.branchFilter.value, item: item}
     });
   }
 

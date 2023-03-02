@@ -41,7 +41,7 @@
       </ng-container>
       <ng-container matColumnDef="product">
         <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
-        <mat-cell *matCellDef="let line" [formGroup]="line" (click)="openDialog(line.value['itemNumber'])" class="opener">
+        <mat-cell *matCellDef="let line" [formGroup]="line" (click)="openDialog(line.value)" class="opener">
           <div class="details">
             <strong class="link">
               {{ line.value['itemNumber'] }}
@@ -144,7 +144,7 @@
         <mat-header-cell *matHeaderCellDef>
           <div class="load-details right">
             <div>
-              VIC
+              VIC on hand
             </div>
             <mat-slide-toggle [(ngModel)]="hideNoStockVic" (change)="toggle('vic', $event)" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
           </div>
@@ -277,7 +277,7 @@
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let line" [formGroup]="line">
-          <input formControlName="notes" class="transfer-input" type="text">
+          <textarea formControlName="notes" class="transfer-input" type="text"></textarea>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
         </mat-footer-cell>
@@ -322,7 +322,7 @@
     <mat-card appearance="raised" *ngIf="showNotes" class="notes">
       <mat-form-field class="search-form" subscriptSizing="dynamic">
         <mat-label>Notes</mat-label>
-        <textarea matInput type="text" [formControl]="notes" autocomplete="off"></textarea>
+        <textarea matInput class="main-notes" type="text" [formControl]="notes" autocomplete="off"></textarea>
       </mat-form-field>
     </mat-card>
   </mat-card>

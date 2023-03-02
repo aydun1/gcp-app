@@ -25,6 +25,12 @@ export interface SuggestedItem {
   OnHandSA: number;
   OnHandVIC: number;
   OnHandWA: number;
+  AllocHEA: number;
+  AllocNSW: number;
+  AllocQLD: number;
+  AllocSA: number;
+  AllocVIC: number;
+  AllocWA: number;
   Notes: string;
   ToTransfer?: number;
 }
