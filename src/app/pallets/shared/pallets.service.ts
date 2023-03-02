@@ -348,16 +348,23 @@ export class PalletsService {
     const startOfMonth = `${date.getFullYear()}-${date.getMonth() + 1}-1`;
     const eod = new Date(date.setHours(23,59,59,999)).toISOString();
     const dateInt = this.dateInt(date);
-    let dateIntArray: Array<number> = [this.dateInt(new Date('2021-11-15'))];
-    while (dateIntArray[dateIntArray?.length - 1] < dateInt) {
-      const lastDate = dateIntArray[dateIntArray?.length - 1].toString(10);
+    const cutoff = this.dateInt(new Date('2022-01-01'));
+
+    const monthsArray: Array<number> = [dateInt];
+
+    while (monthsArray.length < 11 || monthsArray[monthsArray.length - 1] > cutoff) {
+      const lastDate = monthsArray[monthsArray?.length - 1].toString(10);
       const year = parseInt(lastDate.slice(0, 4), 10);
       const month = parseInt(lastDate.slice(-2), 10);
-      const yearMonth = parseInt(month < 12 ? `${year}${('00' + (month + 1)).slice(-2)}` : `${year + 1}${('0001').slice(-2)}`);
-      dateIntArray.push(yearMonth);
+      const yearMonth = parseInt(month > 1 ? `${year}${('00' + (month - 1)).slice(-2)}` : `${year - 1}${('0012').slice(-2)}`);
+      monthsArray.push(yearMonth);
     }
-    dateIntArray = dateIntArray.filter(_ => _ !== dateInt);
-    const pastDateValues$ = dateIntArray.map(dateInt => {
+    monthsArray.shift();
+    const previousPalletsUrl = `${this._palletTrackerOwedUrl}/items?expand=fields(select=Owing)&filter=fields/DateInt lt '${monthsArray[monthsArray.length - 1] }' and fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}'&top=2000`;
+    const previousPallets$ = this.http.get<{value: PalletTotals[]}>(previousPalletsUrl).pipe(
+      map(_ => _['value'].reduce((subtotal, qty) => subtotal + qty.fields.Owing, 0))
+    )
+    const pastMonthValues$ = monthsArray.map(dateInt => {
       const url = `${this._palletTrackerOwedUrl}/items?expand=fields(select=Owing)&filter=fields/DateInt eq ${dateInt} and fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}'&top=2000`;
       return this.http.get<{value: PalletTotals[]}>(url).pipe(
         map(_ => _['value'].reduce((subtotal, qty) => subtotal + qty.fields.Owing, 0))
@@ -366,7 +373,7 @@ export class PalletsService {
     const currentMonthUrl = `${this._palletTrackerUrl}/items?expand=fields(select=In,Out)&filter=fields/Date ge '${startOfMonth}' and fields/Date lt '${eod}' and fields/Branch eq '${branch}' and fields/Pallet eq '${pallet}' and fields/CustomerNumber ne null&top=2000`;
     const currMonth$ = this.http.get<{value:Pallet[]}>(currentMonthUrl).pipe(map(_ => _['value'].reduce((subtotal, qty) => subtotal + qty.fields.Out - qty.fields.In, 0)));
 
-    return combineLatest([...pastDateValues$, currMonth$]).pipe(
+    return combineLatest([previousPallets$, ...pastMonthValues$, currMonth$]).pipe(
       tap(_ => console.log(_)),
       map(_ => _.reduce((acc, val) => acc + val, 0))
       
