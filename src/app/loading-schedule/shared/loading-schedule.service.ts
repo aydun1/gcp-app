@@ -30,6 +30,10 @@ export class LoadingScheduleService {
     private shared: SharedService
   ) { }
 
+  private htmlEncode(text: string | null): string {
+    return text?.replace(/(?:\r\n|\r|\n)/g, '<br>').replace(/,/g, '&#44;') || '';
+  }
+
   private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
     const params = '?expand=fields(select=TransportCompany,Driver,Spaces,ArrivalDate,LoadingDate,From,To,Status,PanLists,Notes)&orderby=fields/ArrivalDate asc';
@@ -167,6 +171,7 @@ export class LoadingScheduleService {
     return firstValueFrom(this.getLoadingScheduleEntry(id).pipe(
       switchMap(_ => {
         const toUpdate = _.fields.PanListsArray?.find(p => `${p[0]}` === `${panListId}`) || [];
+        toUpdate[1] = this.htmlEncode(toUpdate[1]);
         toUpdate[2] = result;
         const fields = {PanLists: _.fields.PanListsArray?.join('\r\n')};
         return this.http.patch<LoadingSchedule>(url, {fields});
@@ -187,7 +192,7 @@ export class LoadingScheduleService {
     return firstValueFrom(this.getLoadingScheduleEntry(id).pipe(
       switchMap(_ => {
         const toUpdate = _.fields.PanListsArray?.find(p => `${p[0]}` === `${panListId}`) || [];
-        toUpdate[1] = note?.replace(/(?:\r\n|\r|\n)/g, '<br>').replace(/,/g, '&#44;') || '';
+        toUpdate[1] = this.htmlEncode(note);
         const fields = {PanLists: _.fields.PanListsArray?.join('\r\n')};
         return this.http.patch<LoadingSchedule>(url, {fields});
       }),
