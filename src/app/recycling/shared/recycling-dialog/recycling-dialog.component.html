@@ -80,6 +80,7 @@
             <mat-expansion-panel-header>
               <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> <span class="cage-type">{{ cage.fields.AssetTypeClean }}</span></mat-panel-title>
               <mat-panel-description>{{ cage.fields.Status }}</mat-panel-description>
+              <img *ngIf="cage.logo" class="recycle-logo" [src]="'assets/' + cage.logo">
             </mat-expansion-panel-header>
             <gcp-action-button [cages]="[cage]" (updated)="getCagesWithCustomer()" class="actions"></gcp-action-button>
             <mat-list>

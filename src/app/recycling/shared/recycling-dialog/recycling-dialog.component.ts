@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 
 import { SharedService } from '../../../shared.service';
 import { RecyclingService } from '../../shared/recycling.service';
@@ -58,7 +58,11 @@ export class RecyclingDialogComponent implements OnInit {
 
   getCagesWithCustomer(): void {
     this.loadingCages$.next(true);
-    this.recyclingService.getActiveCustomerCages(this.data.customer.custNmbr, this.site, true).subscribe(
+    this.recyclingService.getActiveCustomerCages(this.data.customer.custNmbr, this.site, true).pipe(
+      map(_ => _.map(c => {
+        return {...c, logo: this.recyclingService.materials.find(m => m['code'] === c.fields.Material)?.image}
+      }))
+    ).subscribe(
       _ => {
         this.noAllocatedCages$.next(_.filter(c => c['statusId'] === this.allocated).length === 0);
         this.noDeliveredCages$.next(_.filter(c => c['statusId'] === this.delivered).length === 0);

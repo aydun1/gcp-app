@@ -23,7 +23,7 @@
     </div>
     <mat-card appearance="outlined">
       <mat-card-content>
-        <img class="material" [src]="'assets/' + recycleLogo">
+        <img *ngIf="recycleLogo" class="material" [src]="'assets/' + recycleLogo">
         <mat-list>
           <div mat-subheader><span class="subheader">Details</span></div>
           <mat-list-item *ngIf="cage.fields.Status">
