@@ -88,6 +88,7 @@
                 <span matListItemTitle>{{ cage.fields.Site }}</span>
                 <span>Site</span>            
               </mat-list-item>
+              <gcp-cage-notes [cage]="cage" (updated)="getCagesWithCustomer()"></gcp-cage-notes>
               <div mat-subheader>Weights</div>
               <gcp-cage-weights [cage]="cage" (updated)="getCagesWithCustomer()"></gcp-cage-weights>
             </mat-list>

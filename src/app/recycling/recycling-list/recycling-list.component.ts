@@ -25,15 +25,17 @@ export class RecyclingListComponent implements OnInit {
   public branchFilter = new FormControl('');
   public statusFilter = new FormControl('');
   public assetTypeFilter = new FormControl('');
+  public materialFilter = new FormControl<number | undefined>(undefined);
   public loading = this.recyclingService.loading;
   public weight!: number;
   public count!: number;
   public displayedColumns: Array<string> = [];
   public sortSort!: string;
   public sortOrder!: 'asc' | 'desc';
-  public choices$: Observable<{Status: choice, AssetType: choice, Branch: choice}> | undefined;
+  public choices$: Observable<{Status: choice, AssetType: choice, Branch: choice, Material: choice}> | undefined;
+  public materials = this.recyclingService.materials;
   public statusPicked!: boolean;
-  public placeholder = {AssetType: {choice: {choices: []}, name: ''}, Status: {choice: {choices: []}, name: ''}, Branch: {choice: {choices: []}, name: ''}}
+  public placeholder = {AssetType: {choice: {choices: []}, name: ''}, Status: {choice: {choices: []}, name: ''},Branch: {choice: {choices: []}, name: ''}};
   public selection = new SelectionModel<Cage>(true, []);
   public date = new Date();
 
@@ -129,6 +131,13 @@ export class RecyclingListComponent implements OnInit {
     } else {
       this.assetTypeFilter.patchValue('');
     }
+    if ('material' in params) {
+      const material = parseInt(params['material'])
+      this.materialFilter.patchValue(material);
+      filters['material'] = material;
+    } else {
+      this.materialFilter.patchValue(undefined);
+    }
     if ('sort' in params) {
       this.sortSort = params['sort'];
       this.sortOrder = params['order'];
@@ -153,6 +162,7 @@ export class RecyclingListComponent implements OnInit {
       prev['branch'] === curr['branch'],
       prev['bin'] === curr['bin'],
       prev['assetType'] === curr['assetType'],
+      prev['material'] === curr['material'],
       prev['status'] === curr['status'],
       prev['sort'] === curr['sort'],
       prev['order'] === curr['order']
@@ -171,6 +181,10 @@ export class RecyclingListComponent implements OnInit {
 
   setAssetType(assetType: MatSelectChange): void {
     this.router.navigate([], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  setMaterial(material: MatSelectChange): void {
+    this.router.navigate([], { queryParams: {material: material.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   clearBinFilter(): void {

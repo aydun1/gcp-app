@@ -23,6 +23,7 @@
     </div>
     <mat-card appearance="outlined">
       <mat-card-content>
+        <img class="material" [src]="'assets/' + recycleLogo">
         <mat-list>
           <div mat-subheader><span class="subheader">Details</span></div>
           <mat-list-item *ngIf="cage.fields.Status">
@@ -47,23 +48,7 @@
           </a>
         </mat-nav-list>
         <mat-list>
-          <form (ngSubmit)="setCageNotes(cage.id)">
-            <mat-list-item>
-              <mat-icon matListItemIcon>tag</mat-icon>
-              <span *ngIf="editCageNotes" matListItemTitle>
-                <input [(ngModel)]="currentCageNotes" [ngModelOptions]="{standalone: true}" type="text" placeholder="Reference number or cage notes">
-              </span>
-              <span *ngIf="!editCageNotes" matListItemTitle>{{ currentCageNotes }}</span>
-              <span>Reference</span>
-              <ng-container matListItemMeta *ngIf="!editCageNotes">
-                <button mat-icon-button type="button" (click)="editCageNotes = true"><mat-icon>edit</mat-icon></button>
-              </ng-container>
-              <ng-container matListItemMeta *ngIf="editCageNotes">
-                <button mat-icon-button type="button" (click)="cancelEditCageNotes(cage.fields.Notes)"><mat-icon>close</mat-icon></button>
-                <button mat-icon-button type="submit"><mat-icon>check</mat-icon></button>
-              </ng-container>
-            </mat-list-item>
-          </form>
+          <gcp-cage-notes [cage]="cage" (updated)="getCage()"></gcp-cage-notes>
           <div mat-subheader>Weights</div>
           <gcp-cage-weights [cage]="cage" (updated)="getCage()"></gcp-cage-weights>
         </mat-list>

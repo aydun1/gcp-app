@@ -23,11 +23,9 @@ export class RecyclingViewComponent implements OnDestroy, OnInit {
   public displayedColumns = ['updated', 'customer', 'status', 'weight', 'nav'];
   public totalWeight!: number;
   public isCage!: boolean;
-  public editCageNotes!: boolean;
-  public currentCageNotes!: string;
-  public newCageNotes!: string;
   public loading = new BehaviorSubject<boolean>(true);
   public loadingHistory = new BehaviorSubject<boolean>(true);
+  public recycleLogo: string | undefined;
 
   constructor(
     private route: ActivatedRoute,
@@ -43,10 +41,11 @@ export class RecyclingViewComponent implements OnDestroy, OnInit {
       tap(() => this.loading.next(true)),
       switchMap(_ => this.recyclingService.getCage(_)),
       tap(_ => {
+        this.recycleLogo = _.fields.Material ? this.recyclingService.materials.find(m => m['code'] === _.fields.Material)?.image : '';
+        console.log(this.recycleLogo)
         this.cageId = _.fields.id;
         this.cageNumber = _.fields.CageNumber;
         this.isCage = _.fields.AssetType.startsWith('Cage');
-        this.currentCageNotes = _.fields.Notes;
         this.getCageHistory(_.fields.CageNumber, _.fields.AssetType);
         this.loading.next(false);
       }),
@@ -81,20 +80,6 @@ export class RecyclingViewComponent implements OnDestroy, OnInit {
 
   getNext(): Observable<string> {
     return this.recyclingService.getNextCageId(this.cageId, false);
-  }
-
-  setCageNotes(id: string): void {
-    this.recyclingService.setNotes(id, this.currentCageNotes).pipe(
-      tap(() => {
-        this.cageSource$.next();
-        this.editCageNotes = false;
-      })
-    ).subscribe();
-  }
-
-  cancelEditCageNotes(notes: string): void {
-    this.currentCageNotes = notes;
-    this.editCageNotes = false;
   }
 
   goBack(): void {

@@ -58,3 +58,9 @@ input {
 .actions {
   margin-left: auto;
 }
+
+.material {
+  height: 60px;
+  position: absolute;
+  right: 16px;
+}

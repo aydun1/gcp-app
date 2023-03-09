@@ -34,12 +34,21 @@
       <mat-icon>location_city</mat-icon>
       <span>Change branch</span>
     </button>
+    <button type="button" mat-menu-item [matMenuTriggerFor]="materialsMenu">
+      <mat-icon>recycling</mat-icon>
+      <span>Pick material</span>
+    </button>
     <button type="button" mat-menu-item [matMenuTriggerFor]="depotMenu" [disabled]="statusId !== 0">
       <mat-icon>local_shipping</mat-icon>
       <span>Transfer to depot</span>
     </button>
   </ng-template>
 </mat-menu>
+
+<mat-menu #materialsMenu="matMenu">
+  <button type="button" *ngFor="let material of materials" mat-menu-item (click)="setMaterial(cages, material)" [disabled]="material['code'] === cageMaterial" [value]="material['code']">{{ material['name'] }}</button>
+</mat-menu>
+
 <mat-menu #branchesMenu="matMenu">
   <button type="button" *ngFor="let branch of branches" mat-menu-item (click)="setBranch(cages, branch)" [disabled]="branch === cageBranch">{{ branch }}</button>
 </mat-menu>

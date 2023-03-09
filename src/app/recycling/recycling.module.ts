@@ -13,6 +13,7 @@ import { RecyclingViewComponent } from './recycling-view/recycling-view.componen
 import { RecyclingNewComponent } from './recycling-new/recycling-new.component';
 import { ActionButtonComponent } from './shared/action-button/action-button.component';
 import { CageDetailsComponent } from './shared/cage-details/cage-details.component';
+import { CageNotesComponent } from './shared/cage-notes/cage-notes.component';
 import { CageWeightsComponent } from './shared/cage-weights/cage-weights.component';
 import { RecyclingCustomerListDialogComponent } from './shared/recycling-customer-list-dialog/recycling-customer-list-dialog.component';
 import { RecyclingReceiptListComponent } from './recycling-receipt-list/recycling-receipt-list.component';
@@ -29,6 +30,7 @@ import { SignaturePadModule } from '../shared/signature/signature-pad.module';
     RecyclingNewComponent,
     ActionButtonComponent,
     CageDetailsComponent,
+    CageNotesComponent,
     CageWeightsComponent,
     RecyclingCustomerListDialogComponent,
     RecyclingReceiptListComponent,

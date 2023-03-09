@@ -29,6 +29,10 @@ export class RecyclingService {
   };
 
   public loading = new BehaviorSubject<boolean>(false);
+  public materials = [
+    {code: 5, name: 'PP', image:'pp5.png'},
+    {code: 6, name: 'PS', image:'ps6.png'}
+  ];
 
   constructor(
     private http: HttpClient,
@@ -79,6 +83,9 @@ export class RecyclingService {
           return `fields/Status eq '${filters['status']}'`;
         case 'assetType':
           return `fields/AssetType eq '${filters['assetType']}'`;
+        case 'material':
+          return `fields/Material eq '${filters['material']}'`;
+  
         default:
           return '';
       }
@@ -210,7 +217,7 @@ export class RecyclingService {
   }
 
   getActiveCustomerCages(custnmbr: string, site = '', includeReturned: boolean): Observable<Cage[]> {
-    const fields = ['AssetType', 'CageNumber', 'CageWeight', 'Created', 'Branch', 'CustomerNumber', 'Date1', 'Date2', 'Date3', 'Date4', 'GrossWeight', 'Modified', 'NetWeight', 'Site', 'Status', 'ToLocalProcessing'];
+    const fields = ['AssetType', 'CageNumber', 'CageWeight', 'Created', 'Branch', 'CustomerNumber', 'Notes', 'Date1', 'Date2', 'Date3', 'Date4', 'GrossWeight', 'Modified', 'NetWeight', 'Site', 'Status', 'ToLocalProcessing'];
     let url = this._cageTrackerUrl + `/items?expand=fields(select=${fields.join(',')})&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
     if (!includeReturned) url += ` and fields/Date2 eq null`;
     url += ` and fields/Status ne 'Complete'`;
@@ -338,21 +345,28 @@ export class RecyclingService {
   setBranch(id: string, branch: string): Observable<Cage> {
     const payload = {fields: {Branch: branch}};
     return this.updateStatus(id, payload).pipe(
-      tap(() => this.snackBar.open("Branch updated", '', {duration: 3000})),
+      tap(() => this.snackBar.open('Branch updated', '', {duration: 3000})),
+    );
+  }
+
+  setMaterial(id: string, material: number): Observable<Cage> {
+    const payload = {fields: {Material: material}};
+    return this.updateStatus(id, payload).pipe(
+      tap(() => this.snackBar.open('Collection material updated', '', {duration: 3000})),
     );
   }
 
   setDepot(id: string, depot: string): Observable<Cage> {
     const payload = {fields: {Depot: depot, ToDepot: new Date()}};
     return this.updateStatus(id, payload).pipe(
-      tap(() => this.snackBar.open("Cage transferred to depot", '', {duration: 3000})),
+      tap(() => this.snackBar.open('Cage transferred to depot', '', {duration: 3000})),
     );
   }
 
   removeDepot(id: string): Observable<Cage> {
     const payload = {fields: {Depot: null, ToDepot: null}};
     return this.updateStatus(id, payload).pipe(
-      tap(() => this.snackBar.open("Cage removed from depot", '', {duration: 3000})),
+      tap(() => this.snackBar.open('Cage removed from depot', '', {duration: 3000})),
     );
   }
 
@@ -381,7 +395,7 @@ export class RecyclingService {
     const url = this._cageTrackerUrl + `/items('${id}')`;
     return this.http.delete<Cage>(url).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err)),
-      tap(() => this.snackBar.open("Cage successfully dehired", '', {duration: 3000})),
+      tap(() => this.snackBar.open('Cage successfully dehired', '', {duration: 3000})),
       switchMap(() => this.updateList({id} as Cage))
     );
   }
