@@ -23,7 +23,7 @@ export class SharedService {
     'NSW': ['NSW'],
     'QLD': ['QLD'],
     'SA': ['SA'],
-    'VIC': ['ACT', 'MISC', 'NT', 'OTHER', 'TAS', 'VIC'],
+    'VIC': ['ACT', 'MISC', 'NT', 'OTHER', 'TAS', 'VIC', 'CUSTOM'],
     'WA': ['WA']
   };
   private _pallets = [
