@@ -170,7 +170,7 @@ export class RecyclingService {
           if (newCage['fields']) cages[i] = newCage
           else cages.splice(i, 1);
         } else {
-          cages.unshift(newCage);
+          if (newCage['fields']) cages.unshift(newCage);
         }
         this._cagesSubject$.next(cages);
         return newCage;
@@ -389,7 +389,9 @@ export class RecyclingService {
   }
 
   resetCage(id: string): Observable<Cage> {
-    const payload = {fields: {Status: 'Available', CustomerNumber: null, Customer: null, Date1: null, Date2: null, Date3: null, Date4: null, GrossWeight: null}};
+    const payload = {fields:
+      {Status: 'Available', CustomerNumber: null, Customer: null, Date1: null, Date2: null, Date3: null, Date4: null, GrossWeight: null, Material: null, Notes: null}
+    };
     return this.updateStatus(id, payload);
   }
 
