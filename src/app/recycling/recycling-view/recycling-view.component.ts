@@ -25,7 +25,6 @@ export class RecyclingViewComponent implements OnDestroy, OnInit {
   public isCage!: boolean;
   public loading = new BehaviorSubject<boolean>(true);
   public loadingHistory = new BehaviorSubject<boolean>(true);
-  public recycleLogo: string | undefined;
 
   constructor(
     private route: ActivatedRoute,
@@ -41,8 +40,6 @@ export class RecyclingViewComponent implements OnDestroy, OnInit {
       tap(() => this.loading.next(true)),
       switchMap(_ => this.recyclingService.getCage(_)),
       tap(_ => {
-        this.recycleLogo = _.fields.Material ? this.recyclingService.materials.find(m => m['code'] === _.fields.Material)?.image : '';
-        console.log(this.recycleLogo)
         this.cageId = _.fields.id;
         this.cageNumber = _.fields.CageNumber;
         this.isCage = _.fields.AssetType.startsWith('Cage');
