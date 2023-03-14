@@ -36,7 +36,7 @@ export class LoadingScheduleService {
 
   private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
-    const params = '?expand=fields(select=TransportCompany,Driver,Spaces,ArrivalDate,LoadingDate,From,To,Status,PanLists,Notes)&orderby=fields/ArrivalDate asc';
+    const params = '?expand=fields(select=TransportCompany,Driver,Spaces,ArrivalDate,LoadingDate,From,To,Status,PanLists,Notes)';
     let url = `${this._loadingScheduleUrl}/items${params}`;
     const parsed = filterKeys.map(key => {
       switch (key) {
@@ -50,6 +50,7 @@ export class LoadingScheduleService {
     }).filter(_ => _);
     if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Delivered'`);
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
+    url += `&orderby=fields/ArrivalDate ${filters['status'] === 'delivered' ? 'desc' : 'asc'}`;
     url += `&top=25`;
     return url;
   }

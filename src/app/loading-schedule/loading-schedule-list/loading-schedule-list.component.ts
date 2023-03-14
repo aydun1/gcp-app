@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
@@ -32,11 +32,18 @@ export class LoadingScheduleListComponent implements OnInit {
   public state = '';
 
   constructor(
+    private el: ElementRef,
     private route: ActivatedRoute,
     private router: Router,
     private shared: SharedService,
     private loadingScheduleService: LoadingScheduleService
   ) { }
+
+  @HostListener('scroll', ['$event'])
+  onScroll(e: Event): void {
+    const bottomPosition = this.el.nativeElement.offsetHeight + this.el.nativeElement.scrollTop - this.el.nativeElement.scrollHeight;
+    if (bottomPosition >= -250) this.loadingScheduleService.getNextPage();
+  }
 
   ngOnInit(): void {
     const state$ = this.shared.getBranch();
