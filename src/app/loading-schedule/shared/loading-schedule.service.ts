@@ -55,12 +55,12 @@ export class LoadingScheduleService {
     return url;
   }
 
-  private getLoadingSchedules(url: string, paginate = false): Observable<LoadingSchedule[]> {
+  private getLoadingSchedules(url: string): Observable<LoadingSchedule[]> {
     this._loadingLoadingSchedule = true;
     this.loading.next(true);
     return this.http.get<{value: LoadingSchedule[]}>(url).pipe(
       tap(_ => {
-        if (paginate) this._nextPage = _['@odata.nextLink'];
+        this._nextPage = _['@odata.nextLink'];
         this._loadingLoadingSchedule = false;
         this.loading.next(false);
       }),
@@ -83,7 +83,7 @@ export class LoadingScheduleService {
     );
   }
 
-  private parseMultiLine(key: string, arrayKey: string, data: any) {
+  private parseMultiLine(key: string, arrayKey: string, data: any): void {
     const arrayData = data['fields'][key]?.split(/[\r\n]+/);
     data['fields'][arrayKey] = arrayData?.map((line: string) => {
       const data = line?.split(',').map(_ => _.replace(/&#44;/g, ','));
@@ -95,11 +95,12 @@ export class LoadingScheduleService {
     this._nextPage = '';
     this._loadingLoadingSchedule = false;
     const url = this.createUrl(filters);
-    this.getLoadingSchedules(url, true).subscribe(_ => this._loadingScheduleListSubject$.next(_));
+    this.getLoadingSchedules(url).subscribe(_ => this._loadingScheduleListSubject$.next(_));
     return this._loadingScheduleListSubject$;
   }
 
   getNextPage(): void {
+    console.log(this._nextPage);
     if (!this._nextPage || this._loadingLoadingSchedule) return;
     this._loadingScheduleListSubject$.pipe(
       take(1),
