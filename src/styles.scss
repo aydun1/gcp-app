@@ -108,6 +108,10 @@ input {
   color: mat.get-color-from-palette($dark-accent);
 }
 
+.dark-theme .invert {
+  filter: invert(1);
+}
+
 .mat-mdc-cell:hover a {
   text-decoration: underline;
 }

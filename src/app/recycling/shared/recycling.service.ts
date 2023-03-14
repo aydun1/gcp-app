@@ -30,8 +30,9 @@ export class RecyclingService {
 
   public loading = new BehaviorSubject<boolean>(false);
   public materials = [
-    {code: 5, name: 'PP', image:'pp5.png'},
-    {code: 6, name: 'PS', image:'ps6.png'}
+    {code: 2, name: 'HDPE', image:'hdpe2-logo.png'},
+    {code: 5, name: 'PP', image:'pp5-logo.png'},
+    {code: 6, name: 'PS', image:'ps6-logo.png'}
   ];
 
   constructor(
@@ -103,6 +104,7 @@ export class RecyclingService {
 
   private assignStatus(cage: Cage): Cage {
     if (!cage.fields) return cage;
+    cage['material'] = this.materials.find(_ => _.code === cage.fields.Material) || {};
     cage['Date'] = cage.fields.Date4 || cage.fields.Date3 || cage.fields.ToLocalProcessing || cage.fields.Date2 || cage.fields.Date1 || cage.fields.Created;
     cage['Cage'] = cage.fields.AssetType?.startsWith('Cage');
     cage['Type'] = cage['Cage'] ? cage.fields.AssetType.split('-', 2)[1].split(' ', 2)[1][0].toLowerCase() : null;

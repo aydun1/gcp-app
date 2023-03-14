@@ -219,7 +219,7 @@ export class RecyclingListComponent implements OnInit {
   }
 
   hideStatus(hide: boolean): void {
-    const displayedColumns = ['checked', 'fields/CageNumber', 'assetType', 'status', 'location', 'fields/Modified', 'weight'];
+    const displayedColumns = ['checked', 'fields/CageNumber', 'assetType', 'status', 'location', 'material', 'fields/Modified', 'weight'];
     this.displayedColumns = hide ? displayedColumns.filter(_ => _ !== 'status') : displayedColumns;
   }
 

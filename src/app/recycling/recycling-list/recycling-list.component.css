@@ -88,6 +88,10 @@
 }
 
 .mat-column-location {
+  flex: 1 1 100px;
+}
+
+.mat-column-location {
   flex: 1 1 200px;
 }
 
