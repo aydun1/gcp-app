@@ -24,6 +24,9 @@
       <button mat-stroked-button type="button" (click)="exportChemicals()">
         <mat-icon>download_file</mat-icon>Export
       </button>
+      <button mat-icon-button type="button" [matMenuTriggerFor]="actionsMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
     </div>
     <div class="options inner">
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch-filter">
@@ -227,8 +230,8 @@
 
 <mat-menu #actionsMenu="matMenu">
   <ng-template matMenuContent>
-    <button type="button" mat-menu-item (click)="exportChemicals()">
-      <mat-icon>download_file</mat-icon>Download chemical list
+    <button type="button" mat-menu-item (click)="openOtherChemicals()">
+      <mat-icon>download_file</mat-icon>Manage non-inventory items
     </button>
   </ng-template>
 </mat-menu>

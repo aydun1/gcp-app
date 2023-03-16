@@ -12,12 +12,12 @@ import { ChemicalService } from '../chemical.service';
   styleUrls: ['./chemical-backpack-dialog.component.css']
 })
 export class ChemicalBackpackDialogComponent implements OnInit {
+  private _subject = new Subject<boolean>();
   public chemicals$!: Observable<Chemical[]>;
   public chemicalCount!: number;
   public saving = false;
   public selected: Chemical | undefined;
   public loading = true;
-  public subject = new Subject<boolean>();
   public searchControl = new FormControl('');
 
   constructor (
@@ -53,7 +53,7 @@ export class ChemicalBackpackDialogComponent implements OnInit {
       () => {
         this.searchControl.enable();
         this.loading = false;
-        this.subject.next(true);
+        this._subject.next(true);
       }
     ).catch(e => {
       console.log(e);
@@ -72,5 +72,9 @@ export class ChemicalBackpackDialogComponent implements OnInit {
 
   clearSearch(): void {
     this.searchControl.reset();
+  }
+
+  trackByFn(index: number, item: Chemical): string {
+    return item.CwNo;
   }
 }

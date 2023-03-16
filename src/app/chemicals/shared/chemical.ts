@@ -5,6 +5,7 @@ export interface Chemical {
   CwNo: string;
   Name: string;
   sdsExists: number;
-  docNo: string;
+  DocNo: string;
   hCodes: Array<string>;
+  Quantity: number;
 }

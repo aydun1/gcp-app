@@ -189,6 +189,34 @@ export class ChemicalService {
     );
   }
 
+  getNonInventoryChemicals(branch: string): Observable<Chemical[]> {
+    return this.http.get<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/non-inventory-chemicals?branch=${branch}`).pipe(
+      map(res => res.chemicals.map(
+        c => {
+          return {...c, key: c.Name?.toLocaleLowerCase()};
+        }
+      ))
+    );
+  }
+
+  addNonInventoryChemicals(itemNmbr: string, itemDesc: string, size: number, units: string): Promise<Chemical[]> {
+    const payload = {itemNmbr, itemDesc, size, units};
+    const res = this.http.post<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/non-inventory-chemicals`, payload).pipe(
+      map(res => res.chemicals.map(
+        c => {
+          return {...c, key: c.Name?.toLocaleLowerCase()};
+        }
+      ))
+    );
+    return lastValueFrom(res);
+  }
+
+  updateNonInventoryChemicalQuantity(itemNmbr: string, quantity: number, branch: string): Promise<boolean> {
+    const payload = {itemNmbr, quantity, branch};
+    const res = this.http.post<{chemicals: Chemical[]}>(`${environment.gpEndpoint}/non-inventory-chemical-qty`, payload).pipe(map(() => true))
+    return lastValueFrom(res);
+  }
+
   getChemicalManifest(): Observable<{[key: string]: {L: number, kg: number}}> {
     return this._chemicalListSubject$.pipe(
       map(chemicals => {

@@ -1,0 +1,76 @@
+<div class="header">
+  <h2 mat-dialog-title>Non-inventory chemicals</h2>
+</div>
+
+  <mat-tab-group #tabs animationDuration="0">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        All non-inventory chemicals
+      </ng-template>
+      <ng-template matTabContent>
+        <mat-dialog-content>
+          <mat-list *ngIf="chemicals$ | async as chemicals">
+            <mat-list-item *ngFor="let c of chemicals;trackBy: trackByFn">
+              <span>{{ c.ItemDesc }}</span> x
+              <span *ngIf="editQuantity === c.ItemNmbr"><input [(ngModel)]="quantity" [ngModelOptions]="{standalone: true}" type="number" placeholder="Quantity"></span>
+              <span *ngIf="editQuantity !== c.ItemNmbr">{{ c.Quantity || 0 | number }}</span>
+
+              <ng-container *ngIf="editQuantity !== c.ItemNmbr" matListItemMeta>
+                <button mat-icon-button type="button" (click)="quantity = c.Quantity; editQuantity = c.ItemNmbr"><mat-icon class="last-icon">edit</mat-icon></button>
+              </ng-container>
+
+              <ng-container *ngIf="editQuantity === c.ItemNmbr" matListItemMeta>
+                <button mat-icon-button type="button" (click)="cancelEditQuantity(c.Quantity)"><mat-icon class="last-icon">close</mat-icon></button>
+                <button mat-icon-button type="submit" (click)="saveQuantity(c.ItemNmbr, quantity)"><mat-icon class="last-icon">check</mat-icon></button>
+              </ng-container>
+            </mat-list-item>
+
+            <mat-list-item *ngIf="chemicals.length === 0">
+              No safety data sheets to show...
+            </mat-list-item>
+          </mat-list>
+          <mat-spinner *ngIf="loading" class="list-loader" diameter="24"></mat-spinner>
+        </mat-dialog-content>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon>add</mat-icon>
+      </ng-template>
+      <ng-template matTabContent>
+        <form [formGroup]="newChemicalForm" (ngSubmit)="addChemical()">
+          <mat-dialog-content>
+            <mat-form-field appearance="fill">
+              <mat-label>Product name</mat-label>
+              <input matInput type="text" autocomplete="off" formControlName="itemNmbr">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Product description</mat-label>
+              <input matInput type="text" autocomplete="off" formControlName="itemDesc">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Container size</mat-label>
+              <input matInput type="number" autocomplete="off" formControlName="containerSize">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Units</mat-label>
+              <mat-select formControlName="units">
+                <mat-option value="g">g</mat-option>
+                <mat-option value="kg">kg</mat-option>
+                <mat-option value="ml">ml</mat-option>
+                <mat-option value="L">L</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </mat-dialog-content>
+          <mat-dialog-actions>
+            <div class="buttons">
+              <button type="button" mat-button mat-dialog-close tabindex=-1>Cancel</button>
+              <button type="submit" mat-raised-button color="primary" [disabled]="!newChemicalForm.valid || saving || loading">Save</button>  
+            </div>
+          </mat-dialog-actions>
+        </form>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+

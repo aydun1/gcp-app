@@ -10,6 +10,7 @@ import { distinctUntilChanged, filter, map, Observable, startWith, switchMap, ta
 import { SharedService } from '../../shared.service';
 import { Chemical } from '../shared/chemical';
 import { ChemicalManifestDialogComponent } from '../shared/chemical-manifest-dialog/chemical-manifest-dialog.component';
+import { ChemicalOthersDialogComponent } from '../shared/chemical-others-dialog/chemical-others-dialog.component';
 import { ChemicalService } from '../shared/chemical.service';
 
 @Component({
@@ -174,6 +175,11 @@ export class ChemicalListComponent implements OnInit {
   openChemicalManifest(): void {
     const data = {branch: this.branchFilter.value};
     this.dialog.open(ChemicalManifestDialogComponent, {panelClass: 'printable', width: '600px', autoFocus: false, data});
+  }
+
+  openOtherChemicals(): void {
+    const data = {branch: this.branchFilter.value};
+    this.dialog.open(ChemicalOthersDialogComponent, {width: '600px', autoFocus: false, data});
   }
 
   trackByGroupsFn(index: number, item: any): string {

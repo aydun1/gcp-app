@@ -1,0 +1,22 @@
+input {
+  font-size: 16px;
+}
+
+.header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.list-loader {
+  margin: 0 auto;
+}
+
+.mat-mdc-form-field {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.buttons {
+  margin-left: auto;
+}

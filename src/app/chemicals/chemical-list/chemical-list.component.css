@@ -18,10 +18,12 @@
 .doc-header > .buttons {
   position: absolute;
   right: 10px;
-  top: 0px;
+  top: -8px;
+  display: flex;
+  align-items: center;
 }
 
-.doc-header > .buttons > .mdc-button {
+.doc-header > .buttons > button {
   margin-left: 10px;
 }
 

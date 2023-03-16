@@ -8,6 +8,7 @@ import { ChemicalListComponent } from './chemical-list/chemical-list.component';
 import { ChemicalsRoutingModule } from './chemicals-routing.module';
 import { ChemicalViewComponent } from './chemical-view/chemical-view.component';
 import { ChemicalBackpackDialogComponent } from './shared/chemical-backpack-dialog/chemical-backpack-dialog.component';
+import { ChemicalOthersDialogComponent } from './shared/chemical-others-dialog/chemical-others-dialog.component';
 import { ChemicalManifestDialogComponent } from './shared/chemical-manifest-dialog/chemical-manifest-dialog.component';
 
 @NgModule({
@@ -16,6 +17,7 @@ import { ChemicalManifestDialogComponent } from './shared/chemical-manifest-dial
     ChemicalListComponent,
     ChemicalViewComponent,
     ChemicalBackpackDialogComponent,
+    ChemicalOthersDialogComponent,
     ChemicalManifestDialogComponent
   ],
   imports: [
