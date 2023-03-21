@@ -29,14 +29,14 @@ export class ChemicalOthersDialogComponent implements OnInit {
 
   constructor (
     private fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: {branch: string},
+    @Inject(MAT_DIALOG_DATA) public data: {ownBranch: string},
     private chemicalService: ChemicalService
   ) { }
 
   ngOnInit(): void {
     this.chemicals$ = this.updater.pipe(
       startWith(true),
-      switchMap(_ => this.chemicalService.getNonInventoryChemicals(this.data.branch)),
+      switchMap(_ => this.chemicalService.getNonInventoryChemicals(this.data.ownBranch)),
       tap(_ => {
         this.chemicalCount = _.length;
         this.loading = false;
@@ -75,7 +75,7 @@ export class ChemicalOthersDialogComponent implements OnInit {
   }
 
   saveQuantity(itemNmbr: string, quantity: number) {
-    this.chemicalService.updateNonInventoryChemicalQuantity(itemNmbr, quantity, this.data.branch).then(_ => {
+    this.chemicalService.updateNonInventoryChemicalQuantity(itemNmbr, quantity, this.data.ownBranch).then(_ => {
       this.editQuantity = '';
       this.updater.next(true)
     });

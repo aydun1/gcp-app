@@ -30,6 +30,7 @@ export class ChemicalListComponent implements OnInit {
   public displayedColumns = [...this.defaultColumns];
   public chemicals$!: Observable<Chemical[]>;
   public branchFilter = new FormControl({value: '', disabled: false});
+  public ownState!: string;
   public states = this.shared.branches;
   public address$ = this.shared.getOwnAddress();
   public date = new Date();
@@ -68,7 +69,10 @@ export class ChemicalListComponent implements OnInit {
         map(() => _)
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
-      switchMap(_ => branch$.pipe(map(branch => _['branch'] === undefined ? {..._, branch} : _))),
+      switchMap(_ => branch$.pipe(
+        tap(branch => this.ownState = branch),
+        map(branch => _['branch'] === undefined ? {..._, branch} : _)
+      )),
       tap(_ => this.parseParams(_)),
       switchMap(_ => this.loadList ? this.getChemicals(_['search'], _['branch'], _['sort'], _['order']) : []),
       tap(_ => this.chemicals = _)
@@ -178,7 +182,7 @@ export class ChemicalListComponent implements OnInit {
   }
 
   openOtherChemicals(): void {
-    const data = {branch: this.branchFilter.value};
+    const data = {ownBranch: this.ownState};
     this.dialog.open(ChemicalOthersDialogComponent, {width: '600px', autoFocus: false, data});
   }
 
