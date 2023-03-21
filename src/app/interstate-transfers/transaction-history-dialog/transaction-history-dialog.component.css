@@ -51,6 +51,6 @@
   display: flex;
 }
 
-.limit {
-  margin-right: 60px;
+.limit:first-child {
+  margin-right: 120px;
 }

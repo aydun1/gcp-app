@@ -33,12 +33,12 @@
   <h3> {{data.branch}} limits</h3>
   <div class="limits">
     <div class="limit">
-      <div>Minimum: {{ data.item.minOrderQty }}</div>
-      <div>Maximum: {{ data.item.maxOrderQty }}</div>
+      <div>Minimum: {{ data.item.minOrderQty | number }}</div>
+      <div>Maximum: {{ data.item.maxOrderQty | number }}</div>
     </div>
     <div class="limit">
-      <div>Order point qty: {{ data.item.orderPointQty }}</div>
-      <div>Order up to lvl: {{ data.item.orderUpToLvl }}</div>
+      <div>Order point qty: {{ data.item.orderPointQty | number }}</div>
+      <div>Order up to lvl: {{ data.item.orderUpToLvl | number }}</div>
     </div>
   </div>
 
