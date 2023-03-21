@@ -8,9 +8,10 @@ export interface SuggestedItem {
   ItemNmbr: string;
   Location: string;
   Vendor: number;
-  Max: number;
-  Min: number;
+  MaxOrderQty: number;
+  MinOrderQty: number;
   OrderPointQty: number;
+  OrderUpToLvl: number;
   PackSize: number;
   PalletQty: number;
   PalletHeight: number;

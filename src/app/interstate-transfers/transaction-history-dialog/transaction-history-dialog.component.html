@@ -5,32 +5,44 @@
   <div>
     {{ data.item.itemDesc}}
   </div>
-  
-<h3>National availability</h3>
-<div class="availability-grid">
-  <div></div>
-  <div class="grid-heading">MAIN</div>
-  <div class="grid-heading">NSW</div>
-  <div class="grid-heading">QLD</div>
-  <div class="grid-heading">SA</div>
-  <div class="grid-heading">WA</div>
-  <div class="grid-heading">HEA</div>
-  <div class="grid-heading">On hand</div>
-  <div>{{ data.item.vicOnHand || 0 | number }}</div>
-  <div>{{ data.item.nswOnHand || 0 | number}}</div>
-  <div>{{ data.item.qldOnHand || 0 | number }}</div>
-  <div>{{ data.item.saOnHand || 0 | number }}</div>
-  <div>{{ data.item.waOnHand || 0 | number }}</div>
-  <div>{{ data.item.heaOnHand || 0 | number}}</div>
-  <div class="grid-heading">Allocated</div>
-  <div>{{ data.item.vicAlloc || 0 | number }}</div>
-  <div>{{ data.item.nswAlloc || 0 | number}}</div>
-  <div>{{ data.item.qldAlloc || 0 | number }}</div>
-  <div>{{ data.item.saAlloc || 0 | number }}</div>
-  <div>{{ data.item.waAlloc || 0 | number }}</div>
-  <div>{{ data.item.heaAlloc || 0 | number}}</div>
-</div>
-<h3>{{data.branch}} allocations</h3>
+  <h3>National availability</h3>
+  <div class="availability-grid">
+    <div></div>
+    <div class="grid-heading">MAIN</div>
+    <div class="grid-heading">NSW</div>
+    <div class="grid-heading">QLD</div>
+    <div class="grid-heading">SA</div>
+    <div class="grid-heading">WA</div>
+    <div class="grid-heading">HEA</div>
+    <div class="grid-heading">On hand</div>
+    <div>{{ data.item.vicOnHand || 0 | number }}</div>
+    <div>{{ data.item.nswOnHand || 0 | number}}</div>
+    <div>{{ data.item.qldOnHand || 0 | number }}</div>
+    <div>{{ data.item.saOnHand || 0 | number }}</div>
+    <div>{{ data.item.waOnHand || 0 | number }}</div>
+    <div>{{ data.item.heaOnHand || 0 | number}}</div>
+    <div class="grid-heading">Allocated</div>
+    <div>{{ data.item.vicAlloc || 0 | number }}</div>
+    <div>{{ data.item.nswAlloc || 0 | number}}</div>
+    <div>{{ data.item.qldAlloc || 0 | number }}</div>
+    <div>{{ data.item.saAlloc || 0 | number }}</div>
+    <div>{{ data.item.waAlloc || 0 | number }}</div>
+    <div>{{ data.item.heaAlloc || 0 | number}}</div>
+  </div>
+
+  <h3> {{data.branch}} limits</h3>
+  <div class="limits">
+    <div class="limit">
+      <div>Minimum: {{ data.item.minOrderQty }}</div>
+      <div>Maximum: {{ data.item.maxOrderQty }}</div>
+    </div>
+    <div class="limit">
+      <div>Order point qty: {{ data.item.orderPointQty }}</div>
+      <div>Order up to lvl: {{ data.item.orderUpToLvl }}</div>
+    </div>
+  </div>
+
+  <h3>{{data.branch}} allocations</h3>
   <div class="header row">
     <div class="date">Date</div>
     <div class="invoice-number">Doc number</div>
@@ -54,5 +66,4 @@
       No allocations
     </div>
   </div>
-
 </mat-dialog-content>

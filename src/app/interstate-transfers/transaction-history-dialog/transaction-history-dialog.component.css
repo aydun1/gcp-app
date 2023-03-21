@@ -46,3 +46,11 @@
 .note {
   text-align: center;
 }
+
+.limits {
+  display: flex;
+}
+
+.limit {
+  margin-right: 60px;
+}
