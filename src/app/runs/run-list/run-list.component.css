@@ -120,6 +120,13 @@ h2 {
   position: absolute;
 }
 
+.mat-mdc-list-item-icon {
+  cursor: move;
+  margin-left: 6px;
+  margin-right: 22px;
+  padding: 10px;
+}
+
 @media (max-width: 1024px) {
   .mat-column-actions {
     flex: 0 0 110px;

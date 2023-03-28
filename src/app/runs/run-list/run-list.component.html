@@ -44,9 +44,9 @@
 
         <ng-container matColumnDef="sequence">
           <mat-header-cell *matHeaderCellDef> # </mat-header-cell>
-          <mat-cell (touchstart)="dragDisabled = false" (mousedown)="dragDisabled = false" *matCellDef="let delivery">
+          <mat-cell (touchstart)="dragDisabled = false" (mousedown)="dragDisabled = false" *matCellDef="let delivery; let index = index">
             <mat-icon class="drag">drag_indicator</mat-icon>
-            {{ delivery.fields.Sequence }}
+            {{ index + 1 }}
           </mat-cell>
           <mat-footer-cell *matFooterCellDef></mat-footer-cell>
         </ng-container>

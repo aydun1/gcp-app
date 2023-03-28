@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
-import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, lastValueFrom, map, Observable, of, startWith, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, startWith, switchMap, take, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
@@ -23,7 +23,6 @@ export class DeliveryService {
   private _dropsUrl = 'lists/b8088299-ac55-4e30-9977-4b0b20947b84';
   private _runsListUrl = `${environment.endpoint}/${environment.siteUrl}/${this._runsUrl}`;
   private _deliveryListUrl = `${environment.endpoint}/${environment.siteUrl}/${this._dropsUrl}`;
-  private _loadingDeliveries!: boolean;
   private _nextPage!: string;
   private _deliveriesSubject$ = new BehaviorSubject<Delivery[]>([]);
   private _runsSubject$ = new BehaviorSubject<Delivery[]>([]);
@@ -48,12 +47,6 @@ export class DeliveryService {
           return '';
       }
     }).filter(_ => _);
-    if (filterKeys.includes('run')) {
-      const cleanName = this.shared.sanitiseName(filters['run']);
-      parsed.push(`fields/Title eq '${cleanName}'`);
-    } else {
-      parsed.push(`fields/Title eq null`);
-    }
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
     url += `&orderby=fields/Sequence asc&top=25`;
     return url;
@@ -61,18 +54,15 @@ export class DeliveryService {
 
   private getDeliveries(url: string, paginate = false): Observable<Delivery[]> {
     this.loading.next(true);
-    this._loadingDeliveries = true;
     return this.http.get(url).pipe(
       tap(_ => {
         this._nextPage = paginate ? _['@odata.nextLink'] : this._nextPage;
         this.loading.next(false);
-        this._loadingDeliveries = false;
       }),
       map((res: any) => res.value),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         this.loading.next(false);
-        this._loadingDeliveries = false;
         return of([]);
       })
     );
@@ -83,20 +73,6 @@ export class DeliveryService {
       take(1),
       map(_ => _.map(obj => res.find(o => o.id === obj.id) || obj).sort((a, b) => (a.fields.Sequence > b.fields.Sequence) ? 1 : -1)),
       tap(_ => this._deliveriesSubject$.next(_))
-    );
-  }
-
-  private updateList(res: Delivery): Observable<Delivery> {
-    return this._deliveriesSubject$.pipe(
-      take(1),
-      map(_ => {
-        const deliveries = _.map(delivery => delivery);
-        const i = deliveries.findIndex(delivery => delivery.id === res.id);
-        if (i > -1) deliveries[i] = res;
-        else deliveries.push(res);
-        this._deliveriesSubject$.next(deliveries);
-        return res;
-      })
     );
   }
 
@@ -228,32 +204,22 @@ export class DeliveryService {
 
   getFirstPage(filters: Params): BehaviorSubject<Delivery[]> {
     this._nextPage = '';
-    this._loadingDeliveries = false;
     const url = this.createUrl(filters);
     this.getDeliveries(url, true).subscribe(_ => this._deliveriesSubject$.next(_));
     return this._deliveriesSubject$;
   }
 
-  getNextPage(): void {
-    if (!this._nextPage || this._loadingDeliveries) return;
-    this._deliveriesSubject$.pipe(
-      take(1),
-      switchMap(acc => this.getDeliveries(this._nextPage, true).pipe(
-        map(curr => [...acc, ...curr])
-      ))
-    ).subscribe(_ => this._deliveriesSubject$.next(_));
-  }
-
   createDelivery(title: string, customer: Customer, site: Site | null, address: string, orderNo: string, notes: string, sequence: number): Observable<Delivery[]> {
-    const fields = {Title: title, Customer: customer.name, CustomerNumber: customer.custNmbr, Sequence: sequence, OrderNumber: orderNo};
+    const fields = {Title: title || undefined, Customer: customer.name, CustomerNumber: customer.custNmbr, Sequence: sequence, OrderNumber: orderNo};
     if (notes) fields['Notes'] = notes;
     if (site) fields['Site'] = site.fields.Title;
     fields['Address'] = address ? address : site && site.fields.Address ? site.fields.Address : customer.address1_composite;
-
-     return this._deliveriesSubject$.pipe(
+    return this._deliveriesSubject$.pipe(
       take(1),
       tap(deliveries => {
-        deliveries.splice(sequence - 1, 0, {fields: {OrderNumber: orderNo}} as Delivery);
+        const runItems = deliveries.filter(_ => title ? _.fields.Title === title : !_.fields.Title);
+        const targetIndex = runItems[sequence - 1]?.fields?.Sequence || runItems[runItems.length - 1]?.fields?.Sequence + 1 || deliveries.length + 1;
+        deliveries.splice(targetIndex - 1, 0, {fields: fields} as Delivery);
         this._deliveriesSubject$.next(deliveries);
       }),
       switchMap(() => this.shared.getBranch()),
@@ -262,7 +228,9 @@ export class DeliveryService {
         return this._deliveriesSubject$.pipe(
           take(1),
           tap(deliveries => {
-            deliveries.splice(sequence - 1, 1, d);
+            const runItems = deliveries.filter(_ => title ? _.fields.Title === title : !_.fields.Title);
+            const targetIndex = runItems[sequence]?.fields?.Sequence || runItems[runItems.length - 2]?.fields?.Sequence + 1 || deliveries.length;
+            deliveries.splice(targetIndex - 1, 1, d);
             this._deliveriesSubject$.next(deliveries);
           })
         );
@@ -276,11 +244,16 @@ export class DeliveryService {
     );
   }
 
-  moveItem(previousIndex: number, currentIndex: number): Observable<Delivery[]> {
+  moveItem(previousIndex: number, currentIndex: number, run: string): Observable<Delivery[]> {
     return this._deliveriesSubject$.pipe(
       take(1),
-      tap(_ => moveItemInArray(_, previousIndex, currentIndex)),
-      tap(_ => this._deliveriesSubject$.next(_)),
+      tap(deliveries => {
+        const runItems = deliveries.filter(_ => run ? _.fields.Title === run : !_.fields.Title);
+        const id = runItems[previousIndex].id;
+        const index = deliveries.findIndex(_ => _.id === id);
+        moveItemInArray(deliveries, index, index + (currentIndex - previousIndex));
+        this._deliveriesSubject$.next(deliveries)
+      }),
       switchMap(_ => {
         const changedFrom = Math.min(previousIndex, currentIndex);
         const changedItems = _.map((object, i) => {return {id: object.id, index: i + 1}}).slice(changedFrom);

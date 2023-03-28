@@ -74,7 +74,10 @@ export class RunListComponent implements OnInit {
   }
 
   getFirstPage(params: Params): Observable<Delivery[]> {
-    return this.deliveryService.getFirstPage(params);
+    console.log(params['run'])
+    return this.deliveryService.getFirstPage(params).pipe(
+      map(_ => _.filter(d => d.fields.Title === params['run']))
+    )
   }
 
   parseParams(params: Params): void {
@@ -119,15 +122,15 @@ export class RunListComponent implements OnInit {
   }
 
   moveItem(event: CdkDragDrop<Delivery[]>): void {
+    const run = this.runFilter.value || '';
     if ((event.previousContainer === event.container)) {
-      this.deliveryService.moveItem(event.previousIndex, event.currentIndex).pipe(
+      this.deliveryService.moveItem(event.previousIndex, event.currentIndex, run).pipe(
         tap(a => this.listSize = a.length)
       ).subscribe();
     } else {
-      const run = this.runFilter.value || '';
       const data = event.item.data as Order;
-      const customer = {name: data.custName, custNmbr: data.custNmbr} as Customer;
-      this.deliveryService.createDelivery(run, customer, null, 'Stapylton', data.sopNumber, 'Notes', event.currentIndex + 1).subscribe()
+      const customer = {name: data.custName, custNmbr: data.custNumber} as Customer;
+      this.deliveryService.createDelivery(run, customer, null, '', data.sopNumber, '', event.currentIndex + 1).subscribe();
     }
     this.dragDisabled = true;
   }
