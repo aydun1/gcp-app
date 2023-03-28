@@ -15,6 +15,7 @@ import { SharedService } from '../../shared.service';
 import { Delivery } from '../shared/delivery';
 import { DeliveryEditorDialogComponent } from '../shared/delivery-editor-dialog/delivery-editor-dialog.component';
 import { DeliveryService } from '../shared/delivery.service';
+import { Order } from '../shared/order';
 import { Run } from '../shared/run';
 import { RunManagerDialogComponent } from '../shared/run-manager-dialog/run-manager-dialog.component';
 
@@ -29,6 +30,7 @@ export class RunListComponent implements OnInit {
 
   public listSize!: number;
   public runFilter = new FormControl('');
+  public orders$!: Observable<Order[]>;
   public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
   public runs: Array<Run> = [{fields: {Title: 'Default'}} as Run];
@@ -48,7 +50,7 @@ export class RunListComponent implements OnInit {
 
   ngOnInit(): void {
     const state$ = this.sharedService.getBranch();
-
+    this.orders$ = this.deliveryService.syncOrders('QLD');
     this.deliveries$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
@@ -116,16 +118,23 @@ export class RunListComponent implements OnInit {
     ).subscribe()
   }
 
-  moveItem(event: CdkDragDrop<Delivery[]>) {
+  moveItem(event: CdkDragDrop<Delivery[]>): void {
+    if ((event.previousContainer === event.container)) {
+      this.deliveryService.moveItem(event.previousIndex, event.currentIndex).pipe(
+        tap(a => this.listSize = a.length)
+      ).subscribe();
+    } else {
+      const run = this.runFilter.value || '';
+      const data = event.item.data as Order;
+      const customer = {name: data.custName, custNmbr: data.custNmbr} as Customer;
+      this.deliveryService.createDelivery(run, customer, null, 'Stapylton', data.sopNumber, 'Notes', event.currentIndex + 1).subscribe()
+    }
     this.dragDisabled = true;
-    return this.deliveryService.moveItem(event.previousIndex, event.currentIndex).pipe(
-      tap(a => this.listSize = a.length)
-    ).subscribe()
   }
 
   addDelivery(customer: Customer, site: Site, address: string, notes: string) {
     const run = this.runFilter.value || '';
-    return this.deliveryService.createDelivery(run, customer, site, address, notes, this.listSize + 1);
+    return this.deliveryService.createDelivery(run, customer, site, address, '', notes, this.listSize + 1);
   }
 
   markComplete(id: string, currentStatus: string) {

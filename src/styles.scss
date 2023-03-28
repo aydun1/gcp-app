@@ -213,16 +213,18 @@ input {
   border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
+.drag-list-item,
 .mat-mdc-row,
-gcp-big-button > .link,
-.note.load {
-  background: white;
+.note.load,
+gcp-big-button > .link {
+  background: white !important
+  ;
 }
-
+.dark-theme .drag-list-item
 .dark-theme .mat-mdc-row,
-.dark-theme gcp-big-button > .link,
-.dark-theme .note.load {
-  background: #424242;
+.dark-theme .note.load,
+.dark-theme gcp-big-button > .link {
+  background: #424242 !important;
 }
 
 .active {

@@ -133,6 +133,7 @@ export class SharedService {
   }
 
   sanitiseName(name: string): string {
+    if (!name) return '';
     return encodeURIComponent(name.trim().replace('\'', '\'\'').replace('%2F', '/'));
   }
 

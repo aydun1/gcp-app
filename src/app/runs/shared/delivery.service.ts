@@ -1,9 +1,10 @@
 import { moveItemInArray } from '@angular/cdk/drag-drop';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
-import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, startWith, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, lastValueFrom, map, Observable, of, startWith, switchMap, take, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
@@ -12,7 +13,7 @@ import { CustomersService } from '../../customers/shared/customers.service';
 import { Site } from '../../customers/shared/site';
 import { Delivery } from './delivery';
 import { Run } from './run';
-import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { Order } from './order';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,7 @@ export class DeliveryService {
 
   private createUrl(filters: Params): string {
     const filterKeys = Object.keys(filters);
-    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,Address,CustomerNumber,Customer,Status, Notes)`;
+    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,Address,CustomerNumber,Customer,Status,OrderNumber,Notes)`;
     const parsed = filterKeys.map(key => {
       switch (key) {
         case 'branch':
@@ -94,7 +95,7 @@ export class DeliveryService {
         if (i > -1) deliveries[i] = res;
         else deliveries.push(res);
         this._deliveriesSubject$.next(deliveries);
-        return res
+        return res;
       })
     );
   }
@@ -110,12 +111,12 @@ export class DeliveryService {
     )
   }
 
-  private updateIndexesFrom(index: number) {
+  private updateIndexesFrom(index: number): Observable<Delivery[]> {
     return this._deliveriesSubject$.pipe(
       take(1),
       map(_ => _.map((object, i) => {return {id: object.id, index: i + 1}}).slice(index)),
       switchMap(_ => this.updateSequence(_))
-    )
+    );
   }
 
   private updateSequence(items: Array<{id: string, index: number}>): Observable<Delivery[]> {
@@ -154,6 +155,18 @@ export class DeliveryService {
     );
   }
 
+  syncOrders(branch: string): Observable<Order[]> {
+    const request = this.http.get<{orders: Order[]}>(`${environment.gpEndpoint}/orders?branch=${branch}`).pipe(
+      map(_ => _.orders),
+      switchMap(orders => {
+        return this._deliveriesSubject$.pipe(
+          map(deliveries => orders.filter(_ => !deliveries.map(d => d.fields.OrderNumber).includes(_.sopNumber)))
+        )
+      })
+    );
+    return request;
+  }
+
   getRuns(branch: string): Observable<Run[]> {
     const url = `${this._runsListUrl}/items?expand=fields(select=Title)&filter=fields/Branch eq '${branch}'`;
     return this.http.get(url).pipe(
@@ -170,7 +183,7 @@ export class DeliveryService {
     );
   }
 
-  addRun(run: string) {
+  addRun(run: string): Observable<Run> {
     const url = `${this._runsListUrl}/items`;
     return this.shared.getBranch().pipe(
       switchMap(_ => this.http.post<Run>(url, {fields: {Title: run, Branch: _}}))
@@ -205,10 +218,10 @@ export class DeliveryService {
     return deliveries;
   }
 
-  getDeliveriesByAccount(customerNumber: string, runName: string) {
+  getDeliveriesByAccount(customerNumber: string, runName: string): Observable<Delivery> {
     const url = `${this._deliveryListUrl}/items?expand=fields(select=Notes)&filter=fields/CustomerNumber eq '${customerNumber}' and fields/Title eq '${runName}'`;
-    const runs = this.http.get(url) as Observable<{value: Delivery[]}>;
-    return runs.pipe(
+    const deliveries = this.http.get(url) as Observable<{value: Delivery[]}>;
+    return deliveries.pipe(
       map(_ => _.value[0])
     );
   }
@@ -231,21 +244,50 @@ export class DeliveryService {
     ).subscribe(_ => this._deliveriesSubject$.next(_));
   }
 
-  createDelivery(title: string, customer: Customer, site: Site, address: string, notes: string, sequence: number): Observable<Delivery> {
-    const fields = {
-      Title: title,
-      Customer: customer.name,
-      CustomerNumber: customer.custNmbr,
-      Sequence: sequence
-    };
+  createDelivery(title: string, customer: Customer, site: Site | null, address: string, orderNo: string, notes: string, sequence: number): Observable<Delivery[]> {
+    const fields = {Title: title, Customer: customer.name, CustomerNumber: customer.custNmbr, Sequence: sequence, OrderNumber: orderNo};
     if (notes) fields['Notes'] = notes;
     if (site) fields['Site'] = site.fields.Title;
     fields['Address'] = address ? address : site && site.fields.Address ? site.fields.Address : customer.address1_composite;
 
-    return this.shared.getBranch().pipe(
-      switchMap(_ => this.http.post<Delivery>(`${this._deliveryListUrl}/items`, {fields: {...fields, Branch: _}}).pipe(
-        switchMap(_ => this.updateList(_))
-      ))
+     return this._deliveriesSubject$.pipe(
+      take(1),
+      tap(deliveries => {
+        deliveries.splice(sequence - 1, 0, {fields: {OrderNumber: orderNo}} as Delivery);
+        this._deliveriesSubject$.next(deliveries);
+      }),
+      switchMap(() => this.shared.getBranch()),
+      switchMap(_ => this.http.post<Delivery>(`${this._deliveryListUrl}/items`, {fields: {...fields, Branch: _}})),
+      switchMap(d => {
+        return this._deliveriesSubject$.pipe(
+          take(1),
+          tap(deliveries => {
+            deliveries.splice(sequence - 1, 1, d);
+            this._deliveriesSubject$.next(deliveries);
+          })
+        );
+      }),
+      switchMap(_ => {
+        const changedItems = _.map((object, i) => {return {id: object.id, index: i + 1}}).slice(sequence - 1);
+        return this.updateSequence(changedItems).pipe(
+          tap(a => this._deliveriesSubject$.next(a)),
+        );
+      })
+    );
+  }
+
+  moveItem(previousIndex: number, currentIndex: number): Observable<Delivery[]> {
+    return this._deliveriesSubject$.pipe(
+      take(1),
+      tap(_ => moveItemInArray(_, previousIndex, currentIndex)),
+      tap(_ => this._deliveriesSubject$.next(_)),
+      switchMap(_ => {
+        const changedFrom = Math.min(previousIndex, currentIndex);
+        const changedItems = _.map((object, i) => {return {id: object.id, index: i + 1}}).slice(changedFrom);
+        return this.updateSequence(changedItems).pipe(
+          tap(a => this._deliveriesSubject$.next(a)),
+        );
+      })
     )
   }
 
@@ -271,34 +313,19 @@ export class DeliveryService {
     );
   }
 
-  moveItem(previousIndex: number, currentIndex: number) {
-    return this._deliveriesSubject$.pipe(
-      take(1),
-      tap(_ => moveItemInArray(_, previousIndex, currentIndex)),
-      tap(_ => this._deliveriesSubject$.next(_)),
-      switchMap(_ => {
-        const changedFrom = Math.min(previousIndex, currentIndex);
-        const changedItems = _.map((object, i) => {return {id: object.id, index: i + 1}}).slice(changedFrom);
-        return this.updateSequence(changedItems).pipe(
-          tap(a => this._deliveriesSubject$.next(a)),
-        );
-      })
-    )
-  }
-
-  requestCageTransfer(runName: string, customerNumber: string, siteName: string, message: string) {
+  requestCageTransfer(runName: string, customerNumber: string, siteName: string, message: string): Observable<Delivery | Delivery[]> {
     this.loading.next(true);
-    const run = this.getDeliveriesByAccount(customerNumber, runName);
+    const delivery = this.getDeliveriesByAccount(customerNumber, runName);
     const cust = this.cutomersService.getCustomer(customerNumber);
-    return combineLatest([run, cust]).pipe(
-      switchMap(([run, customer]) => {
+    return combineLatest([delivery, cust]).pipe(
+      switchMap(([delivery, customer]) => {
         const site = {fields: {Title: siteName}} as Site;
         const address = '';
-        if (run) {
-          const notes = run.fields.Notes ? `${run.fields.Notes}<br>${message}` : message;
-          return this.updateDelivery(run.id, notes);
+        if (delivery) {
+          const notes = delivery.fields.Notes ? `${delivery.fields.Notes}<br>${message}` : message;
+          return this.updateDelivery(delivery.id, notes);
          } else {
-          return this.createDelivery(runName, customer, site, address, message, 0);
+          return this.createDelivery(runName, customer, site, address, '', message, 0);
          }
       }),
       tap(_ =>this.snackBar.open('Added to run list', '', {duration: 3000})

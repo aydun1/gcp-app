@@ -153,7 +153,7 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
 
   requestCages(): void {
     const message = 'Cage requested for delivery';
-    const data = {accountnumber: this.customer.custNmbr, site: this.site, message};
+    const data = {custNmbr: this.customer.custNmbr, site: this.site, message};
     this.dialog.open(RunPickerDialogComponent, {width: '600px', data, autoFocus: false});
   }
 
