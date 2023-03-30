@@ -74,7 +74,6 @@ export class RunListComponent implements OnInit {
   }
 
   getFirstPage(params: Params): Observable<Delivery[]> {
-    console.log(params['run'])
     return this.deliveryService.getFirstPage(params).pipe(
       map(_ => _.filter(d => d.fields.Title === params['run']))
     )
@@ -129,8 +128,10 @@ export class RunListComponent implements OnInit {
       ).subscribe();
     } else {
       const data = event.item.data as Order;
+      const address = [data.address1, data.address2, data.address3].filter(_ => _).join('\r\n') + '\r\n' +
+      [data.city, data.state, data.postCode].filter(_ => _).join(' ');
       const customer = {name: data.custName, custNmbr: data.custNumber} as Customer;
-      this.deliveryService.createDelivery(run, customer, null, '', data.sopNumber, '', event.currentIndex).subscribe();
+      this.deliveryService.createDelivery(run, customer, null, address, data.sopNumber, '', event.currentIndex).subscribe();
     }
     this.dragDisabled = true;
   }
@@ -177,4 +178,9 @@ export class RunListComponent implements OnInit {
     };
     this.router.navigate([], { queryParams: {run: run.value || null}, queryParamsHandling: 'merge', replaceUrl: true});
   }
+
+  trackByGroupsFn(index: number, item: any): string {
+    return item.key;
+  }
+
 }

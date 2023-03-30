@@ -256,10 +256,10 @@ export class DeliveryService {
       take(1),
       tap(deliveries => {
         const runItems = deliveries.filter(_ => run ? _.fields.Title === run : !_.fields.Title);
-        const id = runItems[previousIndex].id;
-        const index = deliveries.findIndex(_ => _.id === id);
-        moveItemInArray(deliveries, index, index + (currentIndex - previousIndex));
-        this._deliveriesSubject$.next(deliveries)
+        const fromIndex = deliveries.findIndex(_ => _.id === runItems[previousIndex].id);
+        const toIndex = deliveries.findIndex(_ => _.id === runItems[currentIndex].id);
+        moveItemInArray(deliveries, fromIndex, toIndex);
+        this._deliveriesSubject$.next(deliveries);
       }),
       switchMap(_ => {
         const changedFrom = Math.min(previousIndex, currentIndex);
@@ -269,7 +269,7 @@ export class DeliveryService {
           return {id: object.id, index: i}
         }).slice(changedFrom);
         return this.updateSequence(changedItems).pipe(
-          tap(a => this._deliveriesSubject$.next(a)),
+          tap(a => this._deliveriesSubject$.next(a))
         );
       })
     )

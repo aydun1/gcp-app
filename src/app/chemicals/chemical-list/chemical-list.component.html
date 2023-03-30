@@ -58,7 +58,7 @@
   </div>
 
   <div>
-    <div *ngFor="let c of (chemicals$ | async) || [] | groupByProperty:(groupFilter.value || '')">
+    <div *ngFor="let c of (chemicals$ | async) || [] | groupByProperty:(groupFilter.value || '');trackBy:trackByGroupsFn">
       <div *ngIf="c" class="inner">
         <div *ngIf="c.key !== 'undefined'" class="section-head">
           <h3>{{ groupName }} {{ c.key !== 'null' && c.key !== '' ? c.key : 'Unknown' }}</h3> <span *ngIf="groupFilter.value === 'class' && classes[c.key]" class="class-description"> {{ classes[c.key] }}</span>

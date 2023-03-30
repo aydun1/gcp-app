@@ -30,10 +30,13 @@
             </mat-expansion-panel-header>
             <div class="order-list">
               <mat-list #orderList="cdkDropList" cdkDropList [cdkDropListConnectedTo]="[deliveryList]" [cdkDropListSortingDisabled]="true">
-                <mat-list-item class="drag-list-item" *ngFor="let order of orders" cdkDrag [cdkDragData]="order">
-                  <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
-                  {{ order.sopNumber }} - {{ order.custName }}
-                </mat-list-item>
+                <div *ngFor="let section of orders|groupByProperty:'shipMethod';trackBy:trackByGroupsFn">
+                  <div matSubheader>{{ section.key}}</div>
+                  <mat-list-item class="drag-list-item" *ngFor="let order of section.value;trackBy:trackByFn" cdkDrag [cdkDragData]="order">
+                    <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
+                    {{ order.sopNumber }} - {{ order.custName }}
+                  </mat-list-item>
+                </div>
               </mat-list>
             </div>
           </mat-expansion-panel>
@@ -125,7 +128,7 @@
       <mat-icon>edit</mat-icon>Edit
     </button>
     <button mat-menu-item (click)="deleteDelivery(delivery.id, delivery.fields.Title)">
-      <mat-icon>delete</mat-icon>Delete
+      <mat-icon>delete</mat-icon>Remove
     </button>
   </ng-template>
 </mat-menu>
