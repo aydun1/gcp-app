@@ -223,7 +223,7 @@ export class DeliveryService {
       take(1),
       tap(deliveries => {
         const targetIndex = deliveries.findIndex(_ => _.fields.Title === runName && _.fields.Sequence === sequence);
-        deliveries.splice(targetIndex, 0, {fields: fields} as Delivery);
+        deliveries.splice(targetIndex > -1 ? targetIndex : deliveries.length, 0, {fields: fields} as Delivery);
         this._deliveriesSubject$.next(deliveries);
       }),
       switchMap(() => this.shared.getBranch()),
