@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
-import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, startWith, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, lastValueFrom, map, Observable, of, startWith, switchMap, take, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
@@ -87,10 +87,14 @@ export class DeliveryService {
     )
   }
 
-  private updateIndexesFrom(index: number): Observable<Delivery[]> {
+  private updateRunDeliveries(run: string): Observable<Delivery[]> {
     return this._deliveriesSubject$.pipe(
       take(1),
-      map(_ => _.map((object, i) => {return {id: object.id, index: i + 1}}).slice(index)),
+      map(deliveries => deliveries.filter(_ => _.fields.Title === run).map(
+        (object, i) => {
+          return {id: object.id, index: i};
+        })//.slice(index)
+      ),
       switchMap(_ => this.updateSequence(_))
     );
   }
@@ -209,17 +213,17 @@ export class DeliveryService {
     return this._deliveriesSubject$;
   }
 
-  createDelivery(title: string, customer: Customer, site: Site | null, address: string, orderNo: string, notes: string, sequence: number): Observable<Delivery[]> {
-    const fields = {Title: title || undefined, Customer: customer.name, CustomerNumber: customer.custNmbr, Sequence: sequence, OrderNumber: orderNo};
+  createDelivery(run: string, customer: Customer, site: Site | null, address: string, orderNo: string, notes: string, sequence: number): Observable<Delivery[]> {
+    const runName = run || undefined;
+    const fields = {Title: runName, Customer: customer.name, CustomerNumber: customer.custNmbr, Sequence: sequence, OrderNumber: orderNo};
     if (notes) fields['Notes'] = notes;
     if (site) fields['Site'] = site.fields.Title;
     fields['Address'] = address ? address : site && site.fields.Address ? site.fields.Address : customer.address1_composite;
     return this._deliveriesSubject$.pipe(
       take(1),
       tap(deliveries => {
-        const runItems = deliveries.filter(_ => title ? _.fields.Title === title : !_.fields.Title);
-        const targetIndex = runItems[sequence - 1]?.fields?.Sequence || runItems[runItems.length - 1]?.fields?.Sequence + 1 || deliveries.length + 1;
-        deliveries.splice(targetIndex - 1, 0, {fields: fields} as Delivery);
+        const targetIndex = deliveries.findIndex(_ => _.fields.Title === runName && _.fields.Sequence === sequence);
+        deliveries.splice(targetIndex, 0, {fields: fields} as Delivery);
         this._deliveriesSubject$.next(deliveries);
       }),
       switchMap(() => this.shared.getBranch()),
@@ -228,15 +232,18 @@ export class DeliveryService {
         return this._deliveriesSubject$.pipe(
           take(1),
           tap(deliveries => {
-            const runItems = deliveries.filter(_ => title ? _.fields.Title === title : !_.fields.Title);
-            const targetIndex = runItems[sequence]?.fields?.Sequence || runItems[runItems.length - 2]?.fields?.Sequence + 1 || deliveries.length;
-            deliveries.splice(targetIndex - 1, 1, d);
+            const targetIndex = deliveries.findIndex(_ => _.fields.Title === runName && _.fields.Sequence === sequence);
+            deliveries.splice(targetIndex, 1, d);
             this._deliveriesSubject$.next(deliveries);
           })
         );
       }),
       switchMap(_ => {
-        const changedItems = _.map((object, i) => {return {id: object.id, index: i + 1}}).slice(sequence - 1);
+        const changedItems = _.filter(_ =>
+          runName ? _.fields.Title === runName : !_.fields.Title
+        ).map((object, i) => {
+          return {id: object.id, index: i}
+        }).slice(sequence);
         return this.updateSequence(changedItems).pipe(
           tap(a => this._deliveriesSubject$.next(a)),
         );
@@ -256,7 +263,11 @@ export class DeliveryService {
       }),
       switchMap(_ => {
         const changedFrom = Math.min(previousIndex, currentIndex);
-        const changedItems = _.map((object, i) => {return {id: object.id, index: i + 1}}).slice(changedFrom);
+        const changedItems = _.filter(_ =>
+          run ? _.fields.Title === run : !_.fields.Title
+        ).map((object, i) => {
+          return {id: object.id, index: i}
+        }).slice(changedFrom);
         return this.updateSequence(changedItems).pipe(
           tap(a => this._deliveriesSubject$.next(a)),
         );
@@ -264,26 +275,29 @@ export class DeliveryService {
     )
   }
 
-  changeStatus(id: string, currentStatus: string): Observable<Delivery[]> {
+  changeStatus(id: string, currentStatus: string): Promise<Delivery[]> {
     const status = currentStatus === 'Complete' ? 'Active' : 'Complete';
     const fields = {Status: status};
-    return this.http.patch<Delivery>(`${this._deliveryListUrl}/items('${id}')`, {fields}).pipe(
-      switchMap(_ => this.updateIndexesFrom(0))
+    const req = this.http.patch<Delivery>(`${this._deliveryListUrl}/items('${id}')`, {fields}).pipe(
+      switchMap(_ => this.updateListMulti([_]))
     );
+    return lastValueFrom(req);
   }
 
-  updateDelivery(id: string, notes: string): Observable<Delivery[]> {
+  updateDelivery(id: string, notes: string): Promise<Delivery[]> {
     const fields = {Notes: notes};
-    return this.http.patch<Delivery>(`${this._deliveryListUrl}/items('${id}')`, {fields}).pipe(
-      switchMap(_ => this.updateIndexesFrom(0))
+    const req = this.http.patch<Delivery>(`${this._deliveryListUrl}/items('${id}')`, {fields}).pipe(
+      switchMap(_ => this.updateListMulti([_]))
     );
+    return lastValueFrom(req);
   }
 
-  deleteDelivery(id: string): Observable<Delivery[]> {
-    return this.http.delete<Delivery>(`${this._deliveryListUrl}/items('${id}')`).pipe(
+  deleteDelivery(id: string, run: string): Promise<Delivery[]> {
+    const req = this.http.delete<Delivery>(`${this._deliveryListUrl}/items('${id}')`).pipe(
       switchMap(_ => this.removeItemFromList(id)),
-      switchMap(_ => this.updateIndexesFrom(0))
+      switchMap(_ => this.updateRunDeliveries(run))
     );
+    return lastValueFrom(req);
   }
 
   requestCageTransfer(runName: string, customerNumber: string, siteName: string, message: string): Observable<Delivery | Delivery[]> {

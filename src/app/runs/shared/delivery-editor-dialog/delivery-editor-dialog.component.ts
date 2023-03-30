@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { catchError, tap, throwError } from 'rxjs';
+import { throwError } from 'rxjs';
 
 import { Delivery } from '../delivery';
 import { DeliveryService } from '../delivery.service';
@@ -38,15 +38,12 @@ export class DeliveryEditorDialogComponent implements OnInit {
     this.loading = true;
     const notes = this.deliveryForm.value.notes || '';
     const action = this.deliveryService.updateDelivery(this.data.delivery.id, notes)
-    action.pipe(
-      tap(_ => {
-        this.dialogRef.close();
-      }),
-      catchError(err => {
+    action.then(() =>
+      this.dialogRef.close()
+    ).catch(err => {
         this.loading = false;
         return throwError(() => new Error(err));
-      })
-    ).subscribe();
+    });
   }
 
   closeDialog(): void {

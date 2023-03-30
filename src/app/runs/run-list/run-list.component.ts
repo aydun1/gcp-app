@@ -130,28 +130,28 @@ export class RunListComponent implements OnInit {
     } else {
       const data = event.item.data as Order;
       const customer = {name: data.custName, custNmbr: data.custNumber} as Customer;
-      this.deliveryService.createDelivery(run, customer, null, '', data.sopNumber, '', event.currentIndex + 1).subscribe();
+      this.deliveryService.createDelivery(run, customer, null, '', data.sopNumber, '', event.currentIndex).subscribe();
     }
     this.dragDisabled = true;
   }
 
-  addDelivery(customer: Customer, site: Site, address: string, notes: string) {
+  addDelivery(customer: Customer, site: Site, address: string, notes: string): Observable<Delivery[]> {
     const run = this.runFilter.value || '';
-    return this.deliveryService.createDelivery(run, customer, site, address, '', notes, this.listSize + 1);
+    return this.deliveryService.createDelivery(run, customer, site, address, '', notes, this.listSize);
   }
 
-  markComplete(id: string, currentStatus: string) {
-    return this.deliveryService.changeStatus(id, currentStatus).subscribe();
+  markComplete(id: string, currentStatus: string): void {
+    this.deliveryService.changeStatus(id, currentStatus);
   }
 
-  editDelivery(delivery: Delivery) {
+  editDelivery(delivery: Delivery): void {
     const data = {delivery};
     const dialogRef = this.dialog.open(DeliveryEditorDialogComponent, {width: '600px', data});
-    return dialogRef.afterClosed().subscribe();
+    dialogRef.afterClosed().subscribe();
   }
 
-  deleteDelivery(id: string) {
-    return this.deliveryService.deleteDelivery(id).subscribe();
+  deleteDelivery(id: string, run: string): void {
+    this.deliveryService.deleteDelivery(id, run);
   }
 
   trackByFn(index: number, item: Delivery): string {
