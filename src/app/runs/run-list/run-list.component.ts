@@ -125,7 +125,7 @@ export class RunListComponent implements OnInit {
     const action = event.previousContainer === event.container ?
     this.deliveryService.moveItem(event.previousIndex, event.currentIndex, run) :
     this.addOrderDelivery(event.item.data as Order, run, event.currentIndex);
-    action.subscribe(_ => this.listSize = _.length);
+    action.subscribe();
     this.dragDisabled = true;
   }
 

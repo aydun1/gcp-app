@@ -106,10 +106,13 @@ export class DeliveryService {
       const payload = {fields: {Sequence: _['index']}};
       return {id: index + 1, method: 'PATCH', url, headers, body: payload};
     });
-    return requests.length ? this.http.post(`${environment.endpoint}/$batch`, {requests}).pipe(
-      map((_: any) => _.responses.map((r: any) => r['body'])),
+
+    const res: Observable<Delivery[]> = requests.length ? this.http.post(`${environment.endpoint}/$batch`, {requests}).pipe(
+      map((_: any) => _.responses.map((r: {body: Delivery}) => r['body']))) : of([] as Delivery[]);
+
+    return res.pipe(
       switchMap(_ => this.updateListMulti(_))
-    ) : of([] as Delivery[]);
+    );
   }
 
   private transferRunDeliveries(action: Observable<Object>, oldName: string, newName: string): Observable<any> {
@@ -237,7 +240,7 @@ export class DeliveryService {
           return {id: object.id, index: i}
         }).slice(sequence);
         return this.updateSequence(changedItems).pipe(
-          tap(a => this._deliveriesSubject$.next(a)),
+          tap(deliveries => this._deliveriesSubject$.next(deliveries)),
         );
       })
     );
