@@ -87,10 +87,10 @@ export class DeliveryService {
     )
   }
 
-  private updateRunDeliveries(run: string): Observable<Delivery[]> {
+  private updateRunDeliveries(runName: string | null): Observable<Delivery[]> {
     return this._deliveriesSubject$.pipe(
       take(1),
-      map(deliveries => deliveries.filter(_ => _.fields.Title === run).map(
+      map(deliveries => deliveries.filter(_ => runName ? _.fields.Title === runName : !_.fields.Title).map(
         (object, i) => {
           return {id: object.id, index: i};
         })//.slice(index)
@@ -298,6 +298,27 @@ export class DeliveryService {
       switchMap(_ => this.removeItemsFromList(ids)),
       switchMap(_ => this.updateRunDeliveries(run))
     ) : of([] as Delivery[]);
+    return lastValueFrom(req);
+  }
+
+  moveDeliveries(ids: Array<string>, run: string | null, targetRun: string): Promise<Delivery[]> {
+    const headers = {'Content-Type': 'application/json'};
+    const req = this._deliveriesSubject$.pipe(
+      take(1),
+      map(deliveries => deliveries.filter(_ => targetRun ? _.fields.Title === targetRun : !_.fields.Title).length),
+      switchMap(_ => {
+        const body = {fields: {Title: targetRun, Sequence: _}};
+        const requests = ids.map((id, index) => {
+          const url = `${environment.siteUrl}/${this._dropsUrl}/items/${id}`;
+          return {id: index + 1, method: 'PATCH', url, headers, body};
+        });
+        return requests.length ? this.http.post(`${environment.endpoint}/$batch`, {requests}).pipe(
+          map((_: any) => _.responses.map((r: any) => r['body'])),
+          switchMap(_ => this.updateListMulti(_)),
+          switchMap(_ => this.updateRunDeliveries(run))
+        ) : of([] as Delivery[]);
+      })
+    )
     return lastValueFrom(req);
   }
 

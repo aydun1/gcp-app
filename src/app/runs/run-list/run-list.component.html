@@ -130,9 +130,19 @@
     <button mat-menu-item (click)="editDelivery(delivery)">
       <mat-icon>edit</mat-icon>Edit
     </button>
+    <button mat-menu-item (click)="editDelivery(delivery)" [matMenuTriggerFor]="runMenu" [matMenuTriggerData]="{delivery}">
+      <mat-icon>edit</mat-icon>Move to run
+    </button>
     <button mat-menu-item (click)="deleteDelivery(delivery.id, delivery.fields.Title)">
       <mat-icon>delete</mat-icon>Remove
     </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #runMenu="matMenu">
+  <ng-template matMenuContent let-delivery="delivery">
+    <button mat-menu-item *ngIf="runFilter.value" (click)="moveToOtherRun(delivery, '')">Default</button>
+    <button mat-menu-item *ngFor="let s of otherRuns" (click)="moveToOtherRun(delivery, s.fields.Title)">{{ s.fields.Title }}</button>
   </ng-template>
 </mat-menu>
 

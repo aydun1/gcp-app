@@ -34,6 +34,7 @@ export class RunListComponent implements OnInit {
   public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
   public runs: Array<Run> = [{fields: {Title: 'Default'}} as Run];
+  public otherRuns: Array<Run> = [{fields: {Title: 'Default'}} as Run];
   public run = '';
   public loading = false;
   public empty = true;
@@ -65,6 +66,7 @@ export class RunListComponent implements OnInit {
       )),
       switchMap(_ => this.deliveryService.getRuns(_['branch']).pipe(
         tap(runs => this.runs = runs),
+        tap(runs => this.otherRuns = runs.filter(r => r.fields.Title !== this.runFilter.value)),
         map(() => _)
       )),
       tap(_ => this.parseParams(_)),
@@ -127,6 +129,10 @@ export class RunListComponent implements OnInit {
     this.addOrderDelivery(event.item.data as Order, run, event.currentIndex);
     action.subscribe();
     this.dragDisabled = true;
+  }
+
+  moveToOtherRun(event: Delivery, targetRun: string): void {
+    this.deliveryService.moveDeliveries([event.id], this.runFilter.value, targetRun);
   }
 
   addOrderDelivery(order: Order, run: string, index: number) {
