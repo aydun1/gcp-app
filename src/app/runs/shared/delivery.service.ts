@@ -48,7 +48,7 @@ export class DeliveryService {
       }
     }).filter(_ => _);
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
-    url += `&orderby=fields/Sequence asc&top=25`;
+    url += `&orderby=fields/Sequence asc&top=2000`;
     return url;
   }
 
