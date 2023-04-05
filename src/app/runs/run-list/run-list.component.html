@@ -34,7 +34,8 @@
                   <div matSubheader>{{ section.key}}</div>
                   <mat-list-item class="drag-list-item" *ngFor="let order of section.value;trackBy:trackByFn" cdkDrag [cdkDragData]="order">
                     <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
-                    {{ order.sopNumber }} - {{ order.custName }}
+                    <span matListItemTitle>{{ order.custName }}</span>
+                    <span>{{ order.sopNumber }}</span>
                     <ng-container matListItemMeta>
                       <button type="button" mat-icon-button (click)="addOrderDelivery(order, run, listSize).subscribe()" class="icon"><mat-icon>add</mat-icon></button>
                     </ng-container>
