@@ -131,7 +131,7 @@
     <button mat-menu-item (click)="editDelivery(delivery)">
       <mat-icon>edit</mat-icon>Edit
     </button>
-    <button mat-menu-item (click)="editDelivery(delivery)" [matMenuTriggerFor]="runMenu" [matMenuTriggerData]="{delivery}">
+    <button mat-menu-item [matMenuTriggerFor]="runMenu" [matMenuTriggerData]="{delivery}">
       <mat-icon>edit</mat-icon>Move to run
     </button>
     <button mat-menu-item (click)="deleteDelivery(delivery.id, delivery.fields.Title)">
