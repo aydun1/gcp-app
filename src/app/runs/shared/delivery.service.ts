@@ -37,7 +37,7 @@ export class DeliveryService {
 
   private createUrl(branch: string): string {
     let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,Address,CustomerNumber,Customer,Status,OrderNumber,Notes)`;
-    if (branch) url += `&fields/Branch eq '${branch}'`;
+    if (branch) url += `&filter=fields/Branch eq '${branch}'`;
     url += `&orderby=fields/Sequence asc&top=2000`;
     return url;
   }
