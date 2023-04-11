@@ -66,8 +66,8 @@ export class DeliveryService {
       take(1),
       map(deliveries => deliveries.filter(_ => runName ? _.fields.Title === runName : !_.fields.Title).map(
         (object, i) => {
-          return {id: object.id, index: i};
-        })//.slice(index)
+          return {id: object.id, index: object.fields.Sequence !== i ? i : -1};
+        }).filter(_ => _.index > -1)
       ),
       switchMap(_ => this.updateSequence(_))
     );
@@ -243,17 +243,8 @@ export class DeliveryService {
         moveItemInArray(deliveries, fromIndex, toIndex);
         this._deliveriesSubject$.next(deliveries);
       }),
-      switchMap(_ => {
-        const changedFrom = Math.min(previousIndex, currentIndex);
-        const changedItems = _.filter(_ =>
-          run ? _.fields.Title === run : !_.fields.Title
-        ).map((object, i) => {
-          return {id: object.id, index: i}
-        }).slice(changedFrom);
-        return this.updateSequence(changedItems).pipe(
-          tap(a => this._deliveriesSubject$.next(a))
-        );
-      })
+      switchMap(_ => this.updateRunDeliveries(run)),
+      tap(_ => this._deliveriesSubject$.next(_))
     )
   }
 

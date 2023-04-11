@@ -37,7 +37,7 @@
                     <span matListItemTitle>{{ order.custName }}</span>
                     <span>{{ order.sopNumber }}</span>
                     <ng-container matListItemMeta>
-                      <button type="button" mat-icon-button (click)="addOrderDelivery(order, run, undefined).subscribe()" class="icon"><mat-icon>add</mat-icon></button>
+                      <button type="button" [disabled]="loading" mat-icon-button (click)="addOrderDelivery(order, run, undefined).subscribe()" class="icon"><mat-icon>add</mat-icon></button>
                     </ng-container>
                   </mat-list-item>
                 </div>
