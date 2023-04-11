@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, HostBinding, OnInit } from '@angular/core';
+import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,7 +14,7 @@ import { LoadingSchedule } from '../shared/loading-schedule';
   templateUrl: './loading-schedule-view.component.html',
   styleUrls: ['./loading-schedule-view.component.css']
 })
-export class LoadingScheduleViewComponent implements OnInit {
+export class LoadingScheduleViewComponent implements OnDestroy, OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';
 
   public loadingScheduleEntry$!: Observable<any>;
@@ -26,12 +26,14 @@ export class LoadingScheduleViewComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private renderer: Renderer2,
     private snackBar: MatSnackBar,
     private navService: NavigationService,
     private loadingScheduleService: LoadingScheduleService
   ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.renderer.addClass(document.body, 'print');
     const id = this.route.snapshot.paramMap.get('id');
     const loadingSchedule$ = this.loadingScheduleService.getLoadingScheduleEntry(id);
 
@@ -39,6 +41,10 @@ export class LoadingScheduleViewComponent implements OnInit {
       tap(_ => this.goToPanList(_)),
       catchError((err: HttpErrorResponse) => this.handleError(err, true))
     );
+  }
+
+  ngOnDestroy(): void {
+    this.renderer.removeClass(document.body, 'print');
   }
 
   handleError(err: HttpErrorResponse, redirect = false): Observable<never> {
