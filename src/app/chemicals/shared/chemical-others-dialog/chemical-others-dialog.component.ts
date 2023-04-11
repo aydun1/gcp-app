@@ -68,7 +68,6 @@ export class ChemicalOthersDialogComponent implements OnInit {
         this.tabGroup.selectedIndex = 0;
         this.newChemicalForm.reset();
         this.newChemicalForm.enable();
-
         this.saving = false;
       }
     ).catch(e => this.saving = false);

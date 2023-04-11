@@ -26,6 +26,7 @@ export class ChemicalListComponent implements OnInit {
 
   public textFilter = new FormControl(this.route.snapshot.paramMap.get('search'));
   public groupFilter = new FormControl(this.route.snapshot.paramMap.get('groupby'));
+  public categoryFilter = new FormControl(this.route.snapshot.paramMap.get('category'));
   public loading = this.chemicalService.loading;
   public displayedColumns = [...this.defaultColumns];
   public chemicals$!: Observable<Chemical[]>;
@@ -48,6 +49,12 @@ export class ChemicalListComponent implements OnInit {
     {key: 'class', value: 'Class'},
     {key: 'packingGroup', value: 'Packing group'},
     {key: 'hazardRating', value: 'Hazard'},
+  ];
+
+  public categories = [
+    {key: '', value: 'All'},
+    {key: 'inventory', value: 'Inventory'},
+    {key: 'nonInventory', value: 'Non-inventory'},
   ];
 
   constructor(
@@ -74,7 +81,7 @@ export class ChemicalListComponent implements OnInit {
         map(branch => _['branch'] === undefined ? {..._, branch} : _)
       )),
       tap(_ => this.parseParams(_)),
-      switchMap(_ => this.loadList ? this.getChemicals(_['search'], _['branch'], _['sort'], _['order']) : []),
+      switchMap(_ => this.loadList ? this.getChemicals(_['search'], _['branch'], _['category'], _['sort'], _['order']) : []),
       tap(_ => this.chemicals = _)
     );
 
@@ -103,6 +110,11 @@ export class ChemicalListComponent implements OnInit {
       this.sortSort = '';
       this.sortOrder = '';
     }
+    if ('category' in params) {
+      this.categoryFilter.patchValue(params['category']);
+    } else {
+      this.categoryFilter .patchValue('');
+    }
     if ('groupby' in params) {
       this.groupFilter.patchValue(params['groupby']);
     } else {
@@ -119,14 +131,19 @@ export class ChemicalListComponent implements OnInit {
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
     const sameBranch = prev['branch'] === curr['branch'];
+    const sameCategory = prev['category'] === curr['category'];
     const sameSearch = prev['search'] === curr['search'];
     const sameSort = prev['sort'] === curr['sort'];
     const sameOrder = prev['order'] === curr['order'];
-    return this.loadList && sameBranch && sameSearch && sameSort && sameOrder;
+    return this.loadList && sameBranch && sameCategory && sameSearch && sameSort && sameOrder;
   }
 
   setBranch(branch: MatSelectChange): void {
     this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  setCategory(category: MatSelectChange): void {
+    this.router.navigate([], { queryParams: {category: category.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setGroup(view: MatSelectChange): void {
@@ -143,9 +160,9 @@ export class ChemicalListComponent implements OnInit {
     return lines.reduce((acc, cur) => acc + 1, 0);
   }
 
-  getChemicals(search: string, branch: string, sort: string, order: string): Observable<Chemical[]> {
+  getChemicals(search: string, branch: string, category: string, sort: string, order: string): Observable<Chemical[]> {
     search = (search || '').toLowerCase();
-    return this.chemicalService.getOnHandChemicals(branch, sort, order).pipe(
+    return this.chemicalService.getOnHandChemicals(branch, category, sort, order).pipe(
       map(_ => _.filter(c => c.ItemNmbr?.toLowerCase()?.includes(search) || c.ItemDesc?.toLowerCase()?.includes(search)))
     )
   }

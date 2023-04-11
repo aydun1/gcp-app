@@ -119,9 +119,9 @@ export class ChemicalService {
     return lastValueFrom(request);
   }
 
-  getOnHandChemicals(branch: string, sort: string, order: string): Observable<Chemical[]> {
+  getOnHandChemicals(branch: string, category: string, sort: string, order: string): Observable<Chemical[]> {
     this.loading.next(true);
-    const url = `${environment.gpEndpoint}/chemicals?branch=${branch}&orderby=${sort || 'product'}&order=${order || 'asc'}`;
+    const url = `${environment.gpEndpoint}/chemicals?branch=${branch}&category=${category}&orderby=${sort || 'product'}&order=${order || 'asc'}`;
     return this._chemicalListSubject$.pipe(
       take(1),
       switchMap(() => this.http.get<{chemicals: Chemical[]}>(url)),
