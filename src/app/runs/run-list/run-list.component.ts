@@ -70,13 +70,13 @@ export class RunListComponent implements OnInit {
         map(() => _)
       )),
       tap(_ => this.parseParams(_)),
-      switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
+      switchMap(_ => this._loadList ? this.getDeliveries(_) : []),
       tap(_ => this.listSize = _.length),
     )
   }
 
-  getFirstPage(params: Params): Observable<Delivery[]> {
-    return this.deliveryService.getFirstPage(params).pipe(
+  getDeliveries(params: Params): Observable<Delivery[]> {
+    return this.deliveryService.getDeliveries(params['branch']).pipe(
       map(_ => _.filter(d => d.fields.Title === params['run']))
     )
   }
@@ -125,8 +125,8 @@ export class RunListComponent implements OnInit {
   moveItem(event: CdkDragDrop<Delivery[]>): void {
     const run = this.runFilter.value || '';
     const action = event.previousContainer === event.container ?
-    this.deliveryService.moveItem(event.previousIndex, event.currentIndex, run) :
-    this.addOrderDelivery(event.item.data as Order, run, event.currentIndex);
+      this.deliveryService.moveItem(event.previousIndex, event.currentIndex, run) :
+      this.addOrderDelivery(event.item.data as Order, run, event.currentIndex);
     action.subscribe();
     this.dragDisabled = true;
   }
@@ -135,16 +135,16 @@ export class RunListComponent implements OnInit {
     this.deliveryService.moveDeliveries([event.id], this.runFilter.value, targetRun);
   }
 
-  addOrderDelivery(order: Order, run: string, index: number) {
-    const address = [order.address1, order.address2, order.address3].filter(_ => _).join('\r\n') + '\r\n' +
+  addOrderDelivery(order: Order, run: string, index?: number) {
+    const fullAddress = [order.address1, order.address2, order.address3].filter(_ => _).join('\r\n') + '\r\n' +
     [order.city, order.state, order.postCode].filter(_ => _).join(' ');
     const customer = {name: order.custName, custNmbr: order.custNumber} as Customer;
-    return this.deliveryService.createDelivery(run, customer, null, address, order.sopNumber, '', index)
+    return this.deliveryService.createDelivery(run, customer, null, fullAddress, order.city, order.state, order.postCode, order.sopNumber, '', index)
   }
 
   addCustomerDelivery(customer: Customer, site: Site, address: string, notes: string): Observable<Delivery[]> {
     const run = this.runFilter.value;
-    return this.deliveryService.createDelivery(run, customer, site, address, '', notes, this.listSize);
+    return this.deliveryService.createDelivery(run, customer, site, address, '', '', '', '', notes, this.listSize);
   }
 
   markComplete(id: string, currentStatus: string): void {

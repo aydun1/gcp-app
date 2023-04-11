@@ -12,6 +12,9 @@ export interface Delivery {
     id: string;
     Title: string;
     Address: string;
+    City: string;
+    State: string;
+    PostCode: string;
     Branch: string;
     Customer: string;
     CustomerNumber: string;
