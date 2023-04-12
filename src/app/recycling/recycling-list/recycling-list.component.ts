@@ -80,7 +80,7 @@ export class RecyclingListComponent implements OnInit {
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
       tap((cages: Array<Cage>) => {
         this.updatedSelection(cages);
-        this.weight = cages.map(_ => _.fields?.NetWeight).filter(_ => _).reduce((acc, val) => acc + +val, 0);
+        this.weight = cages.map(_ => _.fields?.NetWeight?.replace(/,/g, '')).filter(_ => _).reduce((acc, val) => acc + +val, 0);
         this.count = cages.map(() => 1).reduce((acc, val) => acc + val, 0);
       })
     )
