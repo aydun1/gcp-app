@@ -89,10 +89,10 @@ export class DeliveryService {
     );
   }
 
-  private transferRunDeliveries(action: Observable<Object>, oldName: string, newName: string): Observable<any> {
+  private transferRunDeliveries(oldName: string, newName: string): Observable<any> {
+    if (oldName === newName) return of(1);
     const headers = {'Content-Type': 'application/json'};
-    return action.pipe(
-      switchMap(() => this.getDeliveriesByRun(oldName)),
+    return this.getDeliveriesByRun(oldName).pipe(
       switchMap(deliveries => {
         const requests = deliveries.map((_, index) => {
           const url = `${environment.siteUrl}/${this._dropsUrl}/items/${_['id']}`;
@@ -117,7 +117,7 @@ export class DeliveryService {
   }
 
   getRuns(branch: string): Observable<Run[]> {
-    const url = `${this._runsListUrl}/items?expand=fields(select=Title)&filter=fields/Branch eq '${branch}'`;
+    const url = `${this._runsListUrl}/items?expand=fields(select=Title,Owner)&filter=fields/Branch eq '${branch}'`;
     return this.http.get(url).pipe(
       startWith(this._runsSubject$),
       map((res: any) => res.value as Delivery[]),
@@ -129,28 +129,31 @@ export class DeliveryService {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         return of([]);
       })
-    );
+    ) as Observable<Run[]>;
   }
 
-  addRun(run: string): Observable<Run> {
+  addRun(run: string, owner: string): Observable<Run> {
     const url = `${this._runsListUrl}/items`;
     return this.shared.getBranch().pipe(
-      switchMap(_ => this.http.post<Run>(url, {fields: {Title: run, Branch: _}}))
+      switchMap(_ => this.http.post<Run>(url, {fields: {Title: run, Branch: _, Owner: owner}}))
     );
   }
 
   deleteRun(runId: string, oldName: string): Observable<Object> {
     const url = `${this._runsListUrl}/items('${runId}')`
-    const action = this.http.delete(url);
-    return this.transferRunDeliveries(action, oldName, '');
+    return this.http.delete(url).pipe(
+      switchMap(_ => this.transferRunDeliveries(oldName, ''))
+    );
   }
 
-  renameRun(runId: string, newName: string, oldName: string): Observable<Object> {
-    const payload = {fields: {
+  renameRun(runId: string, newName: string, oldName: string, owner: string): Observable<Object> {
+    const fields = {
       Title: newName,
-    }};
-    const action = this.http.patch(`${this._runsListUrl}/items('${runId}')`, payload);
-    return this.transferRunDeliveries(action, oldName, newName);
+      Owner: owner
+    };
+    return this.http.patch(`${this._runsListUrl}/items('${runId}')`, {fields}).pipe(
+      switchMap(_ => this.transferRunDeliveries(oldName, newName))
+    );
   }
 
   getDeliveriesByRun(runName: string): Observable<Delivery[]> {

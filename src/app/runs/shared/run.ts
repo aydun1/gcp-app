@@ -11,5 +11,6 @@ export interface Run {
   fields: {
     Title: string;
     Branch: string;
+    Owner: string;
   }
 }

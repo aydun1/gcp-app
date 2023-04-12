@@ -8,6 +8,7 @@ import { Run } from '../run';
 
 interface RunForm {
   run: FormControl<string | null>;
+  owner: FormControl<string | null>;
 }
 
 @Component({
@@ -21,6 +22,7 @@ export class RunManagerDialogComponent implements OnInit {
   public runForm!: FormGroup<RunForm>;
   public runId!: string;
   public oldName!: string;
+  public oldOwner!: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: {runs: Array<Run>},
@@ -33,23 +35,27 @@ export class RunManagerDialogComponent implements OnInit {
   ngOnInit(): void {
     this.loading = false;
     this.runForm = this.fb.group({
-      run: ['', [Validators.required, this.deliveryService.uniqueRunValidator(this.data.runs)]]
+      run: ['', [Validators.required, this.deliveryService.uniqueRunValidator(this.data.runs)]],
+      owner: ['', []]
     });
   }
 
-  openEditor(runId: string, name: string): void {
+  openEditor(runId: string, name: string, owner: string): void {
     this.runId = runId;
     this.oldName = name;
+    this.oldOwner = owner;
     this.runForm = this.fb.group({
-      run: [name, [Validators.required, this.deliveryService.uniqueRunValidator(this.data.runs.filter(_ => _.fields.Title !== this.oldName))]]
+      run: [name, [Validators.required, this.deliveryService.uniqueRunValidator(this.data.runs.filter(_ => _.fields.Title !== this.oldName))]],
+      owner: [owner, []]
     });
   }
 
   addRun(): void {
     this.loading = true;
     const runName = this.runForm.value['run'];
+    const runOwner = this.runForm.value['owner'] || '';
     if (this.runForm.invalid || !runName) return;
-    this.deliveryService.addRun(runName).subscribe(_ => {
+    this.deliveryService.addRun(runName, runOwner).subscribe(_ => {
       this.loading = false;
       this.closeDialog();
       this.navigate(runName);
@@ -59,8 +65,9 @@ export class RunManagerDialogComponent implements OnInit {
   renameRun(): void {
     this.loading = true;
     const newName = this.runForm.value['run'];
+    const owner = this.runForm.value['owner'] || '';
     if (this.runForm.invalid || !newName) return;
-    this.deliveryService.renameRun(this.runId, newName, this.oldName).subscribe(_ => {
+    this.deliveryService.renameRun(this.runId, newName, this.oldName, owner).subscribe(_ => {
       this.loading = false;
       this.closeDialog();
       this.navigate(newName);
