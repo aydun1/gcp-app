@@ -1,0 +1,30 @@
+.header {
+  font-weight: bold;
+}
+
+.row {
+  align-items: center;
+  display: flex;
+  margin: 5px 0;
+}
+
+.item-number {
+  flex: 0 1 130px;
+}
+
+.item-desc {
+  flex: 1;
+}
+
+.quantity {
+  flex: 0 0 60px;
+  text-align: right;
+}
+
+.note {
+  text-align: center;
+}
+
+.spinner {
+  margin: 0 auto;
+}

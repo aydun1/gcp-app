@@ -2,6 +2,9 @@
   <div class="outer">
     <gcp-letterhead class="print-heading">Local deliveries</gcp-letterhead>
     <h2>Local deliveries</h2>
+    <div class="refresher">
+      <mat-spinner *ngIf="loading" diameter="36"></mat-spinner>
+    </div>
     <div class="options inner">
       <div class="buttons">
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="run">
@@ -78,6 +81,7 @@
           <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
           <mat-cell *matCellDef="let delivery">
             <div [innerHTML]="delivery.fields.Notes"></div>
+           {{delivery.fields.OrderNumber}}
           </mat-cell>
           <mat-footer-cell *matFooterCellDef></mat-footer-cell>
         </ng-container>
@@ -87,6 +91,7 @@
           <mat-cell *matCellDef="let delivery">
             <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.Site)">Pallets</button>
             <button mat-raised-button color="primary" (click)="openRecyclingDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.Site)">Recycling</button>
+            <button *ngIf="delivery.fields.OrderNumber" mat-icon-button (click)="openReceipt(delivery.fields.OrderNumber)"><mat-icon>receipt</mat-icon></button>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef></mat-footer-cell>
         </ng-container>
@@ -128,13 +133,13 @@
 </div>
 <mat-menu #menu="matMenu" xPosition="before">
   <ng-template matMenuContent let-delivery="delivery">
-    <button mat-menu-item (click)="editDelivery(delivery)">
+    <button mat-menu-item (click)="editDelivery(delivery)" [disabled]="loading">
       <mat-icon>edit</mat-icon>Edit
     </button>
-    <button mat-menu-item [matMenuTriggerFor]="runMenu" [matMenuTriggerData]="{delivery}">
+    <button mat-menu-item [matMenuTriggerFor]="runMenu" [matMenuTriggerData]="{delivery}" [disabled]="loading">
       <mat-icon>move_down</mat-icon>Move to run
     </button>
-    <button mat-menu-item (click)="deleteDelivery(delivery.id, delivery.fields.Title)">
+    <button mat-menu-item (click)="deleteDelivery(delivery.id, delivery.fields.Title)" [disabled]="loading">
       <mat-icon>delete</mat-icon>Remove
     </button>
   </ng-template>

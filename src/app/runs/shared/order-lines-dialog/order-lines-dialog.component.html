@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Delivery Manifest</h2>
+
+<mat-dialog-content>
+  <div class="header row">
+    <div class="item-number">Item Number</div>
+    <div class="item-desc">Item Description</div>
+    <div class="quantity">Quantity</div>
+  </div>
+  <div *ngIf="orderLines$ | async as ol">
+    <div *ngFor="let l of ol; last as last">
+      <div class="row">
+        <div class="item-number">{{ l.itemNmbr }}</div>
+        <div class="item-desc">{{ l.itemDesc }}</div>
+        <div class="quantity">{{ l.quantity | number }}</div>
+      </div>
+      <mat-divider *ngIf="!last"></mat-divider>
+    </div>
+    <div class="note" *ngIf="ol.length === 0">
+      No allocations
+    </div>
+
+  </div>
+  <div *ngIf="loading" class="note">
+    <mat-spinner diameter="48" class="spinner"></mat-spinner>
+  </div>
+</mat-dialog-content>

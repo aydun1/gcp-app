@@ -14,6 +14,7 @@ import { Site } from '../../customers/shared/site';
 import { Delivery } from './delivery';
 import { Run } from './run';
 import { Order } from './order';
+import { Line } from './line';
 
 @Injectable({
   providedIn: 'root'
@@ -112,6 +113,13 @@ export class DeliveryService {
           map(deliveries => orders.filter(_ => !deliveries.map(d => d.fields.OrderNumber).includes(_.sopNumber)))
         )
       })
+    );
+    return request;
+  }
+
+  getOrderLines(sopType: number, sopNumber: string): Observable<Line[]> {
+    const request = this.http.get<{lines: Line[]}>(`${environment.gpEndpoint}/orders/${sopType}/${sopNumber}`).pipe(
+      map(_ => _.lines)
     );
     return request;
   }

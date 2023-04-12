@@ -10,6 +10,7 @@ import { DeliveryEditorDialogComponent } from './shared/delivery-editor-dialog/d
 import { RunPickerDialogComponent } from './shared/run-picker-dialog/run-picker-dialog.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RunManagerDialogComponent } from './shared/run-manager-dialog/run-manager-dialog.component';
+import { OrderLinesDialogComponent } from './shared/order-lines-dialog/order-lines-dialog.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { RunManagerDialogComponent } from './shared/run-manager-dialog/run-manag
     RunListComponent,
     DeliveryEditorDialogComponent,
     RunManagerDialogComponent,
-    RunPickerDialogComponent
+    RunPickerDialogComponent,
+    OrderLinesDialogComponent
   ],
   imports: [
     CommonModule,

@@ -18,6 +18,7 @@ import { DeliveryService } from '../shared/delivery.service';
 import { Order } from '../shared/order';
 import { Run } from '../shared/run';
 import { RunManagerDialogComponent } from '../shared/run-manager-dialog/run-manager-dialog.component';
+import { OrderLinesDialogComponent } from '../shared/order-lines-dialog/order-lines-dialog.component';
 
 @Component({
   selector: 'gcp-run-list',
@@ -79,6 +80,16 @@ export class RunListComponent implements OnInit {
     return this.deliveryService.getDeliveries(params['branch']).pipe(
       map(_ => _.filter(d => d.fields.Title === params['run']))
     )
+  }
+
+  openReceipt(orderNumber: string) {
+    const data = {title: 'Delivery details', sopType: 2, sopNumber: orderNumber};
+    const dialogRef = this.dialog.open(OrderLinesDialogComponent, {width: '600px', data});
+    dialogRef.afterClosed().pipe(
+      switchMap(_ => _ ? this.addCustomerDelivery(_.customer, _.site, _.address, _.notes,) : of()),
+    ).subscribe(() => {
+      this.loading = false;
+    });
   }
 
   parseParams(params: Params): void {
@@ -161,7 +172,10 @@ export class RunListComponent implements OnInit {
   }
 
   deleteDelivery(id: string, run: string): void {
-    this.deliveryService.deleteDeliveries([id], run);
+    this.loading = true;
+    this.deliveryService.deleteDeliveries([id], run).then(
+      _ => this.loading = false
+    );
   }
 
   trackByFn(index: number, item: Delivery): string {
