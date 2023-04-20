@@ -66,7 +66,7 @@ export class PanListComponent implements OnInit {
   public hideUnsuggesteds = false;
   public hideNoMaxes = false;
   public saving = new Subject<string>();
-  public columns = [ 'bin', 'product', 'allocated', 'onHand', 'HEA', 'NSW', 'QLD', 'SA', 'VIC', 'WA', 'required', 'suggested', 'toFill', 'spacer', 'transfer', 'notes'];
+  public columns = [ 'product', 'allocated', 'onHand', 'HEA', 'NSW', 'QLD', 'SA', 'VIC', 'WA', 'required', 'suggested', 'toFill', 'spacer', 'transfer', 'notes'];
   public categoryOptions = [
     {value: 'M', name: 'Manufactured'},
     {value: 'A', name: 'Allied'},
