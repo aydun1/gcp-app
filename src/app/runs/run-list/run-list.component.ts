@@ -31,12 +31,14 @@ export class RunListComponent implements OnInit {
 
   public listSize!: number;
   public runFilter = new FormControl('');
+  public dateFilter = new FormControl('');
   public orders$!: Observable<Order[]>;
   public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
   public runs: Array<Run> = [{fields: {Title: 'Default'}} as Run];
   public otherRuns: Array<Run> = [{fields: {Title: 'Default'}} as Run];
   public run = '';
+  public showFulfilled = false;
   public loading = false;
   public empty = true;
   public displayedColumns = ['sequence', 'customer', 'site', 'notes', 'actions', 'status', 'menu'];
@@ -52,7 +54,8 @@ export class RunListComponent implements OnInit {
 
   ngOnInit(): void {
     const state$ = this.sharedService.getBranch();
-    this.orders$ = this.deliveryService.syncOrders('QLD');
+    const date = new Date();
+    this.orders$ = this.deliveryService.syncOrders('QLD', date);
     this.deliveries$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
@@ -62,7 +65,10 @@ export class RunListComponent implements OnInit {
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       switchMap(_ => state$.pipe(
-        tap(_ => this._branch = _),
+        tap(_ => {
+          this._branch = _;
+          this.showFulfilled = this._branch === 'QLD';
+        }),
         map(state => !_['branch'] ? {..._, branch: state} : _),
       )),
       switchMap(_ => this.deliveryService.getRuns(_['branch']).pipe(
@@ -74,6 +80,13 @@ export class RunListComponent implements OnInit {
       switchMap(_ => this._loadList ? this.getDeliveries(_) : []),
       tap(_ => this.listSize = _.length),
     )
+
+
+        this.dateFilter.valueChanges.subscribe(
+          _ => console.log(_)
+        )
+
+
   }
 
   getDeliveries(params: Params): Observable<Delivery[]> {

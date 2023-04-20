@@ -19,38 +19,51 @@
       <button type="button" mat-raised-button color="primary" (click)="openCustomerPicker()" [disabled]="loading" class="action">Add delivery</button>
     </div>
 
-    <div *ngIf="orders$ | async as orders">
-      <div class="inner" *ngIf="orders.length > 0">
-        <mat-accordion>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                Fulfilled orders
-              </mat-panel-title>
-              <mat-panel-description>
-                Drag these below to add to a run!
-              </mat-panel-description>
-            </mat-expansion-panel-header>
-            <div class="order-list">
-              <mat-list #orderList="cdkDropList" cdkDropList [cdkDropListConnectedTo]="[deliveryList]" [cdkDropListSortingDisabled]="true">
-                <div *ngFor="let section of orders|groupByProperty:'shipMethod';trackBy:trackByGroupsFn">
-                  <div matSubheader>{{ section.key}}</div>
-                  <mat-list-item class="drag-list-item" *ngFor="let order of section.value;trackBy:trackByFn" cdkDrag [cdkDragData]="order">
-                    <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
-                    <span matListItemTitle>{{ order.custName }}</span>
-                    <span>{{ order.sopNumber }}</span>
-                    <ng-container matListItemMeta>
-                      <button type="button" [disabled]="loading" mat-icon-button (click)="addOrderDelivery(order, run, undefined).subscribe()" class="icon"><mat-icon>add</mat-icon></button>
-                    </ng-container>
-                  </mat-list-item>
-                </div>
-              </mat-list>
-            </div>
-          </mat-expansion-panel>
-        </mat-accordion>
-      </div>
+    <div *ngIf="showFulfilled" class="inner">
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Fulfilled orders
+            </mat-panel-title>
+            <mat-panel-description>
+              Drag these below to add to a run!
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="order-list" *ngIf="orders$ | async as orders">
+            <mat-form-field appearance="fill" subscriptSizing="dynamic" class="run" *ngIf="0">
+              <mat-label>Delivery date</mat-label>
+              <input matInput [matDatepicker]="picker1" [formControl]="dateFilter">
+              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+              <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+
+
+
+
+
+
+
+            <mat-list #orderList="cdkDropList" cdkDropList [cdkDropListConnectedTo]="[deliveryList]" [cdkDropListSortingDisabled]="true">
+              <div *ngFor="let section of orders|groupByProperty:'shipMethod';trackBy:trackByGroupsFn">
+                <div matSubheader><strong>{{ section.key }}</strong></div>
+                <mat-list-item class="drag-list-item" *ngFor="let order of section.value;trackBy:trackByFn" cdkDrag [cdkDragData]="order">
+                  <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
+                  <span matListItemTitle>{{ order.custName }}</span>
+                  <span>{{ order.sopNumber }}</span>
+                  <ng-container matListItemMeta>
+                    <button type="button" [disabled]="loading" mat-icon-button (click)="addOrderDelivery(order, run, undefined).subscribe()" class="icon"><mat-icon>add</mat-icon></button>
+                  </ng-container>
+                </mat-list-item>
+              </div>
+            </mat-list>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
     </div>
 
+    <h3 *ngIf="runFilter.value">{{runFilter.value}}</h3>
     <mat-card appearance="outlined" class="inner">
       <mat-table #deliveryList="cdkDropList" [dataSource]="deliveries$" [trackBy]="trackByFn" cdkDropList [cdkDropListDisabled]="dragDisabled" (cdkDropListDropped)="moveItem($event)">
 

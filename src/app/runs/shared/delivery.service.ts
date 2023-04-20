@@ -105,8 +105,12 @@ export class DeliveryService {
     );
   }
 
-  syncOrders(branch: string): Observable<Order[]> {
-    const request = this.http.get<{orders: Order[]}>(`${environment.gpEndpoint}/orders?branch=${branch}`).pipe(
+  syncOrders(branch: string, date: Date): Observable<Order[]> {
+    const day = date.getDay();
+    const nextDay = day > 4 ? 8 - day : 1;
+    date.setDate(date.getDate() + nextDay)
+    const d = (date).toLocaleString( 'sv', { timeZoneName: 'short' } ).split(' ', 1)[0];
+    const request = this.http.get<{orders: Order[]}>(`${environment.gpEndpoint}/orders?branch=${branch}&date=${d}`).pipe(
       map(_ => _.orders),
       switchMap(orders => {
         return this._deliveriesSubject$.pipe(
