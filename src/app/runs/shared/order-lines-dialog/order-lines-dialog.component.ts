@@ -19,6 +19,7 @@ interface Data {
 export class OrderLinesDialogComponent implements OnInit {
   public orderLines$!: Observable<Line[]>;
   public loading = true;
+  public palletSpaces!: number;
 
   constructor(
     public dialogRef: MatDialogRef<OrderLinesDialogComponent>,
@@ -28,7 +29,10 @@ export class OrderLinesDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.orderLines$ = this.deliveryService.getOrderLines(this.data.sopType, this.data.sopNumber).pipe(
-      tap(_ => this.loading = false)
+      tap(_ => {
+        this.palletSpaces = _.reduce((acc, cur) => acc += +cur.palletSpaces, 0);
+        this.loading = false;
+      })
     );
   }
 

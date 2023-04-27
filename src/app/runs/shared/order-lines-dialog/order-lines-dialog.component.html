@@ -18,7 +18,12 @@
     <div class="note" *ngIf="ol.length === 0">
       No allocations
     </div>
-
+    <mat-divider></mat-divider>
+    <div>
+      <div>
+        <strong>Approx pallet spaces:</strong> {{ palletSpaces | number: '1.0-2' }}
+      </div>
+    </div>
   </div>
   <div *ngIf="loading" class="note">
     <mat-spinner diameter="48" class="spinner"></mat-spinner>
