@@ -38,20 +38,14 @@
               <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
               <mat-datepicker #picker1></mat-datepicker>
             </mat-form-field>
-
-
-
-
-
-
-
             <mat-list #orderList="cdkDropList" cdkDropList [cdkDropListConnectedTo]="[deliveryList]" [cdkDropListSortingDisabled]="true">
               <div *ngFor="let section of orders|groupByProperty:'shipMethod';trackBy:trackByGroupsFn">
                 <div matSubheader><strong>{{ section.key }}</strong></div>
                 <mat-list-item class="drag-list-item" *ngFor="let order of section.value;trackBy:trackByFn" cdkDrag [cdkDragData]="order">
                   <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
                   <span matListItemTitle>{{ order.custName }}</span>
-                  <span>{{ order.sopNumber }}</span>
+                  <span matListItemLine>Order: {{ order.sopNumber }} </span>
+                  <span matListItemLine>Spaces: {{ order.palletSpaces | number: '1.1-1' }}</span>
                   <ng-container matListItemMeta>
                     <button type="button" [disabled]="loading" mat-icon-button (click)="addOrderDelivery(order, run, undefined).subscribe()" class="icon"><mat-icon>add</mat-icon></button>
                   </ng-container>
