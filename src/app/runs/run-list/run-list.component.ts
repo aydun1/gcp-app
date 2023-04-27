@@ -43,6 +43,7 @@ export class RunListComponent implements OnInit {
   public empty = true;
   public displayedColumns = ['sequence', 'customer', 'site', 'notes', 'actions', 'status', 'menu'];
   public dragDisabled = true;
+  public locked = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -109,10 +110,12 @@ export class RunListComponent implements OnInit {
     if (!params) return;
     const filters: Params = {};
     if ('run' in params) {
+      this.locked = true;
       this.run = params['run'];
       this.runFilter.patchValue(this.run);
       filters['run'] = this.run;
     } else {
+      this.locked = false;
       this.run = '';
       this.runFilter.patchValue('');
     }

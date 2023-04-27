@@ -9,8 +9,7 @@
   max-width: 1024px;
 }
 
-h2,
-h3 {
+h2 {
   margin-left: 10px;
 }
 
@@ -21,6 +20,17 @@ h3 {
 
 .buttons {
   flex: 1;
+}
+
+.run-head {
+  margin: 0 10px;
+  position: relative;
+}
+
+.run-head-buttons {
+  position: absolute;
+  right: 0;
+  top: -12px;
 }
 
 .mat-mdc-form-field {
@@ -65,8 +75,11 @@ h3 {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-.mat-mdc-cell.mat-column-sequence {
+.unlocked {
   cursor: move;
+}
+
+.mat-mdc-cell.mat-column-sequence {
   padding-bottom: 10px;
   padding-top: 10px;
 }
@@ -77,6 +90,7 @@ h3 {
 
 .mat-column-sequence {
   flex: 0 1 20px;
+  padding-left: 30px;
   padding-right: 30px;
   justify-content: flex-end;
 }
