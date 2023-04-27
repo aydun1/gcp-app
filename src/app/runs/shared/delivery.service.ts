@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Params } from '@angular/router';
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, forkJoin, lastValueFrom, map, Observable, of, startWith, switchMap, take, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
@@ -75,7 +74,6 @@ export class DeliveryService {
   }
 
   private updateSequence(items: Array<{id: string, index: number}>): Observable<Delivery[]> {
-    if (items.length === 0) return of([]);
     const chunkSize = 20;
     const headers = {'Content-Type': 'application/json'};
     const requests = [...Array(Math.ceil(items.length / chunkSize))].map((_, index) => {
@@ -89,7 +87,7 @@ export class DeliveryService {
         map((r: any) => r.responses.map((r: {body: Delivery}) => r['body']) as Delivery[])
       );
     });
-    return forkJoin(requests).pipe(
+    return (forkJoin([...requests, of([])])).pipe(
       switchMap(_ => this.updateListMulti(_.reduce((acc, cur) => [...acc, ...cur], [])))
     );
   }
