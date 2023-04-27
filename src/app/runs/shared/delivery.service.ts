@@ -131,7 +131,7 @@ export class DeliveryService {
   }
 
   getRuns(branch: string): Observable<Run[]> {
-    const url = `${this._runsListUrl}/items?expand=fields(select=Title,Owner)&filter=fields/Branch eq '${branch}'`;
+    const url = `${this._runsListUrl}/items?expand=fields(select=Title,Owner)&filter=fields/Branch eq '${branch}'&orderby=fields/Title asc`;
     return this.http.get(url).pipe(
       startWith(this._runsSubject$),
       map((res: any) => res.value as Delivery[]),
