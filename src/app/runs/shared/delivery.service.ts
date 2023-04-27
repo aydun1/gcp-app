@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Params } from '@angular/router';
-import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, lastValueFrom, map, Observable, of, startWith, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, forkJoin, lastValueFrom, map, Observable, of, startWith, switchMap, take, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
@@ -75,18 +75,22 @@ export class DeliveryService {
   }
 
   private updateSequence(items: Array<{id: string, index: number}>): Observable<Delivery[]> {
+    if (items.length === 0) return of([]);
+    const chunkSize = 20;
     const headers = {'Content-Type': 'application/json'};
-    const requests = items.map((_, index) => {
-      const url = `${environment.siteUrl}/${this._dropsUrl}/items/${_['id']}`;
-      const payload = {fields: {Sequence: _['index']}};
-      return {id: index + 1, method: 'PATCH', url, headers, body: payload};
+    const requests = [...Array(Math.ceil(items.length / chunkSize))].map((_, index) => {
+      const list = items.slice(index*chunkSize, index*chunkSize+chunkSize);
+      const requests = list.map((_, index) => {
+        const url = `${environment.siteUrl}/${this._dropsUrl}/items/${_['id']}`;
+        const payload = {fields: {Sequence: _['index']}};
+        return {id: index + 1, method: 'PATCH', url, headers, body: payload};
+      });
+      return this.http.post(`${environment.endpoint}/$batch`, {requests}).pipe(
+        map((r: any) => r.responses.map((r: {body: Delivery}) => r['body']) as Delivery[])
+      );
     });
-
-    const res: Observable<Delivery[]> = requests.length ? this.http.post(`${environment.endpoint}/$batch`, {requests}).pipe(
-      map((_: any) => _.responses.map((r: {body: Delivery}) => r['body']))) : of([]);
-
-    return res.pipe(
-      switchMap(_ => this.updateListMulti(_))
+    return forkJoin(requests).pipe(
+      switchMap(_ => this.updateListMulti(_.reduce((acc, cur) => [...acc, ...cur], [])))
     );
   }
 
