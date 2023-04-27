@@ -44,7 +44,8 @@
 
   <h3>{{data.branch}} allocations</h3>
   <div class="header row">
-    <div class="date">Date</div>
+    <div class="date">Doc date</div>
+    <div class="date">Req ship date</div>
     <div class="invoice-number">Doc number</div>
     <div class="customer">Customer</div>
     <div class="quantity">Qty</div>
@@ -53,6 +54,7 @@
     <div *ngFor="let h of lh; last as last">
       <div class="row">
         <div class="date">{{ h.date | date: 'd MMM yyyy' }}</div>
+        <div class="date">{{ h.ReqShipDate | date: 'd MMM yyyy' }}</div>
         <div class="invoice-number">{{ h.sopNmbr }}</div>
         <div class="customer">{{ h.customer }}</div>
         <div class="quantity">{{ h.quantity | number }}</div>
