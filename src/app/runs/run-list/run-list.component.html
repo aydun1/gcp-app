@@ -71,7 +71,7 @@
           <mat-icon *ngIf="locked">lock</mat-icon>
           <mat-icon *ngIf="!locked">lock_open</mat-icon>
         </button>
-        <button mat-icon-button [matMenuTriggerFor]="menu" class="menu">
+        <button mat-icon-button [matMenuTriggerFor]="runMore" class="menu">
           <mat-icon>more_vert</mat-icon>
         </button>
       </div>
@@ -156,6 +156,14 @@
     </mat-card>
   </div>
 </div>
+<mat-menu #runMore="matMenu" xPosition="before">
+  <ng-template matMenuContent let-delivery="delivery">
+    <button mat-menu-item (click)="deleteDelivery(delivery.id, delivery.fields.Title)" [disabled]="true">
+      <mat-icon>delete</mat-icon>Remove all
+    </button>
+  </ng-template>
+</mat-menu>
+
 <mat-menu #menu="matMenu" xPosition="before">
   <ng-template matMenuContent let-delivery="delivery">
     <button mat-menu-item (click)="editDelivery(delivery)" [disabled]="loading">
