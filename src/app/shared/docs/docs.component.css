@@ -18,3 +18,12 @@
 .blocker > h3 {
   pointer-events: none;
 }
+
+.header {
+  display: flex;
+  align-items: center;
+}
+
+.upload-button {
+  margin-left: auto;
+}

@@ -7,8 +7,10 @@ import { Line } from '../line';
 
 
 interface Data {
+  custNmbr: string;
   sopType: number;
   sopNumber: string;
+  custName: string;
 }
 
 @Component({

@@ -8,8 +8,8 @@ import { DocsService } from '../docs.service';
   styleUrls: ['./doc-upload.component.css']
 })
 export class DocUploadComponent {
-  @Input() id!: string;
   @Input() folder!: string;
+  @Input() subfolder!: string;
 
   constructor(
     private docsService: DocsService
@@ -20,7 +20,7 @@ export class DocUploadComponent {
     const keys = Array.from(Array(files.length).keys());
     for (let key in keys) {
       const file = files[key];
-      this.docsService.uploadFile(this.id, this.folder, file);
+      this.docsService.uploadFile(this.folder, this.subfolder, file);
     }
   }
 

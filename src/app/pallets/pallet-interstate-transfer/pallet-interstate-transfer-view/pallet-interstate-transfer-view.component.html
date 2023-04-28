@@ -99,7 +99,7 @@
     </mat-card-content>
   </mat-card>
   <mat-card appearance="outlined" class="inner">
-    <gcp-docs [id]="transfer.summary.id" folder="transfers" (statusChanged)="markFileAttached(transfer.summary.id, $event)">
+    <gcp-docs [subfolder]="transfer.summary.id" folder="transfers" (statusChanged)="markFileAttached(transfer.summary.id, $event)">
       <mat-card-header>
         <mat-card-title>Attachments</mat-card-title>
       </mat-card-header>

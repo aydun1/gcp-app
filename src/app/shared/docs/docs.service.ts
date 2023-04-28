@@ -35,8 +35,8 @@ export class DocsService {
     )
   }
 
-  private createUploadSession(id: string, folder: string, file: File): Observable<any> {
-    const url = `${this.endpoint}/drive/root:/${folder}/${id}/${file.name}:/createUploadSession`;
+  private createUploadSession(folder: string, subfolder: string, file: File): Observable<any> {
+    const url = `${this.endpoint}/drive/root:/${folder}/${subfolder}/${file.name}:/createUploadSession`;
     const payload = {
       'item': {
         '@microsoft.graph.conflictBehavior': 'rename',
@@ -79,15 +79,15 @@ export class DocsService {
     );
   }
 
-  uploadFile(id: string, folder: string, file: File): Promise<boolean> {
+  uploadFile(folder: string, subfolder: string, file: File): Promise<boolean> {
     const date = new Date();
-    const uploadSession = this.createUploadSession(id, folder, file).pipe(
+    const uploadSession = this.createUploadSession(folder, subfolder, file).pipe(
       switchMap(upload => this.uploads$.pipe(
         take(1),
         map(pending => {
           const index = pending.findIndex(_ => file.name === _.oldName || file.name === _.name);
           const percent = Math.min(upload.percent, 100) || 0;
-          if (percent === 100) this.docStarter$.next(id);
+          if (percent === 100) this.docStarter$.next(subfolder);
           const doc = {oldName: upload.file ? '' : file.name, name: upload.name || file.name, percent: percent, createdDateTime: date.toISOString(), webUrl: upload.webUrl, createdBy: upload.createdBy, file: upload.file} as Doc;
           return index === -1 ? [doc, ...pending] : pending.map(obj => obj.name === file.name ? doc : obj)
           }
@@ -111,6 +111,8 @@ export class DocsService {
   icon(mime: string): string {
     const path = 'assets';
     switch (mime) {
+      case 'folder':
+        return `${path}/folder.svg`;
       case 'application/pdf':
         return `${path}/pdf.svg`;
       case 'application/vnd.ms-excel':

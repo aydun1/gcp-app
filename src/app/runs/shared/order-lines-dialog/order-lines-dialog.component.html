@@ -1,6 +1,9 @@
-<h2 mat-dialog-title>Delivery Manifest</h2>
+<h2 mat-dialog-title>Delivery docket</h2>
 
 <mat-dialog-content>
+  <div><strong>Customer: </strong>{{ data.custName }}</div>
+  <div><strong>Order no.: </strong>{{ data.sopNumber }}</div>
+  <mat-divider class="section-divider"></mat-divider>
   <div class="header row">
     <div class="item-number">Item Number</div>
     <div class="item-desc">Item Description</div>
@@ -18,14 +21,16 @@
     <div class="note" *ngIf="ol.length === 0">
       No allocations
     </div>
-    <mat-divider></mat-divider>
-    <div>
-      <div>
-        <strong>Approx pallet spaces:</strong> {{ palletSpaces | number: '1.0-2' }}
-      </div>
-    </div>
   </div>
   <div *ngIf="loading" class="note">
     <mat-spinner diameter="48" class="spinner"></mat-spinner>
+  </div>
+  <mat-divider class="section-divider"></mat-divider>
+  <div class="spaces">
+    <strong>Approx pallet spaces:</strong> {{ palletSpaces | number: '1.0-2' }}
+  </div>
+  <mat-divider class="section-divider"></mat-divider>
+  <div class="attachments">
+    <gcp-docs [folder]="'debtors/'+ data.custNmbr" [subfolder]="data.sopNumber"><strong>Attachments</strong></gcp-docs>
   </div>
 </mat-dialog-content>

@@ -9,6 +9,9 @@ export interface Doc {
   file: {
     mimeType: string;
   }
+  folder: {
+    childCount: number;
+  }
   id: string;
   oldName: string;
   name: string;

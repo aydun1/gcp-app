@@ -1,6 +1,9 @@
 <div class="dropzone" (dragover)="allowDrop($event)" (dragenter)="addClass($event)" (drop)="drop($event)">
-  <gcp-doc-upload [id]="id" [folder]="folder"><ng-content></ng-content></gcp-doc-upload>
-  <gcp-doc-list [id]="id" [folder]="folder"></gcp-doc-list>
+  <div class="header">
+    <ng-content></ng-content>
+    <gcp-doc-upload [folder]="folder" [subfolder]="subfolder" class="upload-button"></gcp-doc-upload>
+  </div>
+  <gcp-doc-list [folder]="folder" [subfolder]="subfolder"></gcp-doc-list>
   <div *ngIf="dragOver" class="blocker mat-app-background" (dragleave)="removeClass($event)">
     <h3>Drop file here to upload!</h3>
   </div>

@@ -8,8 +8,8 @@ import { DocsService } from './docs.service';
   styleUrls: ['./docs.component.css']
 })
 export class DocsComponent implements OnInit {
-  @Input() id!: string;
   @Input() folder!: string;
+  @Input() subfolder!: string;
   @Output() statusChanged = this.docsService.statusChanged;
 
   public dragOver = false;
@@ -19,7 +19,7 @@ export class DocsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    if (this.id) this.docsService.docStarter$.next(this.id);
+    if (this.subfolder) this.docsService.docStarter$.next(this.subfolder);
   }
 
   allowDrop(e: DragEvent): void {
@@ -47,7 +47,7 @@ export class DocsComponent implements OnInit {
       let item = items[key];
       if (item.kind === 'file') {
         const file = item.getAsFile();
-        this.docsService.uploadFile(this.id, this.folder, file);
+        this.docsService.uploadFile(this.folder, this.subfolder, file);
       }
     }
   }

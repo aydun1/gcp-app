@@ -2,14 +2,17 @@
   <div class="doc" *ngFor="let doc of docs$ | async">
     <a mat-list-item [href]="doc.webUrl" target="_blank">
       <img *ngIf="doc.file" [src]="icon(doc.file.mimeType)" alt="File type icon" matListItemIcon>
-      <mat-spinner *ngIf="!doc.file" matListItemIcon diameter="24"></mat-spinner>
+      <img *ngIf="doc.folder" [src]="icon('folder')" alt="File type icon" matListItemIcon>
+      <mat-spinner *ngIf="!doc.file && !doc.folder" matListItemIcon diameter="24"></mat-spinner>
       <span matListItemTitle>{{ doc.name }}</span>
       <span *ngIf="doc.createdBy else loading2">Uploaded by {{ doc.createdBy.user.displayName }} on {{ doc.createdDateTime | date: 'dd/MM/yyyy hh:mm a' }} </span>
       <ng-template #loading2>
         <span>{{ doc.percent || 0 }}% </span>
       </ng-template>
     </a>
-    <button mat-icon-button class="menu-toggle" type="button" [matMenuTriggerFor]="menu" [matMenuTriggerData]="{doc: doc}"><mat-icon>more_vert</mat-icon></button>
+    <button *ngIf="doc.file" mat-icon-button class="menu-toggle" type="button" [matMenuTriggerFor]="menu" [matMenuTriggerData]="{doc: doc}">
+      <mat-icon>more_vert</mat-icon>
+    </button>
   </div>
 </mat-nav-list>
 

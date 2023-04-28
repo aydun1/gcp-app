@@ -1,6 +1,7 @@
 export interface Order {
   sopType: number;
   sopNumber: string;
+  batchNumber: string;
   custName: string;
   custNumber: string;
   address1: string;
