@@ -32,23 +32,28 @@
           </mat-expansion-panel-header>
 
           <div class="order-list" *ngIf="orders$ | async as orders">
-            <mat-form-field appearance="fill" subscriptSizing="dynamic" class="run" *ngIf="0">
-              <mat-label>Delivery date</mat-label>
-              <input matInput [matDatepicker]="picker1" [formControl]="dateFilter">
+            <div class="date-picker">
+              <span class="date-label">Delivery date:</span>
+              <input type="text" [matDatepicker]="picker1" [formControl]="dateFilter" class="date-input">
               <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
               <mat-datepicker #picker1></mat-datepicker>
-            </mat-form-field>
+              <button mat-icon-button (click)="prevDay()" type="button" class="prev-day">
+                <mat-icon>chevron_left</mat-icon>
+              </button>
+              <button mat-icon-button (click)="nextDay()" type="button">
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+            </div>
             <mat-list #orderList="cdkDropList" cdkDropList [cdkDropListConnectedTo]="[deliveryList]" [cdkDropListSortingDisabled]="true">
               <div *ngFor="let section of orders|groupByProperty:'shipMethod';trackBy:trackByGroupsFn">
-                <div matSubheader><strong>{{ section.key }}</strong></div>
+                <div matSubheader><strong>{{ section.key !== 'undefined' ? section.key : '' }}</strong></div>
                 <mat-list-item class="drag-list-item" *ngFor="let order of section.value;trackBy:trackByFn" cdkDrag [cdkDragData]="order">
                   <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
                   <span matListItemTitle>{{ order.custName }}</span>
-                  <span matListItemLine>Order: {{ order.sopNumber }} </span>
+                  <span matListItemLine>Order: {{ order.sopNumber }} <ng-container *ngIf="order.posted">| posted</ng-container></span>
                   <span matListItemLine>Spaces: {{ order.palletSpaces | number: '1.1-1' }}</span>
                   <ng-container matListItemMeta>
                     <button mat-icon-button (click)="openReceipt(order.sopNumber)"><mat-icon>receipt</mat-icon></button>
-
                     <button type="button" [disabled]="loading" mat-icon-button (click)="addOrderDelivery(order, run, undefined).subscribe()" class="icon"><mat-icon>add</mat-icon></button>
                   </ng-container>
                 </mat-list-item>

@@ -31,7 +31,7 @@ export class RunListComponent implements OnInit {
 
   public listSize!: number;
   public runFilter = new FormControl('');
-  public dateFilter = new FormControl('');
+  public dateFilter = new FormControl(this.getDate());
   public orders$!: Observable<Order[]>;
   public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
@@ -53,10 +53,39 @@ export class RunListComponent implements OnInit {
     private deliveryService: DeliveryService
   ) { }
 
+  private getDate(): Date {
+    const date = new Date();
+    const day = date.getDay();
+    const nextDay = day > 4 ? 8 - day : 1;
+    date.setDate(date.getDate() + nextDay);
+    date.setHours(0,0,0,0);
+    return date;
+  }
+
+  nextDay(): void {
+    if (!this.dateFilter.value) return;
+    const date = this.dateFilter.value;
+    date.setDate(date.getDate() + 1);
+    date.setHours(0,0,0,0);
+    this.dateFilter.setValue(date);
+  }
+
+  prevDay(): void {
+    if (!this.dateFilter.value) return;
+    const date = this.dateFilter.value;
+    date.setDate(date.getDate() - 1);
+    date.setHours(0,0,0,0);
+    this.dateFilter.setValue(date);
+  }
+
   ngOnInit(): void {
     const state$ = this.sharedService.getBranch();
-    const date = new Date();
-    this.orders$ = this.deliveryService.syncOrders('QLD', date);
+    this.orders$ = this.dateFilter.valueChanges.pipe(
+      tap(() => this.loading = true),
+      startWith(this.dateFilter.value),
+      switchMap(_ => this.deliveryService.syncOrders('QLD', _ || this.getDate())),
+      tap(() => this.loading = false)
+    );
     this.deliveries$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(

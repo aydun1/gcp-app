@@ -22,6 +22,26 @@ h2 {
   flex: 1;
 }
 
+.date-picker {
+  align-items: center;
+  display: flex;
+}
+
+.date-label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.date-input {
+  padding: 6px;
+  border-radius: 47px;
+  font-size: 16px;
+  border: none;
+  width: 86px;
+  margin: 0 10px;
+}
+
 .run-head {
   margin: 0 10px;
   position: relative;
@@ -33,7 +53,7 @@ h2 {
   top: -12px;
 }
 
-.mat-mdc-form-field {
+.run {
   margin-right: 10px;
   width: 200px;
 }
