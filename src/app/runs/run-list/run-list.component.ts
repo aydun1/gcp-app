@@ -134,12 +134,7 @@ export class RunListComponent implements OnInit {
       custName: custName
     };
 
-    const dialogRef = this.dialog.open(OrderLinesDialogComponent, {width: '800px', data});
-    dialogRef.afterClosed().pipe(
-      switchMap(_ => _ ? this.addCustomerDelivery(_.customer, _.site, _.address, _.notes,) : of()),
-    ).subscribe(() => {
-      this.loading = false;
-    });
+    this.dialog.open(OrderLinesDialogComponent, {width: '800px', data});
   }
 
   parseParams(params: Params): void {
@@ -234,9 +229,9 @@ export class RunListComponent implements OnInit {
     return item.id;
   }
 
-  openPalletDialog(name: string, custNmbr: string, site: string): void {
+  openPalletDialog(name: string, custNmbr: string, orderNmbr: string, site: string): void {
     const customer = {name, custNmbr};
-    const data = {customer, site};
+    const data = {customer, site, orderNmbr: orderNmbr || ''};
     this.dialog.open(PalletDialogComponent, {width: '600px', data, autoFocus: false});
   }
 

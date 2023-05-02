@@ -38,7 +38,7 @@ export class PalletDialogComponent implements OnInit {
 
   constructor(
       public dialogRef: MatDialogRef<PalletDialogComponent>,
-      @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>, site: string},
+      @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>, site: string, orderNmbr: string},
       private snackBar: MatSnackBar,
       private fb: FormBuilder,
       private sharedService: SharedService,
@@ -46,13 +46,14 @@ export class PalletDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    console.log(this.data.orderNmbr)
     this.sharedService.getBranch().subscribe(state => this._state = state);
     const requireSite = this.data.site || this.data.sites?.length;
     this.siteNames = this.data.sites ? this.data.sites.map(_ => _.fields.Title) : [this.data.site].filter(_ => _);
     this.palletForm = this.fb.group({
       site: [this.data.site, requireSite ? Validators.required : ''],
       date: [new Date(), Validators.required],
-      notes: [''],
+      notes: [this.data.orderNmbr],
       quantities: this.fb.array(this.palletTypes.map(_ => this.fb.group<PalletQty>({
         pallet: new FormControl(_.name, [Validators.required]),
         outQty: new FormControl(null, [Validators.min(0), Validators.max(1000)]),

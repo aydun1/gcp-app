@@ -4,6 +4,7 @@ import { SafeUrl } from '@angular/platform-browser';
 import { Location } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { SwUpdate, VersionEvent } from '@angular/service-worker';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSidenavContainer } from '@angular/material/sidenav';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { InteractionStatus, EventMessage, EventType, AccountInfo, RedirectRequest } from '@azure/msal-browser';
@@ -13,6 +14,7 @@ import { authentication } from '@microsoft/teams-js';
 import { SharedService } from './shared.service';
 import { TeamsService } from './teams.service';
 import { ThemingService } from './theming.service';
+import { ScannerDialogComponent } from './scanner-dialog/scanner-dialog.component';
 
 @Component({
   selector: 'gcp-root',
@@ -39,6 +41,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private swUpdate: SwUpdate,
     private authService: MsalService,
     private location: Location,
+    private dialog: MatDialog,
     private msalBroadcastService: MsalBroadcastService,
     private renderer: Renderer2,
     private router: Router,
@@ -158,6 +161,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
   closeMenu(): void {
     if (this.isMobile) this.sidenav.close();
+  }
+
+  openScannerDialog() {
+    const dialogRef = this.dialog.open(ScannerDialogComponent, {width: '800px'});
+    dialogRef.afterClosed().subscribe();
   }
 
   ngOnDestroy(): void {

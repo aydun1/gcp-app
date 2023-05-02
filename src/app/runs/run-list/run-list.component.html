@@ -114,7 +114,7 @@
         <ng-container matColumnDef="actions">
           <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
           <mat-cell *matCellDef="let delivery">
-            <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.Site)">Pallets</button>
+            <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.OrderNumber, delivery.fields.Site)">Pallets</button>
             <button mat-raised-button color="primary" (click)="openRecyclingDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.Site)">Recycling</button>
             <button *ngIf="delivery.fields.OrderNumber" mat-icon-button (click)="openReceipt(delivery.fields.OrderNumber, delivery.fields.CustomerNumber, delivery.fields.Customer)"><mat-icon>receipt</mat-icon></button>
           </mat-cell>

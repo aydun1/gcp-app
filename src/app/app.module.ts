@@ -19,6 +19,7 @@ import { SharedModule } from './shared/shared.module';
 import { LogoutComponent } from './logout/logout.component';
 import { environment } from '../environments/environment';
 import { ThemingService } from './theming.service';
+import { ScannerDialogModule } from './scanner-dialog/scanner-dialog.module';
 
 class CustomDateAdapter extends NativeDateAdapter {
   override parse(value: string): Date | null {
@@ -102,7 +103,8 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerImmediately'
-    })
+    }),
+    ScannerDialogModule
   ],
   providers: [
     {provide: MAT_DATE_LOCALE, useValue: 'en-AU'},
