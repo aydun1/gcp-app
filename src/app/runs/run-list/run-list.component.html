@@ -50,7 +50,7 @@
                 <mat-list-item class="drag-list-item" *ngFor="let order of section.value;trackBy:trackByFn" cdkDrag [cdkDragData]="order">
                   <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
                   <span matListItemTitle>{{ order.custName }}</span>
-                  <span matListItemLine>Order: {{ order.sopNumber }}<ng-container *ngIf="order.posted">| posted</ng-container></span>
+                  <span matListItemLine>Order: {{ order.sopNumber }}<ng-container *ngIf="order.posted"> | posted</ng-container></span>
                   <span matListItemLine>Spaces: {{ order.palletSpaces | number: '1.1-1' }}</span>
                   <ng-container matListItemMeta>
                     <button mat-icon-button (click)="openReceipt(order.sopNumber, order.custNumber, order.custName)"><mat-icon>receipt</mat-icon></button>
