@@ -1,9 +1,10 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Component, OnInit, Inject, OnDestroy, Renderer2 } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy, Renderer2, ViewChild } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { Location } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { SwUpdate, VersionEvent } from '@angular/service-worker';
+import { MatSidenavContainer } from '@angular/material/sidenav';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { InteractionStatus, EventMessage, EventType, AccountInfo, RedirectRequest } from '@azure/msal-browser';
 import { filter, interval, map, Observable, Subject, takeUntil, tap } from 'rxjs';
@@ -19,6 +20,7 @@ import { ThemingService } from './theming.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
+  @ViewChild('snav') public sidenav!: MatSidenavContainer;
   private readonly _destroying$ = new Subject<void>();
   private checkInterval = 1000 * 60 * 60 * 6;  // 6 hours
   public loginDisplay = false;
@@ -60,23 +62,11 @@ export class AppComponent implements OnInit, OnDestroy {
     this.observer.observe(['(max-width: 600px)']).subscribe(_ => this.isMobile = _.matches);
     this.authService.instance.enableAccountStorageEvents();
     this.sharedService.getBranch().subscribe(_ => this.isQld = _ === 'QLD');
-
-    authentication.getAuthToken().then(
-      _ => this.token = _
-    ).catch(
-      _ => console.log(_)
-    );
-    
+    authentication.getAuthToken().then(_ => this.token = _).catch(_ => console.log(_));
     // Enables auto login/logout in other open windows/tabs
     this.msalBroadcastService.msalSubject$.pipe(
       filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED),
-      tap(() => {
-        if (this.authService.instance.getAllAccounts().length === 0) {
-          this.router.navigate(['/']);
-        } else {
-          this.setLoginDisplay();
-        }
-      })
+      tap(() => this.authService.instance.getAllAccounts().length === 0 ? this.router.navigate(['/']) : this.setLoginDisplay())
     ).subscribe();
 
     this.msalBroadcastService.msalSubject$.pipe(
@@ -124,13 +114,13 @@ export class AppComponent implements OnInit, OnDestroy {
     );
   }
 
-  checkIfTeams() {
+  checkIfTeams(): void {
     this.teamsService.isTeams.pipe(
       tap(_ => {
         if (_ !== undefined) this.checkedTeams = true;
         if (_) this.renderer.addClass(document.body, 'teams');
     }),
-    ).subscribe()
+    ).subscribe();
   }
 
   setLoginDisplay(): void {
@@ -164,6 +154,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   urlActive(url: string): boolean {
     return this.router.url.startsWith(url);
+  }
+
+  closeMenu(): void {
+    if (this.isMobile) this.sidenav.close();
   }
 
   ngOnDestroy(): void {
