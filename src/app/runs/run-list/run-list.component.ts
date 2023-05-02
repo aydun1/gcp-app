@@ -125,14 +125,15 @@ export class RunListComponent implements OnInit {
     )
   }
 
-  openReceipt(orderNumber: string, custName: string) {
+  openReceipt(orderNumber: string, custNumber: string, custName: string) {
     const data = {
       title: 'Delivery details',
       sopType: 2,
       sopNumber: orderNumber,
+      custNumber: custNumber,
       custName: custName
     };
-   
+
     const dialogRef = this.dialog.open(OrderLinesDialogComponent, {width: '800px', data});
     dialogRef.afterClosed().pipe(
       switchMap(_ => _ ? this.addCustomerDelivery(_.customer, _.site, _.address, _.notes,) : of()),

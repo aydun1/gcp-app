@@ -7,7 +7,7 @@ import { Line } from '../line';
 
 
 interface Data {
-  custNmbr: string;
+  custNumber: string;
   sopType: number;
   sopNumber: string;
   custName: string;
