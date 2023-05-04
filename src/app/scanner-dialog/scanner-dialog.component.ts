@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { BarcodeFormat } from '@zxing/library';
 import { BehaviorSubject, tap } from 'rxjs';
+
 import { OrderLinesDialogComponent } from '../runs/shared/order-lines-dialog/order-lines-dialog.component';
 
 @Component({
@@ -11,6 +12,7 @@ import { OrderLinesDialogComponent } from '../runs/shared/order-lines-dialog/ord
   styleUrls: ['./scanner-dialog.component.css']
 })
 export class ScannerDialogComponent implements OnInit {
+  private opened = false;
   public availableDevices!: MediaDeviceInfo[];
   public currentDevice: MediaDeviceInfo | undefined;
   public cameraFilter = new FormControl<string | null>(null);
@@ -20,7 +22,7 @@ export class ScannerDialogComponent implements OnInit {
   public torchEnabled = false;
   public torchAvailable$ = new BehaviorSubject<boolean>(false);
   public tryHarder = false;
-  private opened = false;
+  public enabled = true;
 
   public formatsEnabled: BarcodeFormat[] = [
     BarcodeFormat.CODE_39,
@@ -31,9 +33,15 @@ export class ScannerDialogComponent implements OnInit {
   ];
 
   constructor(
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dialogRef: MatDialogRef<ScannerDialogComponent>
   ) { }
 
+  @HostListener('document:visibilitychange', ['$event'])
+  visibilitychange() {
+    this.enabled = !document.hidden;
+  }
+  
   ngOnInit(): void {
     this.cameraFilter.valueChanges.pipe(
       tap(_ => {
@@ -82,9 +90,8 @@ export class ScannerDialogComponent implements OnInit {
     this.tryHarder = !this.tryHarder;
   }
 
-
-
-  openReceipt(orderNumber: string, custNumber: string, custName: string) {
+  openReceipt(orderNumber: string, custNumber: string, custName: string): void {
+    this.dialogRef.close();
     this.opened = true;
     const data = {
       title: 'Delivery details',
@@ -95,7 +102,6 @@ export class ScannerDialogComponent implements OnInit {
     };
     const recDialog = this.dialog.open(OrderLinesDialogComponent, {width: '800px', data});
     recDialog.afterClosed().subscribe(_ => this.opened = false);
-
   }
 
 
