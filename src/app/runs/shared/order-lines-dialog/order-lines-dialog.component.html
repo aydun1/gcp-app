@@ -1,16 +1,16 @@
 <h2 mat-dialog-title>Delivery docket</h2>
 
 <mat-dialog-content>
-  <div><strong>Customer: </strong>{{ data.custName }}</div>
-  <div><strong>Order no.: </strong>{{ data.sopNumber }}</div>
-  <mat-divider class="section-divider"></mat-divider>
-  <div class="header row">
-    <div class="item-number">Item Number</div>
-    <div class="item-desc">Item Description</div>
-    <div class="quantity">Quantity</div>
-  </div>
-  <div *ngIf="orderLines$ | async as ol">
-    <div *ngFor="let l of ol; last as last">
+  <div *ngIf="order$ | async as o">
+    <div><strong>Customer: </strong>{{ o.custName }}</div>
+    <div><strong>Order no.: </strong>{{ o.sopNumber }}</div>
+    <mat-divider class="section-divider"></mat-divider>
+    <div class="header row">
+      <div class="item-number">Item Number</div>
+      <div class="item-desc">Item Description</div>
+      <div class="quantity">Quantity</div>
+    </div>
+    <div *ngFor="let l of o.lines; last as last">
       <div class="row">
         <div class="item-number">{{ l.itemNmbr }}</div>
         <div class="item-desc">{{ l.itemDesc }}</div>
@@ -18,19 +18,19 @@
       </div>
       <mat-divider *ngIf="!last"></mat-divider>
     </div>
-    <div class="note" *ngIf="ol.length === 0">
+    <div class="note" *ngIf="o.lines.length === 0">
       No allocations
+    </div>
+    <mat-divider class="section-divider"></mat-divider>
+    <div class="spaces">
+      <strong>Approx pallet spaces:</strong> {{ palletSpaces | number: '1.0-2' }}
+    </div>
+    <mat-divider class="section-divider"></mat-divider>
+    <div class="attachments">
+      <gcp-docs [folder]="'debtors/'+ o.custNumber" [subfolder]="data.sopNumber"><strong>Attachments</strong></gcp-docs>
     </div>
   </div>
   <div *ngIf="loading" class="note">
     <mat-spinner diameter="48" class="spinner"></mat-spinner>
-  </div>
-  <mat-divider class="section-divider"></mat-divider>
-  <div class="spaces">
-    <strong>Approx pallet spaces:</strong> {{ palletSpaces | number: '1.0-2' }}
-  </div>
-  <mat-divider class="section-divider"></mat-divider>
-  <div class="attachments">
-    <gcp-docs [folder]="'debtors/'+ data.custNumber" [subfolder]="data.sopNumber"><strong>Attachments</strong></gcp-docs>
   </div>
 </mat-dialog-content>

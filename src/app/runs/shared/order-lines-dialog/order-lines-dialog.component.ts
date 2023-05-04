@@ -3,14 +3,12 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Observable, tap } from 'rxjs';
 
 import { DeliveryService } from '../delivery.service';
-import { Line } from '../line';
+import { Order } from '../order';
 
 
 interface Data {
-  custNumber: string;
   sopType: number;
   sopNumber: string;
-  custName: string;
 }
 
 @Component({
@@ -19,7 +17,7 @@ interface Data {
   styleUrls: ['./order-lines-dialog.component.css']
 })
 export class OrderLinesDialogComponent implements OnInit {
-  public orderLines$!: Observable<Line[]>;
+  public order$!: Observable<Order>;
   public loading = true;
   public palletSpaces!: number;
 
@@ -30,9 +28,9 @@ export class OrderLinesDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.orderLines$ = this.deliveryService.getOrderLines(this.data.sopType, this.data.sopNumber).pipe(
+    this.order$ = this.deliveryService.getOrder(this.data.sopType, this.data.sopNumber).pipe(
       tap(_ => {
-        this.palletSpaces = _.reduce((acc, cur) => acc += +cur.palletSpaces, 0);
+        this.palletSpaces = _.lines.reduce((acc, cur) => acc += +cur.palletSpaces, 0);
         this.loading = false;
       })
     );

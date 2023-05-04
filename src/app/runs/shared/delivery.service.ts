@@ -13,7 +13,6 @@ import { Site } from '../../customers/shared/site';
 import { Delivery } from './delivery';
 import { Run } from './run';
 import { Order } from './order';
-import { Line } from './line';
 
 @Injectable({
   providedIn: 'root'
@@ -121,10 +120,8 @@ export class DeliveryService {
     return request;
   }
 
-  getOrderLines(sopType: number, sopNumber: string): Observable<Line[]> {
-    const request = this.http.get<{lines: Line[]}>(`${environment.gpEndpoint}/orders/${sopType}/${sopNumber}`).pipe(
-      map(_ => _.lines)
-    );
+  getOrder(sopType: number, sopNumber: string): Observable<Order> {
+    const request = this.http.get<Order>(`${environment.gpEndpoint}/orders/${sopType}/${sopNumber}`);
     return request;
   }
 

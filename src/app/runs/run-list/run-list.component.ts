@@ -125,13 +125,10 @@ export class RunListComponent implements OnInit {
     )
   }
 
-  openReceipt(orderNumber: string, custNumber: string, custName: string) {
+  openReceipt(orderNumber: string): void {
     const data = {
-      title: 'Delivery details',
       sopType: 2,
       sopNumber: orderNumber,
-      custNumber: custNumber,
-      custName: custName
     };
 
     this.dialog.open(OrderLinesDialogComponent, {width: '800px', data});

@@ -53,7 +53,7 @@
                   <span matListItemLine>Order: {{ order.sopNumber }}<ng-container *ngIf="order.posted"> | posted</ng-container></span>
                   <span matListItemLine>Spaces: {{ order.palletSpaces | number: '1.1-1' }}</span>
                   <ng-container matListItemMeta>
-                    <button mat-icon-button (click)="openReceipt(order.sopNumber, order.custNumber, order.custName)"><mat-icon>receipt</mat-icon></button>
+                    <button mat-icon-button (click)="openReceipt(order.sopNumber)"><mat-icon>receipt</mat-icon></button>
                     <button type="button" [disabled]="loading" mat-icon-button (click)="addOrderDelivery(order, run, undefined).subscribe()" class="icon"><mat-icon>add</mat-icon></button>
                   </ng-container>
                 </mat-list-item>
@@ -116,7 +116,7 @@
           <mat-cell *matCellDef="let delivery">
             <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.OrderNumber, delivery.fields.Site)">Pallets</button>
             <button mat-raised-button color="primary" (click)="openRecyclingDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.Site)">Recycling</button>
-            <button *ngIf="delivery.fields.OrderNumber" mat-icon-button (click)="openReceipt(delivery.fields.OrderNumber, delivery.fields.CustomerNumber, delivery.fields.Customer)"><mat-icon>receipt</mat-icon></button>
+            <button *ngIf="delivery.fields.OrderNumber" mat-icon-button (click)="openReceipt(delivery.fields.OrderNumber)"><mat-icon>receipt</mat-icon></button>
           </mat-cell>
           <mat-footer-cell *matFooterCellDef></mat-footer-cell>
         </ng-container>

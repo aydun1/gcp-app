@@ -1,3 +1,5 @@
+import { Line } from "./line";
+
 export interface Order {
   sopType: number;
   sopNumber: string;
@@ -10,4 +12,5 @@ export interface Order {
   city: string;
   postCode: string;
   state: string;
+  lines: Array<Line>;
 }
