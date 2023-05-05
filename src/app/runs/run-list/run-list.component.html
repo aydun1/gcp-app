@@ -3,7 +3,7 @@
     <gcp-letterhead class="print-heading">Local deliveries</gcp-letterhead>
     <h2>Local deliveries</h2>
     <div class="refresher">
-      <mat-spinner *ngIf="loading" diameter="36"></mat-spinner>
+      <mat-spinner *ngIf="loading || loadingOrders" diameter="36"></mat-spinner>
     </div>
     <div class="options inner">
       <div class="buttons">

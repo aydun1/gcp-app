@@ -61,14 +61,24 @@ export class DeliveryService {
     )
   }
 
-  private updateRunDeliveries(runName: string | null): Observable<Delivery[]> {
+  private updateRunDeliveries(runName: string | null | undefined): Observable<Delivery[]> {
     return this._deliveriesSubject$.pipe(
       take(1),
-      map(deliveries => deliveries.filter(_ => runName ? _.fields.Title === runName : !_.fields.Title).map(
-        (object, i) => {
-          return {id: object.id, index: object.fields.Sequence !== i ? i : -1};
-        }).filter(_ => _.index > -1)
-      ),
+      map(deliveries => {
+        const runDeliveries = deliveries.filter(_ => runName ? _.fields.Title === runName : !_.fields.Title);
+        return runDeliveries.map((cur, i) => {
+          const prev = runDeliveries[i - 1];
+          const next = runDeliveries[i + 1];
+          const curIndex = cur.fields.Sequence;
+          const prevIndex = prev ? prev.fields.Sequence : -1;
+          const nextIndex = next ? next.fields?.Sequence : (cur.fields.Sequence || 0) + 512;
+          let newIndex = (curIndex <= prevIndex || curIndex >= nextIndex || !curIndex) ? Math.floor((prevIndex + nextIndex) / 2) : curIndex;
+          if (newIndex <= prevIndex) newIndex = prevIndex + 1;
+          const changed = runDeliveries[i]['fields']['Sequence'] !== newIndex;
+          runDeliveries[i]['fields']['Sequence'] = newIndex;
+          return {id: cur.id, index: newIndex, changed};
+        }).filter(_ => _.changed === true)
+      }),
       switchMap(_ => this.updateSequence(_))
     );
   }
@@ -202,7 +212,7 @@ export class DeliveryService {
     return this._deliveriesSubject$;
   }
 
-  createDelivery(run: string | null, customer: Customer, site: Site | null, address: string, city: string, state: string, postcode: string, orderNo: string, notes: string, sequence: number | undefined): Observable<Delivery[]> {
+  createDelivery(run: string | null, customer: Customer, site: Site | null, address: string, city: string, state: string, postcode: string, orderNo: string, notes: string, targetIndex: number | undefined): Observable<Delivery[]> {
     const runName = run || undefined;
     const fields = {Title: runName, Customer: customer.name, CustomerNumber: customer.custNmbr, OrderNumber: orderNo};
     if (notes) fields['Notes'] = notes;
@@ -214,34 +224,25 @@ export class DeliveryService {
     return this._deliveriesSubject$.pipe(
       take(1),
       tap(deliveries => {
-        sequence = sequence !== undefined ? sequence : deliveries.filter(_ => _.fields.Title === runName).findIndex(_ => _.fields.PostCode > postcode);
-        fields['Sequence'] = sequence;
-        const targetIndex = deliveries.findIndex(_ => _.fields.Title === runName && _.fields.Sequence === sequence);
-        deliveries.splice(targetIndex > -1 ? targetIndex : deliveries.length, 0, {fields: fields} as Delivery);
+        const runDeliveries = deliveries.filter(_ => _.fields.Title === runName);
+        targetIndex = targetIndex !== undefined ? targetIndex : runDeliveries.findIndex(_ => _.fields.PostCode > postcode);
+        const insertBeforeId = runDeliveries[targetIndex]?.id;
+        const insertBeforeIndex = insertBeforeId ? deliveries.findIndex(_ => _.id === insertBeforeId) : deliveries.length;
+        deliveries.splice(insertBeforeIndex, 0, {fields: fields} as Delivery);
         this._deliveriesSubject$.next(deliveries);
       }),
       switchMap(() => this.shared.getBranch()),
       switchMap(_ => this.http.post<Delivery>(`${this._deliveryListUrl}/items`, {fields: {...fields, Branch: _}})),
-      switchMap(d => {
+      switchMap(delivery => {
         return this._deliveriesSubject$.pipe(
           take(1),
           tap(deliveries => {
-            const targetIndex = deliveries.findIndex(_ => _.fields.Title === runName && _.fields.Sequence === sequence);
-            deliveries.splice(targetIndex, 1, d);
+            deliveries[deliveries.findIndex(_ => !_.id)] = delivery;
             this._deliveriesSubject$.next(deliveries);
           })
         );
       }),
-      switchMap(_ => {
-        const changedItems = _.filter(_ =>
-          runName ? _.fields.Title === runName : !_.fields.Title
-        ).map((object, i) => {
-          return {id: object.id, index: i}
-        }).slice(sequence);
-        return this.updateSequence(changedItems).pipe(
-          tap(deliveries => this._deliveriesSubject$.next(deliveries)),
-        );
-      })
+      switchMap(_ => this.updateRunDeliveries(runName))
     );
   }
 

@@ -40,6 +40,7 @@ export class RunListComponent implements OnInit {
   public run = '';
   public showFulfilled = false;
   public loading = false;
+  public loadingOrders = true;
   public empty = true;
   public displayedColumns = ['sequence', 'customer', 'site', 'notes', 'actions', 'status', 'menu'];
   public dragDisabled = true;
@@ -81,10 +82,10 @@ export class RunListComponent implements OnInit {
   ngOnInit(): void {
     const state$ = this.sharedService.getBranch();
     this.orders$ = this.dateFilter.valueChanges.pipe(
-      tap(() => this.loading = true),
+      tap(() => this.loadingOrders = true),
       startWith(this.dateFilter.value),
       switchMap(_ => this.deliveryService.syncOrders('QLD', _ || this.getDate())),
-      tap(() => this.loading = false)
+      tap(() => this.loadingOrders = false)
     );
     this.deliveries$ = this.route.queryParams.pipe(
       startWith({}),
@@ -110,13 +111,6 @@ export class RunListComponent implements OnInit {
       switchMap(_ => this._loadList ? this.getDeliveries(_) : []),
       tap(_ => this.listSize = _.length),
     )
-
-
-        this.dateFilter.valueChanges.subscribe(
-          _ => console.log(_)
-        )
-
-
   }
 
   getDeliveries(params: Params): Observable<Delivery[]> {
