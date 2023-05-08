@@ -1,42 +1,27 @@
 zxing-scanner {
-  max-width: 100%;
-}
-
-.header {
-  position: sticky;
-  top: 0;
-  padding: 10px;
-  background: #333;
   display: flex;
 }
 
-button {
-  margin-left: 8px;
+.action-button {
+  position: absolute;
+  right: 6px;
+  top: 6px;
 }
 
-mat-form-field {
+.mat-mdc-dialog-content,
+.mat-mdc-dialog-actions {
+  padding: 0;
+}
+
+.message {
+  position: absolute;
+  top: 32%;
+}
+
+.mat-mdc-form-field {
   width: 100%;
-  font-weight: bold;
 }
 
-.results {
-  position: sticky;
-  bottom: 0;
-  padding: 15px;
-  background: #02c3c3;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.results .small {
-  font-weight: bolder;
-  display: block;
-  font-size: 60%;
-  margin: -.6em 0 0 0;
-}
-
-h2 {
-  padding: 0 16px;
+h3 {
+  margin-left: 40px;
 }

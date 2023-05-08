@@ -164,7 +164,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   openScannerDialog() {
-    const dialogRef = this.dialog.open(ScannerDialogComponent, {width: '800px'});
+    const dialogRef = this.dialog.open(ScannerDialogComponent, {width: '800px', autoFocus: false});
     dialogRef.afterClosed().subscribe();
   }
 

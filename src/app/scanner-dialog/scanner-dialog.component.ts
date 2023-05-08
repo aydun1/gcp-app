@@ -1,8 +1,9 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { BarcodeFormat } from '@zxing/library';
-import { BehaviorSubject, tap } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, startWith, tap } from 'rxjs';
 
 import { OrderLinesDialogComponent } from '../runs/shared/order-lines-dialog/order-lines-dialog.component';
 
@@ -12,17 +13,17 @@ import { OrderLinesDialogComponent } from '../runs/shared/order-lines-dialog/ord
   styleUrls: ['./scanner-dialog.component.css']
 })
 export class ScannerDialogComponent implements OnInit {
-  private opened = false;
+  private orderRe = /^QO[0-9]{7}|WEB[0-9]{9}$/ig;
   public availableDevices!: MediaDeviceInfo[];
   public currentDevice: MediaDeviceInfo | undefined;
-  public cameraFilter = new FormControl<string | null>(null);
+  public cameraPicker = new FormControl<string | null>(null);
   public hasDevices!: boolean;
   public hasPermission!: boolean;
-  public qrResultString!: string | null;
   public torchEnabled = false;
   public torchAvailable$ = new BehaviorSubject<boolean>(false);
   public tryHarder = false;
   public enabled = true;
+  public scannedText = new FormControl('');
 
   public formatsEnabled: BarcodeFormat[] = [
     BarcodeFormat.CODE_39,
@@ -34,6 +35,7 @@ export class ScannerDialogComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
+    private snackBar: MatSnackBar,
     private dialogRef: MatDialogRef<ScannerDialogComponent>
   ) { }
 
@@ -43,35 +45,51 @@ export class ScannerDialogComponent implements OnInit {
   }
   
   ngOnInit(): void {
-    this.cameraFilter.valueChanges.pipe(
-      tap(_ => {
-        const device = this.availableDevices.find(x => x.deviceId === _);
-        this.currentDevice = device;
+    this.cameraPicker.valueChanges.pipe(
+      tap(_ => this.setCamera(_)
+    )
+    ).subscribe()
+
+    this.scannedText.valueChanges.pipe(
+      startWith(''),
+      distinctUntilChanged((a, b) => {
+        a = a || '';
+        b = b || '';
+        const l = (a.length + b.length) / 2;
+        const diff = l - [...a].reduce((acc, cur, i) => acc += (b ? b[i] : '') === cur ? 1 : 0, 0);
+        if (b.length > 0 && diff > 1) this.processCode(b);
+        return false;
       })
     ).subscribe()
   }
 
+  setCamera(deviceId: string | null): void {
+    if (!deviceId) return;
+    const device = this.availableDevices.find(x => x.deviceId === deviceId);
+    this.currentDevice = device;
+  }
+
   clearResult(): void {
-    this.qrResultString = null;
+    this.scannedText.patchValue('');
   }
 
   onCamerasFound(devices: MediaDeviceInfo[]): void {
     this.availableDevices = devices;
     this.hasDevices = Boolean(devices && devices.length);
-    setTimeout(()=>{
-      this.cameraFilter.setValue(this.availableDevices[0].deviceId);
-      
-    }, 500)
+    setTimeout(()=> this.cameraPicker.setValue(this.availableDevices[0].deviceId), 500);
   }
 
   onCodeResult(resultString: string): void {
-    const orderRe = /^QO[0-9]{7}|WEB[0-9]{9}$/ig;
+    this.scannedText.patchValue(resultString);
+  }
 
-    if (!this.opened && orderRe.test(resultString)) {
-      this.openReceipt(resultString,'','')
+  processCode(code: string | null): void {
+    if (!code) return;
+    if (this.orderRe.test(code)) {
+      this.openReceipt(code);
+    } else {
+      this.snackBar.open('Did not recognise code', '', {duration: 3000});
     }
-
-    this.qrResultString = resultString;
   }
 
   onHasPermission(has: boolean): void {
@@ -90,19 +108,17 @@ export class ScannerDialogComponent implements OnInit {
     this.tryHarder = !this.tryHarder;
   }
 
-  openReceipt(orderNumber: string, custNumber: string, custName: string): void {
+  openReceipt(orderNumber: string): void {
     this.dialogRef.close();
-    this.opened = true;
     const data = {
-      title: 'Delivery details',
       sopType: 2,
-      sopNumber: orderNumber,
-      custNumber: custNumber,
-      custName: custName
+      sopNumber: orderNumber
     };
-    const recDialog = this.dialog.open(OrderLinesDialogComponent, {width: '800px', data});
-    recDialog.afterClosed().subscribe(_ => this.opened = false);
+    this.dialog.open(OrderLinesDialogComponent, {width: '800px', data});
   }
 
+  onScanError(event: any): void {
+    console.log(event);
+  }
 
 }
