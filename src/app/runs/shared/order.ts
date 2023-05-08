@@ -13,4 +13,5 @@ export interface Order {
   postCode: string;
   state: string;
   lines: Array<Line>;
+  reqShipDate: Date;
 }

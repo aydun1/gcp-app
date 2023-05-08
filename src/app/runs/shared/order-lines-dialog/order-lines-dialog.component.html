@@ -4,6 +4,7 @@
   <div *ngIf="order$ | async as o">
     <div><strong>Customer: </strong>{{ o.custName }}</div>
     <div><strong>Order no.: </strong>{{ o.sopNumber }}</div>
+    <div><strong>Req. delivery date: </strong>{{ o.reqShipDate | date: 'd MMM yyyy' }}</div>
     <mat-divider class="section-divider"></mat-divider>
     <div class="header row">
       <div class="item-number">Item Number</div>
