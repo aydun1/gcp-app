@@ -46,9 +46,8 @@ export class ScannerDialogComponent implements OnInit {
   
   ngOnInit(): void {
     this.cameraPicker.valueChanges.pipe(
-      tap(_ => this.setCamera(_)
-    )
-    ).subscribe()
+      tap(_ => this.setCamera(_))
+    ).subscribe();
 
     this.scannedText.valueChanges.pipe(
       startWith(''),

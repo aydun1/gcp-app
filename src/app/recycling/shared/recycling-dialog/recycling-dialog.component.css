@@ -49,6 +49,11 @@
   right: 0;
 }
 
+.note-available {
+  margin: 60px 0;
+  text-align: center;
+}
+
 .close-button {
   position: absolute;
   right: 0;

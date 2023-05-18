@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../../shared.service';
 import { RecyclingService } from '../../shared/recycling.service';
@@ -23,6 +23,7 @@ export class RecyclingDialogComponent implements OnInit {
   readonly allocated = 1;
   readonly delivered = 2;
   readonly returned = 3;
+  public others = ['Bulka Bag', 'Pallet', 'Other'];
   public noAllocatedCages$ = new BehaviorSubject<boolean>(false);
   public noDeliveredCages$ = new BehaviorSubject<boolean>(false);
   public noReturnedCages$ = new BehaviorSubject<boolean>(false);
@@ -71,6 +72,14 @@ export class RecyclingDialogComponent implements OnInit {
         this.loadingCages$.next(false);
       }
     );
+  }
+
+  createAndAssignToCustomer(containerType: string): void {
+    if (this.allocatorForm.invalid) return;
+    const site = this.allocatorForm.value.site;
+    this.recyclingService.addNewCage(undefined, this.data.branch, containerType, undefined).pipe(
+      switchMap(_ => this.recyclingService.allocateToCustomer(_.id, this.data.customer.custNmbr, this.data.customer.name, site))
+    ).subscribe(() => this.closeAssigningPage());
   }
 
   assignToCustomer(id: string): void {

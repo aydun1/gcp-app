@@ -1,20 +1,38 @@
 <ng-container *ngIf="assigning">
   <div class="buttons">
     <button mat-icon-button (click)="closeAssigningPage()" type="button"><mat-icon>arrow_back</mat-icon></button>
-    <h2 mat-dialog-title>Available cages</h2>
+    <h2 mat-dialog-title>Assign a cage</h2>
     <mat-slide-toggle (change)="getAvailableCages($event.checked)" labelPosition="before" class="all-toggle">
       Show all
     </mat-slide-toggle>
   </div>
   <mat-dialog-content>
+    <h3>Containers</h3>
     <mat-accordion>
-      <p *ngIf="loadingAvailableCages$ | async" class="note">
-        Loading...
-      </p>
-      <mat-expansion-panel *ngFor="let cage of availableCages$ | async;trackBy: trackByFn">
+      <mat-expansion-panel *ngFor="let other of others">
         <mat-expansion-panel-header>
-          <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> <span class="cage-type">{{ cage.fields.AssetTypeClean }}</span></mat-panel-title>
+          <mat-panel-title>{{ other }}</mat-panel-title>
         </mat-expansion-panel-header>
+        <form [formGroup]="allocatorForm">
+          <mat-form-field appearance="outline" *ngIf="sites.length > 0 || site">
+            <mat-label>Site</mat-label>
+            <mat-select formControlName="site">
+              <mat-option *ngFor="let site of sites" [value]="site">{{ site }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div class="actions">
+            <button mat-raised-button type="submit" color="primary" (click)="createAndAssignToCustomer(other)">Assign to {{ data.customer.name || data.customer.custNmbr }}</button>
+          </div>
+        </form>
+      </mat-expansion-panel>
+    </mat-accordion>
+    <h3>Available cages</h3>
+    <div *ngIf="availableCages$ | async as cages">
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let cage of cages;trackBy: trackByFn">
+          <mat-expansion-panel-header>
+            <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> <span class="cage-type">{{ cage.fields.AssetTypeClean }}</span></mat-panel-title>
+          </mat-expansion-panel-header>
           <form [formGroup]="allocatorForm">
             <mat-form-field appearance="outline" *ngIf="sites.length > 0 || site">
               <mat-label>Site</mat-label>
@@ -26,8 +44,12 @@
               <button mat-raised-button type="submit" color="primary" (click)="assignToCustomer(cage.id)">Assign to {{ data.customer.name ||data.customer.custNmbr }}</button>
             </div>
           </form>
-      </mat-expansion-panel>
-    </mat-accordion>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <p *ngIf="loadingAvailableCages$ | async" class="note-available">
+      Loading...
+    </p>
   </mat-dialog-content>
 </ng-container>
 
