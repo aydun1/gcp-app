@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+
 import { GroupByPropertyPipe } from './group-by-property';
 import { GroupByPipe } from './group-by.pipe';
 import { GroupCagesPipe } from './group-cages';

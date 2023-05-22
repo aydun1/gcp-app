@@ -26,8 +26,6 @@ export class StringColourPipe implements PipeTransform {
     let mixed = [0, 0, 0];
     console.log(color)
     color.forEach(c => mixed = mixed.map((v, i) => v += c));
-
-    console.log(mixed)
     return [mixed[0] / color.length, mixed[1] / color.length, mixed[2] / color.length];
   }
 
