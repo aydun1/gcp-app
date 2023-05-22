@@ -1,0 +1,42 @@
+{
+  "packageId": "com.gardencityplastics.pallets.twa",
+  "host": "pallets.gardencityplastics.com",
+  "name": "Inventory Management System",
+  "launcherName": "IMS",
+  "display": "standalone",
+  "themeColor": "#309962",
+  "navigationColor": "#000000",
+  "navigationColorDark": "#000000",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#FAFAFA",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://pallets.gardencityplastics.com/assets/icons/icon-512x512.png",
+  "maskableIconUrl": "https://pallets.gardencityplastics.com/assets/icons/maskable-icon-512x512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "C:\\Users\\aidan.obrien.gcp\\dev\\gcp-app\\android.keystore",
+    "alias": "android"
+  },
+  "appVersionName": "2",
+  "appVersionCode": 2,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://pallets.gardencityplastics.com/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://pallets.gardencityplastics.com/",
+  "minSdkVersion": 19,
+  "orientation": "default",
+  "fingerprints": [],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "appVersion": "2"
+}
