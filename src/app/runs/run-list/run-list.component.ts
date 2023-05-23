@@ -1,4 +1,4 @@
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -35,7 +35,7 @@ export class RunListComponent implements OnInit {
   public orders$!: Observable<Order[]>;
   public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
-  public runs: Array<Run> = [{fields: {Title: 'Default'}} as Run];
+  public runs: Array<Run> = [];
   public otherRuns: Array<Run> = [{fields: {Title: 'Default'}} as Run];
   public run = '';
   public showFulfilled = false;
@@ -43,7 +43,6 @@ export class RunListComponent implements OnInit {
   public loadingOrders = true;
   public empty = true;
   public displayedColumns = ['sequence', 'customer', 'site', 'notes', 'actions', 'status', 'menu'];
-  public dragDisabled = true;
   public locked = false;
 
   constructor(
@@ -177,7 +176,6 @@ export class RunListComponent implements OnInit {
       this.deliveryService.moveItem(event.previousIndex, event.currentIndex, run) :
       this.addOrderDelivery(event.item.data as Order, run, event.currentIndex);
     action.subscribe();
-    this.dragDisabled = true;
   }
 
   moveToOtherRun(event: Delivery, targetRun: string): void {
@@ -199,7 +197,8 @@ export class RunListComponent implements OnInit {
     return this.deliveryService.createDelivery(run, customer, site, address, '', '', '', '', notes, this.listSize);
   }
 
-  markComplete(id: string, currentStatus: string): void {
+  markComplete(e: any, id: string, currentStatus: string): void {
+    e.stopPropagation();
     this.deliveryService.changeStatus(id, currentStatus);
   }
 
@@ -214,6 +213,10 @@ export class RunListComponent implements OnInit {
     this.deliveryService.deleteDeliveries([id], run).then(
       _ => this.loading = false
     );
+  }
+
+  deleteDeliveriesByRun(runName: string): void {
+    this.deliveryService.deleteDeliveriesByRun(runName);
   }
 
   trackByFn(index: number, item: Delivery): string {
@@ -240,6 +243,10 @@ export class RunListComponent implements OnInit {
     this.router.navigate([], { queryParams: {run: run.value || null}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
+  allowPredicate(item: CdkDrag<number>): boolean {
+    return true;
+  }
+  
   trackByGroupsFn(index: number, item: any): string {
     return item.key;
   }

@@ -36,7 +36,7 @@ export class DeliveryService {
   ) { }
 
   private createUrl(branch: string): string {
-    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,Address,CustomerNumber,Customer,Status,OrderNumber,Notes)`;
+    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,Address,CustomerNumber,Customer,Status,OrderNumber,Notes)`;
     if (branch) url += `&filter=fields/Branch eq '${branch}'`;
     url += `&orderby=fields/Sequence asc&top=2000`;
     return url;
@@ -177,9 +177,10 @@ export class DeliveryService {
 
   getDeliveriesByRun(runName: string): Observable<Delivery[]> {
     let url = `${this._deliveryListUrl}/items?expand=fields(select=Notes)&filter=`;
+    const runString = runName ? `'${runName}'` : 'null';
     const deliveries = this.shared.getBranch().pipe(
       switchMap(branch => {
-        const filter2 = `fields/Title eq '${runName}'`;
+        const filter2 = `fields/Title eq ${runString}`;
         const filter3 = `fields/Branch eq '${branch}'`;
         url += [filter2, filter3].join(' and ');
         return this.http.get(url) as Observable<{value: Delivery[]}>;
@@ -289,6 +290,14 @@ export class DeliveryService {
       switchMap(_ => this.removeItemsFromList(ids)),
       switchMap(_ => this.updateRunDeliveries(run))
     ) : of([] as Delivery[]);
+    return lastValueFrom(req);
+  }
+
+  deleteDeliveriesByRun(runName: string): Promise<Delivery[]> {
+    const req = this.getDeliveriesByRun(runName).pipe(
+      map(_ => _.map(run => run.id)),
+      switchMap(_ => this.deleteDeliveries(_, runName))
+    );
     return lastValueFrom(req);
   }
 
