@@ -12,6 +12,7 @@ interface PalletQuantities {
   Chep: PalletQuantity;
   GCP: PalletQuantity;
   Plain: PalletQuantity;
+  [key: string]: PalletQuantity;
 };
 
 @Component({

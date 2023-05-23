@@ -58,7 +58,7 @@ export class LoadingScheduleService {
   private getLoadingSchedules(url: string): Observable<LoadingSchedule[]> {
     this._loadingLoadingSchedule = true;
     this.loading.next(true);
-    return this.http.get<{value: LoadingSchedule[]}>(url).pipe(
+    return this.http.get<{['@odata.nextLink']: string, value: LoadingSchedule[]}>(url).pipe(
       tap(_ => {
         this._nextPage = _['@odata.nextLink'];
         this._loadingLoadingSchedule = false;
@@ -115,9 +115,9 @@ export class LoadingScheduleService {
       take(1),
       map(_ => {
         if (_) return of(_);
-        return this.http.get(`${this._loadingScheduleUrl}/columns`).pipe(
+        return this.http.get<{value: {name: string}[]}>(`${this._loadingScheduleUrl}/columns`).pipe(
           map(_ => _['value']),
-          map(_ => _.reduce((acc: any, val: any) => ({ ...acc, [val.name]: val}), {})),
+          map(_ => _.reduce((acc, val) => ({ ...acc, [val.name]: val}), {})),
           tap(_ => this._columns$.next(_))
         );
       }),

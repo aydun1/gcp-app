@@ -214,7 +214,7 @@ export class DeliveryService {
 
   createDelivery(run: string | null, customer: Customer, site: Site | null, address: string, city: string, state: string, postcode: string, orderNo: string, notes: string, targetIndex: number | undefined): Observable<Delivery[]> {
     const runName = run || undefined;
-    const fields = {Title: runName, Customer: customer.name, CustomerNumber: customer.custNmbr, OrderNumber: orderNo};
+    const fields: Partial<Delivery['fields']> = {Title: runName as string, Customer: customer.name, CustomerNumber: customer.custNmbr, OrderNumber: orderNo};
     if (notes) fields['Notes'] = notes;
     if (site) fields['Site'] = site.fields.Title;
     if (city) fields['City'] = city;

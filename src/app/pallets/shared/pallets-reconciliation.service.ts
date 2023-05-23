@@ -42,7 +42,7 @@ export class PalletsReconciliationService {
   private getReconciliations(url: string, paginate = false): Observable<Reconciliation[]> {
     this.loading.next(true);
     this._loadingPallets = true;
-    return this.http.get(url).pipe(
+    return this.http.get<{['@odata.nextLink']: string}>(url).pipe(
       tap(_ => {
         this._nextPage = paginate ? _['@odata.nextLink'] : this._nextPage;
         this.loading.next(false);

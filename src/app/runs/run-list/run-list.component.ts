@@ -88,7 +88,7 @@ export class RunListComponent implements OnInit {
       tap(() => this.loadingOrders = false)
     );
     this.deliveries$ = this.route.queryParams.pipe(
-      startWith({}),
+      startWith({} as Params),
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),

@@ -96,7 +96,7 @@ export class SharedService {
   getBranch(): Observable<string> {
     const url = `${environment.endpoint}/me/officeLocation`;
     return this._state$.pipe(
-      switchMap(cur => cur ? of(cur) : this.http.get(url).pipe(
+      switchMap(cur => cur ? of(cur) : this.http.get<{value: string}>(url).pipe(
         map(_ => this.offices.find(o => o.suburb === _['value'])?.state || 'NA'),
         tap(_ => this._state$.next(_))
       ))
@@ -110,7 +110,7 @@ export class SharedService {
   getOwnAddress(): Observable<{street: string, city: string, state: string, postalCode: string}> {
     const url = `${environment.betaEndpoint}/me/profile/positions`;
     return this._address$.pipe(
-      switchMap(cur => cur ? of(cur) : this.http.get(url).pipe(
+      switchMap(cur => cur ? of(cur) : this.http.get<any>(url).pipe(
         map(_ => _['value'] ? _['value'][0]?.detail?.company?.address || {} : {}),
         tap(_ => this._address$.next(_))
       ))

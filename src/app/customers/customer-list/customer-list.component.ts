@@ -31,7 +31,7 @@ export class CustomerListComponent implements OnInit {
   public sortSort = this.route.snapshot.queryParamMap.get('sort') || '';
   public sortOrder = this.route.snapshot.queryParamMap.get('order') as SortDirection;
   public pallets = this.sharedService.palletDetails;
-  public palletTotals = this.pallets.reduce((acc, curr) => (acc[curr.key]='',acc),{});
+  public palletTotals = this.pallets.reduce((acc, curr) => (acc[curr.key]='',acc), {} as any);
   public displayedColumns = ['name', 'custNmbr', ...this.pallets.map(_ => _.key)];
 
   constructor(
@@ -51,7 +51,7 @@ export class CustomerListComponent implements OnInit {
   ngOnInit(): void {
     const state$ = this.sharedService.getBranch();
     this.customers$ = this.route.queryParams.pipe(
-      startWith({}),
+      startWith({} as Params),
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),

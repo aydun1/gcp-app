@@ -54,7 +54,7 @@ export class RecyclingReceiptListComponent implements OnInit {
 
   parseParams(params: Params): void {
     if (!params) return;
-    const filters = {};
+    const filters = {} as {branch: string};
     if ('branch' in params) {
       this.branchFilter.patchValue(params['branch']);
       filters['branch'] = params['branch'];

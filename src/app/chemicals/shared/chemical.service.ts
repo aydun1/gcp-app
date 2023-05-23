@@ -217,7 +217,7 @@ export class ChemicalService {
     return lastValueFrom(res);
   }
 
-  getChemicalManifest(): Observable<{[key: string]: {L: number, kg: number}}> {
+  getChemicalManifest(): Observable<{[key: string]: {l: number, kg: number}}> {
     return this._chemicalListSubject$.pipe(
       map(chemicals => {
         return chemicals.filter(_ => _['class'] !== '').reduce((acc: any, val: any) => ({ ...acc, [val.class]: {
@@ -247,7 +247,7 @@ export class ChemicalService {
     return lastValueFrom(request);
   }
 
-  exportToCsv(filename: string, rows: Array<object>): void {
+  exportToCsv(filename: string, rows: Array<any>): void {
     if (!rows || rows.length === 0) return;
     const separator = ',';
     const keys = Object.keys(rows[0]);

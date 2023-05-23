@@ -69,7 +69,7 @@ export class ChemicalListComponent implements OnInit {
   ngOnInit(): void {
     const branch$ = this.shared.getBranch();
     this.chemicals$ = this.route.queryParams.pipe(
-      startWith({}),
+      startWith({} as Params),
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
@@ -156,7 +156,7 @@ export class ChemicalListComponent implements OnInit {
     this.displayedColumns = this.defaultColumns.filter( _ => _ !==  name);
   }
 
-  getTotalRequestedLines(lines: Array<any>): number {
+  getTotalRequestedLines(lines: Array<number>): number {
     return lines.reduce((acc, cur) => acc + 1, 0);
   }
 

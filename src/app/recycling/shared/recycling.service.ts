@@ -46,7 +46,7 @@ export class RecyclingService {
       take(1),
       map(_ => {
         if (!_.Placeholder) return of(_);
-        return this.http.get(`${this._cageTrackerUrl}/columns`).pipe(
+        return this.http.get<{value: any[]}>(`${this._cageTrackerUrl}/columns`).pipe(
           map(_ => _['value']),
           map(_ => _.reduce((a: any, v: any) => ({ ...a, [v.name]: v}), {})),
           tap(_ => this._columns$.next(_))
@@ -142,13 +142,13 @@ export class RecyclingService {
   private getCages(url: string, paginate = false): Observable<Cage[]> {
     this._loadingCages = true;
     this.loading.next(true);
-    return this.http.get(url).pipe(
+    return this.http.get<{['@odata.nextLink']: string, value: Cage[]}>(url).pipe(
       tap(_ => {
         if (paginate) this._nextPage = _['@odata.nextLink'];
         this._loadingCages = false;
         this.loading.next(false);
       }),
-      map((res: any) => res.value.map((cage: Cage) => this.assignStatus(cage)))
+      map(res => res.value.map(cage => this.assignStatus(cage)))
     );
   }
 
@@ -228,7 +228,7 @@ export class RecyclingService {
   }
 
   allocateToCustomer(id: string, custnmbr: string, customerName: string, site: Site | string | null | undefined): Observable<Cage> {
-    const fields = {Status: 'Allocated to customer', CustomerNumber: custnmbr, Customer: customerName};
+    const fields = {Status: 'Allocated to customer', CustomerNumber: custnmbr, Customer: customerName, Site: ''};
     if (site) fields['Site'] = typeof site === 'string' ? site : site.fields?.Title;
     return this.shared.getBranch().pipe(
       switchMap(_ => this.updateStatus(id, {fields: {...fields, Branch: _}})),
@@ -292,7 +292,7 @@ export class RecyclingService {
   }
 
   undo(id: string, status: string): Observable<Cage> {
-    const fields = {};
+    const fields = {} as Cage['fields'];
     switch(status)
     {
     case 'Collected from local processing':
@@ -374,9 +374,9 @@ export class RecyclingService {
 
   addNewCage(cageNumber: number | string | null | undefined, branch: string, assetType: string, cageWeight: number | string | null | undefined): Observable<Cage> {
     const url = this._cageTrackerUrl + `/items`;
-    const payload = {fields: {Status: 'Available', Branch: branch, AssetType: assetType}};
-    if (cageNumber) payload['fields']['CageNumber'] = cageNumber;
-    if (cageWeight) payload['fields']['CageWeight'] = cageWeight;
+    const payload = {fields: {Status: 'Available', Branch: branch, AssetType: assetType}} as Cage;
+    if (cageNumber) payload['fields']['CageNumber'] = +cageNumber;
+    if (cageWeight) payload['fields']['CageWeight'] = +cageWeight;
     return this.http.post<Cage>(url, payload).pipe(
       switchMap(_ => this.updateList(_))
     );

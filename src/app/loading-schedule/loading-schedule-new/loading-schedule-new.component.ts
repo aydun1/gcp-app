@@ -90,7 +90,7 @@ export class LoadingScheduleNewComponent implements OnInit {
     if (this.id) {
       firstValueFrom(this.loadingScheduleService.getLoadingScheduleEntry(this.id)).then(
         _ => {
-          const data = {};
+          const data = {} as any;
           data['status'] = _.fields['Status'];
           data['arrivalDate'] = _.fields['ArrivalDate'];
           data['loadingDate'] = _.fields['LoadingDate'];

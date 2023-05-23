@@ -56,7 +56,7 @@ export class InterstateTransferRequestedComponent implements OnInit {
     });
 
     this.interstateTransfers$ = this.route.queryParams.pipe(
-      startWith({}),
+      startWith({} as Params),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       switchMap(params => state$.pipe(map(state => !params['from'] ? {...params, from: state} : params))),
       tap(_ => this.parseParams(_)),

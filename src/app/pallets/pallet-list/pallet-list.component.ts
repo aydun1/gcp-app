@@ -51,10 +51,10 @@ export class PalletListComponent implements OnInit {
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-        map(() => _)
+        map(() => _ as {branch: string})
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
-      switchMap(_ => branch$.pipe(map(state => !_['branch'] ? {..._, branch: state} : _))),
+      switchMap((_) => branch$.pipe(map(state => !_['branch'] ? {..._, branch: state} : _))),
       tap(_ => {
         this.parseParams(_);
         this.totalIn = 0;
