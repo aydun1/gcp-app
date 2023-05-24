@@ -38,7 +38,7 @@ export class DeliveryService {
   ) { }
 
   private createUrl(branch: string): string {
-    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,Address,CustomerNumber,Customer,Status,OrderNumber,Notes)`;
+    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,ContactPerson,Address,CustomerNumber,Customer,Status,OrderNumber,Notes)`;
     if (branch) url += `&filter=fields/Branch eq '${branch}'`;
     url += `&orderby=fields/Sequence asc&top=2000`;
     return url;
@@ -215,11 +215,12 @@ export class DeliveryService {
     return this._deliveriesSubject$;
   }
 
-  createDelivery(run: string | null, customer: Customer, site: Site | null, address: string, city: string, state: string, postcode: string, orderNo: string, notes: string, targetIndex: number | undefined): Observable<Delivery[]> {
+  createDelivery(run: string | null, customer: Customer, site: Site | null, contact: string | null, address: string, city: string, state: string, postcode: string, orderNo: string, notes: string, targetIndex: number | undefined): Observable<Delivery[]> {
     const runName = run || undefined;
     const fields: Partial<Delivery['fields']> = {Title: runName as string, Customer: customer.name, CustomerNumber: customer.custNmbr, OrderNumber: orderNo};
     if (notes) fields['Notes'] = notes;
     if (site) fields['Site'] = site.fields.Title;
+    if (contact) fields['ContactPerson'] = contact;
     if (city) fields['City'] = city;
     if (state) fields['State'] = state;
     if (postcode) fields['PostCode'] = postcode;
@@ -347,7 +348,7 @@ export class DeliveryService {
           const notes = delivery.fields.Notes ? `${delivery.fields.Notes}<br>${message}` : message;
           return this.updateDelivery(delivery.id, notes);
          } else {
-          return this.createDelivery(runName, customer, site, address, '', '', '', '', message, 0);
+          return this.createDelivery(runName, customer, site, null, address, '', '', '', '', message, 0);
          }
       }),
       tap(_ =>this.snackBar.open('Added to run list', '', {duration: 3000})

@@ -77,22 +77,24 @@
       </div>
     </div>
 
-    <div class="inner" #deliveryList="cdkDropList" cdkDropList (cdkDropListDropped)="moveItem($event)" [cdkDropListEnterPredicate]="allowPredicate">
+    <div class="inner run-list" #deliveryList="cdkDropList" cdkDropList (cdkDropListDropped)="moveItem($event)" [cdkDropListEnterPredicate]="allowPredicate">
       <mat-accordion *ngIf="deliveries$ | async as drops">
-        <mat-expansion-panel *ngFor="let delivery of  drops | groupByCustomerAddress;let i = index;trackBy:trackByAddress" class="delivery" cdkDrag [cdkDragData]="delivery" [cdkDragDisabled]="locked">
+        <mat-expansion-panel *ngFor="let delivery of drops | groupByCustomerAddress;let i = index;trackBy:trackByGroupsFn" class="delivery" cdkDrag [cdkDragData]="delivery" [cdkDragDisabled]="locked">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              <div [ngClass]="{unlocked: !locked}" cdkDragHandle class="sequence">
-                <mat-icon *ngIf="!locked" class="drag">drag_indicator</mat-icon>
-                {{ i + 1 }}
-              </div>
-              <div class="customer">
-                {{ delivery.fields.Customer }}
-              </div>
+              <mat-panel-title>
+                <div [ngClass]="{unlocked: !locked}" cdkDragHandle class="sequence">
+                  <mat-icon *ngIf="!locked" class="drag">drag_indicator</mat-icon>
+                  {{ i + 1 }}
+                </div>
+                <div class="customer">
+                  {{ delivery.fields.Customer }}
+                </div>
+              </mat-panel-title>
+              <mat-panel-description>
+                {{ delivery.fields.City ? delivery.fields.City + ', ' + delivery.fields.PostCode : delivery.fields.Address }}
+              </mat-panel-description>
             </mat-panel-title>
-            <mat-panel-description>
-              {{ delivery.fields.City ? delivery.fields.City + ', ' + delivery.fields.PostCode : delivery.fields.Address }}
-            </mat-panel-description>
             <div class="status">
               <mat-checkbox color="accent" [checked]="delivery.fields.Status === 'Complete'" (click)="markComplete($event, delivery.value, delivery.fields.Status)"></mat-checkbox>
             </div>
@@ -101,24 +103,24 @@
             </div>
           </mat-expansion-panel-header>
   
-          <div [routerLink]="['/customers', delivery.fields.CustomerNumber]" [queryParams]="{site:delivery.fields.Site}">
-            <a [routerLink]="['/customers', delivery.fields.CustomerNumber]" [queryParams]="{site:delivery.fields.Site}" class="customer-link">{{ delivery.fields.Customer }}</a>
+          <div>{{ delivery.fields.ContactPerson }}</div>
+          <div class="site">{{ delivery.fields.Address || delivery.fields.Site }}</div>
+
+          <div *ngIf="delivery.hasNotes">
+            <h3>Notes</h3>
+            <p mat-list-item *ngFor="let d of delivery.value" (click)="openReceipt(d.fields.Notes)">
+              {{ d.fields.Notes }}
+            </p>
           </div>
 
-          <div class="site">
-            {{ delivery.fields.Address || delivery.fields.Site }}
-          </div>
-
-          <div class="notes">
-            <div [innerHTML]="delivery.fields.Notes"></div>
-          </div>
-          <mat-action-list *ngIf="delivery.orders">
+          <mat-action-list *ngIf="delivery.hasOrderNumbers">
             <button mat-list-item *ngFor="let d of delivery.value" (click)="openReceipt(d.fields.OrderNumber)">
               <mat-icon matListItemIcon>receipt</mat-icon>
               {{ d.fields.OrderNumber }}
             </button>
           </mat-action-list>
           <mat-action-row>
+            <a mat-button color="primary" [routerLink]="['/customers', delivery.fields.CustomerNumber]" [queryParams]="{site:delivery.fields.Site}" class="customer-link">Customer</a>
             <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.OrderNumber, delivery.fields.Site)">Pallets</button>
             <button mat-raised-button color="primary" (click)="openRecyclingDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.Site)">Recycling</button>
             <button *ngIf="delivery.fields.OrderNumber" mat-icon-button ></button>

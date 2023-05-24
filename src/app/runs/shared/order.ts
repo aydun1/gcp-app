@@ -6,6 +6,7 @@ export interface Order {
   batchNumber: string;
   custName: string;
   custNumber: string;
+  cntPrsn: string;
   address1: string;
   address2: string;
   address3: string;

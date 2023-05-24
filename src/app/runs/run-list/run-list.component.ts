@@ -157,7 +157,7 @@ export class RunListComponent implements OnInit {
     const data = {notes: true, address: true, title: 'Delivery details'};
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().pipe(
-      switchMap(_ => _ ? this.addCustomerDelivery(_.customer, _.site, _.address, _.notes,) : of()),
+      switchMap(_ => _ ? this.addCustomerDelivery(_.customer, _.site, _.address, _.notes) : of()),
     ).subscribe(() => {
       this.loading = false;
     });
@@ -187,14 +187,14 @@ export class RunListComponent implements OnInit {
     const fullAddress = [order.address1, order.address2, order.address3].filter(_ => _).join('\r\n') + '\r\n' +
     [order.city, order.state, order.postCode].filter(_ => _).join(' ');
     const customer = {name: order.custName, custNmbr: order.custNumber} as Customer;
-    return this.deliveryService.createDelivery(run, customer, null, fullAddress, order.city, order.state, order.postCode, order.sopNumber, '', index).pipe(
+    return this.deliveryService.createDelivery(run, customer, null, order.cntPrsn, fullAddress, order.city, order.state, order.postCode, order.sopNumber, '', index).pipe(
       tap(_ => this.loading = false)
     )
   }
 
   addCustomerDelivery(customer: Customer, site: Site, address: string, notes: string): Observable<Delivery[]> {
     const run = this.runFilter.value;
-    return this.deliveryService.createDelivery(run, customer, site, address, '', '', '', '', notes, this.listSize);
+    return this.deliveryService.createDelivery(run, customer, site, null, address, '', '', '', '', notes, this.listSize);
   }
 
   markComplete(e: any, deliveries: Array<Delivery>, currentStatus: string): void {
@@ -221,14 +221,6 @@ export class RunListComponent implements OnInit {
     this.deliveryService.deleteDeliveriesByRun(runName);
   }
 
-  trackByFn(index: number, item: Delivery): string {
-    return item.id;
-  }
-
-  trackByAddress(index: number, item: Delivery): string {
-    return item.fields.Address;
-  }
-
   openPalletDialog(name: string, custNmbr: string, orderNmbr: string, site: string): void {
     const customer = {name, custNmbr};
     const data = {customer, site, orderNmbr: orderNmbr || ''};
@@ -252,7 +244,11 @@ export class RunListComponent implements OnInit {
   allowPredicate(item: CdkDrag<number>): boolean {
     return true;
   }
-  
+
+  trackByFn(index: number, item: Delivery): string {
+    return item.id;
+  }
+
   trackByGroupsFn(index: number, item: any): string {
     return item.key;
   }
