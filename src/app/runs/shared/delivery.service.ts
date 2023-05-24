@@ -7,6 +7,7 @@ import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, forkJ
 
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
+import { GroupByCustomerAddressPipe } from '../../shared/pipes/group-by-customer-address';
 import { Customer } from '../../customers/shared/customer';
 import { CustomersService } from '../../customers/shared/customers.service';
 import { Site } from '../../customers/shared/site';
@@ -32,7 +33,8 @@ export class DeliveryService {
     private http: HttpClient,
     private snackBar: MatSnackBar,
     private shared: SharedService,
-    private cutomersService: CustomersService
+    private cutomersService: CustomersService,
+    private groupByCustomerAddressPipe: GroupByCustomerAddressPipe
   ) { }
 
   private createUrl(branch: string): string {
@@ -73,7 +75,7 @@ export class DeliveryService {
           const prevIndex = prev ? prev.fields.Sequence : -1;
           const nextIndex = next ? next.fields?.Sequence : (cur.fields.Sequence || 0) + 512;
           let newIndex = (curIndex <= prevIndex || curIndex >= nextIndex || !curIndex) ? Math.floor((prevIndex + nextIndex) / 2) : curIndex;
-          if (newIndex <= prevIndex) newIndex = prevIndex + 1;
+          if (newIndex <= prevIndex || prev?.fields?.CustomerNumber === cur?.fields?.CustomerNumber) newIndex = prevIndex + 1;
           const changed = runDeliveries[i]['fields']['Sequence'] !== newIndex;
           runDeliveries[i]['fields']['Sequence'] = newIndex;
           return {id: cur.id, index: newIndex, changed};
@@ -252,9 +254,14 @@ export class DeliveryService {
       take(1),
       tap(deliveries => {
         const runItems = deliveries.filter(_ => run ? _.fields.Title === run : !_.fields.Title);
-        const fromIndex = deliveries.findIndex(_ => _.id === runItems[previousIndex].id);
-        const toIndex = deliveries.findIndex(_ => _.id === runItems[currentIndex].id);
-        moveItemInArray(deliveries, fromIndex, toIndex);
+        const groupedDrops = this.groupByCustomerAddressPipe.transform(runItems);
+        const toIndex = currentIndex <= previousIndex ?
+        deliveries.findIndex(_ => _.id === groupedDrops[currentIndex].id) :
+        deliveries.length - deliveries.slice().reverse().findIndex(_ => _.id === groupedDrops[currentIndex].id) - 1;
+        groupedDrops[previousIndex]['value'].forEach((_: Delivery) => {
+          const fromIndex = deliveries.findIndex(f => f.id === _.id);
+          moveItemInArray(deliveries, fromIndex, toIndex);
+        });
         this._deliveriesSubject$.next(deliveries);
       }),
       switchMap(_ => this.updateRunDeliveries(run)),
@@ -262,12 +269,18 @@ export class DeliveryService {
     )
   }
 
-  changeStatus(id: string, currentStatus: string): Promise<Delivery[]> {
+  changeStatuses(ids: Array<string>, currentStatus: string): Promise<Delivery[]> {
+    const headers = {'Content-Type': 'application/json'};
     const status = currentStatus === 'Complete' ? 'Active' : 'Complete';
-    const fields = {Status: status};
-    const req = this.http.patch<Delivery>(`${this._deliveryListUrl}/items('${id}')`, {fields}).pipe(
-      switchMap(_ => this.updateListMulti([_]))
-    );
+    const payload = {fields: {Status: status}};
+    const requests = ids.map((id, index) => {
+      const url = `${environment.siteUrl}/${this._dropsUrl}/items/${id}`;
+      return {id: index + 1, method: 'PATCH', url, headers, body: payload};
+    });
+    const req = requests.length ? this.http.post<{responses: {body: Delivery}[]}>(`${environment.endpoint}/$batch`, {requests}).pipe(
+      map(_ => _.responses.map(r => r['body'])),
+      switchMap(_ => this.updateListMulti(_))
+    ) : of([] as Delivery[]);
     return lastValueFrom(req);
   }
 

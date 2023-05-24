@@ -77,9 +77,9 @@
       </div>
     </div>
 
-    <div class="inner">
-      <mat-accordion #deliveryList="cdkDropList" cdkDropList (cdkDropListDropped)="moveItem($event)" [cdkDropListEnterPredicate]="allowPredicate">
-        <mat-expansion-panel *ngFor="let delivery of deliveries$ | async;let i = index;trackBy:trackByFn" class="delivery" cdkDrag>
+    <div class="inner" #deliveryList="cdkDropList" cdkDropList (cdkDropListDropped)="moveItem($event)" [cdkDropListEnterPredicate]="allowPredicate">
+      <mat-accordion *ngIf="deliveries$ | async as drops">
+        <mat-expansion-panel *ngFor="let delivery of  drops | groupByCustomerAddress;let i = index;trackBy:trackByAddress" class="delivery" cdkDrag [cdkDragData]="delivery" [cdkDragDisabled]="locked">
           <mat-expansion-panel-header>
             <mat-panel-title>
               <div [ngClass]="{unlocked: !locked}" cdkDragHandle class="sequence">
@@ -94,7 +94,7 @@
               {{ delivery.fields.City ? delivery.fields.City + ', ' + delivery.fields.PostCode : delivery.fields.Address }}
             </mat-panel-description>
             <div class="status">
-              <mat-checkbox color="accent" [checked]="delivery.fields.Status === 'Complete'" (click)="markComplete($event, delivery.id, delivery.fields.Status)"></mat-checkbox>
+              <mat-checkbox color="accent" [checked]="delivery.fields.Status === 'Complete'" (click)="markComplete($event, delivery.value, delivery.fields.Status)"></mat-checkbox>
             </div>
             <div class="menu">
               <button mat-icon-button [matMenuTriggerData]="{delivery}" [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()"><mat-icon>more_vert</mat-icon></button>
@@ -111,29 +111,31 @@
 
           <div class="notes">
             <div [innerHTML]="delivery.fields.Notes"></div>
-           {{delivery.fields.OrderNumber}}
           </div>
-
+          <mat-action-list *ngIf="delivery.orders">
+            <button mat-list-item *ngFor="let d of delivery.value" (click)="openReceipt(d.fields.OrderNumber)">
+              <mat-icon matListItemIcon>receipt</mat-icon>
+              {{ d.fields.OrderNumber }}
+            </button>
+          </mat-action-list>
           <mat-action-row>
             <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.OrderNumber, delivery.fields.Site)">Pallets</button>
             <button mat-raised-button color="primary" (click)="openRecyclingDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.Site)">Recycling</button>
-            <button *ngIf="delivery.fields.OrderNumber" mat-icon-button (click)="openReceipt(delivery.fields.OrderNumber)"><mat-icon>receipt</mat-icon></button>
+            <button *ngIf="delivery.fields.OrderNumber" mat-icon-button ></button>
           </mat-action-row>
         </mat-expansion-panel>
-
-        <div [class.hidden]="(loadingList$ | async) ? false : true">
-          <div>
-            <gcp-loading-row></gcp-loading-row>
-          </div>
-        </div>
-
-        <div [class.hidden]="(loadingList$ | async) === false && !listSize ? false : true">
-          <div>
-            No deliveries. Add one from the link above.
-          </div>
-        </div>
       </mat-accordion>
+      <div [class.hidden]="(loadingList$ | async) ? false : true">
+        <div>
+          <gcp-loading-row></gcp-loading-row>
+        </div>
+      </div>
 
+      <div [class.hidden]="(loadingList$ | async) === false && !listSize ? false : true">
+        <div>
+          No deliveries. Add one from the link above.
+        </div>
+      </div>
     </div>
 
   </div>
@@ -154,7 +156,7 @@
     <button mat-menu-item [matMenuTriggerFor]="runMenu" [matMenuTriggerData]="{delivery}" [disabled]="loading">
       <mat-icon>move_down</mat-icon>Move to run
     </button>
-    <button mat-menu-item (click)="deleteDelivery(delivery.id, delivery.fields.Title)" [disabled]="loading">
+    <button mat-menu-item (click)="deleteDeliveries(delivery.value, delivery.fields.Title)" [disabled]="loading">
       <mat-icon>delete</mat-icon>Remove
     </button>
   </ng-template>

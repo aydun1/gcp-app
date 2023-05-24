@@ -197,9 +197,10 @@ export class RunListComponent implements OnInit {
     return this.deliveryService.createDelivery(run, customer, site, address, '', '', '', '', notes, this.listSize);
   }
 
-  markComplete(e: any, id: string, currentStatus: string): void {
+  markComplete(e: any, deliveries: Array<Delivery>, currentStatus: string): void {
     e.stopPropagation();
-    this.deliveryService.changeStatus(id, currentStatus);
+    const ids = deliveries.map(_ => _.id);
+    this.deliveryService.changeStatuses(ids, currentStatus);
   }
 
   editDelivery(delivery: Delivery): void {
@@ -208,9 +209,10 @@ export class RunListComponent implements OnInit {
     dialogRef.afterClosed().subscribe();
   }
 
-  deleteDelivery(id: string, run: string): void {
+  deleteDeliveries(deliveries: Array<Delivery>, run: string): void {
+    const ids = deliveries.map(_ => _.id);
     this.loading = true;
-    this.deliveryService.deleteDeliveries([id], run).then(
+    this.deliveryService.deleteDeliveries(ids, run).then(
       _ => this.loading = false
     );
   }
@@ -221,6 +223,10 @@ export class RunListComponent implements OnInit {
 
   trackByFn(index: number, item: Delivery): string {
     return item.id;
+  }
+
+  trackByAddress(index: number, item: Delivery): string {
+    return item.fields.Address;
   }
 
   openPalletDialog(name: string, custNmbr: string, orderNmbr: string, site: string): void {
