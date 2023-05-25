@@ -38,7 +38,7 @@ export class DeliveryService {
   ) { }
 
   private createUrl(branch: string): string {
-    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,ContactPerson,Address,CustomerNumber,Customer,Status,OrderNumber,Notes)`;
+    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,ContactPerson,Address,CustomerNumber,Customer,Status,OrderNumber,Notes,Spaces)`;
     if (branch) url += `&filter=fields/Branch eq '${branch}'`;
     url += `&orderby=fields/Sequence asc&top=2000`;
     return url;
@@ -215,21 +215,23 @@ export class DeliveryService {
     return this._deliveriesSubject$;
   }
 
-  createDelivery(run: string | null, customer: Customer, site: Site | null, contact: string | null, address: string, city: string, state: string, postcode: string, orderNo: string, notes: string, targetIndex: number | undefined): Observable<Delivery[]> {
+  createDelivery(run: string | null, customer: Customer, site: Site | null, address: string, notes: string, targetIndex: number | undefined, order: Partial<Order> = {}): Observable<Delivery[]> {
     const runName = run || undefined;
-    const fields: Partial<Delivery['fields']> = {Title: runName as string, Customer: customer.name, CustomerNumber: customer.custNmbr, OrderNumber: orderNo};
+    const fields: Partial<Delivery['fields']> = {Title: runName as string, Customer: customer.name, CustomerNumber: customer.custNmbr};
     if (notes) fields['Notes'] = notes;
     if (site) fields['Site'] = site.fields.Title;
-    if (contact) fields['ContactPerson'] = contact;
-    if (city) fields['City'] = city;
-    if (state) fields['State'] = state;
-    if (postcode) fields['PostCode'] = postcode;
+    if (order.cntPrsn) fields['ContactPerson'] = order.cntPrsn;
+    if (order.city) fields['City'] = order.city;
+    if (order.state) fields['State'] = order.state;
+    if (order.postCode) fields['PostCode'] = order.postCode;
+    if (order.sopNumber) fields['OrderNumber'] = order.sopNumber;
+    if (order.palletSpaces) fields['Spaces'] = order.palletSpaces;
     fields['Address'] = address ? address : site && site.fields.Address ? site.fields.Address : customer.address1_composite;
     return this._deliveriesSubject$.pipe(
       take(1),
       tap(deliveries => {
         const runDeliveries = deliveries.filter(_ => _.fields.Title === runName);
-        targetIndex = targetIndex !== undefined ? targetIndex : runDeliveries.findIndex(_ => _.fields.PostCode > postcode);
+        targetIndex = targetIndex !== undefined ? targetIndex : runDeliveries.findIndex(_ => _.fields.PostCode > (order.postCode ? order.postCode : ''));
         const insertBeforeId = runDeliveries[targetIndex]?.id;
         const insertBeforeIndex = insertBeforeId ? deliveries.findIndex(_ => _.id === insertBeforeId) : deliveries.length;
         deliveries.splice(insertBeforeIndex, 0, {fields: fields} as Delivery);
@@ -348,7 +350,7 @@ export class DeliveryService {
           const notes = delivery.fields.Notes ? `${delivery.fields.Notes}<br>${message}` : message;
           return this.updateDelivery(delivery.id, notes);
          } else {
-          return this.createDelivery(runName, customer, site, null, address, '', '', '', '', message, 0);
+          return this.createDelivery(runName, customer, site, address, message, 0);
          }
       }),
       tap(_ =>this.snackBar.open('Added to run list', '', {duration: 3000})

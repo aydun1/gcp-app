@@ -13,6 +13,10 @@ h2 {
   margin-left: 10px;
 }
 
+.specs {
+  font-style: italic;
+}
+
 .options {
   align-items: baseline;
   display: flex;

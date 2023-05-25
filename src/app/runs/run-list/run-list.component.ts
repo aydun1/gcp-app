@@ -44,6 +44,7 @@ export class RunListComponent implements OnInit {
   public empty = true;
   public displayedColumns = ['sequence', 'customer', 'site', 'notes', 'actions', 'status', 'menu'];
   public locked = false;
+  public palletSpaces = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -108,7 +109,10 @@ export class RunListComponent implements OnInit {
       )),
       tap(_ => this.parseParams(_)),
       switchMap(_ => this._loadList ? this.getDeliveries(_) : []),
-      tap(_ => this.listSize = _.length),
+      tap(_ => {
+        this.palletSpaces = _.reduce((acc, cur) => acc += (cur.fields.Spaces || 0), 0)
+        this.listSize = _.length
+      })
     )
   }
 
@@ -187,14 +191,14 @@ export class RunListComponent implements OnInit {
     const fullAddress = [order.address1, order.address2, order.address3].filter(_ => _).join('\r\n') + '\r\n' +
     [order.city, order.state, order.postCode].filter(_ => _).join(' ');
     const customer = {name: order.custName, custNmbr: order.custNumber} as Customer;
-    return this.deliveryService.createDelivery(run, customer, null, order.cntPrsn, fullAddress, order.city, order.state, order.postCode, order.sopNumber, '', index).pipe(
+    return this.deliveryService.createDelivery(run, customer, null, fullAddress, '', index, order).pipe(
       tap(_ => this.loading = false)
     )
   }
 
   addCustomerDelivery(customer: Customer, site: Site, address: string, notes: string): Observable<Delivery[]> {
     const run = this.runFilter.value;
-    return this.deliveryService.createDelivery(run, customer, site, null, address, '', '', '', '', notes, this.listSize);
+    return this.deliveryService.createDelivery(run, customer, site, address, notes, this.listSize);
   }
 
   markComplete(e: any, deliveries: Array<Delivery>, currentStatus: string): void {

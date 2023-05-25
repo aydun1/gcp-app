@@ -22,6 +22,7 @@ export interface Delivery {
     Notes: string;
     Site: string;
     Sequence: number;
+    Spaces: number;
     Status: string;
   }
 }

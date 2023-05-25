@@ -65,7 +65,7 @@
     </div>
 
     <div class="run-head">
-      <h3>{{runFilter.value || 'Deliveries'}}</h3>
+      <h3>{{runFilter.value || 'Default run'}}</h3>
       <div class="run-head-buttons">
         <button mat-icon-button (click)="locked = !locked" matTooltip="Lock/unlock delivery sorting">
           <mat-icon *ngIf="locked">lock</mat-icon>
@@ -74,6 +74,11 @@
         <button mat-icon-button [matMenuTriggerData]="{run: runFilter.value}" [matMenuTriggerFor]="runMore" class="menu">
           <mat-icon>more_vert</mat-icon>
         </button>
+      </div>
+      <div class="specs">
+        <div *ngIf="palletSpaces">
+          {{palletSpaces | number: '1.1-1'}} {{ palletSpaces > 1 ? 'spaces' : 'space'}}
+        </div>
       </div>
     </div>
 

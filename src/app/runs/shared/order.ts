@@ -15,4 +15,5 @@ export interface Order {
   state: string;
   lines: Array<Line>;
   reqShipDate: Date;
+  palletSpaces: number;
 }
