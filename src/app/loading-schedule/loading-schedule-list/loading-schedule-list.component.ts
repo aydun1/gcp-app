@@ -137,6 +137,10 @@ export class LoadingScheduleListComponent implements OnInit {
     this.loadingScheduleService.markDelivered(id).subscribe();
   }
 
+  allowNext(to: string, from: string): boolean {
+    return !(to === this.state || from === this.state && to === 'International');
+  }
+
   trackByFn(index: number, item: LoadingSchedule): string {
     return item.id;
   }

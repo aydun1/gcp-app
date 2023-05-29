@@ -236,7 +236,7 @@ export class LoadingScheduleService {
     const isNewTransportCompany = v.transportCompany && typeof v.transportCompany === 'string' ? true : false;
     const drivers = v.transportCompany?.fields?.Drivers?.split('\n') || [];
     const isNewDriver = v.transportCompany && v.driver && !drivers.includes(v.driver);
-    const transportCompany = v.transportCompany?.fields?.Title?.trim() || v.transportCompany.trim() || null;
+    const transportCompany = v.transportCompany?.fields?.Title?.trim() || v.transportCompany?.trim() || null;
     const itemsUrl = `${this._transportCompaniesUrl}/items`;
     if (isNewDriver) drivers.push(v.driver);
 
