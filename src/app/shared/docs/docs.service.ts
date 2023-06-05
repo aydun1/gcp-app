@@ -20,7 +20,7 @@ export class DocsService {
     private http: HttpClient
   ) { }
 
-  private readFragment(file: File, start: number, res: Object): Observable<any> {
+  private readFragment(file: File, start: number, res: any): Observable<any> {
     return from(file.slice(start, start + this.chunkLength).arrayBuffer()).pipe(
       switchMap(chunk => {
         const crHeader = `bytes ${start}-${start + chunk.byteLength - 1}/${file.size}`;
@@ -43,7 +43,7 @@ export class DocsService {
         'name': file.name
       }
     };
-    return this.http.post(url, payload).pipe(
+    return this.http.post<{next: number}>(url, payload).pipe(
       expand(res => this.readFragment(file, res['next'] ? res['next'] : 0, res)),
       take(Math.ceil(file.size / this.chunkLength) + 1)
     );
@@ -51,7 +51,7 @@ export class DocsService {
 
   private listFiles(id: string, folder: string): Observable<Doc[]> {
     const url = `${this.endpoint}/drive/root:/${folder}/${id}:/children?$orderby=name`
-    return this.http.get(url).pipe(
+    return this.http.get<{value: any[]}>(url).pipe(
       map(_ => _['value']),
       catchError((error: HttpErrorResponse) => {
         if (error.error instanceof Error) {

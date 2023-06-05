@@ -14,5 +14,9 @@ export interface LoadingSchedule {
     PanLists: string;
     PanListsArray?: Array<string[]>;
     TransportCompany: string;
+    ArrivalDate: Date;
+    LoadingDate: Date;
+    Destination: string;
+    Notes: string;
   }
 }

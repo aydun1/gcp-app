@@ -26,7 +26,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
   public transport!: boolean;
   public loadingPage = new BehaviorSubject<boolean>(true);
   public pallets = this.sharedService.palletDetails;
-  public values = this.pallets.reduce((acc, curr) => (acc[curr.key] = 0, acc), {});
+  public values = this.pallets.reduce((acc, curr) => (acc[curr.key] = 0, acc), {} as any);
 
   constructor(
     private route: ActivatedRoute,

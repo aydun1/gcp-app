@@ -11,17 +11,17 @@ export interface Cage {
     GrossWeight: number;
     NetWeight: string;
     Status: string | 'Available' | 'Allocated to customer' | 'Delivered to customer' | 'Collected from customer' | 'Delivered to Polymer' | 'Delivered to local processing' | 'Collected from local processing' | 'Collected from Polymer' | 'Complete';
-    AssetType: string;
-    Date1: string | Date;
-    Date2: string | Date;
-    Date3: string | Date;
-    Date4: string | Date;
-    ToLocalProcessing: string | Date;
-    FromLocalProcessing: string | Date;
+    AssetType: 'Cage - Solid (2.5m³)' | 'Cage - Folding (2.5m³)';
+    Date1: string | Date | null;
+    Date2: string | Date | null;
+    Date3: string | Date | null;
+    Date4: string | Date | null;
+    ToLocalProcessing: string | Date | null;
+    FromLocalProcessing: string | Date | null;
     ToDepot: string | Date;
-    CustomerNumber: string;
-    Customer: string;
-    Site: string;
+    CustomerNumber: string | null;
+    Customer: string | null;
+    Site: string | null;
     Material: number,
     Notes: string;
     id: string;
@@ -29,5 +29,12 @@ export interface Cage {
     Created: string | Date;
     Edit: string;
     AssetTypeClean?: string;
-  }
+  },
+  material?: any;
+  Date?: any;
+  Cage?: boolean;
+  Type?: string | null;
+  location?: string | null;
+  status?: string;
+  logo?: string;
 }

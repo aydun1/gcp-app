@@ -32,8 +32,8 @@ export class PanListComponent implements OnInit {
   @Input() showSuppliers: boolean = true;
   @Input() showNotes: boolean = false;
   @Input() estimatePallets: boolean = false;
-  @Input() min = 'MinOrderQty';
-  @Input() max = 'MaxOrderQty';
+  @Input() min: 'MinOrderQty' | 'OrderPointQty' = 'MinOrderQty';
+  @Input() max: 'MaxOrderQty' | 'OrderUpToLvl' = 'MaxOrderQty';
   @Input() panNote!: string;
   @Output() saveClicked: EventEmitter<FormGroup> = new EventEmitter();
   @Output() lineCount: EventEmitter<number> = new EventEmitter();
@@ -130,7 +130,7 @@ export class PanListComponent implements OnInit {
     ).subscribe();
 
     this.route.queryParams.pipe(
-      startWith({}),
+      startWith({} as {branch: any}),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       switchMap(params => state$.pipe(map(state => !params['branch'] ? {...params, branch: state} : params))),
       tap(_ => this.parseParams(_)),

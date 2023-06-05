@@ -44,10 +44,10 @@ export class DocsComponent implements OnInit {
     this.dragOver = false;
     const items = e.dataTransfer?.items;
     for (let key in items) {
-      let item = items[key];
+      let item = items[+key];
       if (item.kind === 'file') {
         const file = item.getAsFile();
-        this.docsService.uploadFile(this.folder, this.subfolder, file);
+        if (file) this.docsService.uploadFile(this.folder, this.subfolder, file);
       }
     }
   }

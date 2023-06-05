@@ -81,7 +81,7 @@ export class PalletReconciliationNewComponent implements OnInit {
     if (this.id) {
       lastValueFrom(this.palletsReconciliationService.getReconciliation(this.id)).then(
         _ => {
-          const data = {};
+          const data = {} as any;
           data['date'] = new Date(_.fields['Date'] || _.fields['Created']);
           data['pallet'] = _.fields['Pallet'];
           data['branch'] = _.fields['Branch'];
@@ -126,7 +126,7 @@ export class PalletReconciliationNewComponent implements OnInit {
     if (!pallet || !date || !branch) return;
     this.loading = true;
     const offs = this.palletsService.getInTransitOff(branch, pallet);
-    const ons = this.palletsService.getInTransitOn(branch, pallet);
+    const ons = this.palletsService.getInTransitOn(branch, pallet as 'Loscam' | 'Chep' | 'GCP' | 'Plain');
     const owed = this.palletsService.getPalletsOwedToBranch(branch, pallet, date);
     combineLatest([offs, ons, owed]).subscribe(([a, b, c]) => {
       this.palletRecForm.patchValue({

@@ -27,7 +27,7 @@ export class LoadingScheduleListComponent implements OnInit {
   public listSize!: number;
   public groups!: Array<string>;
   public grouped!: boolean;
-  public totals!: object;
+  public totals!: any;
   public states = this.shared.branches;
   public state = '';
 
@@ -49,7 +49,7 @@ export class LoadingScheduleListComponent implements OnInit {
     const state$ = this.shared.getBranch();
 
     this.loadingSchedules$ = this.route.queryParams.pipe(
-      startWith({}),
+      startWith({} as any),
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
@@ -72,7 +72,9 @@ export class LoadingScheduleListComponent implements OnInit {
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
       tap(_ => this._loadingScheduleSubject$.next(_)),
       tap(_ => {
-        this.totals = this.groups.reduce((acc, curr) => (acc[curr] = _.filter(res => res.fields?.Status === curr).reduce((a, b) =>  a + (b.fields?.Spaces || 0), 0), acc), {});
+        this.totals = this.groups.reduce((acc, curr) =>
+          (acc[curr] = _.filter(res => res.fields?.Status === curr).reduce((a, b) =>  a + (b.fields?.Spaces || 0), 0), acc), {} as any
+        );
         this.totals['total'] = _.reduce((a, b) =>  a + (b.fields?.Spaces || 0), 0);
       }),
       switchMap(_ => this._loadingScheduleSubject$)
@@ -133,6 +135,10 @@ export class LoadingScheduleListComponent implements OnInit {
 
   markDelivered(id: string): void {
     this.loadingScheduleService.markDelivered(id).subscribe();
+  }
+
+  allowNext(to: string, from: string): boolean {
+    return !(to === this.state || from === this.state && to === 'International');
   }
 
   trackByFn(index: number, item: LoadingSchedule): string {

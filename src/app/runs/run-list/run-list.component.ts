@@ -1,4 +1,4 @@
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -35,7 +35,7 @@ export class RunListComponent implements OnInit {
   public orders$!: Observable<Order[]>;
   public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
-  public runs: Array<Run> = [{fields: {Title: 'Default'}} as Run];
+  public runs: Array<Run> = [];
   public otherRuns: Array<Run> = [{fields: {Title: 'Default'}} as Run];
   public run = '';
   public showFulfilled = false;
@@ -43,8 +43,8 @@ export class RunListComponent implements OnInit {
   public loadingOrders = true;
   public empty = true;
   public displayedColumns = ['sequence', 'customer', 'site', 'notes', 'actions', 'status', 'menu'];
-  public dragDisabled = true;
   public locked = false;
+  public palletSpaces = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -88,7 +88,7 @@ export class RunListComponent implements OnInit {
       tap(() => this.loadingOrders = false)
     );
     this.deliveries$ = this.route.queryParams.pipe(
-      startWith({}),
+      startWith({} as Params),
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
@@ -109,7 +109,10 @@ export class RunListComponent implements OnInit {
       )),
       tap(_ => this.parseParams(_)),
       switchMap(_ => this._loadList ? this.getDeliveries(_) : []),
-      tap(_ => this.listSize = _.length),
+      tap(_ => {
+        this.palletSpaces = _.reduce((acc, cur) => acc += (cur.fields.Spaces || 0), 0)
+        this.listSize = _.length
+      })
     )
   }
 
@@ -158,7 +161,7 @@ export class RunListComponent implements OnInit {
     const data = {notes: true, address: true, title: 'Delivery details'};
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().pipe(
-      switchMap(_ => _ ? this.addCustomerDelivery(_.customer, _.site, _.address, _.notes,) : of()),
+      switchMap(_ => _ ? this.addCustomerDelivery(_.customer, _.site, _.address, _.notes) : of()),
     ).subscribe(() => {
       this.loading = false;
     });
@@ -177,7 +180,6 @@ export class RunListComponent implements OnInit {
       this.deliveryService.moveItem(event.previousIndex, event.currentIndex, run) :
       this.addOrderDelivery(event.item.data as Order, run, event.currentIndex);
     action.subscribe();
-    this.dragDisabled = true;
   }
 
   moveToOtherRun(event: Delivery, targetRun: string): void {
@@ -189,18 +191,20 @@ export class RunListComponent implements OnInit {
     const fullAddress = [order.address1, order.address2, order.address3].filter(_ => _).join('\r\n') + '\r\n' +
     [order.city, order.state, order.postCode].filter(_ => _).join(' ');
     const customer = {name: order.custName, custNmbr: order.custNumber} as Customer;
-    return this.deliveryService.createDelivery(run, customer, null, fullAddress, order.city, order.state, order.postCode, order.sopNumber, '', index).pipe(
+    return this.deliveryService.createDelivery(run, customer, null, fullAddress, '', index, order).pipe(
       tap(_ => this.loading = false)
     )
   }
 
   addCustomerDelivery(customer: Customer, site: Site, address: string, notes: string): Observable<Delivery[]> {
     const run = this.runFilter.value;
-    return this.deliveryService.createDelivery(run, customer, site, address, '', '', '', '', notes, this.listSize);
+    return this.deliveryService.createDelivery(run, customer, site, address, notes, this.listSize);
   }
 
-  markComplete(id: string, currentStatus: string): void {
-    this.deliveryService.changeStatus(id, currentStatus);
+  markComplete(e: any, deliveries: Array<Delivery>, currentStatus: string): void {
+    e.stopPropagation();
+    const ids = deliveries.map(_ => _.id);
+    this.deliveryService.changeStatuses(ids, currentStatus);
   }
 
   editDelivery(delivery: Delivery): void {
@@ -209,15 +213,16 @@ export class RunListComponent implements OnInit {
     dialogRef.afterClosed().subscribe();
   }
 
-  deleteDelivery(id: string, run: string): void {
+  deleteDeliveries(deliveries: Array<Delivery>, run: string): void {
+    const ids = deliveries.map(_ => _.id);
     this.loading = true;
-    this.deliveryService.deleteDeliveries([id], run).then(
+    this.deliveryService.deleteDeliveries(ids, run).then(
       _ => this.loading = false
     );
   }
 
-  trackByFn(index: number, item: Delivery): string {
-    return item.id;
+  deleteDeliveriesByRun(runName: string): void {
+    this.deliveryService.deleteDeliveriesByRun(runName);
   }
 
   openPalletDialog(name: string, custNmbr: string, orderNmbr: string, site: string): void {
@@ -238,6 +243,14 @@ export class RunListComponent implements OnInit {
       return;
     };
     this.router.navigate([], { queryParams: {run: run.value || null}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  allowPredicate(item: CdkDrag<number>): boolean {
+    return true;
+  }
+
+  trackByFn(index: number, item: Delivery): string {
+    return item.id;
   }
 
   trackByGroupsFn(index: number, item: any): string {

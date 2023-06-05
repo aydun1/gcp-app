@@ -20,6 +20,7 @@ export class OrderLinesDialogComponent implements OnInit {
   public order$!: Observable<Order>;
   public loading = true;
   public palletSpaces!: number;
+  public orderWeight!: number;
 
   constructor(
     public dialogRef: MatDialogRef<OrderLinesDialogComponent>,
@@ -31,6 +32,7 @@ export class OrderLinesDialogComponent implements OnInit {
     this.order$ = this.deliveryService.getOrder(this.data.sopType, this.data.sopNumber).pipe(
       tap(_ => {
         this.palletSpaces = _.lines.reduce((acc, cur) => acc += +cur.palletSpaces, 0);
+        this.orderWeight = _.lines.reduce((acc, cur) => acc += +cur.lineWeight, 0);
         this.loading = false;
       })
     );

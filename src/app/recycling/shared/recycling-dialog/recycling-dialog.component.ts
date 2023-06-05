@@ -119,7 +119,7 @@ export class RecyclingDialogComponent implements OnInit {
     if(this.data.sites) this.router.navigate([], { queryParams: {site: this.site}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  trackByIndex(index: number, item: Cage): number {
+  trackByIndex(index: number, item: Cage[]): number {
     return index;
   }
 

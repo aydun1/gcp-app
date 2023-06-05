@@ -7,6 +7,7 @@ import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, forkJ
 
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
+import { GroupByCustomerAddressPipe } from '../../shared/pipes/group-by-customer-address';
 import { Customer } from '../../customers/shared/customer';
 import { CustomersService } from '../../customers/shared/customers.service';
 import { Site } from '../../customers/shared/site';
@@ -32,11 +33,12 @@ export class DeliveryService {
     private http: HttpClient,
     private snackBar: MatSnackBar,
     private shared: SharedService,
-    private cutomersService: CustomersService
+    private cutomersService: CustomersService,
+    private groupByCustomerAddressPipe: GroupByCustomerAddressPipe
   ) { }
 
   private createUrl(branch: string): string {
-    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,Address,CustomerNumber,Customer,Status,OrderNumber,Notes)`;
+    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,ContactPerson,Address,CustomerNumber,Customer,Status,OrderNumber,Notes,Spaces)`;
     if (branch) url += `&filter=fields/Branch eq '${branch}'`;
     url += `&orderby=fields/Sequence asc&top=2000`;
     return url;
@@ -73,7 +75,7 @@ export class DeliveryService {
           const prevIndex = prev ? prev.fields.Sequence : -1;
           const nextIndex = next ? next.fields?.Sequence : (cur.fields.Sequence || 0) + 512;
           let newIndex = (curIndex <= prevIndex || curIndex >= nextIndex || !curIndex) ? Math.floor((prevIndex + nextIndex) / 2) : curIndex;
-          if (newIndex <= prevIndex) newIndex = prevIndex + 1;
+          if (newIndex <= prevIndex || prev?.fields?.CustomerNumber === cur?.fields?.CustomerNumber) newIndex = prevIndex + 1;
           const changed = runDeliveries[i]['fields']['Sequence'] !== newIndex;
           runDeliveries[i]['fields']['Sequence'] = newIndex;
           return {id: cur.id, index: newIndex, changed};
@@ -177,9 +179,10 @@ export class DeliveryService {
 
   getDeliveriesByRun(runName: string): Observable<Delivery[]> {
     let url = `${this._deliveryListUrl}/items?expand=fields(select=Notes)&filter=`;
+    const runString = runName ? `'${runName}'` : 'null';
     const deliveries = this.shared.getBranch().pipe(
       switchMap(branch => {
-        const filter2 = `fields/Title eq '${runName}'`;
+        const filter2 = `fields/Title eq ${runString}`;
         const filter3 = `fields/Branch eq '${branch}'`;
         url += [filter2, filter3].join(' and ');
         return this.http.get(url) as Observable<{value: Delivery[]}>;
@@ -212,20 +215,23 @@ export class DeliveryService {
     return this._deliveriesSubject$;
   }
 
-  createDelivery(run: string | null, customer: Customer, site: Site | null, address: string, city: string, state: string, postcode: string, orderNo: string, notes: string, targetIndex: number | undefined): Observable<Delivery[]> {
+  createDelivery(run: string | null, customer: Customer, site: Site | null, address: string, notes: string, targetIndex: number | undefined, order: Partial<Order> = {}): Observable<Delivery[]> {
     const runName = run || undefined;
-    const fields = {Title: runName, Customer: customer.name, CustomerNumber: customer.custNmbr, OrderNumber: orderNo};
+    const fields: Partial<Delivery['fields']> = {Title: runName as string, Customer: customer.name, CustomerNumber: customer.custNmbr};
     if (notes) fields['Notes'] = notes;
     if (site) fields['Site'] = site.fields.Title;
-    if (city) fields['City'] = city;
-    if (state) fields['State'] = state;
-    if (postcode) fields['PostCode'] = postcode;
+    if (order.cntPrsn) fields['ContactPerson'] = order.cntPrsn;
+    if (order.city) fields['City'] = order.city;
+    if (order.state) fields['State'] = order.state;
+    if (order.postCode) fields['PostCode'] = order.postCode;
+    if (order.sopNumber) fields['OrderNumber'] = order.sopNumber;
+    if (order.palletSpaces) fields['Spaces'] = order.palletSpaces;
     fields['Address'] = address ? address : site && site.fields.Address ? site.fields.Address : customer.address1_composite;
     return this._deliveriesSubject$.pipe(
       take(1),
       tap(deliveries => {
         const runDeliveries = deliveries.filter(_ => _.fields.Title === runName);
-        targetIndex = targetIndex !== undefined ? targetIndex : runDeliveries.findIndex(_ => _.fields.PostCode > postcode);
+        targetIndex = targetIndex !== undefined ? targetIndex : runDeliveries.findIndex(_ => _.fields.PostCode > (order.postCode ? order.postCode : ''));
         const insertBeforeId = runDeliveries[targetIndex]?.id;
         const insertBeforeIndex = insertBeforeId ? deliveries.findIndex(_ => _.id === insertBeforeId) : deliveries.length;
         deliveries.splice(insertBeforeIndex, 0, {fields: fields} as Delivery);
@@ -251,9 +257,14 @@ export class DeliveryService {
       take(1),
       tap(deliveries => {
         const runItems = deliveries.filter(_ => run ? _.fields.Title === run : !_.fields.Title);
-        const fromIndex = deliveries.findIndex(_ => _.id === runItems[previousIndex].id);
-        const toIndex = deliveries.findIndex(_ => _.id === runItems[currentIndex].id);
-        moveItemInArray(deliveries, fromIndex, toIndex);
+        const groupedDrops = this.groupByCustomerAddressPipe.transform(runItems);
+        const toIndex = currentIndex <= previousIndex ?
+        deliveries.findIndex(_ => _.id === groupedDrops[currentIndex].id) :
+        deliveries.length - deliveries.slice().reverse().findIndex(_ => _.id === groupedDrops[currentIndex].id) - 1;
+        groupedDrops[previousIndex]['value'].forEach((_: Delivery) => {
+          const fromIndex = deliveries.findIndex(f => f.id === _.id);
+          moveItemInArray(deliveries, fromIndex, toIndex);
+        });
         this._deliveriesSubject$.next(deliveries);
       }),
       switchMap(_ => this.updateRunDeliveries(run)),
@@ -261,12 +272,18 @@ export class DeliveryService {
     )
   }
 
-  changeStatus(id: string, currentStatus: string): Promise<Delivery[]> {
+  changeStatuses(ids: Array<string>, currentStatus: string): Promise<Delivery[]> {
+    const headers = {'Content-Type': 'application/json'};
     const status = currentStatus === 'Complete' ? 'Active' : 'Complete';
-    const fields = {Status: status};
-    const req = this.http.patch<Delivery>(`${this._deliveryListUrl}/items('${id}')`, {fields}).pipe(
-      switchMap(_ => this.updateListMulti([_]))
-    );
+    const payload = {fields: {Status: status}};
+    const requests = ids.map((id, index) => {
+      const url = `${environment.siteUrl}/${this._dropsUrl}/items/${id}`;
+      return {id: index + 1, method: 'PATCH', url, headers, body: payload};
+    });
+    const req = requests.length ? this.http.post<{responses: {body: Delivery}[]}>(`${environment.endpoint}/$batch`, {requests}).pipe(
+      map(_ => _.responses.map(r => r['body'])),
+      switchMap(_ => this.updateListMulti(_))
+    ) : of([] as Delivery[]);
     return lastValueFrom(req);
   }
 
@@ -289,6 +306,14 @@ export class DeliveryService {
       switchMap(_ => this.removeItemsFromList(ids)),
       switchMap(_ => this.updateRunDeliveries(run))
     ) : of([] as Delivery[]);
+    return lastValueFrom(req);
+  }
+
+  deleteDeliveriesByRun(runName: string): Promise<Delivery[]> {
+    const req = this.getDeliveriesByRun(runName).pipe(
+      map(_ => _.map(run => run.id)),
+      switchMap(_ => this.deleteDeliveries(_, runName))
+    );
     return lastValueFrom(req);
   }
 
@@ -325,7 +350,7 @@ export class DeliveryService {
           const notes = delivery.fields.Notes ? `${delivery.fields.Notes}<br>${message}` : message;
           return this.updateDelivery(delivery.id, notes);
          } else {
-          return this.createDelivery(runName, customer, site, address, '', '', '', '', message, 0);
+          return this.createDelivery(runName, customer, site, address, message, 0);
          }
       }),
       tap(_ =>this.snackBar.open('Added to run list', '', {duration: 3000})

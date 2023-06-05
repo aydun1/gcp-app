@@ -142,10 +142,10 @@
 
 <mat-menu #menu="matMenu" xPosition="before">
   <ng-template matMenuContent let-delivery="delivery">
-    <button type="button" *ngIf="delivery.fields.Status !== 'Pan list sent'" mat-menu-item (click)="markPanListSent(delivery.id)" [disabled]="delivery.fields.To !== state">
+    <button type="button" *ngIf="delivery.fields.Status !== 'Pan list sent'" mat-menu-item (click)="markPanListSent(delivery.id)" [disabled]="allowNext(delivery.fields.To, delivery.fields.From)">
       <mat-icon>playlist_add_checked</mat-icon>Pan list sent
     </button>
-    <button type="button" mat-menu-item (click)="markDelivered(delivery.id)" [disabled]="delivery.fields.To !== state">
+    <button type="button" mat-menu-item (click)="markDelivered(delivery.id)" [disabled]="allowNext(delivery.fields.To, delivery.fields.From)">
       <mat-icon>check</mat-icon>Mark as delivered
     </button>
   </ng-template>

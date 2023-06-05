@@ -62,15 +62,16 @@ export class RecyclingNewComponent implements OnInit {
     });
     this.shared.getBranch().subscribe(branch => this.cageForm.patchValue({branch}));
     this.cageForm.get('assetType')?.valueChanges.subscribe(val => {
-      if (!val) return;
+      const v = val as 'Cage - Folding (2.5m³)' | 'Cage - Solid (2.5m³)';
+      if (!v) return;
       // Require cage number and weight if asset is a cage
       const cageNumberControl = this.cageForm.get('cageNumber');
       const cageWeightControl = this.cageForm.get('cageWeight');
-      val.startsWith('Cage') ? cageNumberControl?.enable() : cageNumberControl?.disable();
-      val.startsWith('Cage') ? cageWeightControl?.enable() : cageWeightControl?.disable();
+      v.startsWith('Cage') ? cageNumberControl?.enable() : cageNumberControl?.disable();
+      v.startsWith('Cage') ? cageWeightControl?.enable() : cageWeightControl?.disable();
 
       // Set default cage weights
-      this.cageForm.get('cageWeight')?.patchValue(this.defaultWeights[val]);
+      this.cageForm.get('cageWeight')?.patchValue(this.defaultWeights[v]);
     });
   }
 

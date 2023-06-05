@@ -131,7 +131,7 @@ export class ActionButtonComponent implements OnInit {
           const curVal = acc[key] ? acc[key]['message'] : [];
           const newVal = curVal.concat(`Cage ${cur.fields.CageNumber} ready for delivery to local processing`);
           return {...acc, [key]: {message: newVal, site: cur.fields.Site, customerNumber: cur.fields.CustomerNumber}};
-        }, {});
+        }, {} as any);
         const tasks = Object.keys(chunks).map(_ => this.deliveryService.requestCageTransfer(run, chunks[_].customerNumber, chunks[_].Site, chunks[_].message.join('<br>')).pipe(take(1)))
         return forkJoin(tasks);
       })
@@ -169,7 +169,7 @@ export class ActionButtonComponent implements OnInit {
           const curVal = acc[key] ? acc[key]['message'] : [];
           const newVal = curVal.concat(`Cage ${cur.fields.CageNumber} ready for delivery to Polymer`);
           return {...acc, [key]: {message: newVal, site: cur.fields.Site, customerNumber}};
-        }, {});
+        }, {} as any);
         const tasks = Object.keys(chunks).map(_ => this.deliveryService.requestCageTransfer(run, chunks[_].customerNumber, chunks[_].Site, chunks[_].message.join('<br>')).pipe(take(1)));
         return forkJoin(tasks);
       })
@@ -251,7 +251,7 @@ export class ActionButtonComponent implements OnInit {
       tap(() => this.loading.next(true)),
       switchMap(run => {
         if (!run) return of(1);
-        const tasks = cages.map(_ => this.deliveryService.requestCageTransfer(run, _.fields.CustomerNumber, _.fields.Site, `Cage ${_.fields.CageNumber ? _.fields.CageNumber + ' ' : ''}ready for collection`).pipe(take(1)));
+        const tasks = cages.map(_ => this.deliveryService.requestCageTransfer(run, _.fields.CustomerNumber || '', _.fields.Site || '', `Cage ${_.fields.CageNumber ? _.fields.CageNumber + ' ' : ''}ready for collection`).pipe(take(1)));
         return forkJoin(tasks);
       })
     ).subscribe(() => this.onComplete());
