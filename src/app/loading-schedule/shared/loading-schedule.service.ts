@@ -7,6 +7,7 @@ import { SharedService } from '../../shared.service';
 import { environment } from '../../../environments/environment';
 import { LoadingSchedule } from './loading-schedule';
 import { TransportCompany } from './transport-company';
+import { PanListService } from '../../pan-list/pan-list.service';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,9 @@ export class LoadingScheduleService {
 
   constructor(
     private http: HttpClient,
-    private shared: SharedService
+    private shared: SharedService,
+    private panListService: PanListService
+
   ) { }
 
   private htmlEncode(text: string | null): string {
@@ -166,7 +169,7 @@ export class LoadingScheduleService {
     ));
   }
 
-  sendPanList(id: string, panListId: string, ls: LoadingSchedule): Promise<any> {
+  sendPanList(id: string, panListId: number, ls: LoadingSchedule): Promise<any> {
     const url = `${this._loadingScheduleUrl}/items('${id}')`;
     const date = new Date();
     const result = date.toLocaleDateString('en-CA');
@@ -180,9 +183,20 @@ export class LoadingScheduleService {
       }),
       tap(_ => this.parseMultiLine('PanLists', 'PanListsArray', _)),
       switchMap(_ => this.markPanSent(id)),
-      switchMap(_ => {
-        const subject = `New pan list for ${ls.fields.To}`;
-        let body = `Click <a href="${environment.redirectUri}/loading-schedule/${id}?pan=${panListId}">here</a> to view`
+      switchMap(_ => this.panListService.getRequestedQuantitiesOnce(id, panListId)),
+      switchMap(lines => {
+        const rows = lines.map(_ => `<tr><td>${_.fields.ItemNumber}</td><td>${_.fields.Quantity}</td></tr>`).join('');
+        const subject = `New pan list for ${ls.fields.To} #${id}-${panListId}`;
+        let body = `<p><i>Click <a href="${environment.redirectUri}/loading-schedule/${id}?pan=${panListId}">here</a> for more details and to print.</i></p>`
+        body += '<p>';
+        if (ls.fields.LoadingDate) body += `<strong>Loading date:</strong> ${new Date(ls.fields.LoadingDate).toLocaleDateString('en-AU')}<br>`;
+        if (ls.fields.ArrivalDate) body += `<strong>Delivery date:</strong> ${new Date(ls.fields.ArrivalDate).toLocaleDateString('en-AU')}<br>`;
+        if (ls.fields.TransportCompany) body += `<strong>Transport:</strong> ${ls.fields.TransportCompany}<br>`;
+        if (ls.fields.Driver) body += `<strong>Driver:</strong> ${ls.fields.Driver}<br>`;
+        if (ls.fields.Spaces) body += `<strong>Spaces:</strong> ${ls.fields.Spaces}<br>`;
+        if (ls.fields.Notes) body += `<strong>Notes:</strong> ${ls.fields.Notes}<br>`;
+        body += '</p>';
+        body += `<table><tr><th>Item number</th><th>Qty Requested</th></tr>${rows}</table>`;
         const to = [ls.fields.From, ls.fields.To].map(_ => this.shared.panMap.get(`${_}` || '')).flat(1).filter(_ => _) as string[];
         return this.shared.sendMail(to, subject, body, 'HTML');
       })

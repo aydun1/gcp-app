@@ -62,7 +62,7 @@ export class LoadingScheduleViewComponent implements OnDestroy, OnInit {
     this.loadingScheduleService.removePanList(id, panListId);
   }
 
-  sendPanList(id: string, panListId: string, ls: LoadingSchedule): void {
+  sendPanList(id: string, panListId: number, ls: LoadingSchedule): void {
     this.loadingScheduleService.sendPanList(id, panListId, ls).then(_ => {
       this.snackBar.open('Pan list sent', '', {duration: 3000})
     });

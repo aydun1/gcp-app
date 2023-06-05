@@ -156,7 +156,7 @@ export class SharedService {
 
   sendMail(to: Array<string>, subject: string, body: string, contentType: 'Text' | 'HTML'): Promise<Object> {
     const url = `${environment.endpoint}/me/sendMail`;
-    const cc = ['aidan.obrien@gardencityplastics.com', this.getOwnEmail()];
+    const cc = [...new Set(['aidan.obrien@gardencityplastics.com', this.getOwnEmail()])];
     const payload  = {
       message: {
         subject: subject,

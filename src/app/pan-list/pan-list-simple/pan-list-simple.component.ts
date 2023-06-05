@@ -18,7 +18,7 @@ export class PanListSimpleComponent implements OnInit {
 
   @Output() addPanList = new EventEmitter<boolean>();
   @Output() deletePanList = new EventEmitter<string>();
-  @Output() sendPanList = new EventEmitter<string>();
+  @Output() sendPanList = new EventEmitter<number>();
 
 
   private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
@@ -144,7 +144,7 @@ export class PanListSimpleComponent implements OnInit {
   }
 
   sendList(): void {
-    this.sendPanList.next(this.selectedPanId);
+    this.sendPanList.next(parseInt(this.selectedPanId));
   }
 
   trackByFn(index: number, item: any): string {
