@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { MsalGuard } from '@azure/msal-angular';
 
 import { CustomersComponent } from './customers.component';
 import { CustomerListComponent } from './customer-list/customer-list.component';
@@ -10,15 +9,13 @@ const routes: Routes = [
   {
     path: '',
     component: CustomersComponent,
-    canActivate: [MsalGuard],
     children: [{
       path: '',
-      data: {title: 'Customers'},
+      title: 'Customers',
       component: CustomerListComponent,
       children: [
         {
           path: ':id',
-          data: {title: 'Customers'},
           component: CustomerViewComponent
         }
     ]

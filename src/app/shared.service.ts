@@ -35,7 +35,6 @@ export class SharedService {
   private _warehouseStaff = ['michael.johnson@gardencityplastics.com'];
   private _state$ = new BehaviorSubject<string>('');
   private _address$ = new BehaviorSubject<string>('');
-  private appTitle = this.titleService.getTitle();
   public branches = Object.keys(this.territories);
   public territoryNames = this.branches.concat(['INT', 'NATIONAL']);
   public isWarehouse!: boolean;
@@ -138,7 +137,7 @@ export class SharedService {
   }
 
   setTitle(pageTitle: string): void {
-    const title =  pageTitle ? `${pageTitle} - ${this.appTitle}` : this.appTitle;
+    const title = `${pageTitle} - IMS}`;
     this.titleService.setTitle(title);
   }
 

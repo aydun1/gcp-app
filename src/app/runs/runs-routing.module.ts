@@ -12,7 +12,7 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        data: {title: 'Runs'},
+        title: 'Runs',
         component: RunListComponent
       }
     ]
