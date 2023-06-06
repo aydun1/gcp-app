@@ -92,8 +92,8 @@ export class RecyclingService {
       }
     }).filter(_ => _);
 
-    if (!filterKeys.includes('assetType')) parsed.push(`fields/CageNumber ne null`);
     if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Complete'`);
+    if (!filterKeys.includes('assetType')) parsed.push(`fields/CageNumber ne null`);
 
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
     url += `&$orderby=${filters['sort'] ? filters['sort'] : 'fields/CageNumber'}`;
