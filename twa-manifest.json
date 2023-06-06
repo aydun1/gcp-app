@@ -1,5 +1,5 @@
 {
-  "packageId": "com.gardencityplastics.pallets.twa",
+  "packageId": "com.gardencityplastics.ims",
   "host": "pallets.gardencityplastics.com",
   "name": "Inventory Management System",
   "launcherName": "IMS",
@@ -19,8 +19,8 @@
     "path": "C:\\Users\\aidan.obrien.gcp\\dev\\gcp-app\\android.keystore",
     "alias": "android"
   },
-  "appVersionName": "2",
-  "appVersionCode": 2,
+  "appVersionName": "3",
+  "appVersionCode": 3,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://pallets.gardencityplastics.com/manifest.webmanifest",
@@ -38,5 +38,5 @@
   "fingerprints": [],
   "additionalTrustedOrigins": [],
   "retainedBundles": [],
-  "appVersion": "2"
+  "appVersion": "3"
 }
