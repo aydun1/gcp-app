@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { MsalGuard } from '@azure/msal-angular';
 
 import { InterstateTransferViewComponent } from './interstate-transfer-view/interstate-transfer-view.component';
 import { InterstateTransferRequestedComponent } from './interstate-transfer-requested/interstate-transfer-requested.component';
@@ -13,38 +12,36 @@ const routes: Routes = [
   {
     path: '',
     component: InterstateTransfersComponent,
-    canActivate: [MsalGuard],
+    title: 'Inventory Transfers'
   },
   {
     path: 'requested-items',
     component: InterstateTransferRequestedComponent,
-    canActivate: [MsalGuard],
+    title: 'Requested Items (PO)',
     children: [
       {
         path: ':id',
-        component: InterstateTransferViewComponent,
-        canActivate: [MsalGuard],
+        component: InterstateTransferViewComponent
       }
     ]
   },
   {
     path: 'suggested-items',
     component: InterstateTransferSuggestedComponent,
-    canActivate: [MsalGuard]
+    title: 'Suggested Items'
   },
   {
     path: 'new',
     component: InterstateTransferNewComponent,
-    canActivate: [MsalGuard]
+    title: 'Quick Transfer'
   },
   {
     path: 'active',
+    title: 'Requested Items (ITT)',
     component: InterstateTransfersActiveComponent,
-    canActivate: [MsalGuard],
     children: [{
       path: ':ittId',
-      component: InterstateTransferViewComponent,
-      canActivate: [MsalGuard]
+      component: InterstateTransferViewComponent
     }]
   },
 ]

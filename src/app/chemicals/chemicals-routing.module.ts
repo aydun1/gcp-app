@@ -13,12 +13,11 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        data: {title: 'Chemicals'},
+        title: 'Chemicals',
         component: ChemicalListComponent,
         children: [
           {
             path: ':id',
-            data: {title: 'Chemicals'},
             component: ChemicalViewComponent,
           }
         ]

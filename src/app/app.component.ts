@@ -95,18 +95,6 @@ export class AppComponent implements OnInit, OnDestroy {
       this.checkForUpdates();
       interval(this.checkInterval).subscribe(() => this.checkForUpdates());
     }
-
-    // Set the page title based on what is set in the router
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-      map(_ => {
-        let child = this.activatedRoute.firstChild;
-        if (!child) return;
-        while (child.firstChild) child = child.firstChild;
-        return child.snapshot.data['title'];
-      }),
-      tap((ttl: string) => this.sharedService.setTitle(ttl))
-    ).subscribe();
   }
 
   checkForUpdates(): void {

@@ -1,9 +1,24 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Injectable, NgModule } from '@angular/core';
+import { RouterModule, RouterStateSnapshot, Routes, TitleStrategy } from '@angular/router';
 import { MsalGuard } from '@azure/msal-angular';
+import { Title } from '@angular/platform-browser';
 
 import { HomeComponent } from './home/home.component';
 import { LogoutComponent } from './logout/logout.component';
+
+@Injectable()
+export class ImsTitleStrategy extends TitleStrategy {
+  constructor(private readonly title: Title) {
+    super();
+  }
+
+  override updateTitle(routerState: RouterStateSnapshot) {
+    const title = this.buildTitle(routerState);
+    console.log(title);
+    const pageTitle = title !== undefined ? `${title} | IMS` : 'Inventory Management System'
+    this.title.setTitle(pageTitle);
+  }
+}
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -21,6 +36,9 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes, {
     paramsInheritanceStrategy: 'always'
 })],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [
+    {provide: TitleStrategy, useClass: ImsTitleStrategy}
+  ]
 })
 export class AppRoutingModule { }
