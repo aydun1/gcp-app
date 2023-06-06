@@ -1,0 +1,11 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.gardencityplastics.ims",
+      "sha256_cert_fingerprints":
+        ["9F:76:61:4D:90:96:60:7C:9C:CD:1E:B7:F8:20:13:2D:E7:FA:3A:7F:76:5D:CB:77:9A:A1:92:F2:BB:67:D7:FB"]
+    }
+  }
+]
