@@ -14,7 +14,6 @@ export class ImsTitleStrategy extends TitleStrategy {
 
   override updateTitle(routerState: RouterStateSnapshot) {
     const title = this.buildTitle(routerState);
-    console.log(title);
     const pageTitle = title !== undefined ? `${title} | IMS` : 'Inventory Management System'
     this.title.setTitle(pageTitle);
   }

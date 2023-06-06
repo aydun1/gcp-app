@@ -2,13 +2,13 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, OnInit, Inject, OnDestroy, Renderer2, ViewChild } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { Location } from '@angular/common';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { SwUpdate, VersionEvent } from '@angular/service-worker';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSidenavContainer } from '@angular/material/sidenav';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { InteractionStatus, EventMessage, EventType, AccountInfo, RedirectRequest } from '@azure/msal-browser';
-import { filter, interval, map, Observable, Subject, takeUntil, tap } from 'rxjs';
+import { filter, interval, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { authentication } from '@microsoft/teams-js';
 
 import { SharedService } from './shared.service';
@@ -24,7 +24,8 @@ import { ScannerDialogComponent } from './scanner-dialog/scanner-dialog.componen
 export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('snav') public sidenav!: MatSidenavContainer;
   private readonly _destroying$ = new Subject<void>();
-  private checkInterval = 1000 * 60 * 60 * 6;  // 6 hours
+  private _checkInterval = 1000 * 60 * 60 * 6;  // 6 hours
+
   public loginDisplay = false;
   public accounts: AccountInfo[] = [];
   public photo$!: Observable<SafeUrl>;
@@ -37,7 +38,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
-    private activatedRoute: ActivatedRoute,
     private swUpdate: SwUpdate,
     private authService: MsalService,
     private location: Location,
@@ -93,7 +93,7 @@ export class AppComponent implements OnInit, OnDestroy {
         filter((evt: VersionEvent) => evt.type === 'VERSION_READY')
       ).subscribe(() => location.reload());
       this.checkForUpdates();
-      interval(this.checkInterval).subscribe(() => this.checkForUpdates());
+      interval(this._checkInterval).subscribe(() => this.checkForUpdates());
     }
   }
 
