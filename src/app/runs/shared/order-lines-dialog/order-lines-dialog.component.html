@@ -28,9 +28,26 @@
       <div><strong>Approx net weight:</strong> {{ orderWeight | number: '1.0-2' }}kg</div>
     </div>
     <mat-divider class="section-divider"></mat-divider>
-    <div><strong>Actions</strong></div>
-    <div class="actions">
+
+    <div class="action-header">
+      <strong>Pallets</strong>
       <button mat-stroked-button (click)="openPalletDialog(o.custName, o.custNumber, o.sopNumber, '')">Transfer pallets</button>
+    </div>
+
+    <div *ngIf="palletsOwing" class="pallets-owing">
+      <div class="pallet-type">
+        <div> </div>
+        <div class="pallet-total"><strong>Out</strong></div>
+        <div class="pallet-total"><strong>In</strong></div>
+      </div>
+      <div *ngFor="let pallet of pallets" class="pallet-type">
+        <div><strong>{{pallet.name}}</strong></div>
+        <div class="pallet-total">{{ palletsOwing[pallet.name]['outs'] }}</div>
+        <div class="pallet-total">{{ palletsOwing[pallet.name]['ins'] }}</div>
+      </div>
+    </div>
+    <div *ngIf="!palletsOwing">
+      <mat-spinner diameter="48" class="spinner"></mat-spinner>
     </div>
     <mat-divider class="section-divider"></mat-divider>
     <div class="attachments">

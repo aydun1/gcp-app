@@ -26,6 +26,20 @@
   visibility: hidden;
 }
 
+.pallets-owing {
+  display: flex;
+}
+
+.pallet-type {
+  width: 70px;
+}
+
+.action-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .actions {
   text-align: right;
 }

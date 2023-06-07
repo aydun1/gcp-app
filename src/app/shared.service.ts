@@ -137,7 +137,7 @@ export class SharedService {
   }
 
   setTitle(pageTitle: string): void {
-    const title = `${pageTitle} - IMS}`;
+    const title = `${pageTitle} | IMS`;
     this.titleService.setTitle(title);
   }
 
