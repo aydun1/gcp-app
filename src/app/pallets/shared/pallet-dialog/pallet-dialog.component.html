@@ -1,6 +1,10 @@
-<h2 mat-dialog-title>Transferring pallets for {{ data.customer.name }} ({{ data.customer.custNmbr }})</h2>
+<h2 mat-dialog-title>Pallet transfer entry</h2>
 <form (ngSubmit)="addPallets()" [formGroup]="palletForm">
   <mat-dialog-content>
+    <div><strong>Customer name:</strong> {{ data.customer.name }}</div>
+    <div><strong>Customer number:</strong> {{ data.customer.custNmbr }}</div>
+    <div *ngIf="data.orderNmbr"><strong>Order number:</strong> {{ data.orderNmbr }}</div>
+    <mat-divider class="section-divider"></mat-divider>
     <div class="vertical pallet-grid" [ngClass]="{ vertical: vertical }" formArrayName="quantities">
       <div *ngFor="let pallet of palletTypes; index as i" class="pallet-column" [formGroupName]="i">
         <div class="pallet-cell head">

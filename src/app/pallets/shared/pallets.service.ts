@@ -193,7 +193,7 @@ export class PalletsService {
     return this.http.post(`${this._palletTrackerUrl}/items`, payload);
   }
 
-  customerPalletTransferMulti(customerName: string, customer: string, branch: string, site: string, date: Date, notes: string, transfers: any): Observable<any> {
+  customerPalletTransferMulti(customerName: string, customer: string, branch: string, site: string, date: Date, orderNmbr: string, notes: string, transfers: any): Observable<any> {
     let i = 0;
     const url = `${environment.siteUrl}/${this._palletListUrl}/items`;
     const headers = {'Content-Type': 'application/json'};
@@ -214,6 +214,7 @@ export class PalletsService {
         Pallet: v.pallet,
         Quantity: Math.abs(inQty - outQty),
         Date: date,
+        OrderNumber: orderNmbr,
         Notes: notes,
         Site: ''
       }};

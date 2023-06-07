@@ -1,9 +1,10 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable, tap } from 'rxjs';
 
 import { DeliveryService } from '../delivery.service';
 import { Order } from '../order';
+import { PalletDialogComponent } from '../../../pallets/shared/pallet-dialog/pallet-dialog.component';
 
 
 interface Data {
@@ -23,6 +24,7 @@ export class OrderLinesDialogComponent implements OnInit {
   public orderWeight!: number;
 
   constructor(
+    private dialog: MatDialog,
     public dialogRef: MatDialogRef<OrderLinesDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Data,
     private deliveryService: DeliveryService
@@ -38,4 +40,12 @@ export class OrderLinesDialogComponent implements OnInit {
     );
   }
 
+  openPalletDialog(name: string, custNmbr: string, orderNmbr: string, site: string): void {
+    const customer = {name, custNmbr};
+    const data = {customer, site, orderNmbr: orderNmbr || ''};
+    const palletDialog = this.dialog.open(PalletDialogComponent, {width: '600px', data, autoFocus: false});
+    palletDialog.afterClosed().subscribe(
+      _ => console.log(_)
+    )
+  }
 }

@@ -46,14 +46,13 @@ export class PalletDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.data.orderNmbr)
     this.sharedService.getBranch().subscribe(state => this._state = state);
     const requireSite = this.data.site || this.data.sites?.length;
     this.siteNames = this.data.sites ? this.data.sites.map(_ => _.fields.Title) : [this.data.site].filter(_ => _);
     this.palletForm = this.fb.group({
       site: [this.data.site, requireSite ? Validators.required : ''],
       date: [new Date(), Validators.required],
-      notes: [this.data.orderNmbr],
+      notes: [''],
       quantities: this.fb.array(this.palletTypes.map(_ => this.fb.group<PalletQty>({
         pallet: new FormControl(_.name, [Validators.required]),
         outQty: new FormControl(null, [Validators.min(0), Validators.max(1000)]),
@@ -74,7 +73,7 @@ export class PalletDialogComponent implements OnInit {
     const date = this.palletForm.get('date')?.value as Date;
     const notes = this.palletForm.get('notes')?.value || '';
     const transfers = this.palletForm.get('quantities')?.value
-    this.palletsService.customerPalletTransferMulti(this.data.customer.name, this.data.customer.custNmbr, this._state, site, date, notes, transfers).pipe(
+    this.palletsService.customerPalletTransferMulti(this.data.customer.name, this.data.customer.custNmbr, this._state, site, date, this.data.orderNmbr, notes, transfers).pipe(
       tap(_ => {
         this.dialogRef.close();
         this.snackBar.open('Successfully transferred pallets', '', {duration: 3000});

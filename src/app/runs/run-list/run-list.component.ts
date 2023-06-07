@@ -7,16 +7,16 @@ import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 import { Customer } from '../../customers/shared/customer';
-import { CustomerPickerDialogComponent } from '../../customers/shared/customer-picker-dialog/customer-picker-dialog.component';
 import { Site } from '../../customers/shared/site';
-import { PalletDialogComponent } from '../../pallets/shared/pallet-dialog/pallet-dialog.component';
-import { RecyclingDialogComponent } from '../../recycling/shared/recycling-dialog/recycling-dialog.component';
-import { SharedService } from '../../shared.service';
 import { Delivery } from '../shared/delivery';
-import { DeliveryEditorDialogComponent } from '../shared/delivery-editor-dialog/delivery-editor-dialog.component';
 import { DeliveryService } from '../shared/delivery.service';
 import { Order } from '../shared/order';
 import { Run } from '../shared/run';
+import { SharedService } from '../../shared.service';
+import { CustomerPickerDialogComponent } from '../../customers/shared/customer-picker-dialog/customer-picker-dialog.component';
+import { PalletDialogComponent } from '../../pallets/shared/pallet-dialog/pallet-dialog.component';
+import { RecyclingDialogComponent } from '../../recycling/shared/recycling-dialog/recycling-dialog.component';
+import { DeliveryEditorDialogComponent } from '../shared/delivery-editor-dialog/delivery-editor-dialog.component';
 import { RunManagerDialogComponent } from '../shared/run-manager-dialog/run-manager-dialog.component';
 import { OrderLinesDialogComponent } from '../shared/order-lines-dialog/order-lines-dialog.component';
 
@@ -128,7 +128,7 @@ export class RunListComponent implements OnInit {
       sopNumber: orderNumber,
     };
 
-    this.dialog.open(OrderLinesDialogComponent, {width: '800px', data});
+    this.dialog.open(OrderLinesDialogComponent, {width: '800px', data, autoFocus: false});
   }
 
   parseParams(params: Params): void {

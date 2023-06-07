@@ -28,6 +28,11 @@
       <div><strong>Approx net weight:</strong> {{ orderWeight | number: '1.0-2' }}kg</div>
     </div>
     <mat-divider class="section-divider"></mat-divider>
+    <div><strong>Actions</strong></div>
+    <div class="actions">
+      <button mat-stroked-button (click)="openPalletDialog(o.custName, o.custNumber, o.sopNumber, '')">Transfer pallets</button>
+    </div>
+    <mat-divider class="section-divider"></mat-divider>
     <div class="attachments">
       <gcp-docs [folder]="'debtors/'+ o.custNumber" [subfolder]="data.sopNumber"><strong>Attachments</strong></gcp-docs>
     </div>
