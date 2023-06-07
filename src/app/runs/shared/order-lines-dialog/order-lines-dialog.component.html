@@ -37,7 +37,7 @@
       <gcp-docs [folder]="'debtors/'+ o.custNumber" [subfolder]="data.sopNumber"><strong>Attachments</strong></gcp-docs>
     </div>
   </div>
-  <div *ngIf="loading" class="note">
+  <div *ngIf="loading">
     <mat-spinner diameter="48" class="spinner"></mat-spinner>
   </div>
 </mat-dialog-content>
