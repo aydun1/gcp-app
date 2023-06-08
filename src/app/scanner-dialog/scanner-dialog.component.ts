@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -13,6 +13,7 @@ import { OrderLinesDialogComponent } from '../runs/shared/order-lines-dialog/ord
   styleUrls: ['./scanner-dialog.component.css']
 })
 export class ScannerDialogComponent implements OnInit {
+  @ViewChild('search') searchElement!: ElementRef;
   private orderRe = /^QO[0-9]{7}|WEB[0-9]{9}$/ig;
   public availableDevices!: MediaDeviceInfo[];
   public currentDevice: MediaDeviceInfo | undefined;
@@ -93,6 +94,7 @@ export class ScannerDialogComponent implements OnInit {
 
   onHasPermission(has: boolean): void {
     this.hasPermission = has;
+    if (!has) this.searchElement.nativeElement.focus();
   }
 
   onTorchCompatible(isCompatible: boolean): void {
