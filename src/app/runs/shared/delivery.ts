@@ -23,6 +23,7 @@ export interface Delivery {
     Site: string;
     Sequence: number;
     Spaces: number;
+    Weight: number;
     Status: string;
   }
 }

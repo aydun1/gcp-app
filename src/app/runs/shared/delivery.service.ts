@@ -38,7 +38,7 @@ export class DeliveryService {
   ) { }
 
   private createUrl(branch: string): string {
-    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,ContactPerson,Address,CustomerNumber,Customer,Status,OrderNumber,Notes,Spaces)`;
+    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,ContactPerson,Address,CustomerNumber,Customer,Status,OrderNumber,Notes,Spaces,Weight)`;
     if (branch) url += `&filter=fields/Branch eq '${branch}'`;
     url += `&orderby=fields/Sequence asc&top=2000`;
     return url;
@@ -226,6 +226,7 @@ export class DeliveryService {
     if (order.postCode) fields['PostCode'] = order.postCode;
     if (order.sopNumber) fields['OrderNumber'] = order.sopNumber;
     if (order.palletSpaces) fields['Spaces'] = order.palletSpaces;
+    if (order.orderWeight) fields['Weight'] = order.orderWeight;
     fields['Address'] = address ? address : site && site.fields.Address ? site.fields.Address : customer.address1_composite;
     return this._deliveriesSubject$.pipe(
       take(1),

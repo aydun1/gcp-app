@@ -45,6 +45,7 @@ export class RunListComponent implements OnInit {
   public displayedColumns = ['sequence', 'customer', 'site', 'notes', 'actions', 'status', 'menu'];
   public locked = false;
   public palletSpaces = 0;
+  public weight = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -110,8 +111,11 @@ export class RunListComponent implements OnInit {
       tap(_ => this.parseParams(_)),
       switchMap(_ => this._loadList ? this.getDeliveries(_) : []),
       tap(_ => {
-        this.palletSpaces = _.reduce((acc, cur) => acc += (cur.fields.Spaces || 0), 0)
-        this.listSize = _.length
+        console.log(_);
+        this.palletSpaces = _.reduce((acc, cur) => acc += (cur.fields.Spaces || 0), 0);
+        this.weight = _.reduce((acc, cur) => acc += (cur.fields.Weight || 0), 0);
+
+        this.listSize = _.length;
       })
     )
   }

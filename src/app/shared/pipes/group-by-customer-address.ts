@@ -29,6 +29,7 @@ export class GroupByCustomerAddressPipe implements PipeTransform {
       const groups = groupedCollection[key] as Delivery[];
       const hasNotes = groups.filter(_ => _.fields.Notes).length;
       const hasOrderNumbers = groups.filter(_ => _.fields.OrderNumber).length;
+      const spaces = groups.filter(_ => _.fields.Spaces).reduce((acc, cur) => acc + +cur.fields.Spaces, 0);
       const id = groups[0]['id'];
       const fields = {
         CustomerNumber: groups[0]['fields']['CustomerNumber'],
@@ -41,7 +42,7 @@ export class GroupByCustomerAddressPipe implements PipeTransform {
         Site: groups[0]['fields']['Site'],
         Notes: groups[0]['fields']['Notes']
       };
-      return {key, id, fields, value: groupedCollection[key], hasOrderNumbers, hasNotes};
+      return {key, id, fields, value: groupedCollection[key], hasOrderNumbers, hasNotes, spaces};
     });
     return res;
   }

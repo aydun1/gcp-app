@@ -13,10 +13,6 @@ h2 {
   margin-left: 10px;
 }
 
-.specs {
-  font-style: italic;
-}
-
 .options {
   align-items: baseline;
   display: flex;
@@ -157,6 +153,10 @@ h2 {
   position: absolute;
   right: 28px;
   top: 12px;
+}
+
+.pallet-spaces {
+  text-align: right;
 }
 
 @media (max-width: 1024px) {
