@@ -52,7 +52,10 @@
                   <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
                   <span matListItemTitle>{{ order.custName }}</span>
                   <span matListItemLine>Order: {{ order.sopNumber }}<ng-container *ngIf="order.posted"> | posted</ng-container></span>
-                  <span matListItemLine>Spaces: {{ order.palletSpaces | number: '1.1-1' }}</span>
+                  <div matListItemLine>
+                    <span>{{ order.palletSpaces | number: '1.1-1' }} spaces</span> |
+                    <span>{{ order.orderWeight | number: '1.1-1' }} kg</span>
+                  </div>
                   <ng-container matListItemMeta>
                     <button mat-icon-button (click)="openReceipt(order.sopNumber)"><mat-icon>receipt</mat-icon></button>
                     <button type="button" [disabled]="loading" mat-icon-button (click)="addOrderDelivery(order, run, undefined).subscribe()" class="icon"><mat-icon>add</mat-icon></button>
@@ -81,10 +84,8 @@
     <div class="inner run-list" #deliveryList="cdkDropList" cdkDropList (cdkDropListDropped)="moveItem($event)" [cdkDropListEnterPredicate]="allowPredicate">
       <div *ngIf="deliveries$ | async | groupByCustomerAddress as groupedDeliveries">
         <p class="specs">
-          <span>{{groupedDeliveries.deliveries | number }} {{ groupedDeliveries.deliveries === 1 ? 'delivery' : 'deliveries'}}</span>
-          <span> | </span>
-          <span>{{groupedDeliveries.spaces | number: '1.1-1'}} {{ groupedDeliveries.spaces === 1 ? 'space' : 'spaces'}}</span>
-          <span> | </span>
+          <span>{{groupedDeliveries.deliveries | number }} {{ groupedDeliveries.deliveries === 1 ? 'delivery' : 'deliveries'}}</span> |
+          <span>{{groupedDeliveries.spaces | number: '1.1-1'}} {{ groupedDeliveries.spaces === 1 ? 'space' : 'spaces'}}</span> |
           <span>{{groupedDeliveries.weight | number: '1.1-1'}} kg</span>
         </p>
         <mat-accordion>
@@ -130,7 +131,11 @@
                 <div matListItemMeta>{{ d.fields.Spaces | number: '1.1-1' }}</div>
               </button>
             </mat-action-list>
-            <div class="pallet-spaces">{{ delivery.spaces | number: '1.1-1' }} spaces</div>
+            <div class="pallet-spaces">
+              <span>{{ delivery.spaces | number: '1.1-1' }} spaces</span> |
+              {{ delivery.weight | number: '1.1-1' }} kg
+              
+            </div>
             <mat-action-row>
               <a mat-button color="primary" [routerLink]="['/customers', delivery.fields.CustomerNumber]" [queryParams]="{site:delivery.fields.Site}" class="customer-link">Customer</a>
               <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, delivery.fields.Site)">Pallets</button>
