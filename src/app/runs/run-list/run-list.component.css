@@ -66,14 +66,6 @@ h2 {
               0 3px 14px 2px rgba(0, 0, 0, 0.12);
 }
 
-.cdk-drag-placeholder {
-  opacity: 0;
-}
-
-.cdk-drag-animating {
-  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-}
-
 .run-list.cdk-drop-list-dragging .delivery:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
@@ -127,7 +119,6 @@ h2 {
   align-self: center;
 }
 
-
 .drag {
   color: #999;
   left: 5px;
@@ -157,6 +148,13 @@ h2 {
 
 .pallet-spaces {
   text-align: right;
+}
+
+.custom-placeholder {
+  opacity: 0.5;
+  border: dotted 3px #999;
+  min-height: 48px;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 @media (max-width: 1024px) {

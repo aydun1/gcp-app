@@ -258,7 +258,7 @@ export class DeliveryService {
       take(1),
       tap(deliveries => {
         const runItems = deliveries.filter(_ => run ? _.fields.Title === run : !_.fields.Title);
-        const groupedDrops = this.groupByCustomerAddressPipe.transform(runItems);
+        const groupedDrops = this.groupByCustomerAddressPipe.transform(runItems).drops;
         const toIndex = currentIndex <= previousIndex ?
         deliveries.findIndex(_ => _.id === groupedDrops[currentIndex].id) :
         deliveries.length - deliveries.slice().reverse().findIndex(_ => _.id === groupedDrops[currentIndex].id) - 1;

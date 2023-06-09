@@ -48,6 +48,7 @@
               <div *ngFor="let section of orders|groupByProperty:'shipMethod';trackBy:trackByGroupsFn">
                 <div matSubheader><strong>{{ section.key !== 'undefined' ? section.key : '' }}</strong></div>
                 <mat-list-item class="drag-list-item" *ngFor="let order of section.value;trackBy:trackByFn" cdkDrag [cdkDragData]="order">
+                  <div class="custom-placeholder" *cdkDragPlaceholder></div>
                   <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
                   <span matListItemTitle>{{ order.custName }}</span>
                   <span matListItemLine>Order: {{ order.sopNumber }}<ng-container *ngIf="order.posted"> | posted</ng-container></span>
@@ -88,6 +89,7 @@
         </p>
         <mat-accordion>
           <mat-expansion-panel *ngFor="let delivery of groupedDeliveries.drops;let i = index;trackBy:trackByGroupsFn" class="delivery" cdkDrag [cdkDragData]="delivery" [cdkDragDisabled]="locked">
+            <div class="custom-placeholder" *cdkDragPlaceholder></div>
             <mat-expansion-panel-header>
               <mat-panel-title>
                 <mat-panel-title>
