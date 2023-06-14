@@ -71,6 +71,9 @@
     <div class="run-head">
       <h3>{{runFilter.value || 'Default run'}}</h3>
       <div class="run-head-buttons">
+        <button mat-icon-button (click)="refresh(runFilter.value)" matTooltip="Reload latest information" [disabled]="loading">
+          <mat-icon>refresh</mat-icon>
+        </button>
         <button mat-icon-button (click)="locked = !locked" matTooltip="Lock/unlock delivery sorting">
           <mat-icon *ngIf="locked">lock</mat-icon>
           <mat-icon *ngIf="!locked">lock_open</mat-icon>

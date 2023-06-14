@@ -37,9 +37,11 @@ export class DeliveryService {
     private groupByCustomerAddressPipe: GroupByCustomerAddressPipe
   ) { }
 
-  private createUrl(branch: string): string {
+  private createUrl(branch: string, runName: string | null | undefined = undefined): string {
     let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,ContactPerson,Address,CustomerNumber,Customer,Status,OrderNumber,Notes,Spaces,Weight)`;
+    const runString = runName ? `'${runName}'` : 'null';
     if (branch) url += `&filter=fields/Branch eq '${branch}'`;
+    if (runName !== undefined ) url += ` and fields/Title eq ${runString}`;
     url += `&orderby=fields/Sequence asc&top=2000`;
     return url;
   }
@@ -119,6 +121,29 @@ export class DeliveryService {
     );
   }
 
+  private getDeliveriesByRun(runName: string): Observable<Delivery[]> {
+    let url = `${this._deliveryListUrl}/items?expand=fields(select=Notes)&filter=`;
+    const runString = runName ? `'${runName}'` : 'null';
+    const deliveries = this.shared.getBranch().pipe(
+      switchMap(branch => {
+        const filter2 = `fields/Title eq ${runString}`;
+        const filter3 = `fields/Branch eq '${branch}'`;
+        url += [filter2, filter3].join(' and ');
+        return this.http.get(url) as Observable<{value: Delivery[]}>;
+      }),
+      map(_ => _.value)
+    );
+    return deliveries;
+  }
+
+  private getDeliveriesByAccount(customerNumber: string, runName: string): Observable<Delivery> {
+    const url = `${this._deliveryListUrl}/items?expand=fields(select=Notes)&filter=fields/CustomerNumber eq '${customerNumber}' and fields/Title eq '${runName}'`;
+    const deliveries = this.http.get(url) as Observable<{value: Delivery[]}>;
+    return deliveries.pipe(
+      map(_ => _.value[0])
+    );
+  }
+
   syncOrders(branch: string, date: Date): Observable<Order[]> {
     const d = (date).toLocaleString( 'sv', { timeZoneName: 'short' } ).split(' ', 1)[0];
     const request = this.http.get<{orders: Order[]}>(`${environment.gpEndpoint}/orders?branch=${branch}&date=${d}`).pipe(
@@ -177,29 +202,6 @@ export class DeliveryService {
     );
   }
 
-  getDeliveriesByRun(runName: string): Observable<Delivery[]> {
-    let url = `${this._deliveryListUrl}/items?expand=fields(select=Notes)&filter=`;
-    const runString = runName ? `'${runName}'` : 'null';
-    const deliveries = this.shared.getBranch().pipe(
-      switchMap(branch => {
-        const filter2 = `fields/Title eq ${runString}`;
-        const filter3 = `fields/Branch eq '${branch}'`;
-        url += [filter2, filter3].join(' and ');
-        return this.http.get(url) as Observable<{value: Delivery[]}>;
-      }),
-      map(_ => _.value)
-    );
-    return deliveries;
-  }
-
-  getDeliveriesByAccount(customerNumber: string, runName: string): Observable<Delivery> {
-    const url = `${this._deliveryListUrl}/items?expand=fields(select=Notes)&filter=fields/CustomerNumber eq '${customerNumber}' and fields/Title eq '${runName}'`;
-    const deliveries = this.http.get(url) as Observable<{value: Delivery[]}>;
-    return deliveries.pipe(
-      map(_ => _.value[0])
-    );
-  }
-
   getDeliveries(branch: string): BehaviorSubject<Delivery[]> {
     const url = this.createUrl(branch);
     this.loading.next(true);
@@ -213,6 +215,23 @@ export class DeliveryService {
       })
     ).subscribe(_ => this._deliveriesSubject$.next(_));
     return this._deliveriesSubject$;
+  }
+
+  reloadRunDeliveries(runName: string | null, branch: string): Promise<any> {
+    const url = this.createUrl(branch, runName);
+    const req = this.http.get<{value: Delivery[]}>(url).pipe(
+      map(res => res.value),
+      switchMap(res => {
+        return this._deliveriesSubject$.pipe(
+          take(1),
+          map(deliveries => {
+            return deliveries.filter(_ => _.fields.Title !== (runName || undefined)).concat(res).map(obj => res.find(o => o.id === obj.id) || obj).sort((a, b) => (a.fields.Sequence > b.fields.Sequence) ? 1 : -1)
+          }),
+        );
+      }),
+      tap(_ => this._deliveriesSubject$.next(_))
+    );
+    return lastValueFrom(req);
   }
 
   createDelivery(run: string | null, customer: Customer, site: Site | null, address: string, notes: string, targetIndex: number | undefined, order: Partial<Order> = {}): Observable<Delivery[]> {

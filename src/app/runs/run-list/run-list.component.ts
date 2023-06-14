@@ -150,7 +150,8 @@ export class RunListComponent implements OnInit {
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
     const sameRun = prev['run'] === curr['run'];
-    return sameRun && this._loadList;
+    const sameRefresh = prev['refresh'] === curr['refresh'];
+    return sameRun && sameRefresh && this._loadList;
   }
 
   openCustomerPicker(): void {
@@ -243,6 +244,13 @@ export class RunListComponent implements OnInit {
 
   allowPredicate(item: CdkDrag<number>): boolean {
     return true;
+  }
+
+  refresh(runName: string | null): void {
+    this.loading = true;
+    this.deliveryService.reloadRunDeliveries(runName, this._branch)
+    .then(_ => this.loading = false)
+    .catch(_ => this.loading = false)
   }
 
   trackByFn(index: number, item: Delivery): string {
