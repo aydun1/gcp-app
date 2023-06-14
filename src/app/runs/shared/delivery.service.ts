@@ -25,7 +25,8 @@ export class DeliveryService {
   private _deliveryListUrl = `${environment.endpoint}/${environment.siteUrl}/${this._dropsUrl}`;
   private _deliveriesSubject$ = new BehaviorSubject<Delivery[]>([]);
   private _runsSubject$ = new BehaviorSubject<Delivery[]>([]);
-  private _validBatches = ['FULFILLED', 'RELEASED', 'AWAITING_GNC', 'INTERVENE'];
+  //private _validBatches = ['FULFILLED', 'RELEASED', 'AWAITING_GNC', 'INTERVENE'];
+  private _validBatches = ['UNRELEASED'];
 
   public loading = new BehaviorSubject<boolean>(true);
 
@@ -150,7 +151,7 @@ export class DeliveryService {
       map(_ => _.orders),
       switchMap(orders => {
         return this._deliveriesSubject$.pipe(
-          map(deliveries => orders.filter(_ => this._validBatches.includes(_.batchNumber)).filter(_ => !deliveries.map(d => d.fields.OrderNumber).includes(_.sopNumber)))
+          map(deliveries => orders.filter(_ => !this._validBatches.includes(_.batchNumber)).filter(_ => !deliveries.map(d => d.fields.OrderNumber).includes(_.sopNumber)))
         )
       })
     );
