@@ -85,6 +85,7 @@ h2 {
 
 .sequence {
   padding: 0 6px;
+  width: 16px;
 }
 
 .mat-expansion-panel-header-title {
@@ -124,7 +125,7 @@ h2 {
   color: #999;
   left: 0;
   top: 4px;
-  padding: 8px;
+  padding: 8px 22px 8px 4px;
   position: absolute;
 }
 
@@ -183,7 +184,7 @@ h2 {
 
   .delivery-header .mat-expansion-panel-header-description {
     flex-grow: 0;
-    margin-left: 20px;
+    margin-left: 28px;
   }
 
   .delivery-header .mat-expansion-panel-header-title {
