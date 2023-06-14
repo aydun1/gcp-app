@@ -157,6 +157,13 @@ h2 {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
+.delivery-header {
+  display: flex;
+  flex-grow: 1;
+  flex-basis: 0;
+  overflow: hidden;
+}
+
 @media (max-width: 1024px) {
   .mat-expansion-panel-header-title, .mat-expansion-panel-header-description {
     margin-right: 0;
@@ -164,6 +171,22 @@ h2 {
 
   .mat-expansion-panel-header-description {
     flex-grow: 1;
+  }
+
+  .delivery-header {
+    flex-direction: column;
+    justify-content: center;
+    white-space: nowrap;
+  }
+
+  .delivery-header .mat-expansion-panel-header-description {
+    flex-grow: 0;
+    margin-left: 20px;
+  }
+
+  .delivery-header .mat-expansion-panel-header-title {
+    flex-grow: 0;
+    flex-basis: auto;
   }
 }
 

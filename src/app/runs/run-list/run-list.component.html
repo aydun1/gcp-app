@@ -95,7 +95,7 @@
           <mat-expansion-panel *ngFor="let delivery of groupedDeliveries.drops;let i = index;trackBy:trackByGroupsFn" class="delivery" cdkDrag [cdkDragData]="delivery" [cdkDragDisabled]="locked">
             <div class="custom-placeholder" *cdkDragPlaceholder></div>
             <mat-expansion-panel-header>
-              <mat-panel-title>
+              <div class="delivery-header">
                 <mat-panel-title>
                   <div [ngClass]="{unlocked: !locked}" cdkDragHandle class="sequence">
                     <mat-icon *ngIf="!locked" class="drag">drag_indicator</mat-icon>
@@ -108,7 +108,7 @@
                 <mat-panel-description>
                   {{ delivery.fields.City ? delivery.fields.City + ', ' + delivery.fields.PostCode : delivery.fields.Address }}
                 </mat-panel-description>
-              </mat-panel-title>
+              </div>
               <div class="status">
                 <mat-checkbox color="accent" [checked]="delivery.fields.Status === 'Complete'" (click)="markComplete($event, delivery.value, delivery.fields.Status)"></mat-checkbox>
               </div>
