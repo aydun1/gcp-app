@@ -39,7 +39,7 @@ export class GroupByCustomerAddressPipe implements PipeTransform {
         PostCode: groups[0]['fields']['PostCode'],
         ContactPerson: groups[0]['fields']['ContactPerson'],
         Address: groups[0]['fields']['Address'],
-        PhoneNumber: groups[0]['fields']['PhoneNumber'].replace(/,/g, ', '),
+        PhoneNumber: groups[0]['fields']['PhoneNumber']?.replace(/,/g, ', '),
         Status: groups[0]['fields']['Status'],
         Site: groups[0]['fields']['Site'],
         Notes: groups[0]['fields']['Notes']
