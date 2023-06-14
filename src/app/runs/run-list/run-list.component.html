@@ -116,10 +116,10 @@
                 <button mat-icon-button [matMenuTriggerData]="{delivery}" [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()"><mat-icon>more_vert</mat-icon></button>
               </div>
             </mat-expansion-panel-header>
-    
-            <div>{{ delivery.fields.ContactPerson }}</div>
-            <div class="site">{{ delivery.fields.Address || delivery.fields.Site }}</div>
 
+            <div *ngIf="delivery.fields.ContactPerson">{{ delivery.fields.ContactPerson }}</div>
+            <div class="site">{{ delivery.fields.Address || delivery.fields.Site }}</div>
+            <div *ngIf="delivery.fields.PhoneNumber" [innerHTML]="delivery.fields.PhoneNumber | phoneLink"></div>
             <div *ngIf="delivery.hasNotes">
               <h3>Notes</h3>
               <p mat-list-item *ngFor="let d of delivery.value" (click)="openReceipt(d.fields.Notes)">

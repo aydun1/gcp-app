@@ -39,7 +39,7 @@ export class DeliveryService {
   ) { }
 
   private createUrl(branch: string, runName: string | null | undefined = undefined): string {
-    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,ContactPerson,Address,CustomerNumber,Customer,Status,OrderNumber,Notes,Spaces,Weight)`;
+    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,ContactPerson,Address,PhoneNumber,CustomerNumber,Customer,Status,OrderNumber,Notes,Spaces,Weight)`;
     const runString = runName ? `'${runName}'` : 'null';
     if (branch) url += `&filter=fields/Branch eq '${branch}'`;
     if (runName !== undefined ) url += ` and fields/Title eq ${runString}`;
@@ -247,6 +247,7 @@ export class DeliveryService {
     if (order.sopNumber) fields['OrderNumber'] = order.sopNumber;
     if (order.palletSpaces) fields['Spaces'] = order.palletSpaces;
     if (order.orderWeight) fields['Weight'] = order.orderWeight;
+    if (order.phoneNumber1 || order.phoneNumber2) fields['PhoneNumber'] = [order.phoneNumber1, order.phoneNumber2].filter(_ => _).join(',');
     fields['Address'] = address ? address : site && site.fields.Address ? site.fields.Address : customer.address1_composite;
     return this._deliveriesSubject$.pipe(
       take(1),

@@ -12,6 +12,8 @@ export interface Order {
   address3: string;
   city: string;
   postCode: string;
+  phoneNumber1: string;
+  phoneNumber2: string;
   state: string;
   lines: Array<Line>;
   reqShipDate: Date;

@@ -3,8 +3,9 @@ import { NgModule } from '@angular/core';
 import { GroupByPropertyPipe } from './group-by-property';
 import { GroupByPipe } from './group-by.pipe';
 import { GroupCagesPipe } from './group-cages';
-import { StringColourPipe } from './string-colour.pipe';
 import { GroupByCustomerAddressPipe } from './group-by-customer-address';
+import { PhoneLinkPipe } from './phone-link';
+import { StringColourPipe } from './string-colour.pipe';
 
 @NgModule({
     declarations: [
@@ -12,6 +13,7 @@ import { GroupByCustomerAddressPipe } from './group-by-customer-address';
       GroupByPipe,
       GroupByPropertyPipe,
       GroupCagesPipe,
+      PhoneLinkPipe,
       StringColourPipe
     ],
     exports: [
@@ -19,6 +21,7 @@ import { GroupByCustomerAddressPipe } from './group-by-customer-address';
       GroupByPipe,
       GroupByPropertyPipe,
       GroupCagesPipe,
+      PhoneLinkPipe,
       StringColourPipe
     ],
     providers: [
