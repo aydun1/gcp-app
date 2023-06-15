@@ -58,7 +58,7 @@
                   </div>
                   <ng-container matListItemMeta>
                     <button mat-icon-button (click)="openReceipt(order.sopNumber)"><mat-icon>receipt</mat-icon></button>
-                    <button type="button" [disabled]="loading" mat-icon-button (click)="addOrderDelivery(order, run, undefined).subscribe()" class="icon"><mat-icon>add</mat-icon></button>
+                    <button type="button" [disabled]="loading" mat-icon-button (click)="addOrderDelivery(order, run, undefined).subscribe()"><mat-icon>add</mat-icon></button>
                   </ng-container>
                 </mat-list-item>
               </div>

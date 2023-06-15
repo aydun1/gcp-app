@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
@@ -50,6 +51,7 @@ export class RunListComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
+    private snackBar: MatSnackBar,
     private sharedService: SharedService,
     private deliveryService: DeliveryService
   ) { }
@@ -180,8 +182,18 @@ export class RunListComponent implements OnInit {
     action.subscribe();
   }
 
-  moveToOtherRun(event: Delivery, targetRun: string): void {
-    this.deliveryService.moveDeliveries([event.id], this.runFilter.value, targetRun);
+  moveToOtherRun(event: {value: Delivery[]}, targetRun: string): void {
+    this.loading = true;
+    const ids = event.value.map(_ => _.id);
+    this.deliveryService.moveDeliveries(ids, this.runFilter.value, targetRun).then(
+      _ => {
+        this.snackBar.open(`Moved delivery to ${targetRun || 'Default'}`, '', {duration: 3000});
+        this.loading = false;
+      }
+    ).catch(_ => {
+      this.snackBar.open('Could not move delivery', '', {duration: 3000});
+      this.loading = false;
+    });
   }
 
   addOrderDelivery(order: Order, run: string, index?: number): Observable<Delivery[]> {
