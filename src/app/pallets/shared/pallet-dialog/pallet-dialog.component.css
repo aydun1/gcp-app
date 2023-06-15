@@ -40,6 +40,13 @@
   border-bottom: 1px solid;
 }
 
+.owing-cell {
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .pallet-input {
   background: none;
   border: none;

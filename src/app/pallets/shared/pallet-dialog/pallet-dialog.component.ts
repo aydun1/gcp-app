@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { catchError, tap, throwError } from 'rxjs';
+import { catchError, startWith, tap, throwError } from 'rxjs';
 
 import { PalletsService } from '../pallets.service';
 import { SharedService } from '../../../shared.service';
@@ -35,6 +35,9 @@ export class PalletDialogComponent implements OnInit {
   public siteNames!: Array<string>;
   public direction = [{name: 'Sent', controlName: 'outQty'}, {name: 'Returned', controlName: 'inQty'}];
   public vertical = true;
+  public palletsOwed = this.palletsService.getPalletsOwedByCustomer(this.data.customer.custNmbr, undefined).pipe(
+    startWith(this.palletTypes.reduce((acc, cur) => {return {...acc, [cur.key]: {total: '...'}}}, {}))
+  );
 
   constructor(
       public dialogRef: MatDialogRef<PalletDialogComponent>,
