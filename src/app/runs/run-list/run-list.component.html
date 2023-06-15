@@ -92,7 +92,7 @@
           <span>{{groupedDeliveries.weight | number: '1.1-1'}} kg</span>
         </p>
         <mat-accordion>
-          <mat-expansion-panel *ngFor="let delivery of groupedDeliveries.drops;let i = index;trackBy:trackByGroupsFn" class="delivery" cdkDrag [cdkDragData]="delivery" [cdkDragDisabled]="locked">
+          <mat-expansion-panel *ngFor="let delivery of groupedDeliveries.drops;let i = index;trackBy:trackByGroupsFn" class="delivery" cdkDrag [cdkDragData]="delivery" [cdkDragDisabled]="locked" [expanded]="delivery.id === currentCategory" (opened)="setOpenedDelivery(delivery.id)" (closed)="setClosedDelivery(delivery.id)">
             <div class="custom-placeholder" *cdkDragPlaceholder></div>
             <mat-expansion-panel-header>
               <div class="delivery-header">

@@ -44,6 +44,7 @@ export class RunListComponent implements OnInit {
   public empty = true;
   public displayedColumns = ['sequence', 'customer', 'site', 'notes', 'actions', 'status', 'menu'];
   public locked = false;
+  public currentCategory = this.route.snapshot.queryParamMap.get('opened');
 
   constructor(
     private route: ActivatedRoute,
@@ -251,6 +252,16 @@ export class RunListComponent implements OnInit {
     this.deliveryService.reloadRunDeliveries(runName, this._branch)
     .then(_ => this.loading = false)
     .catch(_ => this.loading = false)
+  }
+
+  setOpenedDelivery(key: string) {
+    this.currentCategory = key;
+    this.router.navigate([], {queryParams: {opened: key}, replaceUrl: true, queryParamsHandling: 'merge'});
+  }
+
+  setClosedDelivery(key: string): void {
+    if (this.currentCategory !== key) return;
+    this.router.navigate([], {queryParams: {opened: null}, replaceUrl: true, queryParamsHandling: 'merge'});
   }
 
   trackByFn(index: number, item: Delivery): string {
