@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { catchError, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 import { Customer } from '../../customers/shared/customer';
 import { Site } from '../../customers/shared/site';
@@ -201,14 +201,21 @@ export class RunListComponent implements OnInit {
     const fullAddress = [order.address1, order.address2, order.address3].filter(_ => _).join('\r\n') + '\r\n' +
     [order.city, order.state, order.postCode].filter(_ => _).join(' ');
     const customer = {name: order.custName, custNmbr: order.custNumber} as Customer;
-    return this.deliveryService.createDelivery(run, customer, null, fullAddress, '', index, order).pipe(
-      tap(_ => this.loading = false)
+    const delivery = this.deliveryService.createDropPartial(run, customer, null, fullAddress, '', order);
+    return this.deliveryService.addDrop(delivery, index).pipe(
+      tap(_ => this.loading = false),
+      catchError(_ => {
+        this.loading = false;
+        this.snackBar.open('Could not add delivery', '', {duration: 3000});
+        return [];
+      })
     )
   }
 
   addCustomerDelivery(customer: Customer, site: Site, address: string, notes: string): Observable<Delivery[]> {
     const run = this.runFilter.value;
-    return this.deliveryService.createDelivery(run, customer, site, address, notes, this.listSize);
+    const delivery = this.deliveryService.createDropPartial(run, customer, site, address, notes);
+    return this.deliveryService.addDrop(delivery, this.listSize);
   }
 
   markComplete(e: any, deliveries: Array<Delivery>, currentStatus: string): void {
@@ -226,13 +233,24 @@ export class RunListComponent implements OnInit {
   deleteDeliveries(deliveries: Array<Delivery>, run: string): void {
     const ids = deliveries.map(_ => _.id);
     this.loading = true;
-    this.deliveryService.deleteDeliveries(ids, run).then(
-      _ => this.loading = false
-    );
+    this.deliveryService.deleteDeliveries(ids, run).then( _ => {
+      this.snackBar.open('Removed delivery', '', {duration: 3000});
+      this.loading = false
+    }).catch(_ => {
+      this.snackBar.open('Could not remove delivery', '', {duration: 3000});
+       this.loading = false;
+    });
   }
 
   deleteDeliveriesByRun(runName: string): void {
-    this.deliveryService.deleteDeliveriesByRun(runName);
+    this.loading = true;
+    this.deliveryService.deleteDeliveriesByRun(runName).then( _ => {
+      this.snackBar.open('Removed deliveries', '', {duration: 3000});
+      this.loading = false
+    }).catch(_ => {
+      this.snackBar.open('Could not remove deliveries', '', {duration: 3000});
+       this.loading = false;
+    });
   }
 
   openPalletDialog(name: string, custNmbr: string, orderNmbr: string, site: string): void {

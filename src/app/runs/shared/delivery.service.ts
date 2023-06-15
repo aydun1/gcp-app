@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, forkJoin, lastValueFrom, map, Observable, of, startWith, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, firstValueFrom, forkJoin, lastValueFrom, map, Observable, of, startWith, switchMap, take, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
@@ -235,7 +235,8 @@ export class DeliveryService {
     return lastValueFrom(req);
   }
 
-  createDelivery(run: string | null, customer: Customer, site: Site | null, address: string, notes: string, targetIndex: number | undefined, order: Partial<Order> = {}): Observable<Delivery[]> {
+
+  createDropPartial(run: string | null, customer: Customer, site: Site | null, address: string, notes: string, order: Partial<Order> = {}): Partial<Delivery['fields']> {
     const runName = run || undefined;
     const fields: Partial<Delivery['fields']> = {Title: runName as string, Customer: customer.name, CustomerNumber: customer.custNmbr};
     if (notes) fields['Notes'] = notes;
@@ -249,18 +250,28 @@ export class DeliveryService {
     if (order.orderWeight) fields['Weight'] = order.orderWeight;
     if (order.phoneNumber1 || order.phoneNumber2) fields['PhoneNumber'] = [order.phoneNumber1, order.phoneNumber2].filter(_ => _).join(',');
     fields['Address'] = address ? address : site && site.fields.Address ? site.fields.Address : customer.address1_composite;
+    return fields;
+  }
+
+  addDrop(deliveryFields: Partial<Delivery['fields']>, targetIndex: number | undefined): Observable<Delivery[]> {
+    let backup: Delivery[];
     return this._deliveriesSubject$.pipe(
       take(1),
       tap(deliveries => {
-        const runDeliveries = deliveries.filter(_ => _.fields.Title === runName);
-        targetIndex = targetIndex !== undefined ? targetIndex : runDeliveries.findIndex(_ => _.fields.PostCode > (order.postCode ? order.postCode : ''));
+        backup = [...deliveries];
+        const runDeliveries = deliveries.filter(_ => _.fields.Title === deliveryFields.Title);
+        targetIndex = targetIndex !== undefined ? targetIndex : runDeliveries.findIndex(_ => _.fields.PostCode > (deliveryFields?.PostCode ? deliveryFields.PostCode : ''));
         const insertBeforeId = runDeliveries[targetIndex]?.id;
         const insertBeforeIndex = insertBeforeId ? deliveries.findIndex(_ => _.id === insertBeforeId) : deliveries.length;
-        deliveries.splice(insertBeforeIndex, 0, {fields: fields} as Delivery);
+        deliveries.splice(insertBeforeIndex, 0, {fields: deliveryFields} as Delivery);
         this._deliveriesSubject$.next(deliveries);
       }),
       switchMap(() => this.shared.getBranch()),
-      switchMap(_ => this.http.post<Delivery>(`${this._deliveryListUrl}/items`, {fields: {...fields, Branch: _}})),
+      switchMap(_ => this.http.post<Delivery>(`${this._deliveryListUrl}/items`, {fields: {...deliveryFields, Branch: _}})),
+      catchError(_ => {
+        this._deliveriesSubject$.next(backup);
+        throw 'Error';
+      }),
       switchMap(delivery => {
         return this._deliveriesSubject$.pipe(
           take(1),
@@ -270,7 +281,7 @@ export class DeliveryService {
           })
         );
       }),
-      switchMap(_ => this.updateRunDeliveries(runName))
+      switchMap(_ => this.updateRunDeliveries(deliveryFields.Title))
     );
   }
 
@@ -336,7 +347,7 @@ export class DeliveryService {
       map(_ => _.map(run => run.id)),
       switchMap(_ => this.deleteDeliveries(_, runName))
     );
-    return lastValueFrom(req);
+    return firstValueFrom(req);
   }
 
   moveDeliveries(ids: Array<string>, run: string | null, targetRun: string): Promise<Delivery[]> {
@@ -372,7 +383,8 @@ export class DeliveryService {
           const notes = delivery.fields.Notes ? `${delivery.fields.Notes}<br>${message}` : message;
           return this.updateDelivery(delivery.id, notes);
          } else {
-          return this.createDelivery(runName, customer, site, address, message, 0);
+          const delivery = this.createDropPartial(runName, customer, site, address, message);
+          return this.addDrop(delivery, 0);
          }
       }),
       tap(_ =>this.snackBar.open('Added to run list', '', {duration: 3000})
