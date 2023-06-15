@@ -6,6 +6,19 @@
     <div *ngIf="data.orderNmbr"><strong>Order number:</strong> {{ data.orderNmbr }}</div>
     <mat-divider class="section-divider"></mat-divider>
     <div class="vertical pallet-grid" [ngClass]="{ vertical: vertical }" formArrayName="quantities">
+      <div class="pallet-column heading">
+        <div class="pallet-cell head">
+          <div class="direction-title pallet-word">Pallet</div>
+        </div>
+        <div class="pallet-cell owing-cell">
+        </div>
+        <div class="pallet-cell">
+          <div class="direction-title">Sent</div>
+        </div>
+        <div class="pallet-cell">
+          <div class="direction-title">Returned</div>
+        </div>
+      </div>
       <div *ngFor="let pallet of palletTypes; index as i" class="pallet-column" [formGroupName]="i">
         <div class="pallet-cell head">
           <img [src]="pallet.image" alt="{{ pallet.name }} pallet"><span class="name">{{ pallet.name }}</span>
@@ -14,7 +27,7 @@
           <span>{{o[pallet.name]?.total}}</span>
         </div>
         <div *ngFor="let d of direction" class="pallet-cell">
-          <input class="pallet-input" type="number" [formControlName]="d.controlName" autocomplete="off" [placeholder]="d.name" min="0" max="1000">
+          <input class="pallet-input" type="number" [formControlName]="d.controlName" autocomplete="off" [placeholder]="0" min="0" max="1000">
         </div>
       </div>
     </div>

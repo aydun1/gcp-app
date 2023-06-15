@@ -19,6 +19,15 @@
   position: absolute;
 }
 
+.direction-title {
+  font-weight: bold;
+  padding: 4px 5px;
+}
+
+.pallet-word {
+  text-align: right;
+}
+
 .pallet-grid {
   border: 1px solid;
   border-radius: 4px;
@@ -36,6 +45,7 @@
 
 .pallet-cell {
   flex: 1;
+  overflow: hidden;
   position: relative;
   border-bottom: 1px solid;
 }
