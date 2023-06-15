@@ -47,3 +47,9 @@
 .spinner {
   margin: 0 auto;
 }
+
+.close-button {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+}

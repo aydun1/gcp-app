@@ -68,4 +68,9 @@ export class OrderLinesDialogComponent implements OnInit {
       _ => this._palletsSubject$.next(this.data.sopNumber)
     )
   }
+
+  closeDialog(): void {
+    this.dialogRef.close();
+  }
+
 }
