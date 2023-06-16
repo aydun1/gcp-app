@@ -20,6 +20,7 @@ import { LogoutComponent } from './logout/logout.component';
 import { environment } from '../environments/environment';
 import { ThemingService } from './theming.service';
 import { ScannerDialogModule } from './scanner-dialog/scanner-dialog.module';
+import { CacheInterceptor } from './cache-interceptor.service';
 
 class CustomDateAdapter extends NativeDateAdapter {
   override parse(value: string): Date | null {
@@ -106,6 +107,7 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     {provide: MAT_DATE_LOCALE, useValue: 'en-AU'},
     {provide: DateAdapter, useClass: CustomDateAdapter, deps: [MAT_DATE_LOCALE, Platform]},
     {provide: HTTP_INTERCEPTORS, useClass: MsalInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true},
     {provide: MSAL_INSTANCE, useFactory: MSALInstanceFactory},
     {provide: MSAL_GUARD_CONFIG, useFactory: MSALGuardConfigFactory},
     {provide: MSAL_INTERCEPTOR_CONFIG, useFactory: MSALInterceptorConfigFactory},
