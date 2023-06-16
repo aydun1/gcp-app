@@ -137,8 +137,21 @@ h2 {
 }
 
 .order-list {
+  min-height: 60px;
   max-height: 500px;
   overflow-y: auto;
+  position: relative;
+}
+
+.loading-orders {
+  margin: 10px auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+
+.no-orders {
+  text-align: center;
 }
 
 .refresher {

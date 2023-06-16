@@ -249,7 +249,7 @@ export class RunListComponent implements OnInit {
       this.loading = false
     }).catch(_ => {
       this.snackBar.open('Could not remove deliveries', '', {duration: 3000});
-       this.loading = false;
+      this.loading = false;
     });
   }
 
@@ -281,7 +281,10 @@ export class RunListComponent implements OnInit {
     this.loading = true;
     this.deliveryService.reloadRunDeliveries(runName, this._branch)
     .then(_ => this.loading = false)
-    .catch(_ => this.loading = false)
+    .catch(_ => {
+      this.snackBar.open('Could not refresh deliveries', '', {duration: 3000});
+      this.loading = false;
+    })
   }
 
   setOpenedDelivery(key: string) {

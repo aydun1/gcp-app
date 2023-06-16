@@ -3,7 +3,7 @@
     <gcp-letterhead class="print-heading">Local deliveries</gcp-letterhead>
     <h2>Local deliveries</h2>
     <div class="refresher">
-      <mat-spinner *ngIf="loading || loadingOrders" diameter="36"></mat-spinner>
+      <mat-spinner *ngIf="loading" diameter="36"></mat-spinner>
     </div>
     <div class="options inner">
       <div class="buttons">
@@ -30,39 +30,42 @@
               Drag these below to add to a run!
             </mat-panel-description>
           </mat-expansion-panel-header>
-
-          <div class="order-list" *ngIf="orders$ | async as orders">
-            <div class="date-picker">
-              <span class="date-label">Delivery date:</span>
-              <input type="text" [matDatepicker]="picker1" [formControl]="dateFilter" class="date-input">
-              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-              <mat-datepicker #picker1></mat-datepicker>
-              <button mat-icon-button (click)="prevDay()" type="button" class="prev-day">
-                <mat-icon>chevron_left</mat-icon>
-              </button>
-              <button mat-icon-button (click)="nextDay()" type="button">
-                <mat-icon>chevron_right</mat-icon>
-              </button>
+          <div class="date-picker">
+            <span class="date-label">Delivery date:</span>
+            <input type="text" [matDatepicker]="picker1" [formControl]="dateFilter" class="date-input">
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+            <button mat-icon-button (click)="prevDay()" type="button" class="prev-day">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+            <button mat-icon-button (click)="nextDay()" type="button">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+          <div class="order-list">
+            <mat-spinner *ngIf="loadingOrders" diameter="36" class="loading-orders"></mat-spinner>
+            <div *ngIf="orders$ | async as orders">
+              <p *ngIf="orders.length === 0" class="no-orders">No orders to show for this date</p>
+              <mat-list #orderList="cdkDropList" cdkDropList [cdkDropListConnectedTo]="[deliveryList]" [cdkDropListSortingDisabled]="true">
+                <div *ngFor="let section of orders|groupByProperty:'shipMethod';trackBy:trackByGroupsFn">
+                  <div matSubheader><strong>{{ section.key !== 'undefined' ? section.key : '' }}</strong></div>
+                  <mat-list-item class="drag-list-item" *ngFor="let order of section.value;trackBy:trackByFn" cdkDrag [cdkDragData]="order">
+                    <div class="custom-placeholder" *cdkDragPlaceholder></div>
+                    <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
+                    <span matListItemTitle>{{ order.custName }}</span>
+                    <span matListItemLine>Order: {{ order.sopNumber }}<ng-container *ngIf="order.posted"> | posted</ng-container>  | {{ order.batchNumber }}</span>
+                    <div matListItemLine>
+                      <span>{{ order.palletSpaces | number: '1.1-1' }} spaces</span> |
+                      <span>{{ order.orderWeight | number: '1.1-1' }} kg</span>
+                    </div>
+                    <ng-container matListItemMeta>
+                      <button mat-icon-button (click)="openReceipt(order.sopNumber)"><mat-icon>receipt</mat-icon></button>
+                      <button type="button" [disabled]="loading" mat-icon-button (click)="addOrderDelivery(order, run, undefined).subscribe()"><mat-icon>add</mat-icon></button>
+                    </ng-container>
+                  </mat-list-item>
+                </div>
+              </mat-list>
             </div>
-            <mat-list #orderList="cdkDropList" cdkDropList [cdkDropListConnectedTo]="[deliveryList]" [cdkDropListSortingDisabled]="true">
-              <div *ngFor="let section of orders|groupByProperty:'shipMethod';trackBy:trackByGroupsFn">
-                <div matSubheader><strong>{{ section.key !== 'undefined' ? section.key : '' }}</strong></div>
-                <mat-list-item class="drag-list-item" *ngFor="let order of section.value;trackBy:trackByFn" cdkDrag [cdkDragData]="order">
-                  <div class="custom-placeholder" *cdkDragPlaceholder></div>
-                  <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
-                  <span matListItemTitle>{{ order.custName }}</span>
-                  <span matListItemLine>Order: {{ order.sopNumber }}<ng-container *ngIf="order.posted"> | posted</ng-container>  | {{ order.batchNumber }}</span>
-                  <div matListItemLine>
-                    <span>{{ order.palletSpaces | number: '1.1-1' }} spaces</span> |
-                    <span>{{ order.orderWeight | number: '1.1-1' }} kg</span>
-                  </div>
-                  <ng-container matListItemMeta>
-                    <button mat-icon-button (click)="openReceipt(order.sopNumber)"><mat-icon>receipt</mat-icon></button>
-                    <button type="button" [disabled]="loading" mat-icon-button (click)="addOrderDelivery(order, run, undefined).subscribe()"><mat-icon>add</mat-icon></button>
-                  </ng-container>
-                </mat-list-item>
-              </div>
-            </mat-list>
           </div>
         </mat-expansion-panel>
       </mat-accordion>
