@@ -120,8 +120,8 @@ export class RunListComponent implements OnInit {
           const email = this.sharedService.getAccount()?.username?.toLowerCase();
           this.runs = runs ? [{fields: {Title: '', Branch: this._branch, Owner: ''}} as Run, ...runs.sort((a, b) => this.runSortFn(a, b, email))] : [];
           this.otherRuns = runs?.filter(r => r.fields.Title !== this.runName);
-          const ownRun = this.runs?.findIndex(_ => _.fields.Owner === email);
-          if (this.openedTab === null || this.openedTab === -1) {
+          const ownRun = this.runs?.findIndex(_ => _.fields.Owner.toLocaleLowerCase() === email);
+          if ((this.openedTab === null || this.openedTab === -1) && this.runs.length > 0) {
             this.openedTab = ownRun === -1 ? 0 : ownRun;
             this.selectTab(this.openedTab);
           }
@@ -137,7 +137,7 @@ export class RunListComponent implements OnInit {
   }
 
   runSortFn(a: Run, b: Run, email: string | undefined) {
-    const x = +(b.fields.Owner === email) - +(a.fields.Owner?.toLocaleLowerCase() === email);
+    const x = +(b.fields.Owner?.toLocaleLowerCase() === email) - +(a.fields.Owner?.toLocaleLowerCase() === email);
     return x == 0 ? (b.fields.Title > a.fields.Title ? -1 : 1) : x;
   }
 
