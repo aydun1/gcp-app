@@ -39,7 +39,6 @@ export class RunListComponent implements OnInit {
   public loading = false;
   public loadingOrders = true;
   public loadingPage = true;
-
   public empty = true;
   public displayedColumns = ['sequence', 'customer', 'site', 'notes', 'actions', 'status', 'menu'];
   public locked = false;
@@ -310,7 +309,8 @@ export class RunListComponent implements OnInit {
     })
   }
 
-  fileChangeEvent(folder: string, subfolder: string, e: Event): void {
+  fileChangeEvent(folder: string, custNmbr: string, orderNmbr: string, e: Event): void {
+    const subfolder = [custNmbr, orderNmbr].filter(_ => _).join('/');
     this.docsService.fileChangeEvent(folder, subfolder, e);
   }
 

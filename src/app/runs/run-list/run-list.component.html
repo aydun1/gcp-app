@@ -139,7 +139,7 @@
                       {{ delivery.weight | number: '1.1-1' }} kg
                     </div>
                     <mat-action-row>
-                      <input #fileSelect class="file-select" multiple="multiple" type="file" (change)="fileChangeEvent(delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, $event)" placeholder="File">
+                      <input #fileSelect class="file-select" multiple="multiple" type="file" (change)="fileChangeEvent('debtors', delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, $event)" placeholder="File">
                       <label class="file-select-label" for="file">
                         <button mat-icon-button type="button" (click)="fileSelect.click()"><mat-icon>camera</mat-icon></button>
                       </label>
