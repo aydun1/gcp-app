@@ -15,6 +15,9 @@ export interface Doc {
   id: string;
   oldName: string;
   name: string;
+  parentReference: {
+    path: string;
+  }
   size: number;
   uploadUrl: string;
   webUrl: string;

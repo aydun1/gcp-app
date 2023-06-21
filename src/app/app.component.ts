@@ -6,15 +6,17 @@ import { Router } from '@angular/router';
 import { SwUpdate, VersionEvent } from '@angular/service-worker';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSidenavContainer } from '@angular/material/sidenav';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { InteractionStatus, EventMessage, EventType, AccountInfo, RedirectRequest } from '@azure/msal-browser';
-import { filter, interval, Observable, Subject, takeUntil, tap } from 'rxjs';
+import { distinctUntilChanged, filter, interval, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { authentication } from '@microsoft/teams-js';
 
 import { SharedService } from './shared.service';
 import { TeamsService } from './teams.service';
 import { ThemingService } from './theming.service';
 import { ScannerDialogComponent } from './scanner-dialog/scanner-dialog.component';
+import { DocsService } from './shared/docs/docs.service';
 
 @Component({
   selector: 'gcp-root',
@@ -42,6 +44,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private authService: MsalService,
     private location: Location,
     private dialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private docsService: DocsService,
     private msalBroadcastService: MsalBroadcastService,
     private renderer: Renderer2,
     private router: Router,
@@ -52,6 +56,20 @@ export class AppComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+
+    this.docsService.uploads$.pipe(
+      distinctUntilChanged((a, b) => {
+        if (b > a) {
+          this.snackBar.open('Uploading...', '', {duration: 3000})
+        } else if (b.length === 0 && a.length > 0) {
+          this.snackBar.open('Uploads complete', '', {duration: 3000})
+      }
+        return a.length === b.length;
+      })
+    ).subscribe(
+      _ => console.log(_)
+    )
+
     this.themingService.theme.subscribe(_ => {
       const darkClass = 'dark-theme';
       _ ? this.renderer.addClass(document.body, darkClass) : this.renderer.removeClass(document.body, darkClass)

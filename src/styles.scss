@@ -47,6 +47,7 @@ $dark-theme: mat.define-dark-theme((
 @include mat.slide_toggle-theme($light-theme);
 @include mat.snack_bar-theme($light-theme);
 @include mat.table-theme($light-theme);
+@include mat.tabs-theme($light-theme);
 @include mat.toolbar-theme($light-theme);
 @include mat.tooltip-theme($light-theme);
 
@@ -74,6 +75,7 @@ $dark-theme: mat.define-dark-theme((
   @include mat.slide_toggle-color($dark-theme);
   @include mat.snack_bar-color($dark-theme);
   @include mat.table-color($dark-theme);
+  @include mat.tabs-color($dark-theme);
   @include mat.toolbar-color($dark-theme);
   @include mat.tooltip-color($dark-theme);
 }
@@ -228,6 +230,13 @@ gcp-big-button > .link {
 .wide-select {
   position: fixed !important;
   width: auto !important;
+}
+
+.mat-mdc-tab-labels :last-child.mat-mdc-tab {
+  min-width: 0;
+  padding: 0;
+  color: unset;
+  opacity: unset;
 }
 
 

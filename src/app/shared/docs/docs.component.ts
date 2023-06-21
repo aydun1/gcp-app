@@ -52,4 +52,8 @@ export class DocsComponent implements OnInit {
     }
   }
 
+  fileChangeEvent(e: Event): void {
+    this.docsService.fileChangeEvent(this.folder, this.subfolder, e);
+  }
+
 }

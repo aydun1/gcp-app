@@ -24,7 +24,7 @@ export class DeliveryService {
   private _runsListUrl = `${environment.endpoint}/${environment.siteUrl}/${this._runsUrl}`;
   private _deliveryListUrl = `${environment.endpoint}/${environment.siteUrl}/${this._dropsUrl}`;
   private _deliveriesSubject$ = new BehaviorSubject<Delivery[]>([]);
-  private _runsSubject$ = new BehaviorSubject<Delivery[]>([]);
+  private _runsSubject$ = new BehaviorSubject<Run[] | null>(null);
   //private _validBatches = ['FULFILLED', 'RELEASED', 'AWAITING_GNC', 'INTERVENE'];
   private _validBatches = ['UNRELEASED'];
 
@@ -165,18 +165,20 @@ export class DeliveryService {
 
   getRuns(branch: string): Observable<Run[]> {
     const url = `${this._runsListUrl}/items?expand=fields(select=Title,Owner)&filter=fields/Branch eq '${branch}'&orderby=fields/Title asc`;
-    return this.http.get(url).pipe(
+    return this.http.get<{value: Run[]}>(url).pipe(
       startWith(this._runsSubject$),
-      map((res: any) => res.value as Delivery[]),
+      map(res => res.value as Run[]),
       distinctUntilChanged((prev, curr) => {
-        return prev.map(_ => _.fields.Title).join('') === curr.map(_ => _.fields.Title).join('')
-      }),
+        const before = prev?.sort((a, b) => a.fields.Title > b.fields.Title ? -1 : 1).map(_ => _.fields.Title).join('');
+        const after = curr?.sort((a, b) => a.fields.Title > b.fields.Title ? -1 : 1).map(_ => _.fields.Title).join('');
+        return before === after;
+    }),
       tap(_ => this._runsSubject$.next(_)),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         return of([]);
       })
-    ) as Observable<Run[]>;
+    );
   }
 
   addRun(run: string, owner: string): Observable<Run> {

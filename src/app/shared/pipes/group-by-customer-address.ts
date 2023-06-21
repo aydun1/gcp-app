@@ -6,8 +6,8 @@ import { Delivery } from '../../runs/shared/delivery';
   name: 'groupByCustomerAddress'
 })
 export class GroupByCustomerAddressPipe implements PipeTransform {
-  transform(collection: Array<Delivery> | null): {drops: Array<any>, deliveries: number, spaces: number, weight: number} {
-    if(!collection || collection.length === 0) return {drops: [], deliveries: 0, weight: 0, spaces: 0};
+  transform(collection: Array<Delivery> | null): {drops: Array<any>, deliveries: any, spaces: any, weights: any} {
+    if(!collection || collection.length === 0) return {drops: [], deliveries: {}, spaces: {}, weights: {}};
     const groupedCollection = collection.reduce((previous, current)=> {
       if (current['fields']['Address']) {
         if (!previous[current['fields']['Address']]) {
@@ -42,13 +42,26 @@ export class GroupByCustomerAddressPipe implements PipeTransform {
         PhoneNumber: groups[0]['fields']['PhoneNumber']?.replace(/,/g, ', '),
         Status: groups[0]['fields']['Status'],
         Site: groups[0]['fields']['Site'],
-        Notes: groups[0]['fields']['Notes']
+        Notes: groups[0]['fields']['Notes'],
+        Title: groups[0]['fields']['Title']
       };
       return {key, id, fields, value: groupedCollection[key], hasOrderNumbers, hasNotes, spaces, weight};
     });
-    const deliveries = drops.length;
-    const spaces = drops.reduce((acc, cur) => acc + cur.spaces, 0)
-    const weight = drops.reduce((acc, cur) => acc + cur.weight, 0)
-    return {drops, deliveries, spaces, weight};
+    const deliveries = drops.reduce((acc, cur) => {
+      const title = cur.fields.Title || '';
+      acc[title] = (acc[title] || 0) + 1;
+      return acc;
+    }, {}); 
+    const spaces = drops.reduce((acc, cur) => {
+      const title = cur.fields.Title || '';
+      acc[title] = (acc[title] || 0) + cur.spaces;
+      return acc;
+    }, {});
+    const weights = drops.reduce((acc, cur) => {
+      const title = cur.fields.Title || '';
+      acc[title] = (acc[title] || 0) + cur.weight;
+      return acc;
+    }, {});
+    return {drops, deliveries, spaces, weights};
   }
 }

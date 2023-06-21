@@ -16,8 +16,12 @@ export class CacheInterceptor implements HttpInterceptor {
         if (stateEvent instanceof HttpResponse) localStorage?.setItem(key, JSON.stringify(stateEvent));
       }),
       catchError(_ => {
-        if (_.status === 0) this.snackBar.open('Using offline data. No internet?', '', {duration: 3000})
-        return of(new HttpResponse(JSON.parse(localStorage?.getItem(key) || '[]')));
+        if (_.status === 0) {
+          this.snackBar.open('Using offline data. No internet?', '', {duration: 3000})
+          return of(new HttpResponse(JSON.parse(localStorage?.getItem(key) || '[]')));
+        } else {
+          return of(new HttpResponse());
+        }
       })
     )
   }

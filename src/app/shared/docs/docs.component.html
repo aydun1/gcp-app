@@ -1,7 +1,10 @@
 <div class="dropzone" (dragover)="allowDrop($event)" (dragenter)="addClass($event)" (drop)="drop($event)">
   <div class="header">
     <ng-content></ng-content>
-    <gcp-doc-upload [folder]="folder" [subfolder]="subfolder" class="upload-button"></gcp-doc-upload>
+    <input #fileSelect class="file-select" multiple="multiple" type="file" (change)="fileChangeEvent($event)" placeholder="File">
+    <label class="file-select-label" for="file">
+      <button mat-stroked-button type="button" (click)="fileSelect.click()">Attach a document</button>
+    </label>
   </div>
   <gcp-doc-list [folder]="folder" [subfolder]="subfolder"></gcp-doc-list>
   <div *ngIf="dragOver" class="blocker mat-app-background" (dragleave)="removeClass($event)">

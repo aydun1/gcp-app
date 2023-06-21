@@ -2,7 +2,6 @@ import { CdkDrag, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { catchError, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
@@ -20,6 +19,7 @@ import { RecyclingDialogComponent } from '../../recycling/shared/recycling-dialo
 import { DeliveryEditorDialogComponent } from '../shared/delivery-editor-dialog/delivery-editor-dialog.component';
 import { RunManagerDialogComponent } from '../shared/run-manager-dialog/run-manager-dialog.component';
 import { OrderLinesDialogComponent } from '../shared/order-lines-dialog/order-lines-dialog.component';
+import { DocsService } from '../../shared/docs/docs.service';
 
 @Component({
   selector: 'gcp-run-list',
@@ -29,23 +29,31 @@ import { OrderLinesDialogComponent } from '../shared/order-lines-dialog/order-li
 export class RunListComponent implements OnInit {
   private _loadList = false;
   private _branch!: string;
-
-  public listSize!: number;
-  public runFilter = new FormControl('');
   public dateFilter = new FormControl(this.getDate());
   public orders$!: Observable<Order[]>;
   public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
   public runs: Array<Run> = [];
   public otherRuns: Array<Run> = [{fields: {Title: 'Default'}} as Run];
-  public run = '';
-  public showFulfilled = false;
+  public showFulfilled!: boolean;
   public loading = false;
   public loadingOrders = true;
+  public loadingPage = true;
+
   public empty = true;
   public displayedColumns = ['sequence', 'customer', 'site', 'notes', 'actions', 'status', 'menu'];
   public locked = false;
   public currentCategory = this.route.snapshot.queryParamMap.get('opened');
+  public openedTab = this.firstTab();
+
+  get runName(): string {
+    return this.openedTab ? this.runs[this.openedTab]?.fields['Title'] : '';
+  }
+
+  firstTab(): number | null {
+    const tab = this.route.snapshot.queryParamMap.get('tab')
+    return tab === null ? null : parseInt(tab);
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -53,7 +61,8 @@ export class RunListComponent implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private sharedService: SharedService,
-    private deliveryService: DeliveryService
+    private deliveryService: DeliveryService,
+    private docsService: DocsService
   ) { }
 
   private getDate(): Date {
@@ -83,12 +92,14 @@ export class RunListComponent implements OnInit {
 
   ngOnInit(): void {
     const state$ = this.sharedService.getBranch();
+
     this.orders$ = this.dateFilter.valueChanges.pipe(
       tap(() => this.loadingOrders = true),
       startWith(this.dateFilter.value),
       switchMap(_ => this.deliveryService.syncOrders('QLD', _ || this.getDate())),
       tap(() => this.loadingOrders = false)
     );
+
     this.deliveries$ = this.route.queryParams.pipe(
       startWith({} as Params),
       switchMap(_ => this.router.events.pipe(
@@ -105,19 +116,43 @@ export class RunListComponent implements OnInit {
         map(state => !_['branch'] ? {..._, branch: state} : _),
       )),
       switchMap(_ => this.deliveryService.getRuns(_['branch']).pipe(
-        tap(runs => this.runs = runs),
-        tap(runs => this.otherRuns = runs.filter(r => r.fields.Title !== this.runFilter.value)),
-        map(() => _)
+        map(runs => {
+          const email = this.sharedService.getAccount()?.username?.toLowerCase();
+          this.runs = runs ? [{fields: {Title: '', Branch: this._branch, Owner: ''}} as Run, ...runs.sort((a, b) => this.runSortFn(a, b, email))] : [];
+          this.otherRuns = runs?.filter(r => r.fields.Title !== this.runName);
+          const ownRun = this.runs?.findIndex(_ => _.fields.Owner === email);
+          if (this.openedTab === null || this.openedTab === -1) {
+            this.openedTab = ownRun === -1 ? 0 : ownRun;
+            this.selectTab(this.openedTab);
+          }
+          return _;
+        })
       )),
       tap(_ => this.parseParams(_)),
       switchMap(_ => this._loadList ? this.getDeliveries(_) : []),
-      tap(_ => this.listSize = _.length)
+      tap(_ => {
+        this.loadingPage = false;
+      })
     )
   }
 
+  runSortFn(a: Run, b: Run, email: string | undefined) {
+    const x = +(b.fields.Owner === email) - +(a.fields.Owner?.toLocaleLowerCase() === email);
+    return x == 0 ? (b.fields.Title > a.fields.Title ? -1 : 1) : x;
+  }
+
+  selectTab(tab: number | null): void {
+    if (tab === null) return;
+    this.openedTab = tab;
+    this.locked = tab !== 0;
+    const queryParams: any = {tab};
+    this.router.navigate([], {queryParams, replaceUrl: true, queryParamsHandling: 'merge'});
+  }
+
   getDeliveries(params: Params): Observable<Delivery[]> {
+    const run = this.runName || undefined;
     return this.deliveryService.getDeliveries(params['branch']).pipe(
-      map(_ => _.filter(d => d.fields.Title === params['run']))
+      map(_ => _.filter(d => d.fields.Title === run))
     )
   }
 
@@ -134,14 +169,9 @@ export class RunListComponent implements OnInit {
     if (!params) return;
     const filters: Params = {};
     if ('run' in params) {
-      this.locked = true;
-      this.run = params['run'];
-      this.runFilter.patchValue(this.run);
-      filters['run'] = this.run;
+      //filters['run'] = this.run;
     } else {
-      this.locked = false;
-      this.run = '';
-      this.runFilter.patchValue('');
+      //this.run = '';
     }
   }
 
@@ -154,7 +184,8 @@ export class RunListComponent implements OnInit {
     if (this.route.firstChild != null) return true;
     const sameRun = prev['run'] === curr['run'];
     const sameRefresh = prev['refresh'] === curr['refresh'];
-    return sameRun && sameRefresh && this._loadList;
+    const sameTab = prev['tab'] === curr['tab'];
+    return sameTab && sameRun && sameRefresh && this._loadList;
   }
 
   openCustomerPicker(): void {
@@ -168,14 +199,14 @@ export class RunListComponent implements OnInit {
   }
 
   openRunManager(): void {
-    const data = {notes: true, address: true, runs: this.runs};
+    const data = {notes: true, address: true, runs: this.runs.filter(_ => _.fields.Title !== '')};
     const dialogRef = this.dialog.open(RunManagerDialogComponent, {width: '600px', data, autoFocus: false});
     dialogRef.afterClosed().pipe(
     ).subscribe()
   }
 
   moveItem(event: CdkDragDrop<Delivery[]>): void {
-    const run = this.runFilter.value || '';
+    const run = this.runName || '';
     const action = event.previousContainer === event.container ?
       this.deliveryService.moveItem(event.previousIndex, event.currentIndex, run) :
       this.addOrderDelivery(event.item.data as Order, run, event.currentIndex);
@@ -185,7 +216,7 @@ export class RunListComponent implements OnInit {
   moveToOtherRun(event: {value: Delivery[]}, targetRun: string): void {
     this.loading = true;
     const ids = event.value.map(_ => _.id);
-    this.deliveryService.moveDeliveries(ids, this.runFilter.value, targetRun).then(
+    this.deliveryService.moveDeliveries(ids, this.runName, targetRun).then(
       _ => {
         this.snackBar.open(`Moved delivery to ${targetRun || 'Default'}`, '', {duration: 3000});
         this.loading = false;
@@ -213,9 +244,9 @@ export class RunListComponent implements OnInit {
   }
 
   addCustomerDelivery(customer: Customer, site: Site, address: string, notes: string): Observable<Delivery[]> {
-    const run = this.runFilter.value;
+    const run = this.runName;
     const delivery = this.deliveryService.createDropPartial(run, customer, site, address, notes);
-    return this.deliveryService.addDrop(delivery, this.listSize);
+    return this.deliveryService.addDrop(delivery, undefined);
   }
 
   markComplete(e: any, deliveries: Array<Delivery>, currentStatus: string): void {
@@ -265,14 +296,6 @@ export class RunListComponent implements OnInit {
     this.dialog.open(RecyclingDialogComponent, {width: '800px', data, autoFocus: false});
   }
 
-  pickRun(run: MatSelectChange): void {
-    if (run.value === undefined){
-      this.runFilter.patchValue(this.run);
-      return;
-    };
-    this.router.navigate([], { queryParams: {run: run.value || null}, queryParamsHandling: 'merge', replaceUrl: true});
-  }
-
   allowPredicate(item: CdkDrag<number>): boolean {
     return true;
   }
@@ -285,6 +308,10 @@ export class RunListComponent implements OnInit {
       this.snackBar.open('Could not refresh deliveries', '', {duration: 3000});
       this.loading = false;
     })
+  }
+
+  fileChangeEvent(folder: string, subfolder: string, e: Event): void {
+    this.docsService.fileChangeEvent(folder, subfolder, e);
   }
 
   setOpenedDelivery(key: string) {
@@ -305,4 +332,7 @@ export class RunListComponent implements OnInit {
     return item.key;
   }
 
+  trackByRunsFn(index: number, item: Run): string {
+    return item.fields.Title;
+  }
 }

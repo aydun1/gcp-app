@@ -1,24 +1,12 @@
 <div cdkScrollable class="scroller">
   <div class="outer">
     <gcp-letterhead class="print-heading">Local deliveries</gcp-letterhead>
-    <h2>Local deliveries</h2>
-    <div class="refresher">
-      <mat-spinner *ngIf="loading" diameter="36"></mat-spinner>
-    </div>
-    <div class="options inner">
-      <div class="buttons">
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="run">
-          <mat-label>Run</mat-label>
-          <mat-select [formControl]="runFilter" (selectionChange)="pickRun($event)">
-            <mat-option value="">Default</mat-option>
-            <mat-option *ngFor="let s of runs" value="{{ s.fields.Title }}">{{ s.fields.Title }}</mat-option>
-            <mat-option (click)="openRunManager()"><mat-icon>add</mat-icon>Add/edit runs</mat-option>
-          </mat-select>
-        </mat-form-field>
+    <div *ngIf="showFulfilled === false" class="page-header">
+      <h2>Local deliveries</h2>
+      <div class="options">
+        <button type="button" mat-raised-button color="primary" (click)="openCustomerPicker()" [disabled]="loading" class="action">Add delivery</button>
       </div>
-      <button type="button" mat-raised-button color="primary" (click)="openCustomerPicker()" [disabled]="loading" class="action">Add delivery</button>
     </div>
-
     <div *ngIf="showFulfilled" class="inner">
       <mat-accordion>
         <mat-expansion-panel>
@@ -60,7 +48,7 @@
                     </div>
                     <ng-container matListItemMeta>
                       <button mat-icon-button (click)="openReceipt(order.sopNumber)"><mat-icon>receipt</mat-icon></button>
-                      <button type="button" [disabled]="loading" mat-icon-button (click)="addOrderDelivery(order, run, undefined).subscribe()"><mat-icon>add</mat-icon></button>
+                      <button type="button" [disabled]="loading" mat-icon-button (click)="addOrderDelivery(order, runName, undefined).subscribe()"><mat-icon>add</mat-icon></button>
                     </ng-container>
                   </mat-list-item>
                 </div>
@@ -71,105 +59,126 @@
       </mat-accordion>
     </div>
 
-    <div class="run-head">
-      <h3>{{runFilter.value || 'Default run'}}</h3>
-      <div class="run-head-buttons">
-        <button mat-icon-button (click)="refresh(runFilter.value)" matTooltip="Reload latest information" [disabled]="loading">
-          <mat-icon>refresh</mat-icon>
-        </button>
-        <button mat-icon-button (click)="locked = !locked" matTooltip="Lock/unlock delivery sorting">
-          <mat-icon *ngIf="locked">lock</mat-icon>
-          <mat-icon *ngIf="!locked">lock_open</mat-icon>
-        </button>
-        <button mat-icon-button [matMenuTriggerData]="{run: runFilter.value}" [matMenuTriggerFor]="runMore" class="menu">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-      </div>
-    </div>
-
-    <div class="inner run-list" #deliveryList="cdkDropList" cdkDropList (cdkDropListDropped)="moveItem($event)" [cdkDropListEnterPredicate]="allowPredicate">
-      <div *ngIf="deliveries$ | async | groupByCustomerAddress as groupedDeliveries">
-        <p class="specs">
-          <span>{{groupedDeliveries.deliveries | number }} {{ groupedDeliveries.deliveries === 1 ? 'delivery' : 'deliveries'}}</span> |
-          <span>{{groupedDeliveries.spaces | number: '1.1-1'}} {{ groupedDeliveries.spaces === 1 ? 'space' : 'spaces'}}</span> |
-          <span>{{groupedDeliveries.weight | number: '1.1-1'}} kg</span>
-        </p>
-        <mat-accordion>
-          <mat-expansion-panel *ngFor="let delivery of groupedDeliveries.drops;let i = index;trackBy:trackByGroupsFn" class="delivery" cdkDrag [cdkDragData]="delivery" [cdkDragDisabled]="locked" [expanded]="delivery.id === currentCategory" (opened)="setOpenedDelivery(delivery.id)" (closed)="setClosedDelivery(delivery.id)">
-            <div class="custom-placeholder" *cdkDragPlaceholder></div>
-            <mat-expansion-panel-header>
-              <div class="delivery-header">
-                <mat-panel-title>
-                  <div [ngClass]="{unlocked: !locked}" cdkDragHandle class="sequence">
-                    <mat-icon *ngIf="!locked" class="drag">drag_indicator</mat-icon>
-                    {{ i + 1 }}
+    <div #deliveryList="cdkDropList" cdkDropList (cdkDropListDropped)="moveItem($event)" [cdkDropListEnterPredicate]="allowPredicate">
+      <div *ngIf="deliveries$ | async | groupByCustomerAddress as groupedDeliveries" class="deliveries-card inner">
+        <mat-tab-group *ngIf="runs.length > 0; else loadingPage" animationDuration="0ms" mat-stretch-tabs="false" mat-align-tabs="start" [selectedIndex]="openedTab" (selectedIndexChange)="selectTab($event)">
+          <mat-tab *ngFor="let run of runs;trackBy:trackByRunsFn" [label]="run.fields.Title || 'Default'">
+            <ng-template matTabContent>
+              <div class="run-head">
+                <h3>{{ run.fields.Title || 'Default' }}</h3>
+                <div class="run-head-buttons">
+                  <div class="refresher">
+                    <mat-spinner *ngIf="loading" diameter="24"></mat-spinner>
                   </div>
-                  <div class="customer">
-                    {{ delivery.fields.Customer }}
-                  </div>
-                </mat-panel-title>
-                <mat-panel-description>
-                  {{ delivery.fields.City ? delivery.fields.City + ', ' + delivery.fields.PostCode : delivery.fields.Address }}
-                </mat-panel-description>
+                  <button mat-icon-button (click)="refresh(run.fields.Title)" matTooltip="Reload latest information" [disabled]="loading">
+                    <mat-icon>refresh</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="locked = !locked" matTooltip="Lock/unlock delivery sorting">
+                    <mat-icon *ngIf="locked">lock</mat-icon>
+                    <mat-icon *ngIf="!locked">lock_open</mat-icon>
+                  </button>
+                  <button mat-icon-button type="button" (click)="openCustomerPicker()" [disabled]="loading" class="action" matTooltip="Add a delivery">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                  <button mat-icon-button [matMenuTriggerData]="{run: run.fields.Title}" [matMenuTriggerFor]="runMore" class="menu">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                </div>
               </div>
-              <div class="status">
-                <mat-checkbox color="accent" [checked]="delivery.fields.Status === 'Complete'" (click)="markComplete($event, delivery.value, delivery.fields.Status)"></mat-checkbox>
+              <div class="specs">
+                <span>{{groupedDeliveries.deliveries[run.fields.Title] || 0 | number }} {{ groupedDeliveries.deliveries === 1 ? 'delivery' : 'deliveries'}}</span> |
+                <span>{{groupedDeliveries.spaces[run.fields.Title] || 0 | number: '1.1-1'}} {{ groupedDeliveries.spaces === 1 ? 'space' : 'spaces'}}</span> |
+                <span>{{groupedDeliveries.weights[run.fields.Title] || 0 | number: '1.1-1'}} kg</span>
               </div>
-              <div class="menu">
-                <button mat-icon-button [matMenuTriggerData]="{delivery}" [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()"><mat-icon>more_vert</mat-icon></button>
-              </div>
-            </mat-expansion-panel-header>
+              <div class="inner run-list">
+                <mat-accordion>
+                  <mat-expansion-panel *ngFor="let delivery of groupedDeliveries.drops;let i = index;trackBy:trackByGroupsFn" class="delivery" cdkDrag [cdkDragData]="delivery" [cdkDragDisabled]="locked" [expanded]="delivery.id === currentCategory" (opened)="setOpenedDelivery(delivery.id)" (closed)="setClosedDelivery(delivery.id)">
+                    <div class="custom-placeholder" *cdkDragPlaceholder></div>
+                    <mat-expansion-panel-header>
+                      <div class="delivery-header">
+                        <mat-panel-title>
+                          <div [ngClass]="{unlocked: !locked}" cdkDragHandle class="sequence">
+                            <mat-icon *ngIf="!locked" class="drag">drag_indicator</mat-icon>
+                            {{ i + 1 }}
+                          </div>
+                          <div class="customer">
+                            {{ delivery.fields.Customer }}
+                          </div>
+                        </mat-panel-title>
+                        <mat-panel-description>
+                          {{ delivery.fields.City ? delivery.fields.City + ', ' + delivery.fields.PostCode : delivery.fields.Address }}
+                        </mat-panel-description>
+                      </div>
+                      <div class="status">
+                        <mat-checkbox color="accent" [checked]="delivery.fields.Status === 'Complete'" (click)="markComplete($event, delivery.value, delivery.fields.Status)"></mat-checkbox>
+                      </div>
+                      <div class="menu">
+                        <button mat-icon-button [matMenuTriggerData]="{delivery}" [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()"><mat-icon>more_vert</mat-icon></button>
+                      </div>
+                    </mat-expansion-panel-header>
+          
+                    <div *ngIf="delivery.fields.ContactPerson">{{ delivery.fields.ContactPerson }}</div>
+                    <div class="site">{{ delivery.fields.Address || delivery.fields.Site }}</div>
+                    <div *ngIf="delivery.fields.PhoneNumber" [innerHTML]="delivery.fields.PhoneNumber | phoneLink"></div>
+                    <div *ngIf="delivery.hasNotes">
+                      <h3>Notes</h3>
+                      <p mat-list-item *ngFor="let d of delivery.value" (click)="openReceipt(d.fields.Notes)">
+                        {{ d.fields.Notes }}
+                      </p>
+                    </div>
 
-            <div *ngIf="delivery.fields.ContactPerson">{{ delivery.fields.ContactPerson }}</div>
-            <div class="site">{{ delivery.fields.Address || delivery.fields.Site }}</div>
-            <div *ngIf="delivery.fields.PhoneNumber" [innerHTML]="delivery.fields.PhoneNumber | phoneLink"></div>
-            <div *ngIf="delivery.hasNotes">
-              <h3>Notes</h3>
-              <p mat-list-item *ngFor="let d of delivery.value" (click)="openReceipt(d.fields.Notes)">
-                {{ d.fields.Notes }}
-              </p>
-            </div>
-
-            <mat-action-list *ngIf="delivery.hasOrderNumbers">
-              <button mat-list-item *ngFor="let d of delivery.value" (click)="openReceipt(d.fields.OrderNumber)">
-                <mat-icon matListItemIcon>receipt</mat-icon>
-                {{ d.fields.OrderNumber }}
-                <div matListItemMeta>{{ d.fields.Spaces | number: '1.1-1' }}</div>
+                    <mat-action-list *ngIf="delivery.hasOrderNumbers">
+                      <button mat-list-item *ngFor="let d of delivery.value" (click)="openReceipt(d.fields.OrderNumber)">
+                        <mat-icon matListItemIcon>receipt</mat-icon>
+                        {{ d.fields.OrderNumber }}
+                        <div matListItemMeta>{{ d.fields.Spaces | number: '1.1-1' }}</div>
+                      </button>
+                    </mat-action-list>
+                    <div class="pallet-spaces">
+                      <span>{{ delivery.spaces | number: '1.1-1' }} spaces</span> |
+                      {{ delivery.weight | number: '1.1-1' }} kg
+                    </div>
+                    <mat-action-row>
+                      <input #fileSelect class="file-select" multiple="multiple" type="file" (change)="fileChangeEvent(delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, $event)" placeholder="File">
+                      <label class="file-select-label" for="file">
+                        <button mat-icon-button type="button" (click)="fileSelect.click()"><mat-icon>camera</mat-icon></button>
+                      </label>
+                      <a mat-button color="primary" [routerLink]="['/customers', delivery.fields.CustomerNumber]" [queryParams]="{site:delivery.fields.Site}" class="customer-link">Customer</a>
+                      <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, delivery.fields.Site)">Pallets</button>
+                      <button mat-raised-button color="primary" (click)="openRecyclingDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.Site)">Recycling</button>
+                      <button *ngIf="delivery.fields.OrderNumber" mat-icon-button ></button>
+                    </mat-action-row>
+                  </mat-expansion-panel>
+                </mat-accordion>
+                <div *ngIf="(loadingList$ | async) ? true : false">
+                  <mat-spinner diameter="36" class="loading-page"></mat-spinner>
+                </div>
+                <div *ngIf="(loadingList$ | async) === false && !groupedDeliveries.deliveries[run.fields.Title]">
+                  No deliveries. Add one from the link above.
+                </div>
+              </div>
+            </ng-template>
+          </mat-tab>
+          <mat-tab disabled>
+            <ng-template mat-tab-label>
+              <button mat-icon-button (click)="openRunManager()" matTooltip="Add or edit runs">
+                  <mat-icon>add</mat-icon>
               </button>
-            </mat-action-list>
-            <div class="pallet-spaces">
-              <span>{{ delivery.spaces | number: '1.1-1' }} spaces</span> |
-              {{ delivery.weight | number: '1.1-1' }} kg
-              
-            </div>
-            <mat-action-row>
-              <a mat-button color="primary" [routerLink]="['/customers', delivery.fields.CustomerNumber]" [queryParams]="{site:delivery.fields.Site}" class="customer-link">Customer</a>
-              <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, delivery.fields.Site)">Pallets</button>
-              <button mat-raised-button color="primary" (click)="openRecyclingDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.Site)">Recycling</button>
-              <button *ngIf="delivery.fields.OrderNumber" mat-icon-button ></button>
-            </mat-action-row>
-          </mat-expansion-panel>
-        </mat-accordion>
-      </div>
-      <div [class.hidden]="(loadingList$ | async) ? false : true">
-        <div>
-          <gcp-loading-row></gcp-loading-row>
-        </div>
-      </div>
-
-      <div [class.hidden]="(loadingList$ | async) === false && !listSize ? false : true">
-        <div>
-          No deliveries. Add one from the link above.
-        </div>
+          </ng-template>
+          </mat-tab>
+        </mat-tab-group>
+        <ng-template #loadingPage>
+          <mat-spinner diameter="36" class="loading-page"></mat-spinner>
+        </ng-template>
       </div>
     </div>
-
   </div>
 </div>
+
 <mat-menu #runMore="matMenu" xPosition="before">
   <ng-template matMenuContent let-run="run">
     <button mat-menu-item (click)="deleteDeliveriesByRun(run)">
-      <mat-icon>delete</mat-icon>Remove all
+      <mat-icon>delete</mat-icon>Remove deliveries
     </button>
   </ng-template>
 </mat-menu>
@@ -190,7 +199,7 @@
 
 <mat-menu #runMenu="matMenu">
   <ng-template matMenuContent let-delivery="delivery">
-    <button mat-menu-item *ngIf="runFilter.value" (click)="moveToOtherRun(delivery, '')">Default</button>
+    <button mat-menu-item *ngIf="runName" (click)="moveToOtherRun(delivery, '')">Default</button>
     <button mat-menu-item *ngFor="let s of otherRuns" (click)="moveToOtherRun(delivery, s.fields.Title)">{{ s.fields.Title }}</button>
   </ng-template>
 </mat-menu>
