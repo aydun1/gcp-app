@@ -4,7 +4,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { catchError, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { catchError, combineLatest, distinctUntilChanged, filter, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { Customer } from '../../customers/shared/customer';
 import { Site } from '../../customers/shared/site';
@@ -29,6 +29,8 @@ import { DocsService } from '../../shared/docs/docs.service';
 export class RunListComponent implements OnInit {
   private _loadList = false;
   private _branch!: string;
+  private _orderRefreshTrigger$ = new Subject<boolean>();
+
   public dateFilter = new FormControl(this.getDate());
   public orders$!: Observable<Order[]>;
   public deliveries$!: Observable<Delivery[]>;
@@ -91,11 +93,11 @@ export class RunListComponent implements OnInit {
 
   ngOnInit(): void {
     const state$ = this.sharedService.getBranch();
+    const date$ = this.dateFilter.valueChanges.pipe(startWith(this.dateFilter.value));
 
-    this.orders$ = this.dateFilter.valueChanges.pipe(
+    this.orders$ = combineLatest([state$, date$, this._orderRefreshTrigger$]).pipe(
       tap(() => this.loadingOrders = true),
-      startWith(this.dateFilter.value),
-      switchMap(_ => this.deliveryService.syncOrders('QLD', _ || this.getDate())),
+      switchMap(([state, date, _]) => this.deliveryService.syncOrders(state, date || this.getDate())),
       tap(() => this.loadingOrders = false)
     );
 
@@ -110,7 +112,7 @@ export class RunListComponent implements OnInit {
       switchMap(_ => state$.pipe(
         tap(_ => {
           this._branch = _;
-          this.showFulfilled = this._branch === 'QLD';
+          this.showFulfilled = this._branch !== 'VIC';
         }),
         map(state => !_['branch'] ? {..._, branch: state} : _),
       )),
@@ -128,6 +130,8 @@ export class RunListComponent implements OnInit {
         })
       )),
       tap(_ => this.parseParams(_)),
+      tap(_ => this._orderRefreshTrigger$.next(true)
+      ),
       switchMap(_ => this._loadList ? this.getDeliveries(_) : []),
       tap(_ => {
         this.loadingPage = false;
@@ -307,6 +311,10 @@ export class RunListComponent implements OnInit {
       this.snackBar.open('Could not refresh deliveries', '', {duration: 3000});
       this.loading = false;
     })
+  }
+
+  refreshOrders(): void {
+    this._orderRefreshTrigger$.next(true);
   }
 
   fileChangeEvent(folder: string, custNmbr: string, orderNmbr: string, e: Event): void {
