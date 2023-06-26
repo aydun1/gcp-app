@@ -79,6 +79,7 @@ export class DeliveryService {
           const nextIndex = next ? next.fields?.Sequence : (cur.fields.Sequence || 0) + 512;
           let newIndex = (curIndex <= prevIndex || curIndex >= nextIndex || !curIndex) ? Math.floor((prevIndex + nextIndex) / 2) : curIndex;
           if (newIndex <= prevIndex || prev?.fields?.CustomerNumber === cur?.fields?.CustomerNumber) newIndex = prevIndex + 1;
+          if (!newIndex) newIndex = 1;
           const changed = runDeliveries[i]['fields']['Sequence'] !== newIndex;
           runDeliveries[i]['fields']['Sequence'] = newIndex;
           return {id: cur.id, index: newIndex, changed};
