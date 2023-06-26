@@ -41,8 +41,11 @@ export class DeliveryService {
   private createUrl(branch: string, runName: string | null | undefined = undefined): string {
     let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,ContactPerson,Address,PhoneNumber,CustomerNumber,Customer,Status,OrderNumber,Notes,Spaces,Weight)`;
     const runString = runName ? `'${runName}'` : 'null';
-    if (branch) url += `&filter=fields/Branch eq '${branch}'`;
-    if (runName !== undefined ) url += ` and fields/Title eq ${runString}`;
+    const filters: Array<string> = [];
+    filters.push('fields/Branch ne \'Archived\'');
+    if (branch) filters.push(`fields/Branch eq '${branch}'`);
+    if (runName !== undefined ) filters.push(`fields/Title eq ${runString}`);
+    if (filters.length > 0) url += `&filter=${filters.join(' and ')}`;
     url += `&orderby=fields/Sequence asc&top=2000`;
     return url;
   }
@@ -99,7 +102,7 @@ export class DeliveryService {
         return {id: index + 1, method: 'PATCH', url, headers, body: payload};
       });
       return this.http.post(`${environment.endpoint}/$batch`, {requests}).pipe(
-        map((r: any) => r.responses.map((r: {body: Delivery}) => r['body']) as Delivery[])
+        map((r: any) => r.responses.map((r: {body: Delivery}) => r['body']))
       );
     });
     return (forkJoin([...requests, of([])])).pipe(
@@ -350,10 +353,38 @@ export class DeliveryService {
     return lastValueFrom(req);
   }
 
+  archiveDeliveries(ids: Array<string>, run: string): Promise<Delivery[]> {
+    const chunkSize = 20;
+    const headers = {'Content-Type': 'application/json'};
+    const requests = [...Array(Math.ceil(ids.length / chunkSize))].map((_, index) => {
+      const list = ids.slice(index*chunkSize, index*chunkSize+chunkSize);
+      const requests = list.map((_, index) => {
+        const url = `${environment.siteUrl}/${this._dropsUrl}/items/${_}`;
+        const payload = {fields: {Status: 'Archived'}};
+        return {id: index + 1, method: 'PATCH', url, headers, body: payload};
+      });
+      return this.http.post(`${environment.endpoint}/$batch`, {requests}).pipe(
+        map((_: any) => _.responses.map((r: any) => r['body']))
+      );
+    });
+    const req = forkJoin([...requests, of([])]).pipe(
+      switchMap(_ => this.updateListMulti(_.reduce((acc, cur) => [...acc, ...cur], [])))
+    );
+    return lastValueFrom(req);
+  }
+
   deleteDeliveriesByRun(runName: string): Promise<Delivery[]> {
     const req = this.getDeliveriesByRun(runName).pipe(
       map(_ => _.map(run => run.id)),
       switchMap(_ => this.deleteDeliveries(_, runName))
+    );
+    return firstValueFrom(req);
+  }
+
+  archiveDeliveriesByRun(runName: string): Promise<Delivery[]> {
+    const req = this.getDeliveriesByRun(runName).pipe(
+      map(_ => _.map(run => run.id)),
+      switchMap(_ => this.archiveDeliveries(_, runName))
     );
     return firstValueFrom(req);
   }
