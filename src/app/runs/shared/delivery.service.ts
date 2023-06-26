@@ -331,16 +331,22 @@ export class DeliveryService {
   }
 
   deleteDeliveries(ids: Array<string>, run: string): Promise<Delivery[]> {
+    const chunkSize = 20;
     const headers = {'Content-Type': 'application/json'};
-    const requests = ids.map((id, index) => {
-      const url = `${environment.siteUrl}/${this._dropsUrl}/items/${id}`;
-      return {id: index + 1, method: 'DELETE', url, headers};
+    const requests = [...Array(Math.ceil(ids.length / chunkSize))].map((_, index) => {
+      const list = ids.slice(index*chunkSize, index*chunkSize+chunkSize);
+      const requests = list.map((_, index) => {
+        const url = `${environment.siteUrl}/${this._dropsUrl}/items/${_}`;
+        return {id: index + 1, method: 'DELETE', url, headers};
+      });
+      return this.http.post(`${environment.endpoint}/$batch`, {requests}).pipe(
+        map((_: any) => _.responses.map((r: any) => r['body']))
+      );
     });
-    const req = requests.length ? this.http.post(`${environment.endpoint}/$batch`, {requests}).pipe(
-      map((_: any) => _.responses.map((r: any) => r['body'])),
+    const req = forkJoin([...requests, of([])]).pipe(
       switchMap(_ => this.removeItemsFromList(ids)),
       switchMap(_ => this.updateRunDeliveries(run))
-    ) : of([] as Delivery[]);
+    );
     return lastValueFrom(req);
   }
 
