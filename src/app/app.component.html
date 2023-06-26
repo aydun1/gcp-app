@@ -74,8 +74,14 @@
         </a>
         <a mat-list-item (click)="closeMenu()" routerLink="/runs" routerLinkActive="active">
           <mat-icon matListItemIcon class="menu-icon">local_shipping</mat-icon>
-          <span class="menu-label" matListItemTitle>Runs</span>
+          <span class="menu-label">Runs</span>
+          <mat-icon class="chevron">expand_more</mat-icon>
         </a>
+        <ng-container *ngIf="urlActive('/runs')">
+          <a mat-list-item (click)="closeMenu()" routerLink="/runs/delivered" routerLinkActive="active">
+            <span class="menu-label">Delivered</span>
+          </a>
+        </ng-container>
         <a mat-list-item (click)="closeMenu()" routerLink="/chemicals" routerLinkActive="active">
           <mat-icon matListItemIcon class="menu-icon">science</mat-icon>
           <span class="menu-label" matListItemTitle>Chemicals</span>

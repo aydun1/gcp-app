@@ -264,10 +264,10 @@ export class RunListComponent implements OnInit {
     dialogRef.afterClosed().subscribe();
   }
 
-  deleteDeliveries(deliveries: Array<Delivery>, run: string): void {
+  deleteDeliveries(deliveries: Array<Delivery>, runName: string): void {
     const ids = deliveries.map(_ => _.id);
     this.loading = true;
-    this.deliveryService.deleteDeliveries(ids, run).then( _ => {
+    this.deliveryService.deleteDeliveries(ids, runName).then( _ => {
       this.snackBar.open('Removed delivery', '', {duration: 3000});
       this.loading = false
     }).catch(_ => {
@@ -283,6 +283,17 @@ export class RunListComponent implements OnInit {
       this.loading = false
     }).catch(_ => {
       this.snackBar.open('Could not remove deliveries', '', {duration: 3000});
+      this.loading = false;
+    });
+  }
+
+  archiveDeliveriesByRun(runName: string): void {
+    this.loading = true;
+    this.deliveryService.archiveDeliveriesByRun(runName).then( _ => {
+      this.snackBar.open('Archived deliveries', '', {duration: 3000});
+      this.loading = false
+    }).catch(_ => {
+      this.snackBar.open('Could not archive deliveries', '', {duration: 3000});
       this.loading = false;
     });
   }
