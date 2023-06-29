@@ -130,7 +130,7 @@
             </ng-container>
 
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag></mat-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
             <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loadingList$ | async) ? false : true"></mat-footer-row>
             <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
           </mat-table>  

@@ -1,0 +1,48 @@
+.scroller {
+  display: block;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.outer {
+  margin: 0 auto;
+  margin-bottom: 60px;
+  max-width: 1024px;
+}
+
+h2 {
+  margin-left: 10px;
+}
+
+.card-container {
+  overflow-x: auto;
+}
+
+.mat-column-date {
+  flex: 0 1 125px;
+}
+
+.mat-column-run {
+  flex: 0 1 95px;
+}
+
+.mat-column-order {
+  flex: 0 1 125px;
+}
+.mat-column-customer {
+  flex: 1;
+}
+
+@media (max-width: 1024px) {
+
+}
+
+@media print {
+  .scroller {
+    overflow-y: auto;
+  }
+
+  h2, .options {
+    display: none;
+  }
+}

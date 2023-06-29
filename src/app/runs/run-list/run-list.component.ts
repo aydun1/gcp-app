@@ -37,12 +37,11 @@ export class RunListComponent implements OnInit {
   public loadingList$ = this.deliveryService.loading;
   public runs: Array<Run> = [];
   public otherRuns: Array<Run> = [{fields: {Title: 'Default'}} as Run];
-  public showFulfilled!: boolean;
+  public isVic!: boolean;
   public loading = false;
   public loadingOrders = true;
   public loadingPage = true;
   public empty = true;
-  public displayedColumns = ['sequence', 'customer', 'site', 'notes', 'actions', 'status', 'menu'];
   public locked = false;
   public currentCategory = this.route.snapshot.queryParamMap.get('opened');
   public openedTab = this.firstTab();
@@ -112,7 +111,7 @@ export class RunListComponent implements OnInit {
       switchMap(_ => state$.pipe(
         tap(_ => {
           this._branch = _;
-          this.showFulfilled = this._branch !== 'VIC';
+          this.isVic = this._branch === 'VIC';
         }),
         map(state => !_['branch'] ? {..._, branch: state} : _),
       )),

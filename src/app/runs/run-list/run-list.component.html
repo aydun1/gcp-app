@@ -1,13 +1,13 @@
 <div cdkScrollable class="scroller">
   <div class="outer">
     <gcp-letterhead class="print-heading">Local deliveries</gcp-letterhead>
-    <div *ngIf="showFulfilled === false" class="page-header">
+    <div *ngIf="isVic === true" class="page-header">
       <h2>Local deliveries</h2>
       <div class="options">
         <button type="button" mat-raised-button color="primary" (click)="openCustomerPicker()" [disabled]="loading" class="action">Add delivery</button>
       </div>
     </div>
-    <div *ngIf="showFulfilled" class="inner">
+    <div *ngIf="isVic === false" class="inner">
       <mat-accordion>
         <mat-expansion-panel>
           <mat-expansion-panel-header>
@@ -178,7 +178,7 @@
 
 <mat-menu #runMore="matMenu" xPosition="before">
   <ng-template matMenuContent let-run="run">
-    <button mat-menu-item (click)="archiveDeliveriesByRun(run)">
+    <button *ngIf="isVic === false" mat-menu-item (click)="archiveDeliveriesByRun(run)">
       <mat-icon>archive</mat-icon>Archive deliveries
     </button>
     <button mat-menu-item (click)="deleteDeliveriesByRun(run)">

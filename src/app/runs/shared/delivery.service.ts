@@ -42,7 +42,7 @@ export class DeliveryService {
     let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,ContactPerson,Address,PhoneNumber,CustomerNumber,Customer,Status,OrderNumber,Notes,Spaces,Weight)`;
     const runString = runName ? `'${runName}'` : 'null';
     const filters: Array<string> = [];
-    filters.push('fields/Branch ne \'Archived\'');
+    filters.push('fields/Status ne \'Archived\'');
     if (branch) filters.push(`fields/Branch eq '${branch}'`);
     if (runName !== undefined ) filters.push(`fields/Title eq ${runString}`);
     if (filters.length > 0) url += `&filter=${filters.join(' and ')}`;
@@ -361,7 +361,7 @@ export class DeliveryService {
       const list = ids.slice(index*chunkSize, index*chunkSize+chunkSize);
       const requests = list.map((_, index) => {
         const url = `${environment.siteUrl}/${this._dropsUrl}/items/${_}`;
-        const payload = {fields: {Status: 'Archived'}};
+        const payload = {fields: {Status: 'Archived', DeliveryDate: new Date()}};
         return {id: index + 1, method: 'PATCH', url, headers, body: payload};
       });
       return this.http.post(`${environment.endpoint}/$batch`, {requests}).pipe(
@@ -369,7 +369,8 @@ export class DeliveryService {
       );
     });
     const req = forkJoin([...requests, of([])]).pipe(
-      switchMap(_ => this.updateListMulti(_.reduce((acc, cur) => [...acc, ...cur], [])))
+      switchMap(_ => this.removeItemsFromList(ids)),
+      switchMap(_ => this.updateRunDeliveries(run))
     );
     return lastValueFrom(req);
   }
