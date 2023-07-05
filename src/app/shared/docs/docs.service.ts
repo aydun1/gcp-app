@@ -54,7 +54,7 @@ export class DocsService {
 
   private listFiles(id: string, folder: string): Observable<Doc[]> {
     const url = `${this._endpoint}/drive/root:/${folder}/${id}:/children?$orderby=name`
-    return this.http.get<{value: any[]}>(url).pipe(
+    return this.http.get<{value: Doc[]}>(url).pipe(
       map(_ => _['value']),
       catchError((error: HttpErrorResponse) => {
         if (error.error instanceof Error) {
@@ -62,9 +62,9 @@ export class DocsService {
         } else {
           console.log(`Backend returned code ${error.status}, body was: ${error.error}`);
         }
-        return of([])
+        return of([]);
       }),
-      map(_ => _.sort((a: TransportCompany, b: TransportCompany) => b.createdDateTime > a.createdDateTime && 1 || -1))
+      map(_ => _.sort((a, b) => b.createdDateTime > a.createdDateTime && 1 || -1))
     );
   }
 
