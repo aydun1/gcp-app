@@ -6,8 +6,6 @@ import { BehaviorSubject, map, Observable, of, lastValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { InTransitTransfer } from './intransit-transfer';
 import { IntransitTransferLine } from './intransit-transfer-line';
-import { PurchaseOrder } from './purchase-order';
-import { PurchaseOrderLine } from './purchase-order-line';
 
 @Injectable({
   providedIn: 'root'
@@ -21,12 +19,6 @@ export class InterstateTransfersService {
     private snackBar: MatSnackBar
   ) { }
 
-  getPurchaseOrders(from: string, to: string): Observable<PurchaseOrderLine[]> {
-    return this.http.get<{lines: PurchaseOrderLine[]}>(`${environment.gpEndpoint}/po?from=${from}&to=${to}`).pipe(
-      map(_ => _.lines)
-    );
-  }
-
   getInterstateTransfers(from: string, to: string): Observable<IntransitTransferLine[]> {
     return this.http.get<{lines: IntransitTransferLine[]}>(`${environment.gpEndpoint}/itt?from=${from}&to=${to}`).pipe(
       map(_ => _.lines)
@@ -35,12 +27,6 @@ export class InterstateTransfersService {
 
   getInTransitTransfer(id: string): Observable<InTransitTransfer> {
     return this.http.get<InTransitTransfer>(`${environment.gpEndpoint}/itt/${id}`);
-  }
-
-  createTransfer(fromSite: string | null, toSite: string | null, lines: any): Observable<Object> {
-    if (!fromSite || !toSite) return of();
-    const payload = {fromSite, toSite, lines}
-    return this.http.post(`${environment.gpEndpoint}/po`, payload);
   }
 
   createId(branch: string): string {
@@ -58,10 +44,6 @@ export class InterstateTransfersService {
     const payload = {fromSite, toSite, lines, id};
     const request = this.http.post(`${environment.gpEndpoint}/itt`, payload);
     return lastValueFrom(request);
-  }
-
-  getPurchaseOrder(id: string): Observable<PurchaseOrder>  {
-    return this.http.get<PurchaseOrder>(`${environment.gpEndpoint}/po/${id}`);
   }
 
 }
