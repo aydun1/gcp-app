@@ -34,7 +34,7 @@
   display: grid;
   font-size: 14px;
   grid-template-rows: 28px 28px 28px;
-  grid-template-columns: 72px 72px 72px 72px 72px 72px 72px;
+  grid-template-columns: 140px 72px 72px 72px 72px 72px 72px;
   gap: 0px;
   text-align: right;
 }
@@ -51,6 +51,41 @@
   display: flex;
 }
 
-.limit:first-child {
-  margin-right: 120px;
+.limit {
+  border: 1px solid;
+  border-radius: 4px;
+  margin-right: 16px;
+  padding: 10px;
+}
+
+.availability-grid > div {
+  padding: 0 10px;
+}
+
+.QLD > .cell-qld {
+  background-color: #9595953b;
+}
+
+.NSW > .cell-nsw {
+  background-color: #9595953b;
+}
+
+.SA > .cell-sa {
+  background-color: #9595953b;
+}
+
+.WA > .cell-wa {
+  background-color: #9595953b;
+}
+
+.cell-top {
+  border-radius: 4px 4px 0 0;
+}
+
+.cell-bottom {
+  border-radius: 0 0 4px 4px;
+}
+
+.mat-mdc-progress-spinner {
+  margin: 0 auto;
 }

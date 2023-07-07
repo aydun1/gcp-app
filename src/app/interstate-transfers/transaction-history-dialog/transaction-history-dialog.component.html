@@ -5,29 +5,48 @@
   <div>
     {{ data.item.itemDesc}}
   </div>
-  <h3>National availability</h3>
-  <div class="availability-grid">
+  <h3>National quantities</h3>
+  <div class="availability-grid {{ data.branch }}">
     <div></div>
-    <div class="grid-heading">MAIN</div>
-    <div class="grid-heading">NSW</div>
-    <div class="grid-heading">QLD</div>
-    <div class="grid-heading">SA</div>
-    <div class="grid-heading">WA</div>
-    <div class="grid-heading">HEA</div>
+    <div class="grid-heading cell-top cell-vic">MAIN</div>
+    <div class="grid-heading cell-top cell-nsw">NSW</div>
+    <div class="grid-heading cell-top cell-qld">QLD</div>
+    <div class="grid-heading cell-top cell-sa">SA</div>
+    <div class="grid-heading cell-top cell-wa">WA</div>
+    <div class="grid-heading cell-top cell-hea">HEA</div>
     <div class="grid-heading">On hand</div>
-    <div>{{ data.item.vicOnHand || 0 | number }}</div>
-    <div>{{ data.item.nswOnHand || 0 | number}}</div>
-    <div>{{ data.item.qldOnHand || 0 | number }}</div>
-    <div>{{ data.item.saOnHand || 0 | number }}</div>
-    <div>{{ data.item.waOnHand || 0 | number }}</div>
-    <div>{{ data.item.heaOnHand || 0 | number}}</div>
+    <div class="cell-vic">{{ data.item.vicOnHand || 0 | number }}</div>
+    <div class="cell-nsw">{{ data.item.nswOnHand || 0 | number }}</div>
+    <div class="cell-qld">{{ data.item.qldOnHand || 0 | number }}</div>
+    <div class="cell-sa">{{ data.item.saOnHand || 0 | number }}</div>
+    <div class="cell-wa">{{ data.item.waOnHand || 0 | number }}</div>
+    <div class="cell-hea">{{ data.item.heaOnHand || 0 | number }}</div>
     <div class="grid-heading">Allocated</div>
-    <div>{{ data.item.vicAlloc || 0 | number }}</div>
-    <div>{{ data.item.nswAlloc || 0 | number}}</div>
-    <div>{{ data.item.qldAlloc || 0 | number }}</div>
-    <div>{{ data.item.saAlloc || 0 | number }}</div>
-    <div>{{ data.item.waAlloc || 0 | number }}</div>
-    <div>{{ data.item.heaAlloc || 0 | number}}</div>
+    <div class="cell-vic">{{ data.item.vicAlloc || 0 | number }}</div>
+    <div class="cell-nsw">{{ data.item.nswAlloc || 0 | number }}</div>
+    <div class="cell-qld">{{ data.item.qldAlloc || 0 | number }}</div>
+    <div class="cell-sa">{{ data.item.saAlloc || 0 | number }}</div>
+    <div class="cell-wa">{{ data.item.waAlloc || 0 | number }}</div>
+    <div class="cell-hea">{{ data.item.heaAlloc || 0 | number }}</div>
+    <div class="grid-heading">Sold per month</div>
+    <ng-container *ngIf="averages | async as a; else notyet">
+      <div class="cell-vic cell-bottom">{{ a.MAIN || 0 | number: '1.0-0' }}</div>
+      <div class="cell-nsw cell-bottom">{{ a.NSW || 0 | number: '1.0-0' }}</div>
+      <div class="cell-qld cell-bottom">{{ a.QLD || 0 | number: '1.0-0' }}</div>
+      <div class="cell-sa cell-bottom">{{ a.SA || 0 | number: '1.0-0' }}</div>
+      <div class="cell-wa cell-bottom">{{ a.WA || 0 | number: '1.0-0' }}</div>
+      <div class="cell-hea cell-bottom">{{ a.HEA || 0 | number: '1.0-0'}}</div>
+    </ng-container>
+    <ng-template #notyet>
+      <div class="cell-vic cell-bottom">...</div>
+      <div class="cell-nsw cell-bottom">...</div>
+      <div class="cell-qld cell-bottom">...</div>
+      <div class="cell-sa cell-bottom">...</div>
+      <div class="cell-wa cell-bottom">...</div>
+      <div class="cell-hea cell-bottom">...</div>
+    </ng-template>
+
+    <ng-template #notyet><mat-spinner diameter="24"></mat-spinner></ng-template>
   </div>
 
   <h3> {{data.branch}} limits</h3>
@@ -50,22 +69,23 @@
     <div class="customer">Customer</div>
     <div class="quantity">Qty</div>
   </div>
-  <div *ngIf="locationHistory | async as lh">
-    <div *ngFor="let h of lh; last as last">
+  <div *ngIf="previousOrders | async as orders;else loading">
+    <div *ngFor="let o of orders; last as last">
       <div class="row">
-        <div class="date">{{ h.date | date: 'd MMM yyyy' }}</div>
-        <div class="date">{{ h.ReqShipDate | date: 'd MMM yyyy' }}</div>
-        <div class="invoice-number">{{ h.sopNmbr }}</div>
-        <div class="customer">{{ h.customer }}</div>
-        <div class="quantity">{{ h.quantity | number }}</div>
+        <div class="date">{{ o.date | date: 'd MMM yyyy' }}</div>
+        <div class="date">{{ o.ReqShipDate | date: 'd MMM yyyy' }}</div>
+        <div class="invoice-number">{{ o.sopNmbr }}</div>
+        <div class="customer">{{ o.customer }}</div>
+        <div class="quantity">{{ o.quantity | number }}</div>
       </div>
-      <div *ngIf="h.notes" class="notes">
-        {{ h.notes }}
+      <div *ngIf="o.notes" class="notes">
+        {{ o.notes }}
       </div>
       <mat-divider *ngIf="!last"></mat-divider>
     </div>
-    <div class="note" *ngIf="lh.length === 0">
+    <div class="note" *ngIf="orders.length === 0">
       No allocations
     </div>
   </div>
+  <ng-template #loading><mat-spinner diameter="24"></mat-spinner></ng-template>
 </mat-dialog-content>

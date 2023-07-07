@@ -141,16 +141,18 @@ export class SharedService {
     this.titleService.setTitle(title);
   }
 
+  getHistory(itemNmbr: string | undefined): Promise<any[]> {
+    const request = this.http.get<{history: any[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/history`).pipe(
+      map(_ => _.history)
+    );
+    return lastValueFrom(request);
+  }
+
   getTransactions(branch: string | null, itemNmbr: string | undefined): Promise<any[]> {
     const request = this.http.get<{invoices: any[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/current?branch=${branch}`).pipe(
       map(_ => _.invoices)
     );
-    return lastValueFrom(request).catch(
-      e => {
-        console.log(e);
-        return [];
-      }
-    );
+    return lastValueFrom(request);
   }
 
   sendMail(to: Array<string>, subject: string, body: string, contentType: 'Text' | 'HTML'): Promise<Object> {

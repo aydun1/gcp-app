@@ -15,7 +15,8 @@ interface Data {
   styleUrls: ['./transaction-history-dialog.component.css']
 })
 export class TransactionHistoryDialogComponent implements OnInit {
-  public locationHistory!: Promise<Array<any>>;
+  public previousOrders!: Promise<Array<any>>;
+  public averages!: Promise<any>;
 
   constructor(
     public dialogRef: MatDialogRef<TransactionHistoryDialogComponent>,
@@ -24,7 +25,8 @@ export class TransactionHistoryDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.locationHistory = this.sharedService.getTransactions(this.data.branch, this.data.itemNmbr);
+    this.previousOrders = this.sharedService.getTransactions(this.data.branch, this.data.itemNmbr);
+    this.averages = this.sharedService.getHistory(this.data.itemNmbr);
   }
 
 }
