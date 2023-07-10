@@ -35,21 +35,24 @@ export class InterstateTransferSuggestedComponent implements OnInit {
   ngOnInit(): void {
     this.shared.getBranch().subscribe(_ => this._ownState = _);
   }
-  
+
+  private sendIttEmail(fromState: string | null, toState: string, lines: any[], docId: string): void {
+    const subject = `Items requested by ${toState}`;
+    const rows = lines.map(_ => `<tr><td>${_.itemNumber}</td><td>${_.toTransfer}</td></tr>`).join('');
+    const body = `<p><strong>Order no.:</strong> <a href="${environment.redirectUri}/transfers/active/${docId}">${docId}</a></p><table><tr><th>Item number</th><th>Qty Requested</th></tr>${rows}</table>`;
+    const to = this.shared.emailMap.get(fromState || '') || [];
+    if (environment.production) this.shared.sendMail(to, subject, body, 'HTML');
+  }
+
   createTransfer(): void {
     this.creating = true;
-    const id = this.interstateTransfersService.createId(this._ownState);
     if (!this.activeLines || this.activeLines.length === 0 || !this._ownState || !this.fromState) return;
     const lines = this.activeLines.filter((_: any) => _.toTransfer);
-    const subject = `Items requested by ${this._ownState}`;
-    const rows = lines.map(_ => `<tr><td>${_.itemNumber}</td><td>${_.toTransfer}</td></tr>`).join('');
-    const body = `<p><strong>Order no.:</strong> <a href="${environment.redirectUri}/transfers/active/${id}">${id}</a></p><table><tr><th>Item number</th><th>Qty Requested</th></tr>${rows}</table>`;
-    const to = this.shared.emailMap.get(this.fromState || '') || [];
-    this.interstateTransfersService.createInTransitTransfer(this.fromState, this._ownState, lines, id).then(_ => {
+    this.interstateTransfersService.createInTransitTransfer(this.fromState, this._ownState, lines).then(_ => {
       this.snackBar.open('Successfully created ITT.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
-      this.router.navigate(['transfers/active', id]);
+      this.router.navigate(['transfers/active', _.docId]);
+      this.sendIttEmail(this.fromState, this._ownState, lines, _.docId);
       this.creating = false;
-      if (environment.production) this.shared.sendMail(to, subject, body, 'HTML');
     }).catch(err => {
       this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-warn']});
       this.creating = false;

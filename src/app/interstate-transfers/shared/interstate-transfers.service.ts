@@ -15,8 +15,7 @@ export class InterstateTransfersService {
   public loading = new BehaviorSubject<boolean>(false);
 
   constructor(
-    private http: HttpClient,
-    private snackBar: MatSnackBar
+    private http: HttpClient
   ) { }
 
   getInterstateTransfers(from: string, to: string): Observable<IntransitTransferLine[]> {
@@ -40,9 +39,9 @@ export class InterstateTransfersService {
     return `ITT${branch[0]}${yy}${mm}${dd}${h}${m}${s}`;
   }
 
-  createInTransitTransfer(fromSite: string | null, toSite: string | null, lines: any, id: string): Promise<Object> {
-    const payload = {fromSite, toSite, lines, id};
-    const request = this.http.post(`${environment.gpEndpoint}/itt`, payload);
+  createInTransitTransfer(fromSite: string | null, toSite: string | null, lines: any): Promise<InTransitTransfer> {
+    const payload = {fromSite, toSite, lines};
+    const request = this.http.post<InTransitTransfer>(`${environment.gpEndpoint}/itt`, payload);
     return lastValueFrom(request);
   }
 
