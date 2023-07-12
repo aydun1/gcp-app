@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Observable, Subject, switchMap, tap } from 'rxjs';
+import { Observable, Subject, catchError, of, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../../shared.service';
 import { DeliveryService } from '../delivery.service';
@@ -29,7 +29,7 @@ interface PalletQuantities {
 export class OrderLinesDialogComponent implements OnInit {
   private _palletsSubject$ = new Subject<string>();
 
-  public order$!: Observable<Order>;
+  public order$!: Observable<Order | undefined>;
   public loading = true;
   public palletSpaces!: number;
   public orderWeight!: number;
@@ -49,15 +49,21 @@ export class OrderLinesDialogComponent implements OnInit {
     this.order$ = this.deliveryService.getOrder(this.data.sopType, this.data.sopNumber).pipe(
       tap(_ => {
         this.palletSpaces = _.lines.reduce((acc, cur) => acc += +cur.palletSpaces, 0);
-        this.orderWeight = _.lines.reduce((acc, cur) => acc += +cur.lineWeight, 0);
+        this.orderWeight = _.
+        lines.reduce((acc, cur) => acc += +cur.lineWeight, 0);
+        this._palletsSubject$.next(this.data.sopNumber);
         this.loading = false;
+      }),
+      catchError(_ => {
+        this.closeDialog();
+        return of(undefined);
       })
     );
+
     this._palletsSubject$.pipe(
       tap(() => this.palletsOwing = null),
       switchMap(id => this.palletsService.getOrderPallets(id, '', '')),
     ).subscribe(pallets => this.palletsOwing = pallets);
-    this._palletsSubject$.next(this.data.sopNumber);
   }
 
   openPalletDialog(name: string, custNmbr: string, orderNmbr: string, site: string): void {

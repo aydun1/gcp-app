@@ -212,9 +212,9 @@ export class DeliveryService {
   getDeliveries(branch: string): BehaviorSubject<Delivery[]> {
     const url = this.createUrl(branch);
     this.loading.next(true);
-    this.http.get(url).pipe(
+    this.http.get<{value: Delivery[]}>(url).pipe(
       tap(_ => this.loading.next(false)),
-      map((res: any) => res.value),
+      map(res => res.value),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         this.loading.next(false);
