@@ -48,6 +48,7 @@ import { FooterComponent } from './footer/footer.component';
     CommonModule,
     RouterModule,
     MatDialogModule,
+    MatButtonModule,
     MatIconModule,
     MatRippleModule,
   ],

@@ -19,6 +19,7 @@ import { RecyclingDialogComponent } from '../../recycling/shared/recycling-dialo
 import { DeliveryEditorDialogComponent } from '../shared/delivery-editor-dialog/delivery-editor-dialog.component';
 import { RunManagerDialogComponent } from '../shared/run-manager-dialog/run-manager-dialog.component';
 import { OrderLinesDialogComponent } from '../shared/order-lines-dialog/order-lines-dialog.component';
+import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog.component';
 import { DocsService } from '../../shared/docs/docs.service';
 
 @Component({
@@ -287,13 +288,18 @@ export class RunListComponent implements OnInit {
   }
 
   archiveDeliveriesByRun(runName: string): void {
-    this.loading = true;
-    this.deliveryService.archiveDeliveriesByRun(runName).then( _ => {
-      this.snackBar.open('Archived deliveries', '', {duration: 3000});
-      this.loading = false
-    }).catch(_ => {
-      this.snackBar.open('Could not archive deliveries', '', {duration: 3000});
-      this.loading = false;
+    const data = {title: 'Archive run', content: ['Are you sure you want to archive these deliveries?']};
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {width: '800px', data});
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (!result) return;
+      this.loading = true;
+      this.deliveryService.archiveDeliveriesByRun(runName).then( _ => {
+        this.snackBar.open('Archived deliveries', '', {duration: 3000});
+        this.loading = false
+      }).catch(_ => {
+        this.snackBar.open('Could not archive deliveries', '', {duration: 3000});
+        this.loading = false;
+      });
     });
   }
 
