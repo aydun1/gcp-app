@@ -16,7 +16,13 @@ export class CacheInterceptor implements HttpInterceptor {
     const key = req['url'].replace(/^https?:\/\/[a-z\.]+:?[0-9]*/, '');
     return next.handle(req).pipe(
       tap(stateEvent => {
-        if (stateEvent instanceof HttpResponse) localStorage?.setItem(key, JSON.stringify(stateEvent));
+        if (stateEvent instanceof HttpResponse) {
+          try {
+            localStorage.setItem(key, JSON.stringify(stateEvent));
+          } catch {
+            console.log('Could not set cache');
+          }
+        }
       }),
       catchError(stateEvent => {
         if (stateEvent.status === 0) {
