@@ -249,6 +249,7 @@ export class DeliveryService {
     if (site) fields['Site'] = site.fields.Title;
     if (order.cntPrsn) fields['ContactPerson'] = order.cntPrsn;
     if (order.city) fields['City'] = order.city;
+    if (order.reqShipDate) fields['DeliveryDate'] = order.reqShipDate;
     if (order.state) fields['State'] = order.state;
     if (order.postCode) fields['PostCode'] = order.postCode;
     if (order.sopNumber) fields['OrderNumber'] = order.sopNumber;
@@ -361,7 +362,7 @@ export class DeliveryService {
       const list = ids.slice(index*chunkSize, index*chunkSize+chunkSize);
       const requests = list.map((_, index) => {
         const url = `${environment.siteUrl}/${this._dropsUrl}/items/${_}`;
-        const payload = {fields: {Status: 'Archived', DeliveryDate: new Date()}};
+        const payload = {fields: {Status: 'Archived'}};
         return {id: index + 1, method: 'PATCH', url, headers, body: payload};
       });
       return this.http.post(`${environment.endpoint}/$batch`, {requests}).pipe(

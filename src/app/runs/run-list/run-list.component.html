@@ -178,10 +178,10 @@
 
 <mat-menu #runMore="matMenu" xPosition="before">
   <ng-template matMenuContent let-run="run">
-    <button *ngIf="isVic === false" mat-menu-item (click)="archiveDeliveriesByRun(run)">
+    <button *ngIf="isVic === false" mat-menu-item (click)="archiveDeliveriesByRun(run)" type="button">
       <mat-icon>archive</mat-icon>Archive deliveries
     </button>
-    <button mat-menu-item (click)="deleteDeliveriesByRun(run)">
+    <button *ngIf="isVic === true" mat-menu-item (click)="deleteDeliveriesByRun(run)" type="button">
       <mat-icon>delete</mat-icon>Remove deliveries
     </button>
   </ng-template>

@@ -30,7 +30,7 @@ export class DeliveryCompletedService {
     if (branch) filters.push(`fields/Branch eq '${branch}'`);
     if (runName !== undefined ) filters.push(`fields/Title eq ${runString}`);
     if (filters.length > 0) url += `&filter=${filters.join(' and ')}`;
-    url += `&orderby=fields/Sequence asc&top=250`;
+    url += `&orderby=fields/DeliveryDate desc&top=250`;
     return url;
   }
 

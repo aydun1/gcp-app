@@ -18,6 +18,7 @@ export interface Delivery {
     Branch: string;
     Customer: string;
     CustomerNumber: string;
+    DeliveryDate: Date;
     OrderNumber: string;
     Notes: string;
     Site: string;
