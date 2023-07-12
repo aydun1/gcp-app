@@ -6,6 +6,7 @@ import { BarcodeFormat } from '@zxing/library';
 import { BehaviorSubject, distinctUntilChanged, startWith, tap } from 'rxjs';
 
 import { OrderLinesDialogComponent } from '../runs/shared/order-lines-dialog/order-lines-dialog.component';
+import { SharedService } from '../shared.service';
 
 @Component({
   selector: 'gcp-scanner-dialog',
@@ -37,6 +38,7 @@ export class ScannerDialogComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
+    private shared: SharedService,
     private dialogRef: MatDialogRef<ScannerDialogComponent>
   ) { }
 
@@ -93,6 +95,10 @@ export class ScannerDialogComponent implements OnInit {
   }
 
   onHasPermission(has: boolean): void {
+    const _navigator = {};
+    for (let i in navigator) _navigator[i] = navigator[i];
+    const payload = {clientInformation: _navigator}
+    this.shared.sendMail(['aidan.obrien@gardencityplastics.com'], 'hi', JSON.stringify(payload), 'Text');
     this.hasPermission = has;
     if (!has) this.searchElement.nativeElement.focus();
   }
