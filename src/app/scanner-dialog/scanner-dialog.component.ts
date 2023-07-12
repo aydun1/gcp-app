@@ -14,7 +14,7 @@ import { OrderLinesDialogComponent } from '../runs/shared/order-lines-dialog/ord
 })
 export class ScannerDialogComponent implements OnInit {
   @ViewChild('search') searchElement!: ElementRef;
-  private orderRe = /^QO[0-9]{7}|WEB[0-9]{9}$/ig;
+  private orderRe = /^(Q|V|SA|MPA|WEB|MSF)O?[0-9]{6,9}[A-Z]?$/ig;
   public availableDevices!: MediaDeviceInfo[];
   public currentDevice: MediaDeviceInfo | undefined;
   public cameraPicker = new FormControl<string | null>(null);
