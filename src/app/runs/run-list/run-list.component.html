@@ -44,7 +44,12 @@
                     <div class="custom-placeholder" *cdkDragPlaceholder></div>
                     <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
                     <span matListItemTitle>{{ order.custName }}</span>
-                    <span matListItemLine>Order: {{ order.sopNumber }}<ng-container *ngIf="order.posted"> | posted</ng-container>  | {{ order.batchNumber }}</span>
+                    <div matListItemLine>
+                      <span>{{ order.sopNumber }}</span>
+                      <ng-container *ngIf="order.city"> | {{ order.city }}</ng-container>
+                      <ng-container *ngIf="order.posted"> | POSTED</ng-container>
+                      | {{ order.batchNumber }}
+                    </div>
                     <div matListItemLine>
                       <span>{{ order.palletSpaces | number: '1.1-1' }} spaces</span> |
                       <span>{{ order.orderWeight | number: '1.1-1' }} kg</span>

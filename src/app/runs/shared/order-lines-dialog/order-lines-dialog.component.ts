@@ -35,6 +35,7 @@ export class OrderLinesDialogComponent implements OnInit {
   public orderWeight!: number;
   public palletsOwing!: PalletQuantities | null;
   public pallets = this.sharedService.palletDetails;
+  public address!: string;
 
   constructor(
     private dialog: MatDialog,
@@ -52,6 +53,8 @@ export class OrderLinesDialogComponent implements OnInit {
         this.orderWeight = _.
         lines.reduce((acc, cur) => acc += +cur.lineWeight, 0);
         this._palletsSubject$.next(this.data.sopNumber);
+        this.address = (_.cntPrsn ? _.cntPrsn + '\r\n' : '') + [_.address1, _.address2, _.address3].filter(_ => _).join('\r\n') + '\r\n' +
+        [_.city, _.state, _.postCode].filter(_ => _).join(' ');
         this.loading = false;
       }),
       catchError(_ => {
