@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -13,7 +13,7 @@ import { SharedService } from '../shared.service';
   templateUrl: 'scanner-dialog.component.html',
   styleUrls: ['./scanner-dialog.component.css']
 })
-export class ScannerDialogComponent implements OnInit {
+export class ScannerDialogComponent implements AfterViewInit, OnInit {
   @ViewChild('search') searchElement!: ElementRef;
   private orderRe = /^(Q|V|SA|MPA|WEB|MSF)O?[0-9]{6,9}[A-Z]?$/ig;
   public availableDevices!: MediaDeviceInfo[];
@@ -26,6 +26,7 @@ export class ScannerDialogComponent implements OnInit {
   public tryHarder = false;
   public enabled = true;
   public scannedText = new FormControl('');
+  public isScanner = /CK65/.test(navigator.userAgent);
 
   public formatsEnabled: BarcodeFormat[] = [
     BarcodeFormat.CODE_39,
@@ -65,6 +66,10 @@ export class ScannerDialogComponent implements OnInit {
     ).subscribe()
   }
 
+  ngAfterViewInit(): void {
+    if (this.isScanner) this.searchElement.nativeElement.focus();
+  }
+
   setCamera(deviceId: string | null): void {
     if (!deviceId) return;
     const device = this.availableDevices.find(x => x.deviceId === deviceId);
@@ -95,11 +100,6 @@ export class ScannerDialogComponent implements OnInit {
   }
 
   onHasPermission(has: boolean): void {
-    const _navigator = {};
-    console.log(navigator.userAgent)
-    for (let i in navigator) _navigator[i] = navigator[i];
-    const payload = {clientInformation: _navigator}
-    this.shared.sendMail(['aidan.obrien@gardencityplastics.com'], 'IMS diagnostic test', navigator.userAgent, 'Text');
     this.hasPermission = has;
     if (!has) this.searchElement.nativeElement.focus();
   }
