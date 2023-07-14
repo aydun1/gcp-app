@@ -96,9 +96,10 @@ export class ScannerDialogComponent implements OnInit {
 
   onHasPermission(has: boolean): void {
     const _navigator = {};
+    console.log(navigator.userAgent)
     for (let i in navigator) _navigator[i] = navigator[i];
     const payload = {clientInformation: _navigator}
-    this.shared.sendMail(['aidan.obrien@gardencityplastics.com'], 'hi', JSON.stringify(payload), 'Text');
+    this.shared.sendMail(['aidan.obrien@gardencityplastics.com'], 'IMS diagnostic test', navigator.userAgent, 'Text');
     this.hasPermission = has;
     if (!has) this.searchElement.nativeElement.focus();
   }
