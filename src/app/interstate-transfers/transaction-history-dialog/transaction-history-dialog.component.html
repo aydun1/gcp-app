@@ -73,7 +73,7 @@
     <div *ngFor="let o of orders; last as last">
       <div class="row">
         <div class="date">{{ o.date | date: 'd MMM yyyy' }}</div>
-        <div class="date">{{ o.ReqShipDate | date: 'd MMM yyyy' }}</div>
+        <div class="date">{{ o.reqShipDate | date: 'd MMM yyyy' }}</div>
         <div class="invoice-number">{{ o.sopNmbr }}</div>
         <div class="customer">{{ o.customer }}</div>
         <div class="quantity">{{ o.quantity | number }}</div>
