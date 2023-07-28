@@ -15,6 +15,7 @@ export interface Order {
   phoneNumber1: string;
   phoneNumber2: string;
   state: string;
+  note: string;
   lines: Array<Line>;
   reqShipDate: Date;
   palletSpaces: number;
