@@ -37,6 +37,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public token: string | undefined;
   public warehouse!: boolean;
   public isQld = false;
+  public canSee = {runs: false, all: false};
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -74,10 +75,10 @@ export class AppComponent implements OnInit, OnDestroy {
       const darkClass = 'dark-theme';
       _ ? this.renderer.addClass(document.body, darkClass) : this.renderer.removeClass(document.body, darkClass)
     });
-    this.authService.instance.handleRedirectPromise().then(authResult => {
-      const account = this.authService.instance.getActiveAccount();
-      if (!account) this.checkAndSetActiveAccount();
-    }).catch(err=> console.log(err));
+    //this.authService.instance.handleRedirectPromise().then(authResult => {
+    //  const account = this.authService.instance.getActiveAccount();
+    //  if (!account) this.checkAndSetActiveAccount();
+    //}).catch(err=> console.log(err));
     this.setLoginDisplay();
     this.checkIfTeams();
     this.observer.observe(['(max-width: 600px)']).subscribe(_ => this.isMobile = _.matches);
@@ -134,6 +135,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   setLoginDisplay(): void {
     this.accounts = this.authService.instance.getAllAccounts();
+    this.canSee = this.sharedService.getRoles();
     this.loginDisplay = this.accounts.length > 0;
     this.sharedService.checkIfWarehouse(this.accounts);
     this.warehouse = this.sharedService.isWarehouse;
@@ -150,6 +152,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const allAccounts = this.authService.instance.getAllAccounts();
     if (!activeAccount && allAccounts.length > 0) {
       this.authService.instance.setActiveAccount(allAccounts[0]);
+      this.canSee = this.sharedService.getRoles();
     }
   }
 

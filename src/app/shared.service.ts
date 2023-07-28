@@ -131,6 +131,11 @@ export class SharedService {
     return activeAccount;
   }
 
+  getRoles(): {all: boolean, runs: boolean} {
+    const roles = this.getAccount()?.idTokenClaims?.roles || [];
+    return {all: roles.includes('Section.All'), runs: roles.includes('Section.Runs')};
+  }
+
   sanitiseName(name: string): string {
     if (!name) return '';
     return encodeURIComponent(name.trim().replace('\'', '\'\'').replace('%2F', '/'));

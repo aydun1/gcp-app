@@ -72,7 +72,6 @@ export class RunListCompletedComponent implements OnInit {
       ),
       switchMap(_ => this._loadList ? this.getDeliveries(_) : of([])),
       tap(_ => {
-        console.log(_)
         this.loadingPage = false;
       })
     )
