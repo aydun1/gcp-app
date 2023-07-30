@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { catchError, combineLatest, distinctUntilChanged, filter, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 import { Customer } from '../../customers/shared/customer';
 import { Site } from '../../customers/shared/site';
@@ -30,7 +30,7 @@ import { DocsService } from '../../shared/docs/docs.service';
 export class RunListComponent implements OnInit {
   private _loadList = false;
   private _branch!: string;
-  private _orderRefreshTrigger$ = new Subject<boolean>();
+  private _orderRefreshTrigger$ = new BehaviorSubject<boolean>(true);
 
   public dateFilter = new FormControl(this.getDate());
   public orders$!: Observable<Order[]>;
@@ -52,7 +52,7 @@ export class RunListComponent implements OnInit {
   }
 
   firstTab(): number | null {
-    const tab = this.route.snapshot.queryParamMap.get('tab')
+    const tab = this.route.snapshot.queryParamMap.get('tab');
     return tab === null ? null : parseInt(tab);
   }
 
@@ -102,19 +102,12 @@ export class RunListComponent implements OnInit {
     );
 
     this.deliveries$ = this.route.queryParams.pipe(
-      startWith({} as Params),
-      switchMap(_ => this.router.events.pipe(
-        startWith(new NavigationEnd(1, '', '')),
-        filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-        map(() => _)
-      )),
-      distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
-      switchMap(_ => state$.pipe(
-        tap(_ => {
-          this._branch = _;
+      switchMap(params => state$.pipe(
+        map(state => {
+          this._branch = params['branch'] || state;
           this.isVic = this._branch === 'VIC';
+          return !params['branch'] ? {...params, branch: state} : params;
         }),
-        map(state => !_['branch'] ? {..._, branch: state} : _),
       )),
       switchMap(_ => this.deliveryService.getRuns(_['branch']).pipe(
         map(runs => {
@@ -129,13 +122,13 @@ export class RunListComponent implements OnInit {
           return _;
         })
       )),
-      tap(_ => this.parseParams(_)),
-      tap(_ => this._orderRefreshTrigger$.next(true)
-      ),
-      switchMap(_ => this._loadList ? this.getDeliveries(_) : []),
+      distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       tap(_ => {
-        this.loadingPage = false;
-      })
+        this.parseParams(_);
+        this.refreshOrders();
+      }),
+      switchMap(_ => this._loadList ? this.getDeliveries(_) : []),
+      tap(_ => this.loadingPage = false),
     )
   }
 
