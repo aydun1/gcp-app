@@ -57,7 +57,6 @@ export class InterstateTransferViewComponent implements OnDestroy, OnInit {
   }
 
   trackByFn(index: number, item: IntransitTransferLine): string {
-    console.log(item.Id);
     return item.Id;
   }
 
