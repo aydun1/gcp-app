@@ -131,9 +131,10 @@ export class DeliveryService {
     const runString = runName ? `'${runName}'` : 'null';
     const deliveries = this.shared.getBranch().pipe(
       switchMap(branch => {
+        const filter1 = `fields/Status ne 'Archived'`;
         const filter2 = `fields/Title eq ${runString}`;
         const filter3 = `fields/Branch eq '${branch}'`;
-        url += [filter2, filter3].join(' and ');
+        url += [filter1, filter2, filter3].join(' and ');
         return this.http.get(url) as Observable<{value: Delivery[]}>;
       }),
       map(_ => _.value)
