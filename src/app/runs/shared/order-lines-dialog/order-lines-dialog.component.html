@@ -7,7 +7,7 @@
       <div class="deets"><strong>Order no.: </strong><span class="deets-inner">{{ o.sopNumber }}</span></div>
       <div class="deets"><strong>Req. delivery date: </strong><span class="deets-inner">{{ o.reqShipDate | date: 'd MMM yyyy' }}</span></div>
       <div class="deets"><strong>Address: </strong><div class="deets-inner address">{{ address }}</div></div>
-      <div class="deets"><strong>Notes: </strong><div class="deets-inner address">{{ o.note }}</div></div>
+      <div class="deets"><strong>Notes: </strong><div class="deets-inner">{{ o.note }}</div></div>
     </div>
     <mat-divider class="section-divider"></mat-divider>
     <div class="header row">
