@@ -113,7 +113,11 @@ input {
 
 .site-toolbar {
   background-color: #007239!important;
-  color: white;
+  color: white !important;
+}
+
+.dark-theme .site-toolbar {
+  background-color: #1b5e20;
 }
 
 .mat-mdc-dialog-container {
