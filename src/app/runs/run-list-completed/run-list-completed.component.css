@@ -29,8 +29,13 @@ h2 {
 .mat-column-order {
   flex: 0 1 125px;
 }
+
 .mat-column-customer {
   flex: 1;
+}
+
+.loading-page {
+  margin: 16px auto
 }
 
 @media (max-width: 1024px) {
