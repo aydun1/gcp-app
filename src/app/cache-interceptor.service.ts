@@ -34,7 +34,10 @@ export class CacheInterceptor implements HttpInterceptor {
             this.messages$.next('Cannot load page. No internet?');
             return throwError(() => new Error(stateEvent));
           };
-        } else {
+        } else if (stateEvent.status === 404) {
+          return throwError(() => new Error(stateEvent));
+        }
+        else {
           if (stateEvent instanceof HttpErrorResponse) localStorage?.setItem(key, JSON.stringify(stateEvent));
           return of(new HttpResponse());
         }
