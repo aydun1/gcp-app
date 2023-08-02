@@ -198,7 +198,10 @@ export class RunListComponent implements OnInit {
     const data = {notes: true, address: true, runs: this.runs.filter(_ => _.fields.Title !== '')};
     const dialogRef = this.dialog.open(RunManagerDialogComponent, {width: '600px', data, autoFocus: false});
     dialogRef.afterClosed().pipe(
-    ).subscribe()
+    ).subscribe((runName: string) => {
+      const runIndex = this.runs.findIndex(_ => _.fields.Title === runName);
+      this.selectTab(runIndex);
+    })
   }
 
   moveItem(event: CdkDragDrop<Delivery[]>): void {

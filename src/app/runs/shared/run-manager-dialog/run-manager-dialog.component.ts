@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+
 import { DeliveryService } from '../delivery.service';
 import { Run } from '../run';
 
@@ -56,9 +57,7 @@ export class RunManagerDialogComponent implements OnInit {
     const runOwner = this.runForm.value['owner'] || '';
     if (this.runForm.invalid || !runName) return;
     this.deliveryService.addRun(runName, runOwner).subscribe(_ => {
-      this.loading = false;
-      this.closeDialog();
-      this.navigate(runName);
+      this.closeDialog(runName);
     });
   }
 
@@ -68,9 +67,7 @@ export class RunManagerDialogComponent implements OnInit {
     const owner = this.runForm.value['owner'] || '';
     if (this.runForm.invalid || !newName) return;
     this.deliveryService.renameRun(this.runId, newName, this.oldName, owner).subscribe(_ => {
-      this.loading = false;
-      this.closeDialog();
-      this.navigate(newName);
+      this.closeDialog(newName);
     });
   }
 
@@ -78,8 +75,7 @@ export class RunManagerDialogComponent implements OnInit {
     this.loading = true;
     this.deliveryService.deleteRun(this.runId, this.oldName).subscribe(() => {
       this.loading = false;
-      this.closeDialog();
-      this.navigate(null);
+      this.closeDialog(null);
     });
   }
 
@@ -87,7 +83,7 @@ export class RunManagerDialogComponent implements OnInit {
     this.router.navigate([], { queryParams: {run}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  closeDialog(): void {
-    this.dialogRef.close();
+  closeDialog(run: string | null): void {
+    this.dialogRef.close(run);
   }
 }
