@@ -22,7 +22,7 @@ export class SharedService {
     'HEA': ['HEA'],
     'NSW': ['NSW'],
     'QLD': ['QLD'],
-    'SA': ['SA'],
+    'SA': ['SA', 'MPASA'],
     'VIC': ['ACT', 'MISC', 'NT', 'OTHER', 'TAS', 'VIC', 'CUSTOM', 'CUSTOMBM'],
     'WA': ['WA']
   };
