@@ -168,22 +168,22 @@ export class DeliveryService {
     return request;
   }
 
-  getRuns(branch: string): Observable<Run[]> {
+  getRuns(branch: string): Observable<Run[] | null> {
     const url = `${this._runsListUrl}/items?expand=fields(select=Title,Owner)&filter=fields/Branch eq '${branch}'&orderby=fields/Title asc`;
-    return this.http.get<{value: Run[]}>(url).pipe(
-      startWith(this._runsSubject$),
-      map(res => res.value as Run[]),
+    this.http.get<{value: Run[]}>(url).pipe(
+      map(res => res.value),
       distinctUntilChanged((prev, curr) => {
         const before = prev?.sort((a, b) => a.fields.Title > b.fields.Title ? -1 : 1).map(_ => _.fields.Title).join('');
         const after = curr?.sort((a, b) => a.fields.Title > b.fields.Title ? -1 : 1).map(_ => _.fields.Title).join('');
         return before === after;
-    }),
+      }),
       tap(_ => this._runsSubject$.next(_)),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         return of([]);
       })
-    );
+    ).subscribe(_ => this._runsSubject$.next(_));
+    return this._runsSubject$;
   }
 
   addRun(run: string, owner: string): Observable<Run> {

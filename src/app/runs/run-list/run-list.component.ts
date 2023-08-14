@@ -28,7 +28,6 @@ import { DocsService } from '../../shared/docs/docs.service';
   styleUrls: ['./run-list.component.css']
 })
 export class RunListComponent implements OnInit {
-  private _loadList = false;
   private _branch!: string;
   private _orderRefreshTrigger$ = new BehaviorSubject<boolean>(true);
 
@@ -37,7 +36,7 @@ export class RunListComponent implements OnInit {
   public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
   public runs: Array<Run> = [];
-  public otherRuns: Array<Run> = [{fields: {Title: 'Default'}} as Run];
+  public otherRuns: Array<Run> | undefined = [{fields: {Title: 'Default'}} as Run];
   public isVic!: boolean;
   public loading = false;
   public loadingOrders = true;
@@ -106,7 +105,7 @@ export class RunListComponent implements OnInit {
         map(state => {
           this._branch = params['branch'] || state;
           this.isVic = this._branch === 'VIC';
-          return !params['branch'] ? {...params, branch: state} : params;
+          return {...params, branch: this._branch};
         }),
       )),
       switchMap(_ => this.deliveryService.getRuns(_['branch']).pipe(
@@ -115,7 +114,7 @@ export class RunListComponent implements OnInit {
           this.runs = runs ? [{fields: {Title: '', Branch: this._branch, Owner: ''}} as Run, ...runs.sort((a, b) => this.runSortFn(a, b, email))] : [];
           this.otherRuns = runs?.filter(r => r.fields.Title !== this.runName);
           const ownRun = this.runs?.findIndex(_ => _.fields.Owner?.toLocaleLowerCase() === email);
-          if ((this.openedTab === null || this.openedTab === -1) && this.runs.length > 0) {
+          if ((this.openedTab === null || this.openedTab === -1 || !this.route.snapshot.queryParamMap.get('tab')) && this.runs.length > 0) {
             this.openedTab = ownRun === -1 ? 0 : ownRun;
             this.selectTab(this.openedTab);
           }
@@ -123,11 +122,8 @@ export class RunListComponent implements OnInit {
         })
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
-      tap(_ => {
-        this.parseParams(_);
-        this.refreshOrders();
-      }),
-      switchMap(_ => this._loadList ? this.getDeliveries(_) : []),
+      tap(_ => this.refreshOrders()),
+      switchMap(_ => _['tab'] !== undefined ? this.getDeliveries(_) : []),
       tap(_ => this.loadingPage = false),
     )
   }
@@ -146,9 +142,11 @@ export class RunListComponent implements OnInit {
   }
 
   getDeliveries(params: Params): Observable<Delivery[]> {
-    const run = this.runName || undefined;
     return this.deliveryService.getDeliveries(params['branch']).pipe(
-      map(_ => _.filter(d => d.fields.Title === run))
+      map(_ => _.filter(d => {
+        const run = this.runName || this.runs[this.route.snapshot.queryParamMap.get('tab') || 0].fields.Title || undefined;
+        return d.fields.Title === run;
+      }))
     )
   }
 
@@ -161,27 +159,13 @@ export class RunListComponent implements OnInit {
     this.dialog.open(OrderLinesDialogComponent, {width: '800px', data, autoFocus: false});
   }
 
-  parseParams(params: Params): void {
-    if (!params) return;
-    const filters: Params = {};
-    if ('run' in params) {
-      //filters['run'] = this.run;
-    } else {
-      //this.run = '';
-    }
-  }
-
   compareQueryStrings(prev: Params, curr: Params): boolean {
-    if (!this._loadList && this.route.children.length === 0) {
-      this._loadList = true;
-      return false;
-    }
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
     const sameRun = prev['run'] === curr['run'];
     const sameRefresh = prev['refresh'] === curr['refresh'];
     const sameTab = prev['tab'] === curr['tab'];
-    return sameTab && sameRun && sameRefresh && this._loadList;
+    return sameTab && sameRun && sameRefresh;
   }
 
   openCustomerPicker(): void {
