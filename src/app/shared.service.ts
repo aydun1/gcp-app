@@ -46,14 +46,15 @@ export class SharedService {
     ['QLD_MPA', ['qld@gardencityplastics.com']],
     ['NSW', ['nsw@gardencityplastics.com']],
     ['NSW_MPA', ['nsw@gardencityplastics.com']],
-    ['SA', ['sa@gardencityplastics.com']],
+    ['SA', ['sa@gardencityplastics.com', 'robyn.nichol@gardencityplastics.com']],
     ['SA_MPA', ['sa@gardencityplastics.com']],
     ['WA', ['wa@gardencityplastics.com']],
     ['WA_MPA', ['wasales@micropellets.com.au']],
   ]);
 
   public panMap = new Map<string, Array<string>>([
-    ['VIC', ['melb.dispatch@gardencityplastics.com']]
+    ['VIC', ['melb.dispatch@gardencityplastics.com']],
+    ['SA', ['robyn.nichol@gardencityplastics.com']]
   ]);
 
   public offices = [
@@ -160,9 +161,9 @@ export class SharedService {
     return lastValueFrom(request);
   }
 
-  sendMail(to: Array<string>, subject: string, body: string, contentType: 'Text' | 'HTML'): Promise<Object> {
+  sendMail(to: Array<string>, subject: string, body: string, contentType: 'Text' | 'HTML', cc: Array<string> = []): Promise<Object> {
     const url = `${environment.endpoint}/me/sendMail`;
-    const cc = [...new Set(['aidan.obrien@gardencityplastics.com', this.getOwnEmail()])];
+    cc = [...new Set([...cc, this.getOwnEmail(), 'aidan.obrien@gardencityplastics.com'])];
     const payload  = {
       message: {
         subject: subject,
