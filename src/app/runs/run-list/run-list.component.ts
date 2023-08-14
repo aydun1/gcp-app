@@ -91,8 +91,11 @@ export class RunListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const state$ = this.sharedService.getBranch();
     const date$ = this.dateFilter.valueChanges.pipe(startWith(this.dateFilter.value));
+    const state$ = this.sharedService.getBranch().pipe(
+      map(_ => this.route.snapshot.queryParamMap.get('branch') || _),
+      tap(_ => this._branch = _)
+    );
 
     this.orders$ = combineLatest([state$, date$, this._orderRefreshTrigger$]).pipe(
       tap(() => this.loadingOrders = true),
@@ -102,16 +105,15 @@ export class RunListComponent implements OnInit {
 
     this.deliveries$ = this.route.queryParams.pipe(
       switchMap(params => state$.pipe(
-        map(state => {
-          this._branch = params['branch'] || state;
-          this.isVic = this._branch === 'VIC';
-          return {...params, branch: this._branch};
+        map(branch => {
+          this.isVic = branch === 'VIC';
+          return {...params, branch};
         }),
       )),
       switchMap(_ => this.deliveryService.getRuns(_['branch']).pipe(
         map(runs => {
           const email = this.sharedService.getAccount()?.username?.toLowerCase();
-          this.runs = runs ? [{fields: {Title: '', Branch: this._branch, Owner: ''}} as Run, ...runs.sort((a, b) => this.runSortFn(a, b, email))] : [];
+          this.runs = runs ? [{fields: {Title: '', Branch: _['branch'], Owner: ''}} as Run, ...runs.sort((a, b) => this.runSortFn(a, b, email))] : [];
           this.otherRuns = runs?.filter(r => r.fields.Title !== this.runName);
           const ownRun = this.runs?.findIndex(_ => _.fields.Owner?.toLocaleLowerCase() === email);
           if ((this.openedTab === null || this.openedTab === -1 || !this.route.snapshot.queryParamMap.get('tab')) && this.runs.length > 0) {
