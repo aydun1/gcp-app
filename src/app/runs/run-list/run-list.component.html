@@ -148,7 +148,7 @@
                   <mat-action-row>
                     <input #fileSelect class="file-select" multiple="multiple" type="file" (change)="fileChangeEvent('debtors', delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, $event)" placeholder="File">
                     <label class="file-select-label" for="file">
-                      <button mat-icon-button type="button" (click)="fileSelect.click()"><mat-icon>camera</mat-icon></button>
+                      <button mat-icon-button type="button" (click)="fileSelect.click()"><mat-icon>photo_camera</mat-icon></button>
                     </label>
                     <a mat-button color="primary" [routerLink]="['/customers', delivery.fields.CustomerNumber]" [queryParams]="{site:delivery.fields.Site}" class="customer-link">Customer</a>
                     <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, delivery.fields.Site)">Pallets</button>
