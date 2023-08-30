@@ -36,6 +36,7 @@ export class RunListComponent implements OnInit {
   public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
   public runs: Array<Run> = [];
+  public changedRuns!: boolean;
   public otherRuns: Array<Run> | undefined = [{fields: {Title: 'Default'}} as Run];
   public isVic!: boolean;
   public loading = false;
@@ -113,7 +114,9 @@ export class RunListComponent implements OnInit {
       switchMap(_ => this.deliveryService.getRuns(_['branch']).pipe(
         map(runs => {
           const email = this.sharedService.getAccount()?.username?.toLowerCase();
-          this.runs = runs ? [{fields: {Title: '', Branch: _['branch'], Owner: ''}} as Run, ...runs.sort((a, b) => this.runSortFn(a, b, email))] : [];
+          const sortedRuns = runs ? [{fields: {Title: '', Branch: _['branch'], Owner: ''}} as Run, ...runs.sort((a, b) => this.runSortFn(a, b, email))] : [];
+          this.changedRuns = this.runs.map(_ => _.id).toString() !== sortedRuns.map(_ => _.id).toString()
+          this.runs = sortedRuns;
           this.otherRuns = runs?.filter(r => r.fields.Title !== this.runName);
           const ownRun = this.runs?.findIndex(_ => _.fields.Owner?.toLocaleLowerCase() === email);
           if ((this.openedTab === null || this.openedTab === -1 || !this.route.snapshot.queryParamMap.get('tab')) && this.runs.length > 0) {
@@ -146,7 +149,7 @@ export class RunListComponent implements OnInit {
   getDeliveries(params: Params): Observable<Delivery[]> {
     return this.deliveryService.getDeliveries(params['branch']).pipe(
       map(_ => _.filter(d => {
-        const run = this.runName || this.runs[this.route.snapshot.queryParamMap.get('tab') || 0].fields.Title || undefined;
+        const run = this.runName || this.runs[this.route.snapshot.queryParamMap.get('tab') || 0]?.fields.Title || undefined;
         return d.fields.Title === run;
       }))
     )
@@ -167,7 +170,9 @@ export class RunListComponent implements OnInit {
     const sameRun = prev['run'] === curr['run'];
     const sameRefresh = prev['refresh'] === curr['refresh'];
     const sameTab = prev['tab'] === curr['tab'];
-    return sameTab && sameRun && sameRefresh;
+    const runsUnchanged = !this.changedRuns
+    this.changedRuns = false;
+    return sameTab && sameRun && sameRefresh && runsUnchanged;
   }
 
   openCustomerPicker(): void {
