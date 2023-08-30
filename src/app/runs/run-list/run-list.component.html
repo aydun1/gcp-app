@@ -37,17 +37,21 @@
             <mat-spinner *ngIf="loadingOrders" diameter="36" class="loading-orders"></mat-spinner>
             <div *ngIf="orders$ | async as orders">
               <p *ngIf="orders.length === 0" class="no-orders">No orders to show for this date</p>
-              <mat-list #orderList="cdkDropList" cdkDropList [cdkDropListConnectedTo]="['delivery-list']" [cdkDropListSortingDisabled]="true">
+              <mat-nav-list #orderList="cdkDropList" cdkDropList [cdkDropListConnectedTo]="['delivery-list']" [cdkDropListSortingDisabled]="true">
                 <div *ngFor="let section of orders|groupByProperty:'shipMethod';trackBy:trackByGroupsFn">
                   <div matSubheader><strong>{{ section.key !== 'undefined' ? section.key : '' }}</strong></div>
-                  <mat-list-item class="drag-list-item" *ngFor="let order of section.value;trackBy:trackByFn" cdkDrag [cdkDragData]="order">
+                  <mat-list-item (click)="openReceipt(order.sopNumber)" class="drag-list-item" *ngFor="let order of section.value;trackBy:trackByFn" cdkDrag [cdkDragData]="order">
                     <div class="custom-placeholder" *cdkDragPlaceholder></div>
                     <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
-                    <span matListItemTitle>{{ order.custName }}</span>
+                    <span matListItemTitle>
+                      <span *ngIf="order.batchNumber === 'FULFILLED'" class="green">✔</span>
+                      <span *ngIf="order.batchNumber === 'INTERVENE'" class="orange">?</span>
+                      <span *ngIf="order.batchNumber === 'RELEASED'" class="red">✘</span>
+                      {{ order.custName }}</span>
                     <div matListItemLine>
                       <span>{{ order.sopNumber }}</span>
-                      <ng-container *ngIf="order.city"> | {{ order.city }}</ng-container>
-                      <ng-container *ngIf="order.posted"> | POSTED</ng-container>
+                      <span *ngIf="order.city"> | {{ order.city }}</span>
+                      <span *ngIf="order.posted"> | POSTED</span>
                       | {{ order.batchNumber }}
                     </div>
                     <div matListItemLine>
@@ -55,12 +59,11 @@
                       <span>{{ order.orderWeight | number: '1.1-1' }} kg</span>
                     </div>
                     <ng-container matListItemMeta>
-                      <button mat-icon-button (click)="openReceipt(order.sopNumber)"><mat-icon>receipt</mat-icon></button>
-                      <button type="button" [disabled]="loading" mat-icon-button (click)="addOrderDelivery(order, runName, undefined).subscribe()"><mat-icon>add</mat-icon></button>
+                      <button type="button" [disabled]="loading" mat-icon-button matTooltip="Add to run" (click)="addOrderDelivery(order, runName, undefined).subscribe();$event.stopPropagation();"><mat-icon>add</mat-icon></button>
                     </ng-container>
                   </mat-list-item>
                 </div>
-              </mat-list>
+              </mat-nav-list>
             </div>
           </div>
         </mat-expansion-panel>
