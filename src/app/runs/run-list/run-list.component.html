@@ -47,7 +47,7 @@
                       <span *ngIf="order.status === 2" class="green">✔</span>
                       <span *ngIf="order.status === 1" class="orange">?</span>
                       <span *ngIf="order.status === 0" class="red">✘</span>
-                      <span *ngIf="order.note" class="note">📋</span>
+                      <span *ngIf="order.note" class="note">📝</span>
                       {{ order.custName }}
                     </span>
                     <div matListItemLine>
@@ -118,7 +118,7 @@
                         </div>
                       </mat-panel-title>
                       <mat-panel-description>
-                        <span *ngIf="delivery.hasNotes" class="run-note-icon">📋</span>
+                        <span *ngIf="delivery.hasNotes" class="run-note-icon">📝</span>
                         {{ delivery.fields.City ? delivery.fields.City + ', ' + delivery.fields.PostCode : delivery.fields.Address }}
                       </mat-panel-description>
                     </div>
