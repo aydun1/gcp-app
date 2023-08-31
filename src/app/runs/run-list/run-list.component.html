@@ -44,9 +44,9 @@
                     <div class="custom-placeholder" *cdkDragPlaceholder></div>
                     <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
                     <span matListItemTitle>
-                      <span *ngIf="order.batchNumber === 'FULFILLED'" class="green">✔</span>
-                      <span *ngIf="order.batchNumber === 'INTERVENE'" class="orange">?</span>
-                      <span *ngIf="order.batchNumber === 'RELEASED'" class="red">✘</span>
+                      <span *ngIf="order.status === 2" class="green">✔</span>
+                      <span *ngIf="order.status === 1" class="orange">?</span>
+                      <span *ngIf="order.status === 0" class="red">✘</span>
                       {{ order.custName }}</span>
                     <div matListItemLine>
                       <span>{{ order.sopNumber }}</span>

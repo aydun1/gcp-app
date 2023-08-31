@@ -56,6 +56,10 @@ export class RunListComponent implements OnInit {
     return tab === null ? null : parseInt(tab);
   }
 
+  isComplete(order: Order): number {
+    return order['posted'] || order.batchNumber === 'FULFILLED' ? 2 : order.batchNumber === 'INTERVENE' ? 1 : 0;
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -101,6 +105,7 @@ export class RunListComponent implements OnInit {
     this.orders$ = combineLatest([state$, date$, this._orderRefreshTrigger$]).pipe(
       tap(() => this.loadingOrders = true),
       switchMap(([state, date, _]) => this.deliveryService.syncOrders(state, date || this.getDate())),
+      tap(_ => _.map(o => o['status'] = this.isComplete(o))),
       tap(() => this.loadingOrders = false)
     );
 
