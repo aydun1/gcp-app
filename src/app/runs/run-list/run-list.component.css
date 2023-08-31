@@ -137,6 +137,16 @@ h2 {
   align-self: center;
 }
 
+.note {
+  color: #ffc644;
+  margin-right: -4px;
+}
+
+.run-note-icon {
+  color: #ffc644;
+  margin: -3px 0px 0 -4px;
+}
+
 .drag {
   color: #999;
   left: 0;

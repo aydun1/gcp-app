@@ -47,7 +47,9 @@
                       <span *ngIf="order.status === 2" class="green">✔</span>
                       <span *ngIf="order.status === 1" class="orange">?</span>
                       <span *ngIf="order.status === 0" class="red">✘</span>
-                      {{ order.custName }}</span>
+                      <span *ngIf="order.note" class="note">📋</span>
+                      {{ order.custName }}
+                    </span>
                     <div matListItemLine>
                       <span>{{ order.sopNumber }}</span>
                       <span *ngIf="order.city"> | {{ order.city }}</span>
@@ -116,6 +118,7 @@
                         </div>
                       </mat-panel-title>
                       <mat-panel-description>
+                        <span *ngIf="delivery.hasNotes" class="run-note-icon">📋</span>
                         {{ delivery.fields.City ? delivery.fields.City + ', ' + delivery.fields.PostCode : delivery.fields.Address }}
                       </mat-panel-description>
                     </div>
@@ -132,7 +135,7 @@
                   <div *ngIf="delivery.fields.PhoneNumber" [innerHTML]="delivery.fields.PhoneNumber | phoneLink"></div>
                   <div *ngIf="delivery.hasNotes">
                     <h3>Notes</h3>
-                    <p mat-list-item *ngFor="let d of delivery.value" (click)="openReceipt(d.fields.Notes)">
+                    <p mat-list-item *ngFor="let d of delivery.value">
                       {{ d.fields.Notes }}
                     </p>
                   </div>

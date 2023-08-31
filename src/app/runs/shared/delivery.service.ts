@@ -257,6 +257,7 @@ export class DeliveryService {
     if (order.palletSpaces) fields['Spaces'] = order.palletSpaces;
     if (order.orderWeight) fields['Weight'] = order.orderWeight;
     if (order.phoneNumber1 || order.phoneNumber2) fields['PhoneNumber'] = [order.phoneNumber1, order.phoneNumber2].filter(_ => _).join(',');
+    if (order.note) fields['Notes'] = order.note;
     fields['Address'] = address ? address : site && site.fields.Address ? site.fields.Address : customer.address1_composite;
     return fields;
   }
