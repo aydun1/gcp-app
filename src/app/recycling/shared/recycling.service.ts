@@ -236,6 +236,18 @@ export class RecyclingService {
     )
   }
 
+  collectLooseFromCustomer(fields: Partial<Cage['fields']>): Observable<Cage> {
+    const url = this._cageTrackerUrl + `/items`;
+    fields['Date1'] = new Date();
+    fields['Date2'] = new Date();
+    fields['Status'] = 'Collected from customer';
+    fields['AssetType'] = 'Other';
+    const payload = {fields};
+    return this.http.post<Cage>(url, payload).pipe(
+      switchMap(_ => this.updateList(_))
+    );
+  }
+
   readyForCustomer(id: string): Observable<Cage> {
     const payload = {fields: {Status: 'Ready for delivery to customer'}};
     return this.updateStatus(id, payload);

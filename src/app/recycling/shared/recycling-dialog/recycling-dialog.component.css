@@ -6,8 +6,11 @@
 }
 
 .mat-mdc-dialog-content {
-  min-height: 396px;
   padding-top: 0;
+}
+
+.mat-mdc-form-field {
+  width: 100%;
 }
 
 .mat-accordion {

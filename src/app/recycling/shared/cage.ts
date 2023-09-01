@@ -11,7 +11,7 @@ export interface Cage {
     GrossWeight: number;
     NetWeight: string;
     Status: string | 'Available' | 'Allocated to customer' | 'Delivered to customer' | 'Collected from customer' | 'Delivered to Polymer' | 'Delivered to local processing' | 'Collected from local processing' | 'Collected from Polymer' | 'Complete';
-    AssetType: 'Cage - Solid (2.5m³)' | 'Cage - Folding (2.5m³)';
+    AssetType: 'Cage - Solid (2.5m³)' | 'Cage - Folding (2.5m³)' | 'Other';
     Date1: string | Date | null;
     Date2: string | Date | null;
     Date3: string | Date | null;
