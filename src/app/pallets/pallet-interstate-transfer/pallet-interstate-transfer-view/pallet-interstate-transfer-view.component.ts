@@ -1,4 +1,4 @@
-import { Component, HostBinding, OnInit } from '@angular/core';
+import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -13,7 +13,7 @@ import { NavigationService } from '../../../navigation.service';
   templateUrl: './pallet-interstate-transfer-view.component.html',
   styleUrls: ['./pallet-interstate-transfer-view.component.css']
 })
-export class PalletInterstateTransferViewComponent implements OnInit {
+export class PalletInterstateTransferViewComponent implements OnDestroy, OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';
 
   private transferSource$!: Subject<string | null>;
@@ -30,6 +30,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private renderer: Renderer2,
     private snackBar: MatSnackBar,
     private sharedService: SharedService,
     private navService: NavigationService,
@@ -37,6 +38,7 @@ export class PalletInterstateTransferViewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.renderer.addClass(document.body, 'print');
     const id = this.route.snapshot.paramMap.get('id');
     this.transferSource$ = new BehaviorSubject(id);
     this.transfer$ = this.transferSource$.pipe(
@@ -52,6 +54,10 @@ export class PalletInterstateTransferViewComponent implements OnInit {
       map(_ => _[0]),
       catchError((err: HttpErrorResponse) => this.handleError(err, true))
     );
+  }
+
+  ngOnDestroy(): void {
+    this.renderer.removeClass(document.body, 'print');
   }
 
   getTransfer(id: string): void {

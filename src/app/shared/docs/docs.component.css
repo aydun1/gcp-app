@@ -31,3 +31,9 @@
 .file-select {
   display: none;
 }
+
+@media print {
+  .file-select-label {
+    display: none;
+  }
+}

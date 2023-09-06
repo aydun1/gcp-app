@@ -39,3 +39,9 @@
 .file-select {
   display: none;
 }
+
+@media print {
+  .menu-toggle {
+    display: none;
+  }
+}
