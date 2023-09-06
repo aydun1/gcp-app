@@ -43,7 +43,7 @@ export class RunListComponent implements OnInit {
   public loadingOrders = true;
   public loadingPage = true;
   public empty = true;
-  public locked = false;
+  public locked = this.route.snapshot.queryParamMap.get('tab') !== '0';
   public currentCategory = this.route.snapshot.queryParamMap.get('opened');
   public openedTab = this.firstTab();
 
@@ -94,8 +94,11 @@ export class RunListComponent implements OnInit {
   ngOnInit(): void {
     const date$ = this.dateFilter.valueChanges.pipe(startWith(this.dateFilter.value));
     const state$ = this.sharedService.getBranch().pipe(
-      map(_ => this.route.snapshot.queryParamMap.get('branch') || _),
-      tap(_ => this._branch = _)
+      map(_ => this.route.snapshot.queryParamMap.get('branch')?.toLocaleUpperCase() || _),
+      tap(_ => {
+        this._branch = _;
+        this.isVic = _ === 'VIC';
+      })
     );
 
     this.orders$ = combineLatest([state$, date$, this._orderRefreshTrigger$]).pipe(
@@ -106,10 +109,7 @@ export class RunListComponent implements OnInit {
 
     this.deliveries$ = this.route.queryParams.pipe(
       switchMap(params => state$.pipe(
-        map(branch => {
-          this.isVic = branch === 'VIC';
-          return {...params, branch};
-        }),
+        map(branch => {return {...params, branch}})
       )),
       switchMap(_ => this.deliveryService.getRuns(_['branch']).pipe(
         map(runs => {
