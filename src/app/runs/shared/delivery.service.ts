@@ -53,7 +53,7 @@ export class DeliveryService {
   private updateListMulti(res: Array<Delivery>): Observable<Array<Delivery>> {
     return this._deliveriesSubject$.pipe(
       take(1),
-      map(_ => _.map(obj => res.find(o => o.id === obj.id) || obj).sort((a, b) => (a.fields.Sequence > b.fields.Sequence) ? 1 : -1)),
+      map(_ => _.map(obj => res.filter(_ => _).find(o => o.id === obj.id) || obj).sort((a, b) => (a.fields.Sequence > b.fields.Sequence) ? 1 : -1)),
       tap(_ => this._deliveriesSubject$.next(_))
     );
   }
@@ -75,6 +75,8 @@ export class DeliveryService {
       map(deliveries => {
         const runDeliveries = deliveries.filter(_ => runName ? _.fields.Title === runName : !_.fields.Title);
         return runDeliveries.map((cur, i) => {
+          const duplicated = runDeliveries.find(_ => _.fields['OrderNumber'] === cur.fields['OrderNumber'] && _.id < cur.id);
+          if (duplicated) return {id: cur.id, index: null, changed: true};
           const prev = runDeliveries[i - 1];
           const next = runDeliveries[i + 1];
           const curIndex = cur.fields.Sequence;
@@ -92,13 +94,14 @@ export class DeliveryService {
     );
   }
 
-  private updateSequence(items: Array<{id: string, index: number}>): Observable<Delivery[]> {
+  private updateSequence(items: Array<{id: string, index: number | null}>): Observable<Delivery[]> {
     const chunkSize = 20;
     const headers = {'Content-Type': 'application/json'};
     const requests = [...Array(Math.ceil(items.length / chunkSize))].map((_, index) => {
       const list = items.slice(index*chunkSize, index*chunkSize+chunkSize);
       const requests = list.map((_, index) => {
         const url = `${environment.siteUrl}/${this._dropsUrl}/items/${_['id']}`;
+        if (_['index'] === null) return {id: index + 1, method: 'DELETE', url, headers};
         const payload = {fields: {Sequence: _['index']}};
         return {id: index + 1, method: 'PATCH', url, headers, body: payload};
       });
