@@ -86,6 +86,10 @@ input {
 }
 
 @media print {
+  .actions {
+    display: none;
+  }
+
   .arrow {
     display: block;
   }
