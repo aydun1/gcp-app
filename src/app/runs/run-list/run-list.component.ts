@@ -56,10 +56,6 @@ export class RunListComponent implements OnInit {
     return tab === null ? null : parseInt(tab);
   }
 
-  isComplete(order: Order): number {
-    return order['posted'] || order.batchNumber === 'FULFILLED' ? 2 : order.batchNumber === 'INTERVENE' ? 1 : 0;
-  }
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -105,7 +101,6 @@ export class RunListComponent implements OnInit {
     this.orders$ = combineLatest([state$, date$, this._orderRefreshTrigger$]).pipe(
       tap(() => this.loadingOrders = true),
       switchMap(([state, date, _]) => this.deliveryService.syncOrders(state, date || this.getDate())),
-      tap(_ => _.map(o => o['status'] = this.isComplete(o))),
       tap(() => this.loadingOrders = false)
     );
 
@@ -153,10 +148,17 @@ export class RunListComponent implements OnInit {
 
   getDeliveries(params: Params): Observable<Delivery[]> {
     return this.deliveryService.getDeliveries(params['branch']).pipe(
-      map(_ => _.filter(d => {
-        const run = this.runName || this.runs[this.route.snapshot.queryParamMap.get('tab') || 0]?.fields.Title || undefined;
-        return d.fields.Title === run;
-      }))
+      map(_ => {
+        return _.filter(d => {
+          const run = this.runName || this.runs[this.route.snapshot.queryParamMap.get('tab') || 0]?.fields.Title || undefined;
+          return d.fields.Title === run;
+      }).map(
+        _ => {
+          _['order'] = this.deliveryService.getOrder(2, _.fields.OrderNumber);
+          return _
+        }
+      )
+    })
     )
   }
 

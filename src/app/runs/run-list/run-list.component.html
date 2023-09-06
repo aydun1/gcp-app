@@ -44,9 +44,9 @@
                     <div class="custom-placeholder" *cdkDragPlaceholder></div>
                     <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
                     <span matListItemTitle>
-                      <span *ngIf="order.status === 2" class="green">✔</span>
-                      <span *ngIf="order.status === 1" class="orange">?</span>
-                      <span *ngIf="order.status === 0" class="red">✘</span>
+                      <span *ngIf="order.pickStatus === 2" class="green">✔</span>
+                      <span *ngIf="order.pickStatus === 1" class="orange">?</span>
+                      <span *ngIf="order.pickStatus === 0" class="red">✘</span>
                       <span *ngIf="order.note" class="note">📝</span>
                       {{ order.custName }}
                     </span>
@@ -98,8 +98,8 @@
               </div>
             </div>
             <div class="specs">
-              <span>{{groupedDeliveries.deliveries[run.fields.Title] || 0 | number }} {{ groupedDeliveries.deliveries === 1 ? 'delivery' : 'deliveries'}}</span> |
-              <span>{{groupedDeliveries.spaces[run.fields.Title] || 0 | number: '1.1-1'}} {{ groupedDeliveries.spaces === 1 ? 'space' : 'spaces'}}</span> |
+              <span>{{groupedDeliveries.deliveries[run.fields.Title] || 0 | number }} {{ groupedDeliveries.deliveries[run.fields.Title] === 1 ? 'delivery' : 'deliveries'}}</span> |
+              <span>{{groupedDeliveries.spaces[run.fields.Title] || 0 | number: '1.1-1'}} {{ groupedDeliveries.spaces[run.fields.Title] === 1 ? 'space' : 'spaces'}}</span> |
               <span>{{groupedDeliveries.weights[run.fields.Title] || 0 | number: '1.1-1'}} kg</span>
             </div>
             <div class="inner run-list" id="delivery-list" cdkDropList (cdkDropListDropped)="moveItem($event)" [cdkDropListEnterPredicate]="allowPredicate">
@@ -129,38 +129,43 @@
                       <button mat-icon-button [matMenuTriggerData]="{delivery}" [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()"><mat-icon>more_vert</mat-icon></button>
                     </div>
                   </mat-expansion-panel-header>
-          
-                  <div *ngIf="delivery.fields.ContactPerson">{{ delivery.fields.ContactPerson }}</div>
-                  <div class="site">{{ delivery.fields.Address || delivery.fields.Site }}</div>
-                  <div *ngIf="delivery.fields.PhoneNumber" [innerHTML]="delivery.fields.PhoneNumber | phoneLink"></div>
-                  <div *ngIf="delivery.hasNotes">
-                    <h3>Notes</h3>
-                    <p mat-list-item *ngFor="let d of delivery.value">
-                      {{ d.fields.Notes }}
-                    </p>
-                  </div>
-  
-                  <mat-action-list *ngIf="delivery.hasOrderNumbers">
-                    <button mat-list-item *ngFor="let d of delivery.value" (click)="openReceipt(d.fields.OrderNumber)">
-                      <mat-icon matListItemIcon>receipt</mat-icon>
-                      {{ d.fields.OrderNumber }}
-                      <div matListItemMeta>{{ d.fields.Spaces | number: '1.1-1' }}</div>
-                    </button>
-                  </mat-action-list>
-                  <div class="pallet-spaces">
-                    <span>{{ delivery.spaces | number: '1.1-1' }} spaces</span> |
-                    {{ delivery.weight | number: '1.1-1' }} kg
-                  </div>
-                  <mat-action-row>
-                    <input #fileSelect class="file-select" multiple="multiple" type="file" (change)="fileChangeEvent('debtors', delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, $event)" placeholder="File">
-                    <label class="file-select-label" for="file">
-                      <button mat-icon-button type="button" (click)="fileSelect.click()"><mat-icon>photo_camera</mat-icon></button>
-                    </label>
-                    <a mat-button color="primary" [routerLink]="['/customers', delivery.fields.CustomerNumber]" [queryParams]="{site:delivery.fields.Site}" class="customer-link">Customer</a>
-                    <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, delivery.fields.Site)">Pallets</button>
-                    <button mat-raised-button color="primary" (click)="openRecyclingDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.Site)">Recycling</button>
-                    <button *ngIf="delivery.fields.OrderNumber" mat-icon-button ></button>
-                  </mat-action-row>
+                  <ng-template matExpansionPanelContent>
+                    <div *ngIf="delivery.fields.ContactPerson">{{ delivery.fields.ContactPerson }}</div>
+                    <div class="site">{{ delivery.fields.Address || delivery.fields.Site }}</div>
+                    <div *ngIf="delivery.fields.PhoneNumber" [innerHTML]="delivery.fields.PhoneNumber | phoneLink"></div>
+                    <div *ngIf="delivery.hasNotes">
+                      <h3>Notes</h3>
+                      <p mat-list-item *ngFor="let d of delivery.value">
+                        {{ d.fields.Notes }}
+                      </p>
+                    </div>
+    
+                    <mat-action-list *ngIf="delivery.hasOrderNumbers">
+                      <button mat-list-item *ngFor="let d of delivery.value" (click)="openReceipt(d.fields.OrderNumber)">
+                        <mat-icon matListItemIcon>receipt</mat-icon>
+                        {{ d.fields.OrderNumber }}  <span *ngIf="(d['order'] | async) as p">
+                          <span *ngIf="p['pickStatus'] === 2" class="green">✔</span>
+                          <span *ngIf="p['pickStatus'] === 1" class="orange">?</span>
+                          <span *ngIf="p['pickStatus'] === 0" class="red">✘</span>
+                        </span>
+                        <div matListItemMeta>{{ d.fields.Spaces | number: '1.1-1' }}</div>
+                      </button>
+                    </mat-action-list>
+                    <div class="pallet-spaces">
+                      <span>{{ delivery.spaces | number: '1.1-1' }} spaces</span> |
+                      {{ delivery.weight | number: '1.1-1' }} kg
+                    </div>
+                    <mat-action-row>
+                      <input #fileSelect class="file-select" multiple="multiple" type="file" (change)="fileChangeEvent('debtors', delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, $event)" placeholder="File">
+                      <label class="file-select-label" for="file">
+                        <button mat-icon-button type="button" (click)="fileSelect.click()"><mat-icon>photo_camera</mat-icon></button>
+                      </label>
+                      <a mat-button color="primary" [routerLink]="['/customers', delivery.fields.CustomerNumber]" [queryParams]="{site:delivery.fields.Site}" class="customer-link">Customer</a>
+                      <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, delivery.fields.Site)">Pallets</button>
+                      <button mat-raised-button color="primary" (click)="openRecyclingDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.Site)">Recycling</button>
+                      <button *ngIf="delivery.fields.OrderNumber" mat-icon-button ></button>
+                    </mat-action-row>
+                  </ng-template>
                 </mat-expansion-panel>
               </mat-accordion>
               <div *ngIf="(loadingList$ | async) ? true : false">
