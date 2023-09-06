@@ -76,7 +76,7 @@ export class DeliveryService {
         const runDeliveries = deliveries.filter(_ => runName ? _.fields.Title === runName : !_.fields.Title);
         return runDeliveries.map((cur, i) => {
           const duplicated = runDeliveries.find(_ => _.fields['OrderNumber'] === cur.fields['OrderNumber'] && _.id < cur.id);
-          if (duplicated) return {id: cur.id, index: null, changed: true};
+          if (duplicated && cur.fields['OrderNumber']) return {id: cur.id, index: null, changed: true};
           const prev = runDeliveries[i - 1];
           const next = runDeliveries[i + 1];
           const curIndex = cur.fields.Sequence;
