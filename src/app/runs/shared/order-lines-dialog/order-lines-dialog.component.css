@@ -81,6 +81,10 @@
   top: 8px;
 }
 
+.mobile-show {
+  display: none;
+}
+
 @media (max-width: 800px) {
   .row {
     flex-direction: column;
@@ -97,5 +101,9 @@
 
   .item-number, .item-desc, .quantity {
     flex: inherit
+  }
+
+  .mobile-show {
+    display: initial;
   }
 }

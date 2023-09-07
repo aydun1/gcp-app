@@ -19,7 +19,7 @@
       <div class="row">
         <div class="item-number">{{ l.itemNmbr }}</div>
         <div class="item-desc">{{ l.itemDesc }}</div>
-        <div class="quantity">{{ l.quantity | number }} <span *ngIf="l.qtyToInv">({{l.qtyToInv}} uninvoiced)</span></div>
+        <div class="quantity"><span class="mobile-show">Quantity: </span> {{ l.qtyPrInv | number }} <span *ngIf="l.qtyToInv">({{ l.qtyToInv | number }} uninvoiced)</span></div>
       </div>
       <mat-divider *ngIf="!last"></mat-divider>
     </div>
