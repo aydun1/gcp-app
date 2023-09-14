@@ -6,7 +6,7 @@
       <div class="deets"><strong>Customer: </strong><span class="deets-inner">{{ o.custName }}</span></div>
       <div class="deets"><strong>Order no.: </strong><span class="deets-inner">{{ o.sopNumber }}</span></div>
       <div class="deets"><strong>Req. delivery date: </strong><span class="deets-inner">{{ o.reqShipDate | date: 'd MMM yyyy' }}</span></div>
-      <div class="deets"><strong>Address: </strong><div class="deets-inner address">{{ address }}</div></div>
+      <div class="deets"><strong>Address: </strong><div class="deets-inner address">{{ tidyAddress }}</div></div>
       <div *ngIf="o.note" class="deets notes"><div class="notes-inner">{{ o.note }}</div></div>
     </div>
     <mat-divider class="section-divider"></mat-divider>

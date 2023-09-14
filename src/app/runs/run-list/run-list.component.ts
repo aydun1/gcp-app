@@ -21,6 +21,7 @@ import { RunManagerDialogComponent } from '../shared/run-manager-dialog/run-mana
 import { OrderLinesDialogComponent } from '../shared/order-lines-dialog/order-lines-dialog.component';
 import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog.component';
 import { DocsService } from '../../shared/docs/docs.service';
+import { Address } from '../../customers/shared/address';
 
 @Component({
   selector: 'gcp-run-list',
@@ -230,10 +231,8 @@ export class RunListComponent implements OnInit {
 
   addOrderDelivery(order: Order, run: string, index?: number): Observable<Delivery[]> {
     this.loading = true;
-    const fullAddress = [order.address1, order.address2, order.address3].filter(_ => _).join('\r\n') + '\r\n' +
-    [order.city, order.state, order.postCode].filter(_ => _).join(' ');
     const customer = {name: order.custName, custNmbr: order.custNumber} as Customer;
-    const delivery = this.deliveryService.createDropPartial(run, customer, null, fullAddress, '', order);
+    const delivery = this.deliveryService.createDropPartial(run, customer, null, null, '', order);
     return this.deliveryService.addDrop(delivery, index).pipe(
       tap(_ => this.loading = false),
       catchError(_ => {
@@ -244,7 +243,7 @@ export class RunListComponent implements OnInit {
     )
   }
 
-  addCustomerDelivery(customer: Customer, site: Site, address: string, notes: string): Observable<Delivery[]> {
+  addCustomerDelivery(customer: Customer, site: Site, address: Address, notes: string): Observable<Delivery[]> {
     const run = this.runName;
     const delivery = this.deliveryService.createDropPartial(run, customer, site, address, notes);
     return this.deliveryService.addDrop(delivery, undefined);

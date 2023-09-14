@@ -6,8 +6,10 @@ import { AccountInfo } from '@azure/msal-browser';
 import { BehaviorSubject, lastValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 
 import { environment } from '../environments/environment';
+import { Address } from './customers/shared/address';
+import { Order } from './runs/shared/order';
 
-interface Address {
+interface userAddress {
   state: string;
   suburb: string;
   address: string;
@@ -103,8 +105,8 @@ export class SharedService {
     )
   }
 
-  getBranchAddress(branch: string): Address {
-    return this.offices.find(o => o.state === branch) || {} as Address;
+  getBranchAddress(branch: string): userAddress {
+    return this.offices.find(o => o.state === branch) || {} as userAddress;
   }
 
   getOwnAddress(): Observable<{street: string, city: string, state: string, postalCode: string}> {
@@ -140,6 +142,12 @@ export class SharedService {
   sanitiseName(name: string): string {
     if (!name) return '';
     return encodeURIComponent(name.trim().replace('\'', '\'\'').replace('%2F', '/'));
+  }
+
+  addressFormatter(address: Address | Order | null): string {
+    if (!address) return '';
+    const lastLine = [address['city'], address['state'], address['postcode'] || address['Postcode']].filter(_ => _).join(' ');
+    return [address['address1'], address['address2'], address['address3'], lastLine].filter(_ => _).join('\r\n');
   }
 
   setTitle(pageTitle: string): void {

@@ -30,7 +30,7 @@ export class CustomerPickerDialogComponent implements OnInit {
   public addresses$!: Observable<Address[]>;
   public branch!: string;
   public get branches(): Array<string> {return this.shared.branches};
-  public address!: string;
+  public tidyAddress!: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: {notes: boolean, address: boolean, title: string} | undefined,
@@ -56,16 +56,11 @@ export class CustomerPickerDialogComponent implements OnInit {
         this.getSites(_);
       }
     });
-    this.customerForm.get('address')?.valueChanges.subscribe(_ => {
-      if (_) {
-        const lastLine = [_.city, _.state, _.postcode];
-        this.address = [_.line1, _.line2, _.line3, lastLine.join(' ')].filter(_ => _).join('\r\n');
-      } else {
-        this.address = '';
-      }
-    });
+    this.customerForm.get('address')?.valueChanges.subscribe(_ => 
+      this.tidyAddress = _ ? this.shared.addressFormatter(_) : ''
+    );
     this.customerForm.get('site')?.valueChanges.subscribe(_ => {
-      if (_) this.address = _.fields.Address;
+      if (_) this.tidyAddress = _.fields.Address;
     });
   }
 
@@ -97,9 +92,10 @@ export class CustomerPickerDialogComponent implements OnInit {
   pickCustomer(): void {
     if (this.customerForm.invalid) return;
     const customer = this.customerForm.get('customer')?.value as Customer;
+    const address = this.customerForm.get('address')?.value as Address;
     const site = this.customerForm.get('site')?.value as Site;
     const notes = this.customerForm.get('notes')?.value as string;
-    this.dialogRef.close({customer, site, address: this.address, notes});
+    this.dialogRef.close({customer, site, address, notes});
   }
 
   setBranch(branch: string): void {

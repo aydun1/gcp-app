@@ -34,7 +34,7 @@
       <mat-label>Notes</mat-label>
       <textarea matInput formControlName="notes" autocomplete="off" placeholder="Optional notes"></textarea>
     </mat-form-field>
-    <pre *ngIf="data?.address">{{ address || customerForm.value.customer?.address1_composite }}</pre>
+    <pre *ngIf="data?.address">{{ tidyAddress || customerForm.value.customer?.address1_composite }}</pre>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button type="button" mat-button mat-dialog-close tabindex=-1>Cancel</button>

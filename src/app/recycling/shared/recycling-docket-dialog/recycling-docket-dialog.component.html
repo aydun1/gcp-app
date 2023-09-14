@@ -28,9 +28,9 @@
         <div>{{ data.customer.name }}</div>
         <div *ngIf="site">{{ site.fields.Address }}</div>
         <div *ngIf="address">
-          <div>{{ address.line1 }}</div>
-          <div>{{ address.line2 }}</div>
-          <div>{{ address.line3 }}</div>
+          <div>{{ address.address1 }}</div>
+          <div>{{ address.address2 }}</div>
+          <div>{{ address.address3 }}</div>
           <div>{{ address.city }} {{ address.state }} {{ address.postcode }}</div>
         </div>
       </div>

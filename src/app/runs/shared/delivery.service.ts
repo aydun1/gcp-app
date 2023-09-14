@@ -14,6 +14,7 @@ import { Site } from '../../customers/shared/site';
 import { Delivery } from './delivery';
 import { Run } from './run';
 import { Order } from './order';
+import { Address } from '../../customers/shared/address';
 
 @Injectable({
   providedIn: 'root'
@@ -245,23 +246,26 @@ export class DeliveryService {
     return lastValueFrom(req);
   }
 
-
-  createDropPartial(run: string | null, customer: Customer, site: Site | null, address: string, notes: string, order: Partial<Order> = {}): Partial<Delivery['fields']> {
+  createDropPartial(run: string | null, customer: Customer, site: Site | null, address: Address | null, notes: string, order: Partial<Order> = {}): Partial<Delivery['fields']> {
     const runName = run || undefined;
-    const fields: Partial<Delivery['fields']> = {Title: runName as string, Customer: customer.name, CustomerNumber: customer.custNmbr};
+    const fields: Partial<Delivery['fields']> = {
+      Title: runName as string,
+      Customer: customer.name,
+      CustomerNumber: customer.custNmbr,
+      City: order?.city || address?.city,
+      State: order?.state || address?.state,
+      PostCode: order?.postCode || address?.postcode,
+      Address: this.shared.addressFormatter(address || order as Order) || site?.fields.Address || customer.address1_composite
+    };
     if (notes) fields['Notes'] = notes;
     if (site) fields['Site'] = site.fields.Title;
     if (order.cntPrsn) fields['ContactPerson'] = order.cntPrsn;
-    if (order.city) fields['City'] = order.city;
     if (order.reqShipDate) fields['DeliveryDate'] = order.reqShipDate;
-    if (order.state) fields['State'] = order.state;
-    if (order.postCode) fields['PostCode'] = order.postCode;
     if (order.sopNumber) fields['OrderNumber'] = order.sopNumber;
     if (order.palletSpaces) fields['Spaces'] = order.palletSpaces;
     if (order.orderWeight) fields['Weight'] = order.orderWeight;
     if (order.phoneNumber1 || order.phoneNumber2) fields['PhoneNumber'] = [order.phoneNumber1, order.phoneNumber2].filter(_ => _).join(',');
     if (order.note) fields['Notes'] = order.note;
-    fields['Address'] = address ? address : site && site.fields.Address ? site.fields.Address : customer.address1_composite;
     return fields;
   }
 
@@ -425,12 +429,11 @@ export class DeliveryService {
     return combineLatest([delivery, cust]).pipe(
       switchMap(([delivery, customer]) => {
         const site = {fields: {Title: siteName}} as Site;
-        const address = '';
         if (delivery) {
           const notes = delivery.fields.Notes ? `${delivery.fields.Notes}<br>${message}` : message;
           return this.updateDelivery(delivery.id, notes);
          } else {
-          const delivery = this.createDropPartial(runName, customer, site, address, message);
+          const delivery = this.createDropPartial(runName, customer, site, null, message);
           return this.addDrop(delivery, 0);
          }
       }),
