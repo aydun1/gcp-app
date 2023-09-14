@@ -139,11 +139,16 @@
                     <div *ngIf="delivery.fields.PhoneNumber" [innerHTML]="delivery.fields.PhoneNumber | phoneLink"></div>
                     <div *ngIf="delivery.hasNotes">
                       <h3>Notes</h3>
-                      <p mat-list-item *ngFor="let d of delivery.value">
+                      <p *ngFor="let d of delivery.value">
                         {{ d.fields.Notes }}
                       </p>
                     </div>
-    
+                    <div *ngIf="!delivery.hasOrderNumbers">
+                      <div *ngFor="let d of delivery.value">
+                        <p>{{ d.createdBy.user.displayName }} | {{ d.createdDateTime | date:'d MMM yyyy' }}</p>
+                        <p></p>
+                      </div>
+                    </div>
                     <mat-action-list *ngIf="delivery.hasOrderNumbers">
                       <button mat-list-item *ngFor="let d of delivery.value" (click)="openReceipt(d.fields.OrderNumber)">
                         <mat-icon matListItemIcon>receipt</mat-icon>

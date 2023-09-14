@@ -11,6 +11,14 @@ export interface Delivery {
       id: string;
     }
   }
+  createdDateTime: string | Date;
+  createdBy: {
+    user: {
+      displayName: string;
+      email: string;
+      id: string;
+    }
+  }
   order: Observable<Order>;
   fields: {
     id: string;
