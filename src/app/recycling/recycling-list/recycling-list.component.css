@@ -67,6 +67,10 @@
   width: 0;
 }
 
+.table-container {
+  overflow-x: auto;
+}
+
 .mat-column-checked {
   flex: 0 0 80px;
 }
@@ -91,11 +95,11 @@
   flex: 1 1 100px;
 }
 
-.mat-column-location {
-  flex: 1 1 200px;
+.mat-column-weight {
+  flex: 0 1 100px;
 }
 
-.mat-column-weight {
+.mat-column-material {
   flex: 0 1 100px;
 }
 
@@ -122,6 +126,12 @@
   height: 32px;
   box-sizing: border-box;
   font-weight: 500;
+}
+
+@media (max-width: 800px) {
+  .mat-mdc-table {
+    width: 1024px;
+  }
 }
 
 @media print {

@@ -63,7 +63,7 @@
     <div *ngIf="statusFilter.value"><strong>Status:</strong> {{ statusFilter.value }}</div>
   </div>
 
-  <mat-card appearance="outlined" class="inner">
+  <mat-card appearance="outlined" class="inner table-container">
     <mat-table #table [dataSource]="cages" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
 
       <ng-container matColumnDef="checked">
