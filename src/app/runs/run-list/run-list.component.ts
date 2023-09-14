@@ -30,6 +30,7 @@ import { DocsService } from '../../shared/docs/docs.service';
 export class RunListComponent implements OnInit {
   private _branch!: string;
   private _orderRefreshTrigger$ = new BehaviorSubject<boolean>(true);
+  private _firstRuns = ['Pickups', 'Recycling'];
 
   public dateFilter = new FormControl(this.getDate());
   public orders$!: Observable<Order[]>;
@@ -46,6 +47,7 @@ export class RunListComponent implements OnInit {
   public locked = this.route.snapshot.queryParamMap.get('tab') !== '0';
   public currentCategory = this.route.snapshot.queryParamMap.get('opened');
   public openedTab = this.firstTab();
+  public populatedRuns: Set<string> = new Set();
 
   get runName(): string {
     return this.openedTab ? this.runs[this.openedTab]?.fields['Title'] : '';
@@ -129,13 +131,14 @@ export class RunListComponent implements OnInit {
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       tap(_ => this.refreshOrders()),
       switchMap(_ => _['tab'] !== undefined ? this.getDeliveries(_) : []),
-      tap(_ => this.loadingPage = false),
+      tap(_ => this.loadingPage = false)
     )
   }
 
   runSortFn(a: Run, b: Run, email: string | undefined) {
     const x = +(b.fields.Owner?.toLocaleLowerCase() === email) - +(a.fields.Owner?.toLocaleLowerCase() === email);
-    return x == 0 ? (b.fields.Title > a.fields.Title ? -1 : 1) : x;
+    const y = +(this._firstRuns.includes(b.fields.Title)) - +(this._firstRuns.includes(a.fields.Title));
+    return x !== 0 ? x : y !== 0 ? y : (b.fields.Title > a.fields.Title ? -1 : 1);
   }
 
   selectTab(tab: number | null): void {
@@ -149,6 +152,7 @@ export class RunListComponent implements OnInit {
   getDeliveries(params: Params): Observable<Delivery[]> {
     return this.deliveryService.getDeliveries(params['branch']).pipe(
       map(_ => {
+        this.populatedRuns = new Set(_.map(d => d.fields.Title || ''));
         return _.filter(d => {
           const run = this.runName || this.runs[this.route.snapshot.queryParamMap.get('tab') || 0]?.fields.Title || undefined;
           return d.fields.Title === run;

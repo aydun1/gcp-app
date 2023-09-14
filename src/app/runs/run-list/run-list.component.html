@@ -74,7 +74,11 @@
 
     <div *ngIf="deliveries$ | async | groupByCustomerAddress as groupedDeliveries" class="deliveries-card inner">
       <mat-tab-group *ngIf="runs.length > 0; else loadingPage" animationDuration="0ms" mat-stretch-tabs="false" mat-align-tabs="start" [selectedIndex]="openedTab" (selectedIndexChange)="selectTab($event)">
-        <mat-tab *ngFor="let run of runs;trackBy:trackByRunsFn" [label]="run.fields.Title || 'Default'">
+        <mat-tab *ngFor="let run of runs;trackBy:trackByRunsFn">
+          <ng-template mat-tab-label>
+            <div *ngIf="populatedRuns.has(run.fields.Title)" class="has-runs"></div>
+            {{ run.fields.Title || 'Default' }}
+          </ng-template>
           <ng-template matTabContent>
             <div class="run-head">
               <h3>{{ run.fields.Title || 'Default' }}</h3>

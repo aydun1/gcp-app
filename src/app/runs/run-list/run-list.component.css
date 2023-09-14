@@ -147,6 +147,19 @@ h2 {
   margin: -3px 0px 0 -4px;
 }
 
+.has-runs {
+  background: #61a902;
+  width: 10px;
+  height: 10px;
+  margin-right: 4px;
+  margin-bottom: 2px;
+  border-radius: 50%;
+}
+
+.mat-mdc-tab {
+  padding: 0 12px;
+}
+
 .drag {
   color: #999;
   left: 0;
