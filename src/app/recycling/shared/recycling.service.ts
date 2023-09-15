@@ -404,7 +404,9 @@ export class RecyclingService {
     const payload = {fields:
       {Status: 'Available', CustomerNumber: null, Customer: null, Date1: null, Date2: null, Date3: null, Date4: null, GrossWeight: null, Material: null, Notes: null}
     };
-    return this.updateStatus(id, payload);
+    return this.updateStatus(id, payload).pipe(
+      tap(() => this.snackBar.open('Cage reset', '', {duration: 3000})),
+    );
   }
 
   dehireCage(id: string): Observable<Cage> {
