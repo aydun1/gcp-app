@@ -342,6 +342,7 @@ export class RunListComponent implements OnInit {
 
   setClosedDelivery(key: string): void {
     if (this.currentCategory !== key) return;
+    this.currentCategory = null;
     this.router.navigate([], {queryParams: {opened: null}, replaceUrl: true, queryParamsHandling: 'merge'});
   }
 
