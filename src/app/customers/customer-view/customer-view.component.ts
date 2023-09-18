@@ -119,7 +119,7 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
       tap(_ => {
         this.setTitle(_);
         this.refreshSites(_);
-        this.getAddresses(_);
+        this.getCustomerAddresses(_);
         this.refreshPallets(_);
         this.refreshCages(_);
       }),
@@ -132,8 +132,8 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  getAddresses(customer: Customer): void {
-    this.cutomersService.getAddresses(customer.custNmbr).subscribe(_ => this.addresses = _);
+  getCustomerAddresses(customer: Customer): void {
+    this.cutomersService.getCustomerAddresses(customer.custNmbr).subscribe(_ => this.addresses = _);
   }
 
   refreshSites(customer: Customer): void {

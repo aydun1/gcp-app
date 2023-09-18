@@ -1,0 +1,10 @@
+
+<div class="vendor-input-container" (focusin)="onFocusIn($event)" (focusout)="onFocusOut($event)">
+  <input matInput #vendorInput [placeholder]="placeholder" type="search" aria-label="Vendor" [formControl]="myControl" 
+    [matAutocomplete]="auto" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autocomplete="chrome-off">
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="addVendor()" [displayWith]="vendorDisplayFn">
+    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+      {{ option.name }} ({{ option.vendId }})
+    </mat-option>
+  </mat-autocomplete>
+</div>
