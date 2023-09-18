@@ -259,17 +259,19 @@ export class DeliveryService {
     };
     if (notes) fields['Notes'] = notes;
     if (site) fields['Site'] = site.fields.Title;
-    if (order.cntPrsn) fields['ContactPerson'] = order.cntPrsn;
+    if (order.cntPrsn || address?.contact) fields['ContactPerson'] = order.cntPrsn || address?.contact;
     if (order.reqShipDate) fields['DeliveryDate'] = order.reqShipDate;
     if (order.sopNumber) fields['OrderNumber'] = order.sopNumber;
     if (order.palletSpaces) fields['Spaces'] = order.palletSpaces;
     if (order.orderWeight) fields['Weight'] = order.orderWeight;
-    if (order.phoneNumber1 || order.phoneNumber2) fields['PhoneNumber'] = [order.phoneNumber1, order.phoneNumber2].filter(_ => _).join(',');
+    if (order.phoneNumber1 || order.phoneNumber2 || address?.phoneNumber1 || address?.phoneNumber2) fields['PhoneNumber'] = [order.phoneNumber1, order.phoneNumber2, address?.phoneNumber1, address?.phoneNumber2].filter(_ => _).join(',');
     if (order.note) fields['Notes'] = order.note;
     return fields;
   }
 
   addDrop(deliveryFields: Partial<Delivery['fields']>, targetIndex: number | undefined): Observable<Delivery[]> {
+    console.log(deliveryFields['Title'])
+    if (['Pickups', 'Recycling'].includes(deliveryFields['Title'] || '')) deliveryFields['DeliveryType'] = deliveryFields['Title'];
     let backup: Delivery[];
     return this._deliveriesSubject$.pipe(
       take(1),

@@ -137,6 +137,19 @@ h2 {
   align-self: center;
 }
 
+.order-note {
+  border-radius: 6px;
+  padding: 0 10px;
+  margin-bottom: 12px;
+  border: 1px solid;
+  position: relative;
+}
+
+.delivery-edit {
+  position: absolute;
+  right: 0;
+}
+
 .note {
   color: #ffc644;
   margin-right: -4px;

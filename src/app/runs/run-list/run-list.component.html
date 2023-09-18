@@ -137,17 +137,17 @@
                     <div *ngIf="delivery.fields.ContactPerson">{{ delivery.fields.ContactPerson }}</div>
                     <div class="site">{{ delivery.fields.Address || delivery.fields.Site }}</div>
                     <div *ngIf="delivery.fields.PhoneNumber" [innerHTML]="delivery.fields.PhoneNumber | phoneLink"></div>
-                    <div *ngIf="delivery.hasNotes">
+                    <div *ngIf="delivery.hasNotes || !delivery.hasOrderNumbers">
                       <h3>Notes</h3>
-                      <p *ngFor="let d of delivery.value">
-                        {{ d.fields.Notes }}
-                      </p>
-                    </div>
-                    <div *ngIf="!delivery.hasOrderNumbers">
-                      <div *ngFor="let d of delivery.value">
-                        <p>{{ d.createdBy.user.displayName }} | {{ d.createdDateTime | date:'d MMM yyyy' }}</p>
-                        <p></p>
+                      <div *ngFor="let d of delivery.value" class="order-note">
+                        <button *ngIf="!d.fields.OrderNumber" mat-icon-button (click)="editDelivery(d)" [disabled]="loading" class="delivery-edit">
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                        <pre>{{ d.fields.Notes }}</pre>
+                        <p *ngIf="!delivery.hasOrderNumbers">{{ d.createdBy?.user?.displayName }} | {{ d.createdDateTime | date:'d MMM yyyy' }}</p>
                       </div>
+                      <p>
+                      </p>
                     </div>
                     <mat-action-list *ngIf="delivery.hasOrderNumbers">
                       <button mat-list-item *ngFor="let d of delivery.value" (click)="openReceipt(d.fields.OrderNumber)">
@@ -214,9 +214,6 @@
 
 <mat-menu #menu="matMenu" xPosition="before">
   <ng-template matMenuContent let-delivery="delivery">
-    <button mat-menu-item (click)="editDelivery(delivery)" [disabled]="loading">
-      <mat-icon>edit</mat-icon>Edit
-    </button>
     <button mat-menu-item [matMenuTriggerFor]="runMenu" [matMenuTriggerData]="{delivery}" [disabled]="loading">
       <mat-icon>move_down</mat-icon>Move to run
     </button>

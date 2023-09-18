@@ -4,7 +4,7 @@ import { Order } from "./order";
 export interface Delivery {
   id: string;
   lastModifiedDateTime: string | Date;
-  lastModifiedBy: {
+  lastModifiedBy?: {
     user: {
       displayName: string;
       email: string;
@@ -12,7 +12,7 @@ export interface Delivery {
     }
   }
   createdDateTime: string | Date;
-  createdBy: {
+  createdBy?: {
     user: {
       displayName: string;
       email: string;
