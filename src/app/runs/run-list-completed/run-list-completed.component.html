@@ -13,13 +13,13 @@
         <ng-container matColumnDef="run">
           <mat-header-cell *matHeaderCellDef> Run </mat-header-cell>
           <mat-cell *matCellDef="let order">
-            <span>{{ order.fields.Title }}</span>
+            <span>{{ order.fields.Title || 'Default' }}</span>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="order">
           <mat-header-cell *matHeaderCellDef> Order no. </mat-header-cell>
           <mat-cell *matCellDef="let order">
-            <a (click)="openReceipt(order.fields.OrderNumber)" routerLink=".">{{ order.fields.OrderNumber }}</a>
+            <a *ngIf="order.fields.OrderNumber" (click)="openReceipt(order.fields.OrderNumber)" routerLink=".">{{ order.fields.OrderNumber }}</a> {{ order.fields.DeliveryType }}
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="customer">
