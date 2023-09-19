@@ -42,8 +42,8 @@ class CustomDateAdapter extends NativeDateAdapter {
 function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
     auth: {
-      clientId: 'bd14159c-f62e-4ffe-bb05-e5a26f9715ed',
-      authority: 'https://login.microsoftonline.com/2dcb64e0-c4e4-4c31-af32-9fe0edff2be9',
+      clientId: environment.msalConfig.auth.clientId,
+      authority: environment.msalConfig.auth.authority,
       redirectUri: environment.redirectUri,
       postLogoutRedirectUri: environment.redirectUri
     },
