@@ -23,7 +23,7 @@ export class DeliveryCompletedService {
   ) { }
 
   private createUrl(branch: string, runName: string | null | undefined = undefined): string {
-    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,CustomerNumber,Customer,Status,OrderNumber,DeliveryDate)`;
+    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,CustomerNumber,Customer,Status,OrderNumber,DeliveryDate,DeliveryType)`;
     const runString = runName ? `'${runName}'` : 'null';
     const filters: Array<string> = [];
     filters.push('fields/Status eq \'Archived\'');
