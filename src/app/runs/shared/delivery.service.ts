@@ -374,6 +374,7 @@ export class DeliveryService {
       const requests = list.map((_, index) => {
         const url = `${environment.siteUrl}/${this._dropsUrl}/items/${_}`;
         const payload = {fields: {Status: 'Archived'}};
+        if (!payload['fields']['DeliveryDate']) payload['fields']['DeliveryDate'] = new Date();
         return {id: index + 1, method: 'PATCH', url, headers, body: payload};
       });
       return this.http.post(`${environment.endpoint}/$batch`, {requests}).pipe(
