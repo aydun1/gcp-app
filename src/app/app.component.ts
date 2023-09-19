@@ -27,7 +27,7 @@ export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('snav') public sidenav!: MatSidenavContainer;
   private readonly _destroying$ = new Subject<void>();
   private _checkInterval = 1000 * 60 * 60 * 6;  // 6 hours
-
+  private _darkClass = 'dark-theme';
   public loginDisplay = false;
   public accounts: AccountInfo[] = [];
   public photo$!: Observable<SafeUrl>;
@@ -57,7 +57,6 @@ export class AppComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-
     this.docsService.uploads$.pipe(
       distinctUntilChanged((a, b) => {
         if (b > a) {
@@ -67,18 +66,11 @@ export class AppComponent implements OnInit, OnDestroy {
       }
         return a.length === b.length;
       })
-    ).subscribe(
-      _ => console.log(_)
-    )
+    ).subscribe(_ => console.log(_));
 
     this.themingService.theme.subscribe(_ => {
-      const darkClass = 'dark-theme';
-      _ ? this.renderer.addClass(document.body, darkClass) : this.renderer.removeClass(document.body, darkClass)
+      _ ? this.renderer.addClass(document.body, this._darkClass) : this.renderer.removeClass(document.body, this._darkClass)
     });
-    //this.authService.instance.handleRedirectPromise().then(authResult => {
-    //  const account = this.authService.instance.getActiveAccount();
-    //  if (!account) this.checkAndSetActiveAccount();
-    //}).catch(err=> console.log(err));
     this.setLoginDisplay();
     this.checkIfTeams();
     this.observer.observe(['(max-width: 600px)']).subscribe(_ => this.isMobile = _.matches);
@@ -129,7 +121,7 @@ export class AppComponent implements OnInit, OnDestroy {
       tap(_ => {
         if (_ !== undefined) this.checkedTeams = true;
         if (_) this.renderer.addClass(document.body, 'teams');
-    }),
+      })
     ).subscribe();
   }
 
