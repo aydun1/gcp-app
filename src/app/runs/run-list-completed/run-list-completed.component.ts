@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { distinctUntilChanged, filter, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
@@ -18,9 +19,9 @@ import { DeliveryCompletedService } from '../shared/delivery-completed.service';
 })
 export class RunListCompletedComponent implements OnInit {
   private _loadList = false;
-  private _branch!: string;
   private _orderRefreshTrigger$ = new Subject<boolean>();
-
+  public branchFilter = new FormControl('');
+  public typeFilter = new FormControl('');
   public dateFilter = new FormControl(this.getDate());
   public orders$!: Observable<Order[]>;
   public deliveries$!: Observable<Delivery[]>;
@@ -29,8 +30,10 @@ export class RunListCompletedComponent implements OnInit {
   public loading = false;
   public loadingPage = true;
   public empty = true;
-  public displayedColumns = ['date', 'run', 'order', 'customer'];
+  public displayedColumns = ['date', 'run', 'order', 'customer', 'notes'];
   public runName!: string;
+  public states = this.sharedService.branches;
+  public state = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -61,11 +64,11 @@ export class RunListCompletedComponent implements OnInit {
         map(() => _)
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
-      switchMap(_ => state$.pipe(
-        tap(_ => {
-          this._branch = _;
-        }),
-        map(state => !_['branch'] ? {..._, branch: state} : _),
+      switchMap(params => state$.pipe(
+        map(state => {
+          this.state = state;
+          return !params['branch'] ? {...params, branch: state} : {...params};
+        })
       )),
       tap(_ => this.parseParams(_)),
       tap(_ => this._orderRefreshTrigger$.next(true)
@@ -78,7 +81,7 @@ export class RunListCompletedComponent implements OnInit {
   }
 
   getDeliveries(params: Params): Observable<Delivery[]> {
-    return this.deliveryCompletedService.getDeliveries(params['branch']);
+    return this.deliveryCompletedService.getDeliveries(params['branch'], params['type']);
   }
 
   openReceipt(orderNumber: string): void {
@@ -93,10 +96,15 @@ export class RunListCompletedComponent implements OnInit {
   parseParams(params: Params): void {
     if (!params) return;
     const filters: Params = {};
-    if ('run' in params) {
-      //filters['run'] = this.run;
+    if ('branch' in params) {
+      this.branchFilter.patchValue(params['branch']);
     } else {
-      //this.run = '';
+      this.branchFilter.patchValue('');
+    };
+    if ('type' in params) {
+      this.typeFilter.patchValue(params['type']);
+    } else {
+      this.typeFilter.patchValue('');
     }
   }
 
@@ -107,10 +115,17 @@ export class RunListCompletedComponent implements OnInit {
     }
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
-    const sameRun = prev['run'] === curr['run'];
-    const sameRefresh = prev['refresh'] === curr['refresh'];
-    const sameTab = prev['tab'] === curr['tab'];
-    return sameTab && sameRun && sameRefresh && this._loadList;
+    const sameBranch = prev['branch'] === curr['branch'];
+    const sameType = prev['type'] === curr['type'];
+    return sameBranch && sameType && this._loadList;
+  }
+
+  setBranch(branch: MatSelectChange): void {
+    this.router.navigate([], { queryParams: {branch: branch.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  setType(type: MatSelectChange): void {
+    this.router.navigate([], { queryParams: {type: type.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   trackByFn(index: number, item: Delivery): string {

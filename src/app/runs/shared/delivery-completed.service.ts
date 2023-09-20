@@ -22,20 +22,21 @@ export class DeliveryCompletedService {
     private snackBar: MatSnackBar
   ) { }
 
-  private createUrl(branch: string, runName: string | null | undefined = undefined): string {
-    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,CustomerNumber,Customer,Status,OrderNumber,DeliveryDate,DeliveryType)`;
+  private createUrl(branch: string, deliveryType: string, runName: string | null | undefined = undefined): string {
+    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,CustomerNumber,Customer,Status,OrderNumber,DeliveryDate,DeliveryType,Notes)`;
     const runString = runName ? `'${runName}'` : 'null';
     const filters: Array<string> = [];
     filters.push('fields/Status eq \'Archived\'');
     if (branch) filters.push(`fields/Branch eq '${branch}'`);
+    if (deliveryType) filters.push(`fields/DeliveryType eq '${deliveryType}'`);
     if (runName !== undefined ) filters.push(`fields/Title eq ${runString}`);
     if (filters.length > 0) url += `&filter=${filters.join(' and ')}`;
     url += `&orderby=fields/DeliveryDate desc&top=250`;
     return url;
   }
 
-  getDeliveries(branch: string): BehaviorSubject<Delivery[]> {
-    const url = this.createUrl(branch);
+  getDeliveries(branch: string, deliveryType: string): BehaviorSubject<Delivery[]> {
+    const url = this.createUrl(branch, deliveryType);
     this.loading.next(true);
     this.http.get(url).pipe(
       tap(_ => this.loading.next(false)),

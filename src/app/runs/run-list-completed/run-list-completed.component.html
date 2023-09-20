@@ -1,7 +1,25 @@
 <div cdkScrollable class="scroller">
   <div class="outer">
-    <gcp-letterhead class="print-heading">Delivered</gcp-letterhead>
     <h2>Delivered</h2>
+    <gcp-letterhead class="print-heading">Delivered</gcp-letterhead>
+    <div class="options inner">
+      <div class="buttons">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
+          <mat-label>Branch</mat-label>
+          <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
+            <mat-option *ngFor="let s of states" value="{{ s }}">{{ s }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
+          <mat-label>Types</mat-label>
+          <mat-select [formControl]="typeFilter" (selectionChange)="setType($event)">
+            <mat-option>--</mat-option>
+            <mat-option value="Pickups">Pickups</mat-option>
+            <mat-option value="Recycling">Recycling</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
     <mat-card appearance="outlined" *ngIf="deliveries$ | async as groupedDeliveries" class="inner card-container">
       <mat-table #table [dataSource]="groupedDeliveries" [trackBy]="trackByGroupsFn">
         <ng-container matColumnDef="date">
@@ -19,13 +37,20 @@
         <ng-container matColumnDef="order">
           <mat-header-cell *matHeaderCellDef> Order no. </mat-header-cell>
           <mat-cell *matCellDef="let order">
-            <a *ngIf="order.fields.OrderNumber" (click)="openReceipt(order.fields.OrderNumber)" routerLink=".">{{ order.fields.OrderNumber }}</a> {{ order.fields.DeliveryType }}
+            <a *ngIf="order.fields.OrderNumber; else noNumber" (click)="openReceipt(order.fields.OrderNumber)" routerLink=".">{{ order.fields.OrderNumber }}</a>
+            <ng-template #noNumber>{{ order.fields.DeliveryType }}</ng-template>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="customer">
           <mat-header-cell *matHeaderCellDef> Customer </mat-header-cell>
           <mat-cell *matCellDef="let order">
             <span>{{ order.fields.Customer }}</span>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="notes">
+          <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
+          <mat-cell *matCellDef="let order">
+            <span [title]="order.fields.Notes" class="order-notes">{{ order.fields.Notes }}</span>
           </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
