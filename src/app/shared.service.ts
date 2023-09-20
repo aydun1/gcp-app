@@ -169,6 +169,11 @@ export class SharedService {
     return lastValueFrom(request);
   }
 
+  getStock(itemNmbr: string | undefined): Promise<any> {
+    const request = this.http.get<any>(`${environment.gpEndpoint}/inventory/${itemNmbr}/stock`);
+    return lastValueFrom(request);
+  }
+
   sendMail(to: Array<string>, subject: string, body: string, contentType: 'Text' | 'HTML', cc: Array<string> = []): Promise<Object> {
     const url = `${environment.endpoint}/me/sendMail`;
     cc = [...new Set([...cc, this.getOwnEmail(), 'aidan.obrien@gardencityplastics.com'])];

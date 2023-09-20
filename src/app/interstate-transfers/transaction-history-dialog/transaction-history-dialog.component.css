@@ -39,6 +39,10 @@
   text-align: right;
 }
 
+.stock-changed {
+  color: rgb(255, 0, 0);
+}
+
 .grid-heading {
   font-weight: bold;
 }

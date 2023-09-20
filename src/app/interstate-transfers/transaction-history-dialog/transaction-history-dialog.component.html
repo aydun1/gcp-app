@@ -6,6 +6,8 @@
     {{ data.item.itemDesc}}
   </div>
   <h3>National quantities</h3>
+  <p *ngIf="stockChanged" class="stock-changed">Stock for this item has been updated since you loaded the page.<br>
+  The latest values are below.<br>Refresh the page to see the lastest values on the list.</p>
   <div class="availability-grid {{ data.branch }}">
     <div></div>
     <div class="grid-heading cell-top cell-vic">MAIN</div>
@@ -15,19 +17,19 @@
     <div class="grid-heading cell-top cell-wa">WA</div>
     <div class="grid-heading cell-top cell-hea">HEA</div>
     <div class="grid-heading">On hand</div>
-    <div class="cell-vic">{{ data.item.vicOnHand || 0 | number }}</div>
-    <div class="cell-nsw">{{ data.item.nswOnHand || 0 | number }}</div>
-    <div class="cell-qld">{{ data.item.qldOnHand || 0 | number }}</div>
-    <div class="cell-sa">{{ data.item.saOnHand || 0 | number }}</div>
-    <div class="cell-wa">{{ data.item.waOnHand || 0 | number }}</div>
-    <div class="cell-hea">{{ data.item.heaOnHand || 0 | number }}</div>
+    <div class="cell-vic">{{ item.vicOnHand || 0 | number }}</div>
+    <div class="cell-nsw">{{ item.nswOnHand || 0 | number }}</div>
+    <div class="cell-qld">{{ item.qldOnHand || 0 | number }}</div>
+    <div class="cell-sa">{{ item.saOnHand || 0 | number }}</div>
+    <div class="cell-wa">{{ item.waOnHand || 0 | number }}</div>
+    <div class="cell-hea">{{ item.heaOnHand || 0 | number }}</div>
     <div class="grid-heading">Allocated</div>
-    <div class="cell-vic">{{ data.item.vicAlloc || 0 | number }}</div>
-    <div class="cell-nsw">{{ data.item.nswAlloc || 0 | number }}</div>
-    <div class="cell-qld">{{ data.item.qldAlloc || 0 | number }}</div>
-    <div class="cell-sa">{{ data.item.saAlloc || 0 | number }}</div>
-    <div class="cell-wa">{{ data.item.waAlloc || 0 | number }}</div>
-    <div class="cell-hea">{{ data.item.heaAlloc || 0 | number }}</div>
+    <div class="cell-vic">{{ item.vicAlloc || 0 | number }}</div>
+    <div class="cell-nsw">{{ item.nswAlloc || 0 | number }}</div>
+    <div class="cell-qld">{{ item.qldAlloc || 0 | number }}</div>
+    <div class="cell-sa">{{ item.saAlloc || 0 | number }}</div>
+    <div class="cell-wa">{{ item.waAlloc || 0 | number }}</div>
+    <div class="cell-hea">{{ item.heaAlloc || 0 | number }}</div>
     <div class="grid-heading">Sold per month</div>
     <ng-container *ngIf="averages | async as a; else notyet">
       <div class="cell-vic cell-bottom">{{ a.MAIN || 0 | number: '1.0-0' }}</div>
@@ -45,9 +47,17 @@
       <div class="cell-wa cell-bottom">...</div>
       <div class="cell-hea cell-bottom">...</div>
     </ng-template>
-
     <ng-template #notyet><mat-spinner diameter="24"></mat-spinner></ng-template>
   </div>
+
+
+
+
+
+
+
+
+
 
   <h3> {{data.branch}} limits</h3>
   <div class="limits">
