@@ -114,8 +114,12 @@ h2 {
   white-space: nowrap;
 }
 
-.site, .notes {
+.site {
   flex: 1 1 200px;
+}
+
+.notes {
+  white-space: break-spaces;
 }
 
 .actions {
