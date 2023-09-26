@@ -84,6 +84,7 @@ export class RecyclingService {
           return `fields/Status eq '${filters['status']}'`;
         case 'assetType':
           if (filters['assetType'] === 'Cage') return `fields/CageNumber ne null`;
+          if (filters['assetType'] === 'Other') return `fields/CageNumber eq null`;
           return `fields/AssetType eq '${filters['assetType']}'`;
         case 'material':
           return `fields/Material eq '${filters['material']}'`;
