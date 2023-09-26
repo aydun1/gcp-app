@@ -83,17 +83,16 @@ export class RecyclingService {
           if (filters['status'] === 'Local processing') return `fields/ToLocalProcessing ne null`;
           return `fields/Status eq '${filters['status']}'`;
         case 'assetType':
+          if (filters['assetType'] === 'Cage') return `fields/CageNumber ne null`;
           return `fields/AssetType eq '${filters['assetType']}'`;
         case 'material':
           return `fields/Material eq '${filters['material']}'`;
-  
         default:
           return '';
       }
     }).filter(_ => _);
 
-    if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Complete'`);
-    if (!filterKeys.includes('assetType')) parsed.push(`fields/CageNumber ne null`);
+    if (!filterKeys.includes('status')) parsed.unshift(`fields/Status ne 'Complete'`);
 
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
     url += `&$orderby=${filters['sort'] ? filters['sort'] : 'fields/CageNumber'}`;
