@@ -143,7 +143,7 @@
                         <button *ngIf="!d.fields.OrderNumber" mat-icon-button (click)="editDelivery(d)" [disabled]="loading" class="delivery-edit">
                           <mat-icon>edit</mat-icon>
                         </button>
-                        <pre>{{ d.fields.Notes }}</pre>
+                        <pre class="notes">{{ d.fields.Notes }}</pre>
                         <p *ngIf="!delivery.hasOrderNumbers">{{ d.createdBy?.user?.displayName }} | {{ d.createdDateTime | date:'d MMM yyyy' }}</p>
                       </div>
                       <p>
