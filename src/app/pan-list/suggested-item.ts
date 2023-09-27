@@ -44,6 +44,5 @@ export interface SuggestedItem {
   Suggested: number | null;
   UnderStocked?: boolean;
   ToFill?: number;
-  ToFill2?: number;
   Spaces: number;
 }

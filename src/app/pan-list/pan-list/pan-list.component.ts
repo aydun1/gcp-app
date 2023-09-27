@@ -14,6 +14,16 @@ import { PanListService } from '../pan-list.service';
 import { RequestLine } from '../request-line';
 import { SuggestedItem } from '../suggested-item';
 
+interface TransferForm {
+  lines: FormArray<FormGroup<LineForm>>;
+}
+
+interface LineForm {
+  Id: FormControl<number>;
+  ToTransfer: FormControl<number>;
+  Notes: FormControl<string | null>;
+}
+
 @Component({
   selector: 'gcp-pan-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -56,7 +66,7 @@ export class PanListComponent implements OnInit {
   public categories: Array<string> = [];
   public totals!: object;
   public states = this.shared.branches;
-  public transferForm!: FormGroup;
+  public transferForm!: FormGroup<TransferForm>;
   public hideNoStockHea = false;
   public hideNoStockVic = false;
   public hideNoStockNsw = false;
@@ -138,13 +148,15 @@ export class PanListComponent implements OnInit {
       tap(_ => this.loading.next(true)),
       switchMap(_ => this._loadList && this.suggestions ? this.getSuggestedItems(_) : of([] as Array<SuggestedItem>)),
       map(_ => _.map(line => this.makeFormGroup(line, false))),
-      switchMap(_ => this.sortField.pipe(tap(sorter => {
-        this.loading.next(false);
-        //this.lines.clear();
-        const items = _.filter(_ => _.value['QtyRequired'] > 0 || _.value['ToFill'] > 0 || _.value['Suggested'] > 0 || _.value['ToTransfer'] > 0);
-        this.initForm(items.sort((a, b) => (b.get('ToTransfer')?.value > 0) || (a.get(sorter)?.value || 0) < (b.get(sorter)?.value || 0) ? 1 : -1));
-        //this._matTable?.renderRows();
-      }))),
+      switchMap(_ => this.sortField.pipe(
+        tap(sorter => {
+          this.loading.next(false);
+          //this.lines.clear();
+          const items = _.filter(_ => _.value['QtyRequired'] > 0 || _.value['ToFill'] > 0 || _.value['Suggested'] > 0 || (_.value['ToTransfer'] || 0) > 0);
+          this.initForm(items.sort((a, b) => b.value.ToTransfer || b.value.Notes || (a.value[sorter] || 0) < (b.value[sorter] || 0) ? 1 : -1));
+          //this._matTable?.renderRows();
+        })
+      )),
       map(_ => true)
     ).subscribe();
 
@@ -165,14 +177,15 @@ export class PanListComponent implements OnInit {
     ).subscribe();
   }
 
-  initForm(items: FormGroup<any>[]): void {
+  initForm(items: FormGroup<LineForm>[]): void {
     this.transferForm = this.fb.group({
       lines: this.fb.array(items)
     });
     this.transferForm.valueChanges.pipe(
       tap(_ => {
-        this.activeLines.emit(_['lines'].filter((l: SuggestedItem) => l.ToTransfer > 0));
-        this.lineCount.emit(this.getLinesToTransfer(_['lines']));
+        const line = _.lines as SuggestedItem[];
+        this.activeLines.emit(line.filter(l => l.ToTransfer > 0));
+        this.lineCount.emit(this.getLinesToTransfer(line));
       })
     ).subscribe();
   }
@@ -186,7 +199,7 @@ export class PanListComponent implements OnInit {
     this.sortField.next(selected.value);
   }
 
-  calculateSpaces(palQty: number, palHeight: number, toTransfer: number | undefined): number {
+  calculateSpaces(palQty: number | null | undefined, palHeight: number, toTransfer: number | undefined): number {
     return palQty && palQty !== 1 && palQty !== 500 ? ((toTransfer || 0) / palQty * (Math.trunc(palHeight / 1000) / 2)) : 0;
   }
 
@@ -197,49 +210,25 @@ export class PanListComponent implements OnInit {
     const toFill = _[this.max] ? _.QtyAvailable * -1 + _[this.max] : required;
     const suggested =  _.QtyAvailable < _[this.min] ? toFill : 0;
     return {
-      Id: _.Id,
-      ItemDesc: _.ItemDesc,
-      ItemNmbr: _.ItemNmbr,
+      ..._,
       Bin: _.Bin?.replace('QLD BIN', ''),
-      PalletQty: _.PalletQty,
-      PalletHeight: _.PalletHeight,
       PackSize: _.PackSize === _.PalletQty ? '-' : _.PackSize,
-      Vendor: _.Vendor,
-      Category: _.Category,
-      OnHandVIC: _.OnHandVIC,
-      OnHandHEA: _.OnHandHEA,
-      OnHandQLD: _.OnHandQLD,
-      OnHandSA: _.OnHandSA,
-      OnHandWA: _.OnHandWA,
-      OnHandNSW: _.OnHandNSW,
-      AllocHEA: _.AllocHEA,
-      AllocNSW: _.AllocNSW,
-      AllocQLD: _.AllocQLD,
-      AllocSA: _.AllocSA,
-      AllocVIC: _.AllocVIC,
-      AllocWA: _.AllocWA,
       AvailHEA: _.OnHandHEA - _.AllocHEA,
       AvailNSW: _.OnHandNSW - _.AllocNSW,
       AvailQLD: _.OnHandQLD - _.AllocQLD,
       AvailSA: _.OnHandSA - _.AllocSA,
       AvailVIC: _.OnHandVIC - _.AllocVIC,
       AvailWA: _.OnHandWA - _.AllocWA,
-      MinOrderQty: _.MinOrderQty,
-      MaxOrderQty: _.MaxOrderQty,
-      OrderPointQty: _.OrderPointQty,
-      OrderUpToLvl: _.OrderUpToLvl,
       QtyOnHand: qtyOnHand,
       QtyAllocated: qtyAllocated,
-      QtyBackordered: _.QtyBackordered,
       UnderStocked: _.QtyAllocated && _.QtyAllocated > qtyOnHand ? true : false,
       QtyRequired: required || null,
       Suggested: suggested || null,
-      ToFill: toFill,
-      ToFill2: toFill
-    } as SuggestedItem;
+      ToFill: toFill
+    };
   }
 
-  makeFormGroup(line: SuggestedItem, custom: boolean): FormGroup {
+  makeFormGroup(line: SuggestedItem, custom: boolean): FormGroup<LineForm> {
     const origToTransfer =  new FormControl<number | null>(line.ToTransfer || null);
     const toTransfer = new FormControl<number | null>(line.ToTransfer || null);
     const notes = new FormControl<string | null>(line.Notes || null);
@@ -261,27 +250,27 @@ export class PanListComponent implements OnInit {
       debounceTime(500),
       distinctUntilChanged((a_old, a_new) => {
         this.saving.next('saved');
-        const unchangedNotes = a_new['Notes'] === a_old['Notes'];
-        const unchangedQty = a_new['ToTransfer'] === a_old['ToTransfer'];
+        const unchangedNotes = a_new.Notes === a_old.Notes;
+        const unchangedQty = a_new.ToTransfer === a_old.ToTransfer;
         return unchangedNotes && unchangedQty;
       }),
       tap(_ => {
         this.saving.next('saving');
-        const spaces = this.calculateSpaces(_['PalletQty'] as number, _['PalletHeight'] as number, _['ToTransfer'] as number);
+        const spaces = this.calculateSpaces(_.PalletQty, _.PalletHeight as number, _.ToTransfer as number);
         formGroup.patchValue({Spaces: spaces});
       }),
-      switchMap(_ => this.updatePanList(_)),
+      switchMap(_ => this.updatePanList(_ as SuggestedItem)),
       tap(_ => {
-        formGroup.patchValue({origToTransfer: _.fields['Quantity'], origNotes: _.fields['Notes']});
+        formGroup.patchValue({origToTransfer: _.fields.Quantity, origNotes: _.fields.Notes});
         this.saving.next('saved');
       }),
       catchError(e => {
-        formGroup.patchValue({ToTransfer: formGroup.value['origToTransfer'], Notes: formGroup.value['origNotes']});
+        formGroup.patchValue({ToTransfer: formGroup.value.origToTransfer, Notes: formGroup.value.origNotes});
         this.saving.next('error');
         return of();
       })
     ).subscribe();
-    return formGroup;
+    return formGroup as unknown as FormGroup<LineForm>;
   }
 
   getSuggestedItems(params: Params): Observable<SuggestedItem[]> {
@@ -290,11 +279,11 @@ export class PanListComponent implements OnInit {
     return this.panListService.getPanListWithQuantities(branch, this._scheduleId, this._panId).pipe();
   }
 
-  updatePanList(formGroup: any): Observable<RequestLine> {
-    const itemNumber = formGroup['ItemNmbr'] as string;
-    const itemDescription = formGroup['ItemDesc'] as string
-    const quantity = formGroup['ToTransfer'] as number;
-    const notes = formGroup['Notes'] as string;
+  updatePanList(formGroup: SuggestedItem): Observable<RequestLine> {
+    const itemNumber = formGroup.ItemNmbr;
+    const itemDescription = formGroup.ItemDesc;
+    const quantity = formGroup.ToTransfer;
+    const notes = formGroup.Notes;
     if (!itemNumber || !this.autosave) return of();
     return this.panListService.setRequestedQuantities(quantity, notes, itemNumber, itemDescription, this._scheduleId, this._panId);
   }
@@ -390,9 +379,9 @@ export class PanListComponent implements OnInit {
     return lines.reduce((acc, cur) => acc + (cur.QtyRequired || 0), 0);
   }
 
-  getTotalRequestedLines(lines: FormGroup<any>[]): number {
+  getTotalRequestedLines(lines: FormGroup<TransferForm>[]): number {
     if (!lines) return 0;
-    const l: Array<any> = lines;
+    const l: Array<FormGroup<TransferForm>> = lines;
     return l.reduce((acc, cur) => acc + 1, 0);
   }
 
@@ -412,7 +401,7 @@ export class PanListComponent implements OnInit {
     this.saveClicked.emit(this.transferForm);
   }
 
-  trackByFn(index: number, item: FormGroup<any>): number {
+  trackByFn(index: number, item: FormGroup<LineForm>): number | undefined {
     return item.get('Id')?.value;
   }
 
