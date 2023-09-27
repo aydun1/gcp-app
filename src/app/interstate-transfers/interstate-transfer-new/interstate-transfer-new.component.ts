@@ -71,7 +71,7 @@ export class InterstateTransferNewComponent implements OnInit {
     const toState = this.newTransferForm.value.toState || '';
     if (!this.activeLines || this.activeLines.length === 0 || !this.newTransferForm.valid) return;
     this.creating = true;
-    const lines = this.activeLines.filter((_: any) => _.ToTransfer);
+    const lines = this.activeLines.filter(_ => _.ToTransfer);
     this.interstateTransfersService.createInTransitTransfer(fromState, toState, lines).then(_ => {
       this.snackBar.open('Successfully created ITT.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
       this.router.navigate(['transfers/active', _.docId]);
