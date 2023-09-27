@@ -2,11 +2,12 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { SharedService } from '../../../app/shared.service';
+import { SuggestedItem } from '../../pan-list/suggested-item';
 
 interface Data {
   branch: string;
   itemNmbr: string;
-  item: any
+  item: SuggestedItem;
 }
 
 @Component({
@@ -17,7 +18,7 @@ interface Data {
 export class TransactionHistoryDialogComponent implements OnInit {
   public previousOrders!: Promise<Array<any>>;
   public averages!: Promise<any>;
-  public item: any = {};
+  public item: SuggestedItem = {} as SuggestedItem;
   public stockChanged!: boolean;
   constructor(
     public dialogRef: MatDialogRef<TransactionHistoryDialogComponent>,
@@ -32,32 +33,32 @@ export class TransactionHistoryDialogComponent implements OnInit {
     this.averages = this.sharedService.getHistory(this.data.itemNmbr);
     this.sharedService.getStock(this.data.itemNmbr).then(_ => {
       if (
-        this.item['vicOnHand'] !== _['OnHandVIC'] ||
-        this.item['nswOnHand'] !== _['OnHandNSW'] ||
-        this.item['qldOnHand'] !== _['OnHandQLD'] ||
-        this.item['saOnHand'] !== _['OnHandSA'] ||
-        this.item['waOnHand'] !== _['OnHandWA'] ||
-        this.item['heaOnHand'] !== _['OnHandHEA'] ||
-        this.item['vicAlloc'] !== _['AllocVIC'] ||
-        this.item['nswAlloc'] !== _['AllocNSW'] ||
-        this.item['qldAlloc'] !== _['AllocQLD'] ||
-        this.item['saAlloc'] !== _['AllocSA'] ||
-        this.item['waAlloc'] !== _['AllocWA'] ||
-        this.item['heaAlloc'] !== _['AllocHEA']
+        this.item['OnHandVIC'] !== _['OnHandVIC'] ||
+        this.item['OnHandNSW'] !== _['OnHandNSW'] ||
+        this.item['OnHandQLD'] !== _['OnHandQLD'] ||
+        this.item['OnHandSA'] !== _['OnHandSA'] ||
+        this.item['OnHandWA'] !== _['OnHandWA'] ||
+        this.item['OnHandHEA'] !== _['OnHandHEA'] ||
+        this.item['AllocVIC'] !== _['AllocVIC'] ||
+        this.item['AllocNSW'] !== _['AllocNSW'] ||
+        this.item['AllocQLD'] !== _['AllocQLD'] ||
+        this.item['AllocSA'] !== _['AllocSA'] ||
+        this.item['AllocWA'] !== _['AllocWA'] ||
+        this.item['AllocHEA'] !== _['AllocHEA']
       ) this.stockChanged = true;
       
-      this.item['vicOnHand'] = _['OnHandVIC'];
-      this.item['nswOnHand'] = _['OnHandNSW'];
-      this.item['qldOnHand'] = _['OnHandQLD'];
-      this.item['saOnHand'] = _['OnHandSA'];
-      this.item['waOnHand'] = _['OnHandWA'];
-      this.item['heaOnHand'] = _['OnHandHEA'];
-      this.item['vicAlloc'] = _['AllocVIC'];
-      this.item['nswAlloc'] = _['AllocNSW'];
-      this.item['qldAlloc'] = _['AllocQLD'];
-      this.item['saAlloc'] = _['AllocSA'];
-      this.item['waAlloc'] = _['AllocWA'];
-      this.item['heaAlloc'] = _['AllocHEA'];
+      this.item['OnHandVIC'] = _['OnHandVIC'];
+      this.item['OnHandNSW'] = _['OnHandNSW'];
+      this.item['OnHandQLD'] = _['OnHandQLD'];
+      this.item['OnHandSA'] = _['OnHandSA'];
+      this.item['OnHandWA'] = _['OnHandWA'];
+      this.item['OnHandHEA'] = _['OnHandHEA'];
+      this.item['AllocVIC'] = _['AllocVIC'];
+      this.item['AllocNSW'] = _['AllocNSW'];
+      this.item['AllocQLD'] = _['AllocQLD'];
+      this.item['AllocSA'] = _['AllocSA'];
+      this.item['AllocWA'] = _['AllocWA'];
+      this.item['AllocHEA'] = _['AllocHEA'];
     });
   }  
 }

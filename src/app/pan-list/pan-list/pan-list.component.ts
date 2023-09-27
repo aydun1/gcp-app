@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
@@ -358,7 +358,7 @@ export class PanListComponent implements OnInit {
     this.dialog.open(TransactionHistoryDialogComponent, {
       autoFocus: false,
       width: '800px',
-      data: {itemNmbr: item['itemNumber'], branch: this.branchFilter.value, item: item}
+      data: {itemNmbr: item.ItemNmbr, branch: this.branchFilter.value, item: item}
     });
   }
 
