@@ -37,7 +37,7 @@ export class PanListComponent implements OnInit {
   @Input() panNote!: string;
   @Output() saveClicked: EventEmitter<FormGroup> = new EventEmitter();
   @Output() lineCount: EventEmitter<number> = new EventEmitter();
-  @Output() activeLines: EventEmitter<any[]> = new EventEmitter();
+  @Output() activeLines: EventEmitter<SuggestedItem[]> = new EventEmitter();
   @Output() note: EventEmitter<string | null> = new EventEmitter();
 
   private _scheduleId!: string;
@@ -131,7 +131,7 @@ export class PanListComponent implements OnInit {
     ).subscribe();
 
     this.route.queryParams.pipe(
-      startWith({} as {branch: any}),
+      startWith({} as {branch: string}),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
       switchMap(params => state$.pipe(map(state => !params['branch'] ? {...params, branch: state} : params))),
       tap(_ => this.parseParams(_)),
@@ -171,7 +171,7 @@ export class PanListComponent implements OnInit {
     });
     this.transferForm.valueChanges.pipe(
       tap(_ => {
-        this.activeLines.emit(_['lines'].filter((l: any) => l.toTransfer > 0));
+        this.activeLines.emit(_['lines'].filter((l: SuggestedItem) => l.ToTransfer > 0));
         this.lineCount.emit(this.getLinesToTransfer(_['lines']));
       })
     ).subscribe();
