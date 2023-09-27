@@ -261,8 +261,8 @@ export class PanListComponent implements OnInit {
       debounceTime(500),
       distinctUntilChanged((a_old, a_new) => {
         this.saving.next('saved');
-        const unchangedNotes = a_new['notes'] === a_old['notes'];
-        const unchangedQty = a_new['toTransfer'] === a_old['toTransfer'];
+        const unchangedNotes = a_new['Notes'] === a_old['Notes'];
+        const unchangedQty = a_new['ToTransfer'] === a_old['ToTransfer'];
         return unchangedNotes && unchangedQty;
       }),
       tap(_ => {
