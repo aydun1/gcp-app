@@ -61,9 +61,19 @@ h2 {
   margin-left: auto;
 }
 
-.specs {
+.subhead {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
   margin: 0 10px;
-  margin-bottom: 1em;
+}
+
+.specs {
+  margin: 10px 10px 10px 0;
+}
+
+.expansion-controls {
+  margin-left: auto;
 }
 
 .run {
@@ -80,6 +90,7 @@ h2 {
 }
 
 .run-list {
+  margin-top: 0;
   min-height: 48px;
 }
 

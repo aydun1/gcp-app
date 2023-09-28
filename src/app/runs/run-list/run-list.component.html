@@ -101,13 +101,19 @@
                 </button>
               </div>
             </div>
-            <div class="specs">
-              <span>{{groupedDeliveries.deliveries[run.fields.Title] || 0 | number }} {{ groupedDeliveries.deliveries[run.fields.Title] === 1 ? 'delivery' : 'deliveries'}}</span> |
-              <span>{{groupedDeliveries.spaces[run.fields.Title] || 0 | number: '1.1-1'}} {{ groupedDeliveries.spaces[run.fields.Title] === 1 ? 'space' : 'spaces'}}</span> |
-              <span>{{groupedDeliveries.weights[run.fields.Title] || 0 | number: '1.1-1'}} kg</span>
+            <div class="subhead">
+              <div class="specs">
+                <span>{{groupedDeliveries.deliveries[run.fields.Title] || 0 | number }} {{ groupedDeliveries.deliveries[run.fields.Title] === 1 ? 'delivery' : 'deliveries'}}</span> |
+                <span>{{groupedDeliveries.spaces[run.fields.Title] || 0 | number: '1.1-1'}} {{ groupedDeliveries.spaces[run.fields.Title] === 1 ? 'space' : 'spaces'}}</span> |
+                <span>{{groupedDeliveries.weights[run.fields.Title] || 0 | number: '1.1-1'}} kg</span>
+              </div>
+              <div class="expansion-controls">
+                <button mat-button (click)="accordion.closeAll()" class="menu-item" type="button">Collapse All</button>
+                <button mat-button (click)="openAll()" class="menu-item" type="button">Expand All</button>  
+              </div>
             </div>
             <div class="inner run-list" id="delivery-list" cdkDropList (cdkDropListDropped)="moveItem($event)" [cdkDropListEnterPredicate]="allowPredicate">
-              <mat-accordion>
+              <mat-accordion multi #groupedRuns="matAccordion">
                 <mat-expansion-panel *ngFor="let delivery of groupedDeliveries.drops;let i = index;trackBy:trackByGroupsFn" class="delivery" cdkDrag [cdkDragData]="delivery" [cdkDragDisabled]="locked" [expanded]="delivery.id === currentCategory" (opened)="setOpenedDelivery(delivery.id)" (closed)="setClosedDelivery(delivery.id)">
                   <div class="custom-placeholder" *cdkDragPlaceholder></div>
                   <mat-expansion-panel-header>

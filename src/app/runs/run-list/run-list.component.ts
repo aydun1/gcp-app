@@ -1,7 +1,8 @@
 import { CdkDrag, CdkDragDrop } from '@angular/cdk/drag-drop';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatAccordion } from '@angular/material/expansion';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
@@ -32,7 +33,9 @@ export class RunListComponent implements OnInit {
   private _branch!: string;
   private _orderRefreshTrigger$ = new BehaviorSubject<boolean>(true);
   private _firstRuns = ['Pickups', 'Recycling'];
+  private _openingAll = false;
 
+  @ViewChild('groupedRuns') public accordion!: MatAccordion;
   public dateFilter = new FormControl(this.getDate());
   public orders$!: Observable<Order[]>;
   public deliveries$!: Observable<Delivery[]>;
@@ -335,16 +338,25 @@ export class RunListComponent implements OnInit {
     const subfolder = [custNmbr, orderNmbr].filter(_ => _).join('/');
     this.docsService.fileChangeEvent(folder, subfolder, e);
   }
-
-  setOpenedDelivery(key: string) {
-    this.currentCategory = key;
-    this.router.navigate([], {queryParams: {opened: key}, replaceUrl: true, queryParamsHandling: 'merge'});
+  
+  openAll(): void {
+    this._openingAll = true;
+    this.accordion.openAll();
+    this._openingAll = false;
   }
 
-  setClosedDelivery(key: string): void {
-    if (this.currentCategory !== key) return;
-    this.currentCategory = null;
-    this.router.navigate([], {queryParams: {opened: null}, replaceUrl: true, queryParamsHandling: 'merge'});
+  setOpenedDelivery(opened: string) {
+    if (this._openingAll) return;
+    this.currentCategory = opened;
+    this.router.navigate([], {queryParams: {opened}, replaceUrl: true, queryParamsHandling: 'merge'});
+  }
+
+  setClosedDelivery(key: string | null): void {
+    if (this._openingAll) return;
+    if (!key || this.currentCategory === key) {
+      this.currentCategory = null;
+      this.router.navigate([], {queryParams: {opened: null}, replaceUrl: true, queryParamsHandling: 'merge'});
+    }
   }
 
   trackByFn(index: number, item: Delivery): string {
