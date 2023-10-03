@@ -153,7 +153,8 @@ export class PanListComponent implements OnInit {
           this.loading.next(false);
           //this.lines.clear();
           const items = _.filter(_ => _.value['QtyRequired'] > 0 || _.value['ToFill'] > 0 || _.value['Suggested'] > 0 || (_.value['ToTransfer'] || 0) > 0);
-          this.initForm(items.sort((a, b) => b.value.ToTransfer || b.value.Notes || (a.value[sorter] || 0) < (b.value[sorter] || 0) ? 1 : -1));
+          const direction = sorter === 'ItemNmbr' ? 1 : -1;
+          this.initForm(items.sort((a, b) => b.value.ToTransfer || b.value.Notes || (a.value[sorter] || 0) < (b.value[sorter] || 0) ? -direction : direction));
           //this._matTable?.renderRows();
         })
       )),
