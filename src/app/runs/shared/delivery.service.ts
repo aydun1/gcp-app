@@ -246,7 +246,7 @@ export class DeliveryService {
     return lastValueFrom(req);
   }
 
-  createDropPartial(run: string | null, customer: Customer, site: Site | null, address: Address | null, notes: string, order: Partial<Order> = {}): Partial<Delivery['fields']> {
+  createDropPartial(run: string | null, customer: Customer, site: Site | null, address: Address | null, notes: string, customerType: string, order: Partial<Order> = {}): Partial<Delivery['fields']> {
     const runName = run || undefined;
     const fields: Partial<Delivery['fields']> = {
       Title: runName as string,
@@ -257,6 +257,7 @@ export class DeliveryService {
       PostCode: order?.postCode || address?.postcode,
       Address: this.shared.addressFormatter(address || order as Order) || site?.fields.Address || customer.address1_composite
     };
+    if (customerType) fields['CustomerType'] = customerType === 'Vendors' ? 'Vendor' : 'Debtor';
     if (notes) fields['Notes'] = notes;
     if (site) fields['Site'] = site.fields.Title;
     if (order.cntPrsn || address?.contact) fields['ContactPerson'] = order.cntPrsn || address?.contact;
@@ -270,7 +271,6 @@ export class DeliveryService {
   }
 
   addDrop(deliveryFields: Partial<Delivery['fields']>, targetIndex: number | undefined): Observable<Delivery[]> {
-    console.log(deliveryFields['Title'])
     if (['Pickups', 'Recycling'].includes(deliveryFields['Title'] || '')) deliveryFields['DeliveryType'] = deliveryFields['Title'];
     let backup: Delivery[];
     return this._deliveriesSubject$.pipe(
@@ -404,6 +404,14 @@ export class DeliveryService {
     return firstValueFrom(req);
   }
 
+  tickDeliveriesByRun(runName: string, check: boolean): Promise<Delivery[]> {
+    const req = this.getDeliveriesByRun(runName).pipe(
+      map(_ => _.map(run => run.id)),
+      switchMap(_ => this.changeStatuses(_, check ? 'Active' : 'Complete'))
+    );
+    return firstValueFrom(req);
+  }
+
   moveDeliveries(ids: Array<string>, run: string | null, targetRun: string): Promise<Delivery[]> {
     const headers = {'Content-Type': 'application/json'};
     const req = this._deliveriesSubject$.pipe(
@@ -436,7 +444,7 @@ export class DeliveryService {
           const notes = delivery.fields.Notes ? `${delivery.fields.Notes}<br>${message}` : message;
           return this.updateDelivery(delivery.id, notes);
          } else {
-          const delivery = this.createDropPartial(runName, customer, site, null, message);
+          const delivery = this.createDropPartial(runName, customer, site, null, message, 'Debtor');
           return this.addDrop(delivery, 0);
          }
       }),

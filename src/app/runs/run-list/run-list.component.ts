@@ -194,7 +194,7 @@ export class RunListComponent implements OnInit {
     const data = {notes: true, address: true, title: 'Delivery details'};
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().pipe(
-      switchMap(_ => _ ? this.addCustomerDelivery(_.customer, _.site, _.address, _.notes) : of()),
+      switchMap(_ => _ ? this.addCustomerDelivery(_.customer, _.site, _.address, _.notes, _.customerType) : of()),
     ).subscribe(() => {
       this.loading = false;
     });
@@ -235,7 +235,7 @@ export class RunListComponent implements OnInit {
   addOrderDelivery(order: Order, run: string, index?: number): Observable<Delivery[]> {
     this.loading = true;
     const customer = {name: order.custName, custNmbr: order.custNumber} as Customer;
-    const delivery = this.deliveryService.createDropPartial(run, customer, null, null, '', order);
+    const delivery = this.deliveryService.createDropPartial(run, customer, null, null, '', 'Debtor', order);
     return this.deliveryService.addDrop(delivery, index).pipe(
       tap(_ => this.loading = false),
       catchError(_ => {
@@ -246,9 +246,9 @@ export class RunListComponent implements OnInit {
     )
   }
 
-  addCustomerDelivery(customer: Customer, site: Site, address: Address, notes: string): Observable<Delivery[]> {
+  addCustomerDelivery(customer: Customer, site: Site, address: Address, notes: string, customerType: string): Observable<Delivery[]> {
     const run = this.runName;
-    const delivery = this.deliveryService.createDropPartial(run, customer, site, address, notes);
+    const delivery = this.deliveryService.createDropPartial(run, customer, site, address, notes, customerType);
     return this.deliveryService.addDrop(delivery, undefined);
   }
 
@@ -301,6 +301,17 @@ export class RunListComponent implements OnInit {
         this.snackBar.open('Could not archive deliveries', '', {duration: 3000});
         this.loading = false;
       });
+    });
+  }
+
+  checkAllByRun(runName: string, check: boolean): void {
+    this.loading = true;
+    this.deliveryService.tickDeliveriesByRun(runName, check).then( _ => {
+      this.snackBar.open(check ? 'Deliveries checked' : 'Deliveries unchecked', '', {duration: 3000});
+      this.loading = false
+    }).catch(_ => {
+      this.snackBar.open('Could not archive deliveries', '', {duration: 3000});
+      this.loading = false;
     });
   }
 

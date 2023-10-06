@@ -123,17 +123,15 @@ export class CustomerPickerDialogComponent implements OnInit {
       name: this.customerForm.get('customer')?.value?.name || this.customerForm.get('vendor')?.value?.name || '',
       custNmbr: this.customerForm.get('customer')?.value?.custNmbr || this.customerForm.get('vendor')?.value?.vendId || ''
     };
-    if (this.searchType = 'Customers') {
-      const address = this.customerForm.get('address')?.value as Address;
-      const site = this.customerForm.get('site')?.value as Site;
-      const notes = this.customerForm.get('notes')?.value as string;
-      this.dialogRef.close({customer, site, address, notes});
-    }
+    const address = this.customerForm.get('address')?.value as Address;
+    const site = this.customerForm.get('site')?.value as Site;
+    const notes = this.customerForm.get('notes')?.value as string;
+    const customerType = this.searchType;
+    this.dialogRef.close({customer, site, address, notes, customerType});
   }
 
   setSearchType(searchType: string): void {
     this.searchType = searchType;
-    console.log(searchType)
     if (searchType === 'Customers') {
       this.customerForm.get('customer')?.removeValidators(Validators.required);
       this.customerForm.get('vendor')?.clearValidators();

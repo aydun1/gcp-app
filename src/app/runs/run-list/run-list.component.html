@@ -209,6 +209,12 @@
 
 <mat-menu #runMore="matMenu" xPosition="before">
   <ng-template matMenuContent let-run="run">
+    <button mat-menu-item (click)="checkAllByRun(run, true)" type="button">
+      <mat-icon>check_box</mat-icon>Check all
+    </button>
+    <button mat-menu-item (click)="checkAllByRun(run, false)" type="button">
+      <mat-icon>check_box_outline_blank</mat-icon>Uncheck all
+    </button>
     <button *ngIf="isVic === false" mat-menu-item (click)="archiveDeliveriesByRun(run)" type="button">
       <mat-icon>archive</mat-icon>Archive deliveries
     </button>
