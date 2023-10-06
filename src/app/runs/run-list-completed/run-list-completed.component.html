@@ -38,7 +38,10 @@
           <mat-header-cell *matHeaderCellDef> Order no. </mat-header-cell>
           <mat-cell *matCellDef="let order">
             <a *ngIf="order.fields.OrderNumber; else noNumber" (click)="openReceipt(order.fields.OrderNumber)" routerLink=".">{{ order.fields.OrderNumber }}</a>
-            <ng-template #noNumber>{{ order.fields.DeliveryType }}</ng-template>
+            <ng-template #noNumber>
+              <span *ngIf="typeFilter.value === 'Pickups'">{{ order.fields.CustomerType === 'Vendor' ? 'Purchase' : 'Return' || order.fields.DeliveryType }}</span>
+              <span *ngIf="typeFilter.value === 'Recycling'">{{ order.fields.DeliveryType }}</span>
+            </ng-template>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="customer">
@@ -51,6 +54,12 @@
           <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
           <mat-cell *matCellDef="let order">
             <span [title]="order.fields.Notes" class="order-notes">{{ order.fields.Notes }}</span>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="checked">
+          <mat-header-cell *matHeaderCellDef>  </mat-header-cell>
+          <mat-cell *matCellDef="let order">
+              <mat-checkbox color="accent" [checked]="order.fields.PickStatus === 1" (click)="markComplete(order, order.fields.PickStatus)"></mat-checkbox>
           </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

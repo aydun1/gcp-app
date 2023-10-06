@@ -20,6 +20,7 @@ import { DeliveryCompletedService } from '../shared/delivery-completed.service';
 export class RunListCompletedComponent implements OnInit {
   private _loadList = false;
   private _orderRefreshTrigger$ = new Subject<boolean>();
+  private allColumns = ['date', 'run', 'order', 'customer', 'notes', 'checked'];
   public branchFilter = new FormControl('');
   public typeFilter = new FormControl('');
   public dateFilter = new FormControl(this.getDate());
@@ -30,7 +31,7 @@ export class RunListCompletedComponent implements OnInit {
   public loading = false;
   public loadingPage = true;
   public empty = true;
-  public displayedColumns = ['date', 'run', 'order', 'customer', 'notes'];
+  public displayedColumns = [...this.allColumns];
   public runName!: string;
   public states = this.sharedService.branches;
   public state = '';
@@ -54,7 +55,6 @@ export class RunListCompletedComponent implements OnInit {
 
   ngOnInit(): void {
     const state$ = this.sharedService.getBranch();
-    const date$ = this.dateFilter.valueChanges.pipe(startWith(this.dateFilter.value));
 
     this.deliveries$ = this.route.queryParams.pipe(
       startWith({} as Params),
@@ -95,15 +95,16 @@ export class RunListCompletedComponent implements OnInit {
 
   parseParams(params: Params): void {
     if (!params) return;
-    const filters: Params = {};
     if ('branch' in params) {
       this.branchFilter.patchValue(params['branch']);
     } else {
       this.branchFilter.patchValue('');
     };
     if ('type' in params) {
+      this.displayedColumns = [...this.allColumns];
       this.typeFilter.patchValue(params['type']);
     } else {
+      this.displayedColumns = [...this.allColumns].slice(0, -1);
       this.typeFilter.patchValue('');
     }
   }
@@ -118,6 +119,10 @@ export class RunListCompletedComponent implements OnInit {
     const sameBranch = prev['branch'] === curr['branch'];
     const sameType = prev['type'] === curr['type'];
     return sameBranch && sameType && this._loadList;
+  }
+
+  markComplete(delivery: Delivery, currentStatus: number): void {
+    this.deliveryCompletedService.changeStatuses([delivery.id], currentStatus);
   }
 
   setBranch(branch: MatSelectChange): void {

@@ -39,6 +39,10 @@ h2 {
   flex: 1;
 }
 
+.mat-column-checked {
+  flex: 0 1 80px;
+}
+
 .loading-page {
   margin: 16px auto
 }
