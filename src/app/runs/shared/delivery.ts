@@ -1,13 +1,25 @@
+import { Observable } from "rxjs";
+import { Order } from "./order";
+
 export interface Delivery {
   id: string;
   lastModifiedDateTime: string | Date;
-  lastModifiedBy: {
+  lastModifiedBy?: {
     user: {
       displayName: string;
       email: string;
       id: string;
     }
   }
+  createdDateTime: string | Date;
+  createdBy?: {
+    user: {
+      displayName: string;
+      email: string;
+      id: string;
+    }
+  }
+  order: Observable<Order>;
   fields: {
     id: string;
     Title: string;

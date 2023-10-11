@@ -61,9 +61,19 @@ h2 {
   margin-left: auto;
 }
 
-.specs {
+.subhead {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
   margin: 0 10px;
-  margin-bottom: 1em;
+}
+
+.specs {
+  margin: 10px 10px 10px 0;
+}
+
+.expansion-controls {
+  margin-left: auto;
 }
 
 .run {
@@ -80,6 +90,7 @@ h2 {
 }
 
 .run-list {
+  margin-top: 0;
   min-height: 48px;
 }
 
@@ -114,8 +125,12 @@ h2 {
   white-space: nowrap;
 }
 
-.site, .notes {
+.site {
   flex: 1 1 200px;
+}
+
+.notes {
+  white-space: break-spaces;
 }
 
 .actions {
@@ -137,6 +152,42 @@ h2 {
   align-self: center;
 }
 
+.order-note {
+  border-radius: 6px;
+  padding: 0 10px;
+  margin-bottom: 12px;
+  border: 1px solid;
+  position: relative;
+}
+
+.delivery-edit {
+  position: absolute;
+  right: 0;
+}
+
+.note {
+  color: #ffc644;
+  margin-right: -4px;
+}
+
+.run-note-icon {
+  color: #ffc644;
+  margin: -3px 0px 0 -4px;
+}
+
+.has-runs {
+  background: #61a902;
+  width: 10px;
+  height: 10px;
+  margin-right: 4px;
+  margin-bottom: 2px;
+  border-radius: 50%;
+}
+
+.mat-mdc-tab {
+  padding: 0 12px;
+}
+
 .drag {
   color: #999;
   left: 0;
@@ -148,7 +199,7 @@ h2 {
 .mat-mdc-list-item-icon {
   cursor: move;
   margin-left: 6px;
-  margin-right: 22px;
+  margin-right: 0;
   padding: 10px;
 }
 
@@ -212,6 +263,18 @@ h2 {
 .deliveries-card {
   border-radius: 4px;
   border: 1px solid rgba(255,255,255,.2);
+}
+
+.green {
+  color: #4caf50;
+}
+
+.orange {
+  color: orange;
+}
+
+.red {
+  color: red;  
 }
 
 @media (max-width: 1024px) {

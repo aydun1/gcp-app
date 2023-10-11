@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { MsalGuard, MsalInterceptor, MsalGuardConfiguration, MSAL_GUARD_CONFIG, MsalInterceptorConfiguration, MSAL_INTERCEPTOR_CONFIG, MSAL_INSTANCE, MsalService, MsalBroadcastService } from '@azure/msal-angular';
+import { MsalGuard, MsalInterceptor, MsalGuardConfiguration, MSAL_GUARD_CONFIG, MsalInterceptorConfiguration, MSAL_INTERCEPTOR_CONFIG, MSAL_INSTANCE, MsalService, MsalBroadcastService, MsalRedirectComponent } from '@azure/msal-angular';
 import { BrowserCacheLocation, InteractionType, IPublicClientApplication, PublicClientApplication } from '@azure/msal-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -42,8 +42,8 @@ class CustomDateAdapter extends NativeDateAdapter {
 function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
     auth: {
-      clientId: 'bd14159c-f62e-4ffe-bb05-e5a26f9715ed',
-      authority: 'https://login.microsoftonline.com/2dcb64e0-c4e4-4c31-af32-9fe0edff2be9',
+      clientId: environment.msalConfig.auth.clientId,
+      authority: environment.msalConfig.auth.authority,
       redirectUri: environment.redirectUri,
       postLogoutRedirectUri: environment.redirectUri
     },
@@ -116,6 +116,6 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     MsalBroadcastService,
     ThemingService
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent, MsalRedirectComponent]
 })
 export class AppModule { }

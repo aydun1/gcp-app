@@ -1,12 +1,17 @@
 <div class="header">
   <h2 mat-dialog-title>{{ data?.title || 'Pick a customer' }}</h2>
-  <button mat-stroked-button [matMenuTriggerFor]="menu" tabindex="-1">
-    {{ branch || 'All branches'}}
-  </button>
+  <div>
+    <button mat-stroked-button [matMenuTriggerFor]="listMenu" tabindex="-1" class="type-picker" type="button">
+      {{ searchType }}
+    </button>
+    <button mat-stroked-button *ngIf="searchType === 'Customers'" [matMenuTriggerFor]="branchMenu" tabindex="-1" class="branch-picker" type="button">
+      {{ branch || 'All branches'}}
+    </button>
+  </div>
 </div>
 <form [formGroup]="customerForm" (ngSubmit)="pickCustomer()">
   <mat-dialog-content>
-    <mat-form-field color="primary" appearance="outline">
+    <mat-form-field color="primary" appearance="outline" *ngIf="searchType === 'Customers'">
       <mat-label>Customer</mat-label>
       <gcp-customer-control placeholder="Type to search..." formControlName="customer" [territory]="branch"></gcp-customer-control>
       <mat-icon matSuffix>search</mat-icon>
@@ -14,6 +19,16 @@
         Select a customer from the list
       </mat-error>
     </mat-form-field>
+
+    <mat-form-field color="primary" appearance="outline" *ngIf="searchType === 'Vendors'">
+      <mat-label>Vendor</mat-label>
+      <gcp-vendor-control placeholder="Type to search..." formControlName="vendor"></gcp-vendor-control>
+      <mat-icon matSuffix>search</mat-icon>
+      <mat-error *ngIf="customerForm.get('customer')?.hasError('unselected')">
+        Select a vendor from the list
+      </mat-error>
+    </mat-form-field>
+
 
     <mat-form-field *ngIf="data?.address && !this.customerForm.value.site" color="primary" appearance="outline">
       <mat-label>Address</mat-label>
@@ -34,7 +49,7 @@
       <mat-label>Notes</mat-label>
       <textarea matInput formControlName="notes" autocomplete="off" placeholder="Optional notes"></textarea>
     </mat-form-field>
-    <pre *ngIf="data?.address">{{ address || customerForm.value.customer?.address1_composite }}</pre>
+    <pre *ngIf="data?.address">{{ tidyAddress || customerForm.value.customer?.address1_composite }}</pre>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button type="button" mat-button mat-dialog-close tabindex=-1>Cancel</button>
@@ -42,7 +57,15 @@
   </mat-dialog-actions>
 </form>
 
-<mat-menu #menu="matMenu" xPosition="before">
+<mat-menu #listMenu="matMenu" xPosition="before">
+  <ng-template matMenuContent>
+    <button mat-menu-item *ngFor="let st of ['Customers', 'Vendors']" (click)="setSearchType(st)">
+      <span>{{ st }}</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #branchMenu="matMenu" xPosition="before">
   <ng-template matMenuContent>
     <button mat-menu-item *ngFor="let branch of branches" (click)="setBranch(branch)">
       <span>{{ branch }}</span>

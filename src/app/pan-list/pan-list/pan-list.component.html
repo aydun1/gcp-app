@@ -27,6 +27,15 @@
           <mat-option *ngFor="let s of otherStates" [value]="s">{{ s }}</mat-option>
         </mat-select>
       </mat-form-field>
+      <mat-form-field subscriptSizing="dynamic" appearance="outline">
+        <mat-label>Sort by</mat-label>
+        <mat-select (selectionChange)="sortForm($event)">
+          <mat-option value="ItemNmbr">Item</mat-option>
+          <mat-option value="QtyRequired">Required</mat-option>
+          <mat-option value="Suggested">Suggested</mat-option>
+          <mat-option value="ToFill">To fill</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
     <div *ngIf="autosave && (saving | async) as s" class="autosave">Autosave: {{ s }}</div>
   </div>
@@ -44,13 +53,13 @@
         <mat-cell *matCellDef="let line" [formGroup]="line" (click)="openDialog(line.value)" class="opener">
           <div class="details">
             <strong class="link">
-              {{ line.value['itemNumber'] }}
+              {{ line.value['ItemNmbr'] }}
             </strong>
-            <div class="description" [title]="line.value['itemDesc']">
-              {{ line.value['itemDesc'] }}
+            <div class="description" [title]="line.value['ItemDesc']">
+              {{ line.value['ItemDesc'] }}
             </div>
             <div class="description">
-              {{ line.value['packSize'] || '-' }} | {{ line.value['palletQty'] || '-' }}
+              {{ line.value['PackSize'] || '-' }} | {{ line.value['PalletQty'] || '-' }}
             </div>
           </div>
         </mat-cell>
@@ -66,7 +75,7 @@
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
           <div class="load-details right">
-            {{ line.value['qtyAllocated'] | number }}
+            {{ line.value['QtyAllocated'] | number }}
           </div>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
@@ -78,12 +87,12 @@
             <div>
               Required
             </div>
-            <mat-slide-toggle [(ngModel)]="hideUnrequireds" (change)="toggle('required', $event)" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="hideUnrequireds" (change)="toggle('Required', $event)" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
           <div class="load-details right">
-            {{ line.value['qtyRequired'] | number }}
+            {{ line.value['QtyRequired'] | number }}
           </div>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
@@ -100,7 +109,7 @@
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
           <div class="load-details right">
-            {{ line.value['qldOnHand'] | number }}
+            {{ line.value['OnHandQLD'] | number }}
           </div>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
@@ -117,7 +126,7 @@
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
           <div class="load-details right">
-            {{ line.value['saOnHand'] | number }}
+            {{ line.value['OnHandSA'] | number }}
           </div>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
@@ -134,7 +143,7 @@
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
           <div class="load-details right">
-            {{ line.value['heaOnHand'] | number }}
+            {{ line.value['OnHandHEA'] | number }}
           </div>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
@@ -151,7 +160,7 @@
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
           <div class="load-details right">
-            {{ line.value['vicOnHand'] | number }}
+            {{ line.value['OnHandVIC'] | number }}
           </div>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
@@ -168,7 +177,7 @@
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
           <div class="load-details right">
-            {{ line.value['nswOnHand'] | number }}
+            {{ line.value['OnHandNSW'] | number }}
           </div>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
@@ -185,7 +194,7 @@
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
           <div class="load-details right">
-            {{ line.value['waOnHand'] | number }}
+            {{ line.value['OnHandWA'] | number }}
           </div>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
@@ -198,8 +207,8 @@
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
-          <div class="load-details right" [ngClass]="{ understocked: line.value['underStocked'] }">
-            {{ line.value['qtyOnHand'] | number }}
+          <div class="load-details right" [ngClass]="{ understocked: line.value['UnderStocked'] }">
+            {{ line.value['QtyOnHand'] | number }}
           </div>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
@@ -211,12 +220,12 @@
             <div>
               To fill
             </div>
-            <mat-slide-toggle [(ngModel)]="hideNoMaxes" (change)="toggle('tofill', $event)" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="hideNoMaxes" (change)="toggle('Tofill', $event)" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
           <div class="load-details right">
-            {{ line.value['toFill'] | number }}
+            {{ line.value['ToFill'] | number }}
           </div>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
@@ -228,12 +237,12 @@
             <div>
               Suggested
             </div>
-            <mat-slide-toggle [(ngModel)]="hideUnsuggesteds" (change)="toggle('suggested', $event)" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="hideUnsuggesteds" (change)="toggle('Suggested', $event)" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let line">
           <div class="load-details right">
-            {{ line.value['suggested'] | number }}
+            {{ line.value['Suggested'] | number }}
           </div>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
@@ -256,9 +265,9 @@
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let line" [formGroup]="line">
-          <input formControlName="toTransfer" class="transfer-input" type="number" placeholder="0" min="0">
+          <input formControlName="ToTransfer" class="transfer-input" type="number" placeholder="0" min="0">
           <div *ngIf="estimatePallets" class="pallet-count">
-            <span *ngIf="line.value['spaces']">({{ line.value['spaces'] | number: '1.0-1' }})</span>
+            <span *ngIf="line.value['Spaces']">({{ line.value['Spaces'] | number: '1.0-1' }})</span>
           </div>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
@@ -277,7 +286,7 @@
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let line" [formGroup]="line">
-          <textarea formControlName="notes" class="transfer-input" type="text"></textarea>
+          <textarea formControlName="Notes" class="transfer-input" type="text"></textarea>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
         </mat-footer-cell>
@@ -303,18 +312,20 @@
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-header-row *matHeaderRowDef="['another']" class="item-adder"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [class.hidden]="
-      !row.value.custom &&
-      row.value.toTransfer <= 0 &&
-      ((vendorCodes.length > 0 && !vendorCodes.includes(row.value['vendor'])) ||
-      (categories.length > 0 && !categories.includes(row.value['category'])) ||
-      (row.value['heaOnHand'] <= 0 && hideNoStockHea) ||
-      (row.value['vicOnHand'] <= 0 && hideNoStockVic) ||
-      (row.value['nswOnHand'] <= 0 && hideNoStockNsw) ||
-      (row.value['saOnHand'] <= 0 && hideNoStockSa) ||
-      (row.value['waOnHand'] <= 0 && hideNoStockWa) ||
-      (row.value['suggested'] <= 0 && hideUnsuggesteds) ||
-      (!row.value['qtyRequired'] && hideUnrequireds) ||
-      (!row.value['toFill'] && hideNoMaxes))"></mat-row>
+      !row.value.Custom &&
+      row.value.ToTransfer <= 0 &&
+      (
+        (vendorCodes.length > 0 && !vendorCodes.includes(row.value['Vendor'])) ||
+        (categories.length > 0 && !categories.includes(row.value['Category'])) ||
+        (row.value['OnHandHEA'] <= 0 && hideNoStockHea) ||
+        (row.value['OnHandVIC'] <= 0 && hideNoStockVic) ||
+        (row.value['OnHandNSW'] <= 0 && hideNoStockNsw) ||
+        (row.value['OnHandSA'] <= 0 && hideNoStockSa) ||
+        (row.value['OnHandWA'] <= 0 && hideNoStockWa) ||
+        (row.value['Suggested'] <= 0 && hideUnsuggesteds) ||
+        (!row.value['QtyRequired'] && hideUnrequireds) ||
+        (!row.value['ToFill'] && hideNoMaxes)
+      )"></mat-row>
       <mat-footer-row *matFooterRowDef="['loadingDef']" [class.hidden]="(loading | async) === false"></mat-footer-row>
       <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(lines.controls) || !suggestions"></mat-footer-row>
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>

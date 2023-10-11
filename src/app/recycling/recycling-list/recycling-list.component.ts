@@ -21,7 +21,7 @@ export class RecyclingListComponent implements OnInit {
   private lastClicked: number | undefined;
   private shiftHolding = false;
   public cages$!: Observable<Cage[]>;
-  public binFilter = new FormControl<number | null>(null);
+  public cageFilter = new FormControl<number | null>(null);
   public branchFilter = new FormControl('');
   public statusFilter = new FormControl('');
   public assetTypeFilter = new FormControl('');
@@ -35,7 +35,7 @@ export class RecyclingListComponent implements OnInit {
   public choices$: Observable<{Status: choice, AssetType: choice, Branch: choice, Material: choice}> | undefined;
   public materials = this.recyclingService.materials;
   public statusPicked!: boolean;
-  public placeholder = {AssetType: {choice: {choices: []}, name: ''}, Status: {choice: {choices: []}, name: ''},Branch: {choice: {choices: []}, name: ''}};
+  public placeholder = {Status: {choice: {choices: []}, name: ''},Branch: {choice: {choices: []}, name: ''}};
   public selection = new SelectionModel<Cage>(true, []);
   public date = new Date();
 
@@ -85,7 +85,7 @@ export class RecyclingListComponent implements OnInit {
       })
     )
 
-    this.binFilter.valueChanges.pipe(
+    this.cageFilter.valueChanges.pipe(
       debounceTime(200),
       map(_ => _ && _ > 0 ? _ : null),
       tap(_ => this.router.navigate([], { queryParams: {'bin': _}, queryParamsHandling: 'merge', replaceUrl: true}))
@@ -143,10 +143,10 @@ export class RecyclingListComponent implements OnInit {
       this.sortOrder = params['order'];
     }
     if ('bin' in params) {
-      this.binFilter.patchValue(params['bin']);
+      this.cageFilter.patchValue(params['bin']);
       filters['bin'] = params['bin'];
     } else {
-      if (this.binFilter.value) this.binFilter.patchValue(null);
+      if (this.cageFilter.value) this.cageFilter.patchValue(null);
     }
   }
 
@@ -187,8 +187,8 @@ export class RecyclingListComponent implements OnInit {
     this.router.navigate([], { queryParams: {material: material.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  clearBinFilter(): void {
-    this.binFilter.patchValue(null);
+  clearCageFilter(): void {
+    this.cageFilter.patchValue(null);
   }
 
   updatedSelection(cages: Array<Cage>): void {

@@ -243,6 +243,13 @@ gcp-big-button > .link {
   opacity: unset;
 }
 
+.order-note {
+  color: #b57e00;
+}
+
+.dark-theme .order-note {
+  color: #ffc644;
+}
 
 @media (max-width: 800px) {
   .home-cards {
@@ -303,7 +310,8 @@ gcp-big-button > .link {
   .print gcp-pallet-list,
   .print gcp-recycling-list,
   .print gcp-loading-schedule-list,
-  .print gcp-interstate-transfers-active {
+  .print gcp-interstate-transfers-active,
+  .print gcp-pallet-interstate-transfer-list {
     height: 0;
   }
 

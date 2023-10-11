@@ -6,8 +6,10 @@ import { AccountInfo } from '@azure/msal-browser';
 import { BehaviorSubject, lastValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 
 import { environment } from '../environments/environment';
+import { Address } from './customers/shared/address';
+import { Order } from './runs/shared/order';
 
-interface Address {
+interface userAddress {
   state: string;
   suburb: string;
   address: string;
@@ -22,7 +24,7 @@ export class SharedService {
     'HEA': ['HEA'],
     'NSW': ['NSW'],
     'QLD': ['QLD'],
-    'SA': ['SA'],
+    'SA': ['SA', 'MPASA'],
     'VIC': ['ACT', 'MISC', 'NT', 'OTHER', 'TAS', 'VIC', 'CUSTOM', 'CUSTOMBM'],
     'WA': ['WA']
   };
@@ -53,7 +55,8 @@ export class SharedService {
   ]);
 
   public panMap = new Map<string, Array<string>>([
-    ['VIC', ['melb.dispatch@gardencityplastics.com']]
+    ['VIC', ['melb.dispatch@gardencityplastics.com']],
+    ['SA', ['robyn.nichol@gardencityplastics.com']]
   ]);
 
   public offices = [
@@ -102,8 +105,8 @@ export class SharedService {
     )
   }
 
-  getBranchAddress(branch: string): Address {
-    return this.offices.find(o => o.state === branch) || {} as Address;
+  getBranchAddress(branch: string): userAddress {
+    return this.offices.find(o => o.state === branch) || {} as userAddress;
   }
 
   getOwnAddress(): Observable<{street: string, city: string, state: string, postalCode: string}> {
@@ -141,6 +144,12 @@ export class SharedService {
     return encodeURIComponent(name.trim().replace('\'', '\'\'').replace('%2F', '/'));
   }
 
+  addressFormatter(address: Address | Order | null): string {
+    if (!address) return '';
+    const lastLine = [address['city'], address['state'], address['postcode'] || address['Postcode']].filter(_ => _).join(' ');
+    return [address['address1'], address['address2'], address['address3'], lastLine].filter(_ => _).join('\r\n');
+  }
+
   setTitle(pageTitle: string): void {
     const title = `${pageTitle} | IMS`;
     this.titleService.setTitle(title);
@@ -160,9 +169,14 @@ export class SharedService {
     return lastValueFrom(request);
   }
 
-  sendMail(to: Array<string>, subject: string, body: string, contentType: 'Text' | 'HTML'): Promise<Object> {
+  getStock(itemNmbr: string | undefined): Promise<any> {
+    const request = this.http.get<any>(`${environment.gpEndpoint}/inventory/${itemNmbr}/stock`);
+    return lastValueFrom(request);
+  }
+
+  sendMail(to: Array<string>, subject: string, body: string, contentType: 'Text' | 'HTML', cc: Array<string> = []): Promise<Object> {
     const url = `${environment.endpoint}/me/sendMail`;
-    const cc = [...new Set(['aidan.obrien@gardencityplastics.com', this.getOwnEmail()])];
+    cc = [...new Set([...cc, this.getOwnEmail(), 'aidan.obrien@gardencityplastics.com'])];
     const payload  = {
       message: {
         subject: subject,

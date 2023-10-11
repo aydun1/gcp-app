@@ -6,7 +6,7 @@ import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, sta
 
 import { SharedService } from '../../shared.service';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
-import { IntransitTransferLine } from '../shared/intransit-transfer-line';
+import { SuggestedItem } from '../../pan-list/suggested-item';
 
 @Component({
   selector: 'gcp-interstate-transfers-active',
@@ -68,7 +68,7 @@ export class InterstateTransfersActiveComponent implements OnInit {
     )
   }
 
-  makeFormGroup(lines: Array<IntransitTransferLine>): FormGroup<any> {
+  makeFormGroup(lines: Array<any>): FormGroup<any> {
     this.lines.clear();
     let i = -1;
     lines.forEach(_ => 
@@ -94,7 +94,7 @@ export class InterstateTransfersActiveComponent implements OnInit {
     return this.transferForm;
   }
   
-  getInterstateTransfers(params: Params): Observable<IntransitTransferLine[]> {
+  getInterstateTransfers(params: Params): Observable<any[]> {
     const from = params['from'] || '';
     const to = params['to'] || '';
     if (!from) return of([]);

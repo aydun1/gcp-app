@@ -2,11 +2,26 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 import { Delivery } from '../../runs/shared/delivery';
 
+interface groupedDelivery {
+  drops: Array<{
+    id: string;
+    fields: any;
+    value: Delivery[];
+    hasNotes: number;
+    hasOrderNumbers: number;
+    spaces: number;
+    weight: number
+  }>;
+  deliveries: {[key:string]: number};
+  spaces: {[key:string]: number};
+  weights: {[key:string]: number};
+}
+
 @Pipe({
   name: 'groupByCustomerAddress'
 })
 export class GroupByCustomerAddressPipe implements PipeTransform {
-  transform(collection: Array<Delivery> | null): {drops: Array<any>, deliveries: any, spaces: any, weights: any} {
+  transform(collection: Array<Delivery> | null): groupedDelivery {
     if(!collection || collection.length === 0) return {drops: [], deliveries: {}, spaces: {}, weights: {}};
     const groupedCollection = collection.reduce((previous, current)=> {
       if (current['fields']['Address']) {

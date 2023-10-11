@@ -1,10 +1,13 @@
 export interface Address {
   name: string;
+  contact: string;
   addresstypecode: number;
-  line1: string;
-  line2: string;
-  line3: string;
+  address1: string;
+  address2: string;
+  address3: string;
   city: string;
   state: string;
   postcode: string;
+  phoneNumber1: string;
+  phoneNumber2: string;
 }

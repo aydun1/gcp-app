@@ -1,7 +1,8 @@
 import { CdkDrag, CdkDragDrop } from '@angular/cdk/drag-drop';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatAccordion } from '@angular/material/expansion';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
@@ -21,6 +22,7 @@ import { RunManagerDialogComponent } from '../shared/run-manager-dialog/run-mana
 import { OrderLinesDialogComponent } from '../shared/order-lines-dialog/order-lines-dialog.component';
 import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog.component';
 import { DocsService } from '../../shared/docs/docs.service';
+import { Address } from '../../customers/shared/address';
 
 @Component({
   selector: 'gcp-run-list',
@@ -28,24 +30,28 @@ import { DocsService } from '../../shared/docs/docs.service';
   styleUrls: ['./run-list.component.css']
 })
 export class RunListComponent implements OnInit {
-  private _loadList = false;
   private _branch!: string;
   private _orderRefreshTrigger$ = new BehaviorSubject<boolean>(true);
+  private _firstRuns = ['Pickups', 'Recycling'];
+  private _openingAll = false;
 
+  @ViewChild('groupedRuns') public accordion!: MatAccordion;
   public dateFilter = new FormControl(this.getDate());
   public orders$!: Observable<Order[]>;
   public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
   public runs: Array<Run> = [];
-  public otherRuns: Array<Run> = [{fields: {Title: 'Default'}} as Run];
+  public changedRuns!: boolean;
+  public otherRuns: Array<Run> | undefined = [{fields: {Title: 'Default'}} as Run];
   public isVic!: boolean;
   public loading = false;
   public loadingOrders = true;
   public loadingPage = true;
   public empty = true;
-  public locked = false;
+  public locked = this.route.snapshot.queryParamMap.get('tab') !== '0';
   public currentCategory = this.route.snapshot.queryParamMap.get('opened');
   public openedTab = this.firstTab();
+  public populatedRuns: Set<string> = new Set();
 
   get runName(): string {
     return this.openedTab ? this.runs[this.openedTab]?.fields['Title'] : '';
@@ -92,8 +98,14 @@ export class RunListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const state$ = this.sharedService.getBranch();
     const date$ = this.dateFilter.valueChanges.pipe(startWith(this.dateFilter.value));
+    const state$ = this.sharedService.getBranch().pipe(
+      map(_ => this.route.snapshot.queryParamMap.get('branch')?.toLocaleUpperCase() || _),
+      tap(_ => {
+        this._branch = _;
+        this.isVic = _ === 'VIC';
+      })
+    );
 
     this.orders$ = combineLatest([state$, date$, this._orderRefreshTrigger$]).pipe(
       tap(() => this.loadingOrders = true),
@@ -103,19 +115,17 @@ export class RunListComponent implements OnInit {
 
     this.deliveries$ = this.route.queryParams.pipe(
       switchMap(params => state$.pipe(
-        map(state => {
-          this._branch = params['branch'] || state;
-          this.isVic = this._branch === 'VIC';
-          return !params['branch'] ? {...params, branch: state} : params;
-        }),
+        map(branch => {return {...params, branch}})
       )),
       switchMap(_ => this.deliveryService.getRuns(_['branch']).pipe(
         map(runs => {
           const email = this.sharedService.getAccount()?.username?.toLowerCase();
-          this.runs = runs ? [{fields: {Title: '', Branch: this._branch, Owner: ''}} as Run, ...runs.sort((a, b) => this.runSortFn(a, b, email))] : [];
+          const sortedRuns = runs ? [{fields: {Title: '', Branch: _['branch'], Owner: ''}} as Run, ...runs.sort((a, b) => this.runSortFn(a, b, email))] : [];
+          this.changedRuns = this.runs.map(_ => _.id).toString() !== sortedRuns.map(_ => _.id).toString()
+          this.runs = sortedRuns;
           this.otherRuns = runs?.filter(r => r.fields.Title !== this.runName);
           const ownRun = this.runs?.findIndex(_ => _.fields.Owner?.toLocaleLowerCase() === email);
-          if ((this.openedTab === null || this.openedTab === -1) && this.runs.length > 0) {
+          if ((this.openedTab === null || this.openedTab === -1 || !this.route.snapshot.queryParamMap.get('tab')) && this.runs.length > 0) {
             this.openedTab = ownRun === -1 ? 0 : ownRun;
             this.selectTab(this.openedTab);
           }
@@ -123,18 +133,16 @@ export class RunListComponent implements OnInit {
         })
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
-      tap(_ => {
-        this.parseParams(_);
-        this.refreshOrders();
-      }),
-      switchMap(_ => this._loadList ? this.getDeliveries(_) : []),
-      tap(_ => this.loadingPage = false),
+      tap(_ => this.refreshOrders()),
+      switchMap(_ => _['tab'] !== undefined ? this.getDeliveries(_) : []),
+      tap(_ => this.loadingPage = false)
     )
   }
 
   runSortFn(a: Run, b: Run, email: string | undefined) {
     const x = +(b.fields.Owner?.toLocaleLowerCase() === email) - +(a.fields.Owner?.toLocaleLowerCase() === email);
-    return x == 0 ? (b.fields.Title > a.fields.Title ? -1 : 1) : x;
+    const y = +(this._firstRuns.includes(b.fields.Title)) - +(this._firstRuns.includes(a.fields.Title));
+    return x !== 0 ? x : y !== 0 ? y : (b.fields.Title > a.fields.Title ? -1 : 1);
   }
 
   selectTab(tab: number | null): void {
@@ -146,9 +154,19 @@ export class RunListComponent implements OnInit {
   }
 
   getDeliveries(params: Params): Observable<Delivery[]> {
-    const run = this.runName || undefined;
     return this.deliveryService.getDeliveries(params['branch']).pipe(
-      map(_ => _.filter(d => d.fields.Title === run))
+      map(_ => {
+        this.populatedRuns = new Set(_.map(d => d.fields.Title || ''));
+        return _.filter(d => {
+          const run = this.runName || this.runs[this.route.snapshot.queryParamMap.get('tab') || 0]?.fields.Title || undefined;
+          return d.fields.Title === run;
+      }).map(
+        _ => {
+          _['order'] = this.deliveryService.getOrder(2, _.fields.OrderNumber);
+          return _
+        }
+      )
+    })
     )
   }
 
@@ -161,34 +179,22 @@ export class RunListComponent implements OnInit {
     this.dialog.open(OrderLinesDialogComponent, {width: '800px', data, autoFocus: false});
   }
 
-  parseParams(params: Params): void {
-    if (!params) return;
-    const filters: Params = {};
-    if ('run' in params) {
-      //filters['run'] = this.run;
-    } else {
-      //this.run = '';
-    }
-  }
-
   compareQueryStrings(prev: Params, curr: Params): boolean {
-    if (!this._loadList && this.route.children.length === 0) {
-      this._loadList = true;
-      return false;
-    }
     if (!prev || !curr) return true;
     if (this.route.firstChild != null) return true;
     const sameRun = prev['run'] === curr['run'];
     const sameRefresh = prev['refresh'] === curr['refresh'];
     const sameTab = prev['tab'] === curr['tab'];
-    return sameTab && sameRun && sameRefresh && this._loadList;
+    const runsUnchanged = !this.changedRuns
+    this.changedRuns = false;
+    return sameTab && sameRun && sameRefresh && runsUnchanged;
   }
 
   openCustomerPicker(): void {
     const data = {notes: true, address: true, title: 'Delivery details'};
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().pipe(
-      switchMap(_ => _ ? this.addCustomerDelivery(_.customer, _.site, _.address, _.notes) : of()),
+      switchMap(_ => _ ? this.addCustomerDelivery(_.customer, _.site, _.address, _.notes, _.customerType) : of()),
     ).subscribe(() => {
       this.loading = false;
     });
@@ -228,10 +234,8 @@ export class RunListComponent implements OnInit {
 
   addOrderDelivery(order: Order, run: string, index?: number): Observable<Delivery[]> {
     this.loading = true;
-    const fullAddress = [order.address1, order.address2, order.address3].filter(_ => _).join('\r\n') + '\r\n' +
-    [order.city, order.state, order.postCode].filter(_ => _).join(' ');
     const customer = {name: order.custName, custNmbr: order.custNumber} as Customer;
-    const delivery = this.deliveryService.createDropPartial(run, customer, null, fullAddress, '', order);
+    const delivery = this.deliveryService.createDropPartial(run, customer, null, null, '', 'Debtor', order);
     return this.deliveryService.addDrop(delivery, index).pipe(
       tap(_ => this.loading = false),
       catchError(_ => {
@@ -242,9 +246,9 @@ export class RunListComponent implements OnInit {
     )
   }
 
-  addCustomerDelivery(customer: Customer, site: Site, address: string, notes: string): Observable<Delivery[]> {
+  addCustomerDelivery(customer: Customer, site: Site, address: Address, notes: string, customerType: string): Observable<Delivery[]> {
     const run = this.runName;
-    const delivery = this.deliveryService.createDropPartial(run, customer, site, address, notes);
+    const delivery = this.deliveryService.createDropPartial(run, customer, site, address, notes, customerType);
     return this.deliveryService.addDrop(delivery, undefined);
   }
 
@@ -255,6 +259,7 @@ export class RunListComponent implements OnInit {
   }
 
   editDelivery(delivery: Delivery): void {
+    console.log(delivery)
     const data = {delivery};
     const dialogRef = this.dialog.open(DeliveryEditorDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().subscribe();
@@ -299,6 +304,17 @@ export class RunListComponent implements OnInit {
     });
   }
 
+  checkAllByRun(runName: string, check: boolean): void {
+    this.loading = true;
+    this.deliveryService.tickDeliveriesByRun(runName, check).then( _ => {
+      this.snackBar.open(check ? 'Deliveries checked' : 'Deliveries unchecked', '', {duration: 3000});
+      this.loading = false
+    }).catch(_ => {
+      this.snackBar.open('Could not archive deliveries', '', {duration: 3000});
+      this.loading = false;
+    });
+  }
+
   openPalletDialog(name: string, custNmbr: string, orderNmbr: string, site: string): void {
     const customer = {name, custNmbr};
     const data = {customer, site, orderNmbr: orderNmbr || ''};
@@ -333,15 +349,25 @@ export class RunListComponent implements OnInit {
     const subfolder = [custNmbr, orderNmbr].filter(_ => _).join('/');
     this.docsService.fileChangeEvent(folder, subfolder, e);
   }
-
-  setOpenedDelivery(key: string) {
-    this.currentCategory = key;
-    this.router.navigate([], {queryParams: {opened: key}, replaceUrl: true, queryParamsHandling: 'merge'});
+  
+  openAll(): void {
+    this._openingAll = true;
+    this.accordion.openAll();
+    this._openingAll = false;
   }
 
-  setClosedDelivery(key: string): void {
-    if (this.currentCategory !== key) return;
-    this.router.navigate([], {queryParams: {opened: null}, replaceUrl: true, queryParamsHandling: 'merge'});
+  setOpenedDelivery(opened: string) {
+    if (this._openingAll) return;
+    this.currentCategory = opened;
+    this.router.navigate([], {queryParams: {opened}, replaceUrl: true, queryParamsHandling: 'merge'});
+  }
+
+  setClosedDelivery(key: string | null): void {
+    if (this._openingAll) return;
+    if (!key || this.currentCategory === key) {
+      this.currentCategory = null;
+      this.router.navigate([], {queryParams: {opened: null}, replaceUrl: true, queryParamsHandling: 'merge'});
+    }
   }
 
   trackByFn(index: number, item: Delivery): string {

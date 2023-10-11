@@ -12,6 +12,7 @@ import { Site } from '../../../customers/shared/site';
 import { CustomerSiteDialogComponent } from '../../../customers/shared/customer-site-dialog/customer-site-dialog.component';
 import { RunPickerDialogComponent } from '../../../runs/shared/run-picker-dialog/run-picker-dialog.component';
 import { DeliveryService } from '../../../runs/shared/delivery.service';
+import { ConfirmationDialogComponent } from '../../../shared/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'gcp-action-button',
@@ -70,8 +71,8 @@ export class ActionButtonComponent implements OnInit {
   public depots!: Array<Site>;
 
   constructor(
-    private dialog: MatDialog,
     private router: Router,
+    private dialog: MatDialog,
     private sharedService: SharedService,
     private recyclingService: RecyclingService,
     private cutomersService: CustomersService,
@@ -241,9 +242,14 @@ export class ActionButtonComponent implements OnInit {
   }
 
   reset(cages: Array<Cage>): void {
-    this.loading.next(true);
-    const tasks = cages.map(cage => this.recyclingService.resetCage(cage.id));
-    forkJoin(tasks).subscribe(_ => this.onComplete());
+    const data = {title: 'Reset cage', content: ['Are you sure you want to reset this cage?', 'This will clear the current status and customer and set it back to available.']};
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {width: '800px', data});
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (!result) return;
+      this.loading.next(true);
+      const tasks = cages.map(cage => this.recyclingService.resetCage(cage.id));
+      forkJoin(tasks).subscribe(_ => this.onComplete());
+    });
   }
 
   readyForCollection(cages: Array<Cage>): void {

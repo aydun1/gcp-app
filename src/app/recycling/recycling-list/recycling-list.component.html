@@ -25,7 +25,10 @@
         <mat-label>{{ choices.AssetType.name }}</mat-label>
         <mat-select [formControl]="assetTypeFilter" (selectionChange)="setAssetType($event)" panelClass="wide-select">
           <mat-option>All</mat-option>
-          <mat-option *ngFor="let s of choices.AssetType.choice.choices" [value]="s">{{ s }}</mat-option>
+          <mat-option value="Cage">Cage</mat-option>
+          <mat-option value="Cage - Solid (2.5m³)">Cage - Solid</mat-option>
+          <mat-option value="Cage - Folding (2.5m³)">Cage - Folding</mat-option>
+          <mat-option value="Other">Other</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="material">
@@ -35,13 +38,13 @@
           <mat-option *ngFor="let m of materials" [value]="m['code']">{{ m['name'] }}{{ m['code'] }}</mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="bin-filter">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="cage-filter">
         <mat-label>Cage number</mat-label>
-        <input matInput [formControl]="binFilter" min="0" type="number" autocomplete="off" placeholder="Type to search...">
-        <button *ngIf="!binFilter.value" matSuffix mat-icon-button disabled type="button">
+        <input matInput [formControl]="cageFilter" min="0" type="number" autocomplete="off" placeholder="Type to search...">
+        <button *ngIf="!cageFilter.value" matSuffix mat-icon-button disabled type="button">
           <mat-icon>search</mat-icon>
         </button>
-        <button *ngIf="binFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearBinFilter()" type="button">
+        <button *ngIf="cageFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearCageFilter()" type="button">
           <mat-icon>close</mat-icon>
         </button>
       </mat-form-field>
@@ -63,7 +66,7 @@
     <div *ngIf="statusFilter.value"><strong>Status:</strong> {{ statusFilter.value }}</div>
   </div>
 
-  <mat-card appearance="outlined" class="inner">
+  <mat-card appearance="outlined" class="inner table-container">
     <mat-table #table [dataSource]="cages" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
 
       <ng-container matColumnDef="checked">

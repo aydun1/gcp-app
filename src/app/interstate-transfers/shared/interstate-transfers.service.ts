@@ -1,11 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, map, Observable, of, lastValueFrom } from 'rxjs';
+import { BehaviorSubject, map, Observable, lastValueFrom } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { InTransitTransfer } from './intransit-transfer';
-import { IntransitTransferLine } from './intransit-transfer-line';
+import { SuggestedItem } from '../../pan-list/suggested-item';
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +17,8 @@ export class InterstateTransfersService {
     private http: HttpClient
   ) { }
 
-  getInterstateTransfers(from: string, to: string): Observable<IntransitTransferLine[]> {
-    return this.http.get<{lines: IntransitTransferLine[]}>(`${environment.gpEndpoint}/itt?from=${from}&to=${to}`).pipe(
+  getInterstateTransfers(from: string, to: string): Observable<SuggestedItem[]> {
+    return this.http.get<{lines: SuggestedItem[]}>(`${environment.gpEndpoint}/itt?from=${from}&to=${to}`).pipe(
       map(_ => _.lines)
     );
   }
@@ -39,7 +38,7 @@ export class InterstateTransfersService {
     return `ITT${branch[0]}${yy}${mm}${dd}${h}${m}${s}`;
   }
 
-  createInTransitTransfer(fromSite: string | null, toSite: string | null, lines: any): Promise<InTransitTransfer> {
+  createInTransitTransfer(fromSite: string | null, toSite: string | null, lines: SuggestedItem[]): Promise<InTransitTransfer> {
     const payload = {fromSite, toSite, lines};
     const request = this.http.post<InTransitTransfer>(`${environment.gpEndpoint}/itt`, payload);
     return lastValueFrom(request);

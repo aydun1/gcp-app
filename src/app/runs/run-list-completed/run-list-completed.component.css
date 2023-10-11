@@ -18,6 +18,11 @@ h2 {
   overflow-x: auto;
 }
 
+.mat-mdc-form-field {
+  margin-right: 10px;
+  width: 160px;
+}
+
 .mat-column-date {
   flex: 0 1 125px;
 }
@@ -34,8 +39,18 @@ h2 {
   flex: 1;
 }
 
+.mat-column-checked {
+  flex: 0 1 80px;
+}
+
 .loading-page {
   margin: 16px auto
+}
+
+.order-notes {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 @media (max-width: 1024px) {

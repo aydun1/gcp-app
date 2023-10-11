@@ -84,3 +84,26 @@ input {
     flex-direction: column;
   }
 }
+
+@media print {
+  .actions {
+    display: none;
+  }
+
+  .arrow {
+    display: block;
+  }
+
+  .pallets {
+    flex-direction: row;
+  }
+
+  .side-by-side {
+    flex-direction: row;
+  }
+
+  .status {
+    position: fixed;
+    margin-top: 8px;
+  }
+}

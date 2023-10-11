@@ -14,6 +14,7 @@ import { Site } from '../../customers/shared/site';
 import { Delivery } from './delivery';
 import { Run } from './run';
 import { Order } from './order';
+import { Address } from '../../customers/shared/address';
 
 @Injectable({
   providedIn: 'root'
@@ -53,7 +54,7 @@ export class DeliveryService {
   private updateListMulti(res: Array<Delivery>): Observable<Array<Delivery>> {
     return this._deliveriesSubject$.pipe(
       take(1),
-      map(_ => _.map(obj => res.find(o => o.id === obj.id) || obj).sort((a, b) => (a.fields.Sequence > b.fields.Sequence) ? 1 : -1)),
+      map(_ => _.map(obj => res.filter(_ => _).find(o => o.id === obj.id) || obj).sort((a, b) => (a.fields.Sequence > b.fields.Sequence) ? 1 : -1)),
       tap(_ => this._deliveriesSubject$.next(_))
     );
   }
@@ -75,6 +76,8 @@ export class DeliveryService {
       map(deliveries => {
         const runDeliveries = deliveries.filter(_ => runName ? _.fields.Title === runName : !_.fields.Title);
         return runDeliveries.map((cur, i) => {
+          const duplicated = runDeliveries.find(_ => _.fields['OrderNumber'] === cur.fields['OrderNumber'] && _.id < cur.id);
+          if (duplicated && cur.fields['OrderNumber']) return {id: cur.id, index: null, changed: true};
           const prev = runDeliveries[i - 1];
           const next = runDeliveries[i + 1];
           const curIndex = cur.fields.Sequence;
@@ -92,13 +95,14 @@ export class DeliveryService {
     );
   }
 
-  private updateSequence(items: Array<{id: string, index: number}>): Observable<Delivery[]> {
+  private updateSequence(items: Array<{id: string, index: number | null}>): Observable<Delivery[]> {
     const chunkSize = 20;
     const headers = {'Content-Type': 'application/json'};
     const requests = [...Array(Math.ceil(items.length / chunkSize))].map((_, index) => {
       const list = items.slice(index*chunkSize, index*chunkSize+chunkSize);
       const requests = list.map((_, index) => {
         const url = `${environment.siteUrl}/${this._dropsUrl}/items/${_['id']}`;
+        if (_['index'] === null) return {id: index + 1, method: 'DELETE', url, headers};
         const payload = {fields: {Sequence: _['index']}};
         return {id: index + 1, method: 'PATCH', url, headers, body: payload};
       });
@@ -168,22 +172,22 @@ export class DeliveryService {
     return request;
   }
 
-  getRuns(branch: string): Observable<Run[]> {
+  getRuns(branch: string): Observable<Run[] | null> {
     const url = `${this._runsListUrl}/items?expand=fields(select=Title,Owner)&filter=fields/Branch eq '${branch}'&orderby=fields/Title asc`;
-    return this.http.get<{value: Run[]}>(url).pipe(
-      startWith(this._runsSubject$),
-      map(res => res.value as Run[]),
+    this.http.get<{value: Run[]}>(url).pipe(
+      map(res => res.value),
       distinctUntilChanged((prev, curr) => {
         const before = prev?.sort((a, b) => a.fields.Title > b.fields.Title ? -1 : 1).map(_ => _.fields.Title).join('');
         const after = curr?.sort((a, b) => a.fields.Title > b.fields.Title ? -1 : 1).map(_ => _.fields.Title).join('');
         return before === after;
-    }),
+      }),
       tap(_ => this._runsSubject$.next(_)),
       catchError(err => {
         this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         return of([]);
       })
-    );
+    ).subscribe(_ => this._runsSubject$.next(_));
+    return this._runsSubject$;
   }
 
   addRun(run: string, owner: string): Observable<Run> {
@@ -242,26 +246,32 @@ export class DeliveryService {
     return lastValueFrom(req);
   }
 
-
-  createDropPartial(run: string | null, customer: Customer, site: Site | null, address: string, notes: string, order: Partial<Order> = {}): Partial<Delivery['fields']> {
+  createDropPartial(run: string | null, customer: Customer, site: Site | null, address: Address | null, notes: string, customerType: string, order: Partial<Order> = {}): Partial<Delivery['fields']> {
     const runName = run || undefined;
-    const fields: Partial<Delivery['fields']> = {Title: runName as string, Customer: customer.name, CustomerNumber: customer.custNmbr};
+    const fields: Partial<Delivery['fields']> = {
+      Title: runName as string,
+      Customer: customer.name,
+      CustomerNumber: customer.custNmbr,
+      City: order?.city || address?.city,
+      State: order?.state || address?.state,
+      PostCode: order?.postCode || address?.postcode,
+      Address: this.shared.addressFormatter(address || order as Order) || site?.fields.Address || customer.address1_composite
+    };
+    if (customerType) fields['CustomerType'] = customerType === 'Vendors' ? 'Vendor' : 'Debtor';
     if (notes) fields['Notes'] = notes;
     if (site) fields['Site'] = site.fields.Title;
-    if (order.cntPrsn) fields['ContactPerson'] = order.cntPrsn;
-    if (order.city) fields['City'] = order.city;
+    if (order.cntPrsn || address?.contact) fields['ContactPerson'] = order.cntPrsn || address?.contact;
     if (order.reqShipDate) fields['DeliveryDate'] = order.reqShipDate;
-    if (order.state) fields['State'] = order.state;
-    if (order.postCode) fields['PostCode'] = order.postCode;
     if (order.sopNumber) fields['OrderNumber'] = order.sopNumber;
     if (order.palletSpaces) fields['Spaces'] = order.palletSpaces;
     if (order.orderWeight) fields['Weight'] = order.orderWeight;
-    if (order.phoneNumber1 || order.phoneNumber2) fields['PhoneNumber'] = [order.phoneNumber1, order.phoneNumber2].filter(_ => _).join(',');
-    fields['Address'] = address ? address : site && site.fields.Address ? site.fields.Address : customer.address1_composite;
+    if (order.phoneNumber1 || order.phoneNumber2 || address?.phoneNumber1 || address?.phoneNumber2) fields['PhoneNumber'] = [order.phoneNumber1, order.phoneNumber2, address?.phoneNumber1, address?.phoneNumber2].filter(_ => _).join(',');
+    if (order.note) fields['Notes'] = order.note;
     return fields;
   }
 
   addDrop(deliveryFields: Partial<Delivery['fields']>, targetIndex: number | undefined): Observable<Delivery[]> {
+    if (['Pickups', 'Recycling'].includes(deliveryFields['Title'] || '')) deliveryFields['DeliveryType'] = deliveryFields['Title'];
     let backup: Delivery[];
     return this._deliveriesSubject$.pipe(
       take(1),
@@ -364,6 +374,7 @@ export class DeliveryService {
       const requests = list.map((_, index) => {
         const url = `${environment.siteUrl}/${this._dropsUrl}/items/${_}`;
         const payload = {fields: {Status: 'Archived'}};
+        if (!payload['fields']['DeliveryDate']) payload['fields']['DeliveryDate'] = new Date();
         return {id: index + 1, method: 'PATCH', url, headers, body: payload};
       });
       return this.http.post(`${environment.endpoint}/$batch`, {requests}).pipe(
@@ -389,6 +400,14 @@ export class DeliveryService {
     const req = this.getDeliveriesByRun(runName).pipe(
       map(_ => _.map(run => run.id)),
       switchMap(_ => this.archiveDeliveries(_, runName))
+    );
+    return firstValueFrom(req);
+  }
+
+  tickDeliveriesByRun(runName: string, check: boolean): Promise<Delivery[]> {
+    const req = this.getDeliveriesByRun(runName).pipe(
+      map(_ => _.map(run => run.id)),
+      switchMap(_ => this.changeStatuses(_, check ? 'Active' : 'Complete'))
     );
     return firstValueFrom(req);
   }
@@ -421,12 +440,11 @@ export class DeliveryService {
     return combineLatest([delivery, cust]).pipe(
       switchMap(([delivery, customer]) => {
         const site = {fields: {Title: siteName}} as Site;
-        const address = '';
         if (delivery) {
           const notes = delivery.fields.Notes ? `${delivery.fields.Notes}<br>${message}` : message;
           return this.updateDelivery(delivery.id, notes);
          } else {
-          const delivery = this.createDropPartial(runName, customer, site, address, message);
+          const delivery = this.createDropPartial(runName, customer, site, null, message, 'Debtor');
           return this.addDrop(delivery, 0);
          }
       }),

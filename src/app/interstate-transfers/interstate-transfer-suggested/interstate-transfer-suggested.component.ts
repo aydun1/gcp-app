@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
+import { SuggestedItem } from '../../pan-list/suggested-item';
 
 @Component({
   selector: 'gcp-interstate-transfer-suggested',
@@ -18,7 +19,7 @@ export class InterstateTransferSuggestedComponent implements OnInit {
 
   public fromState!: string | null;
   public lineCount!: number;
-  public activeLines!: Array<any>;
+  public activeLines!: Array<SuggestedItem>;
   public creating!: boolean;
 
   public get otherStates(): Array<string> {
@@ -36,18 +37,19 @@ export class InterstateTransferSuggestedComponent implements OnInit {
     this.shared.getBranch().subscribe(_ => this._ownState = _);
   }
 
-  private sendIttEmail(fromState: string | null, toState: string, lines: any[], docId: string): void {
+  private sendIttEmail(fromState: string | null, toState: string, lines: SuggestedItem[], docId: string): void {
     const subject = `Items requested by ${toState}`;
-    const rows = lines.map(_ => `<tr><td>${_.itemNumber}</td><td>${_.toTransfer}</td></tr>`).join('');
+    const rows = lines.map(_ => `<tr><td>${_.ItemNmbr}</td><td>${_.ToTransfer}</td></tr>`).join('');
     const body = `<p><strong>Order no.:</strong> <a href="${environment.redirectUri}/transfers/active/${docId}">${docId}</a></p><table><tr><th>Item number</th><th>Qty Requested</th></tr>${rows}</table>`;
     const to = this.shared.emailMap.get(fromState || '') || [];
-    if (environment.production) this.shared.sendMail(to, subject, body, 'HTML');
+    const cc = this.shared.panMap.get(toState || '') || [];
+    if (environment.production) this.shared.sendMail(to, subject, body, 'HTML', cc);
   }
 
   createTransfer(): void {
     this.creating = true;
     if (!this.activeLines || this.activeLines.length === 0 || !this._ownState || !this.fromState) return;
-    const lines = this.activeLines.filter((_: any) => _.toTransfer);
+    const lines = this.activeLines.filter(_ => _.ToTransfer);
     this.interstateTransfersService.createInTransitTransfer(this.fromState, this._ownState, lines).then(_ => {
       this.snackBar.open('Successfully created ITT.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
       this.router.navigate(['transfers/active', _.docId]);
