@@ -6,6 +6,7 @@ import { Sort } from '@angular/material/sort';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
+import { SharedService } from '../../shared.service';
 import { Cage } from '../shared/cage';
 import { RecyclingService } from '../shared/recycling.service';
 
@@ -43,6 +44,7 @@ export class RecyclingListComponent implements OnInit {
     private el: ElementRef,
     private route: ActivatedRoute,
     private router: Router,
+    private sharedService: SharedService,
     private recyclingService: RecyclingService
   ) { }
 
@@ -62,6 +64,7 @@ export class RecyclingListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const state$ = this.sharedService.getBranch();
     this.getOptions();
     this.cages$ = this.route.queryParams.pipe(
       startWith({} as Params),
@@ -71,6 +74,9 @@ export class RecyclingListComponent implements OnInit {
         map(() => _)
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
+      switchMap(params => state$.pipe(
+        map(branch => params['branch'] === undefined ? {...params, branch} : params)
+      )),
       tap((_: Params) => {
         this.parseParams(_);
         this.weight = 0;

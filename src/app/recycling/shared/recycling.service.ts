@@ -77,6 +77,7 @@ export class RecyclingService {
         case 'bin':
           return `fields/CageNumber eq ${filters['bin']}`;
         case 'branch':
+          if (!filters['branch']) return;
           return `fields/Branch eq '${filters['branch']}'`;
         case 'status':
           if (filters['status'] === 'Polymer') return `fields/Date3 ne null`;
