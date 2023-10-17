@@ -25,10 +25,11 @@ export class GroupByCustomerAddressPipe implements PipeTransform {
     if(!collection || collection.length === 0) return {drops: [], deliveries: {}, spaces: {}, weights: {}};
     const groupedCollection = collection.reduce((previous, current)=> {
       if (current['fields']['Address']) {
-        if (!previous[current['fields']['Address']]) {
-          previous[current['fields']['Address']] = [current];
+        const nameAddress = current['fields']['CustomerNumber'] + current['fields']['Address'];
+        if (!previous[nameAddress]) {
+          previous[nameAddress] = [current];
           } else {
-          previous[current['fields']['Address']].push(current);
+          previous[nameAddress].push(current);
         }
       } else {
         if (!previous[current['fields']['CustomerNumber']]) {
