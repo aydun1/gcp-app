@@ -10,7 +10,8 @@ interface groupedDelivery {
     hasNotes: number;
     hasOrderNumbers: number;
     spaces: number;
-    weight: number
+    weight: number;
+    requestedDate: Date | null;
   }>;
   deliveries: {[key:string]: number};
   spaces: {[key:string]: number};
@@ -47,6 +48,7 @@ export class GroupByCustomerAddressPipe implements PipeTransform {
       const hasOrderNumbers = groups.filter(_ => _.fields.OrderNumber).length;
       const spaces = groups.filter(_ => _.fields.Spaces).reduce((acc, cur) => acc + +cur.fields.Spaces, 0);
       const weight = groups.filter(_ => _.fields.Weight).reduce((acc, cur) => acc + +cur.fields.Weight, 0);
+      const requestedDate = groups.filter(_ => _.fields.RequestedDate).reduce((acc, cur) => acc = !acc ? cur.fields.RequestedDate : cur.fields.RequestedDate < acc ? cur.fields.RequestedDate : acc, null as null | Date);
       const id = groups[0]['id'];
       const fields = {
         CustomerNumber: groups[0]['fields']['CustomerNumber'],
@@ -59,9 +61,10 @@ export class GroupByCustomerAddressPipe implements PipeTransform {
         Status: groups[0]['fields']['Status'],
         Site: groups[0]['fields']['Site'],
         Notes: groups[0]['fields']['Notes'],
-        Title: groups[0]['fields']['Title']
+        Title: groups[0]['fields']['Title'],
+        RequestedDate: groups[0]['fields']['RequestedDate']
       };
-      return {key, id, fields, value: groupedCollection[key], hasOrderNumbers, hasNotes, spaces, weight};
+      return {key, id, fields, value: groupedCollection[key], hasOrderNumbers, hasNotes, spaces, weight, requestedDate};
     });
     const deliveries = drops.reduce((acc, cur) => {
       const title = cur.fields.Title || '';

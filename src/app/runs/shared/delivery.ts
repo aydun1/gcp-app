@@ -31,6 +31,7 @@ export interface Delivery {
     Customer: string;
     CustomerNumber: string;
     DeliveryDate: Date;
+    RequestedDate: Date;
     OrderNumber: string;
     Notes: string;
     Site: string;

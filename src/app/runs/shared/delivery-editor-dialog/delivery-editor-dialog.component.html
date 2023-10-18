@@ -7,9 +7,15 @@
     <mat-label>Notes</mat-label>
     <textarea matInput formControlName="notes" autocomplete="off" placeholder="Optional notes" class="notes"></textarea>
   </mat-form-field>
-    <mat-form-field color="primary" appearance="outline">
+  <mat-form-field color="primary" appearance="outline">
     <mat-label>Address</mat-label>
     <textarea matInput formControlName="address" autocomplete="off" placeholder="Delivery address"></textarea>
+  </mat-form-field>
+  <mat-form-field color="primary" appearance="outline">
+    <mat-label>Requested date</mat-label>
+    <input matInput [matDatepicker]="picker1" formControlName="requested" title="Requested delivery date">
+    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+    <mat-datepicker  #picker1></mat-datepicker>
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

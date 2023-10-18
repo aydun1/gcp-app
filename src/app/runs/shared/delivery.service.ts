@@ -40,7 +40,7 @@ export class DeliveryService {
   ) { }
 
   private createUrl(branch: string, runName: string | null | undefined = undefined): string {
-    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,ContactPerson,Address,PhoneNumber,CustomerNumber,Customer,Status,OrderNumber,Notes,Spaces,Weight)`;
+    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,ContactPerson,Address,PhoneNumber,CustomerNumber,Customer,Status,OrderNumber,Notes,Spaces,Weight,RequestedDate)`;
     const runString = runName ? `'${runName}'` : 'null';
     const filters: Array<string> = [];
     filters.push('fields/Status ne \'Archived\'');
@@ -338,8 +338,8 @@ export class DeliveryService {
     return lastValueFrom(req);
   }
 
-  updateDelivery(id: string, notes: string): Promise<Delivery[]> {
-    const fields = {Notes: notes};
+  updateDelivery(id: string, notes: string, requestedDate: Date | null | undefined): Promise<Delivery[]> {
+    const fields = {Notes: notes, RequestedDate: requestedDate || null};
     const req = this.http.patch<Delivery>(`${this._deliveryListUrl}/items('${id}')`, {fields}).pipe(
       switchMap(_ => this.updateListMulti([_]))
     );
@@ -442,7 +442,7 @@ export class DeliveryService {
         const site = {fields: {Title: siteName}} as Site;
         if (delivery) {
           const notes = delivery.fields.Notes ? `${delivery.fields.Notes}<br>${message}` : message;
-          return this.updateDelivery(delivery.id, notes);
+          return this.updateDelivery(delivery.id, notes, null);
          } else {
           const delivery = this.createDropPartial(runName, customer, site, null, message, 'Debtor');
           return this.addDrop(delivery, 0);

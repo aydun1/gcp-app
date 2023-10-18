@@ -130,6 +130,7 @@
                       <mat-panel-description>
                         <span *ngIf="delivery.hasNotes" class="run-note-icon">📝</span>
                         {{ delivery.fields.City ? delivery.fields.City + ', ' + delivery.fields.PostCode : delivery.fields.Address }}
+                        <span *ngIf="delivery.requestedDate" class="request-date">{{ delivery.requestedDate | date: 'dd/MM/yyyy' }}</span>
                       </mat-panel-description>
                     </div>
                     <div class="status">
@@ -150,7 +151,8 @@
                           <mat-icon>edit</mat-icon>
                         </button>
                         <pre class="notes">{{ d.fields.Notes }}</pre>
-                        <p *ngIf="!delivery.hasOrderNumbers">{{ d.createdBy?.user?.displayName }} | {{ d.createdDateTime | date:'d MMM yyyy' }}</p>
+                        <p *ngIf="delivery.requestedDate" class="request-date">Requested delivery: {{ delivery.requestedDate | date: 'd MMM yyyy' }}</p>
+                        <p *ngIf="!delivery.hasOrderNumbers">- {{ d.createdBy?.user?.displayName }} | {{ d.createdDateTime | date:'d MMM yyyy' }}</p>
                       </div>
                       <p>
                       </p>

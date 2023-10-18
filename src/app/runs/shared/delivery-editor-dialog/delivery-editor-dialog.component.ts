@@ -9,6 +9,7 @@ import { DeliveryService } from '../delivery.service';
 interface DeliveryForm {
   address: FormControl<string | null>;
   notes: FormControl<string | null>;
+  requested: FormControl<Date | null>;
 }
 
 @Component({
@@ -31,13 +32,15 @@ export class DeliveryEditorDialogComponent implements OnInit {
     this.deliveryForm = this.fb.group({
       address: this.data.delivery.fields.Address,
       notes: this.data.delivery.fields.Notes,
+      requested: this.data.delivery.fields.RequestedDate
     });
   }
 
   updateDelivery(): void {
     this.loading = true;
     const notes = this.deliveryForm.value.notes || '';
-    const action = this.deliveryService.updateDelivery(this.data.delivery.id, notes)
+    const requestedDate = this.deliveryForm.value.requested;
+    const action = this.deliveryService.updateDelivery(this.data.delivery.id, notes, requestedDate);
     action.then(() =>
       this.dialogRef.close()
     ).catch(err => {
