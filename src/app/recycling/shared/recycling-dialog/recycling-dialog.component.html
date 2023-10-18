@@ -153,8 +153,9 @@
                 <span>Site</span>            
               </mat-list-item>
               <gcp-cage-notes [cage]="cage" (updated)="getCagesWithCustomer()"></gcp-cage-notes>
-              <div mat-subheader>Weights</div>
+              <div mat-subheader>Weights and material</div>
               <gcp-cage-weights [cage]="cage" (updated)="getCagesWithCustomer()"></gcp-cage-weights>
+              <gcp-cage-material [cage]="cage" (updated)="getCagesWithCustomer()"></gcp-cage-material>
             </mat-list>
             <gcp-cage-details [cage]="cage"></gcp-cage-details>
           </mat-expansion-panel>

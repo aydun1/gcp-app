@@ -1,0 +1,19 @@
+<form (ngSubmit)="setCageMaterial(cage.id)">
+  <mat-list-item>
+    <mat-icon matListItemIcon>recycling</mat-icon>
+    <span *ngIf="editCageMaterial" matListItemTitle>
+      <select [(ngModel)]="cageMaterial" [ngModelOptions]="{standalone: true}" type="text" placeholder="Material">
+        <option *ngFor="let material of materials" [value]="material.code">{{ material.code }} ({{ material.name }})</option>
+      </select>
+    </span>
+    <span *ngIf="!editCageMaterial" matListItemTitle>{{ cageMaterial }}</span>
+    <span>Material</span>
+    <ng-container matListItemMeta *ngIf="!editCageMaterial">
+      <button mat-icon-button type="button" (click)="editCageMaterial = true"><mat-icon>edit</mat-icon></button>
+    </ng-container>
+    <ng-container matListItemMeta *ngIf="editCageMaterial">
+      <button mat-icon-button type="button" (click)="cancelEditCageMaterial()"><mat-icon>close</mat-icon></button>
+      <button mat-icon-button type="submit"><mat-icon>check</mat-icon></button>
+    </ng-container>
+  </mat-list-item>  
+</form>

@@ -49,8 +49,9 @@
         </mat-nav-list>
         <mat-list>
           <gcp-cage-notes [cage]="cage" (updated)="getCage()"></gcp-cage-notes>
-          <div mat-subheader>Weights</div>
+          <div mat-subheader>Weights and material</div>
           <gcp-cage-weights [cage]="cage" (updated)="getCage()"></gcp-cage-weights>
+          <gcp-cage-material [cage]="cage" (updated)="getCage()"></gcp-cage-material>
         </mat-list>
         <gcp-cage-details [cage]="cage" (updated)="getCage()"></gcp-cage-details>
       </mat-card-content>
