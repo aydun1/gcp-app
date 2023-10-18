@@ -60,10 +60,10 @@ export class ActionButtonComponent implements OnInit {
     return statuses.size === 1 ? first : undefined;
   }
 
-  get cageMaterial(): number | undefined {
+  get cageMaterial(): number | null {
     const statuses = new Set(this.cages.map(_ => _?.fields.Material));
     const [first] = statuses;
-    return statuses.size === 1 ? first : undefined;
+    return statuses.size === 1 ? first : null;
   }
 
   public dialogRef!: MatDialogRef<CustomerPickerDialogComponent, any>;

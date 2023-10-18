@@ -21,7 +21,7 @@ export class CageMaterialComponent {
   @Output() updated = new EventEmitter<boolean>();
 
   public editCageMaterial!: boolean;
-  public cageMaterial!: number;
+  public cageMaterial!: number | null;
   public materials = this.recyclingService.materials;
 
   constructor(
@@ -31,7 +31,7 @@ export class CageMaterialComponent {
   setCageMaterial(id: string): void {
     this.recyclingService.setMaterial(id, this.cageMaterial).pipe(
       tap(() => {
-        this.cage.fields.Material = this.cageMaterial;
+        this.cage.fields.Material = this.cageMaterial || null;
         this.updated.next(true);
         this.editCageMaterial = false;
       })

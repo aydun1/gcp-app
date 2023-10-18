@@ -22,7 +22,7 @@ export interface Cage {
     CustomerNumber: string | null;
     Customer: string | null;
     Site: string | null;
-    Material: number,
+    Material: number | null,
     Notes: string;
     id: string;
     Modified: string | Date;

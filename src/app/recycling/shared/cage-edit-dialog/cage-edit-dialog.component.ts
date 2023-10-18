@@ -48,7 +48,7 @@ export class CageEditDialogComponent implements OnInit {
     const notes = this.collectorForm.get('reference')?.value || '';
     const cageWeight = +(this.collectorForm.get('cageWeight')?.value || 0);
     const grossWeight = +(this.collectorForm.get('grossWeight')?.value || 0);
-    const material = +(this.collectorForm.get('material')?.value || 0);
+    const material = +(this.collectorForm.get('material')?.value || 0) || null;
     this.recyclingService.setCageDetails(this.data.cages[0].id, cageWeight, grossWeight, notes, material).subscribe(() => {
       this.snackBar.open('Updated cage details', '', {duration: 3000});
       this.closeDialog();

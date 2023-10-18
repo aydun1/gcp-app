@@ -19,7 +19,7 @@
         <mat-label>Material</mat-label>
         <mat-select formControlName="material">
           <mat-option>--</mat-option>
-          <mat-option *ngFor="let m of materialTypes" [value]="m.code">{{ m.name }}</mat-option>
+          <mat-option *ngFor="let m of materialTypes" [value]="m.code">{{ m.code }} ({{ m.name }})</mat-option>
         </mat-select>
       </mat-form-field>
   </mat-dialog-content>

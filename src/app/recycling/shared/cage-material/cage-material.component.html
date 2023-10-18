@@ -3,6 +3,7 @@
     <mat-icon matListItemIcon>recycling</mat-icon>
     <span *ngIf="editCageMaterial" matListItemTitle>
       <select [(ngModel)]="cageMaterial" [ngModelOptions]="{standalone: true}" type="text" placeholder="Material">
+        <option value="">--</option>
         <option *ngFor="let material of materials" [value]="material.code">{{ material.code }} ({{ material.name }})</option>
       </select>
     </span>
