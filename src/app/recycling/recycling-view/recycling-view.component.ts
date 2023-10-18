@@ -44,7 +44,7 @@ export class RecyclingViewComponent implements OnDestroy, OnInit {
         this.cageId = _.fields.id;
         this.cageNumber = _.fields.CageNumber;
         this.isCage = _.fields.AssetType.startsWith('Cage');
-        this.name = this.isCage ? `${_.fields.AssetTypeClean} ${_.fields.CageNumber}` : _.fields.AssetType;
+        this.name = this.isCage ? 'Cage' : _.fields.AssetType;
         this.getCageHistory(_.fields.CageNumber, _.fields.AssetType);
         this.loading.next(false);
       }),

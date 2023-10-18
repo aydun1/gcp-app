@@ -3,7 +3,7 @@
     <mat-icon>arrow_back</mat-icon>
   </button>
   <ng-container>
-    <div class="top-title">{{name || 'Cage'}}</div>
+    <div class="top-title">{{ name }}</div>
   </ng-container>
   <a *ngIf="getPrev() | async as n" mat-icon-button [routerLink]="['..', n]" [replaceUrl]="true" matTooltip="Previous cage"><mat-icon>chevron_left</mat-icon></a>
   <a *ngIf="getNext() | async as n" mat-icon-button [routerLink]="['..', n]" [replaceUrl]="true" matTooltip="Next cage"><mat-icon>chevron_right</mat-icon></a>
@@ -16,6 +16,11 @@
       <gcp-action-button [cages]="[cage]" (updated)="getCage()" (loading)="updating($event)" (dehired)="goBack()" class="actions"></gcp-action-button>
     </div>
     <mat-card appearance="outlined">
+      <mat-card-header *ngIf="isCage">
+        <mat-card-title>
+          {{ cage.fields.AssetTypeClean}} {{ cage.fields.CageNumber }}
+        </mat-card-title>
+      </mat-card-header>
       <mat-card-content>
         <img *ngIf="cage['material'].image" class="material invert" [src]="'assets/' + cage['material'].image">
         <mat-list>
@@ -43,9 +48,9 @@
         </mat-nav-list>
         <mat-list>
           <gcp-cage-notes [cage]="cage" (updated)="getCage()"></gcp-cage-notes>
-          <div mat-subheader>Weights and material</div>
-          <gcp-cage-weights [cage]="cage" (updated)="getCage()"></gcp-cage-weights>
           <gcp-cage-material [cage]="cage" (updated)="getCage()"></gcp-cage-material>
+          <div mat-subheader>Weights</div>
+          <gcp-cage-weights [cage]="cage" (updated)="getCage()"></gcp-cage-weights>
         </mat-list>
         <gcp-cage-details [cage]="cage" (updated)="getCage()"></gcp-cage-details>
       </mat-card-content>
