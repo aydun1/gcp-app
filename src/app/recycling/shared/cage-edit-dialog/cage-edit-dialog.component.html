@@ -1,0 +1,33 @@
+<h2 mat-dialog-title>Edit cage details</h2>
+<form [formGroup]="collectorForm" (ngSubmit)="updateCage()">
+  <mat-dialog-content>
+      <mat-form-field appearance="fill">
+        <mat-label>Reference</mat-label>
+        <input matInput type="text" formControlName="reference" autocomplete="off" placeholder="Reference">
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Cage weight</mat-label>
+        <input matInput type="number" formControlName="cageWeight" autocomplete="off" placeholder="The container weight">
+        <span matTextSuffix>kg</span>
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Gross weight</mat-label>
+        <input matInput type="number" formControlName="grossWeight" autocomplete="off" placeholder="The total weight">
+        <span matTextSuffix>kg</span>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Material</mat-label>
+        <mat-select formControlName="material">
+          <mat-option>--</mat-option>
+          <mat-option *ngFor="let m of materialTypes" [value]="m.code">{{ m.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <div class="buttons">
+      <button type="button" mat-button [disabled]="sending" (click)="closeDialog()" tabindex=-1>Cancel</button>
+      <button type="submit" mat-raised-button [disabled]="sending" color="primary">Save</button>  
+    </div>
+  </mat-dialog-actions>
+</form>
+<button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>

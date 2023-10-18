@@ -364,6 +364,11 @@ export class RecyclingService {
     );
   }
 
+  setCageDetails(id: string, cageWeight: number, grossWeight: number, notes: string, material: number): Observable<Cage> {
+    const payload = {fields: {Notes: notes, CageWeight: cageWeight, GrossWeight: grossWeight, Material: material}};
+    return this.updateStatus(id, payload);
+  }
+
   setMaterial(id: string, material: number): Observable<Cage> {
     const payload = {fields: {Material: material}};
     return this.updateStatus(id, payload).pipe(

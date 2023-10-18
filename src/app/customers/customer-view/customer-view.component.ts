@@ -176,20 +176,17 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
 
   openRecyclingDocketDialog(customer: Customer): void {
     const data = {customer, addresses: this.addresses, sites: this.sites, site: this.site};
-    const dialogRef = this.dialog.open(RecyclingDocketDialogComponent, {panelClass: 'printable', width: '800px', data, autoFocus: false});
-    dialogRef.afterClosed().subscribe();
+    this.dialog.open(RecyclingDocketDialogComponent, {panelClass: 'printable', width: '800px', data, autoFocus: false});
   }
 
   openPalletHistory(customer: Customer, pallet = ''): void {
     const data = {customer, pallet, addresses: this.addresses, site: this.site};
-    const dialogRef = this.dialog.open(PalletCustomerListDialogComponent, {panelClass: 'printable', width: '800px', data, autoFocus: false});
-    dialogRef.afterClosed().subscribe();
+    this.dialog.open(PalletCustomerListDialogComponent, {panelClass: 'printable', width: '800px', data, autoFocus: false});
   }
 
   openCageHistory(customer: Customer): void {
     const data = {customer, addresses: this.addresses, site: this.site};
-    const dialogRef = this.dialog.open(RecyclingCustomerListDialogComponent, {panelClass: 'printable', width: '800px', data, autoFocus: false});
-    dialogRef.afterClosed().subscribe();
+    this.dialog.open(RecyclingCustomerListDialogComponent, {panelClass: 'printable', width: '800px', data, autoFocus: false});
   }
 
   setSite(site: string | null): void {

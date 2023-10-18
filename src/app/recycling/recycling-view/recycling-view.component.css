@@ -7,10 +7,15 @@ input {
   margin: 10px;
 }
 
+.loading-circ {
+  position: absolute;
+}
+
 .header {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
 .top-title {

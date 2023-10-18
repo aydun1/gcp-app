@@ -13,6 +13,7 @@ import { CustomerSiteDialogComponent } from '../../../customers/shared/customer-
 import { RunPickerDialogComponent } from '../../../runs/shared/run-picker-dialog/run-picker-dialog.component';
 import { DeliveryService } from '../../../runs/shared/delivery.service';
 import { ConfirmationDialogComponent } from '../../../shared/confirmation-dialog/confirmation-dialog.component';
+import { CageEditDialogComponent } from '../cage-edit-dialog/cage-edit-dialog.component';
 
 @Component({
   selector: 'gcp-action-button',
@@ -199,7 +200,7 @@ export class ActionButtonComponent implements OnInit {
     });
   }
 
-  setBranch(cages: Array<Cage>, branch: string) {
+  setBranch(cages: Array<Cage>, branch: string): void {
     this.loading.next(true);
     const tasks = cages.map(_ => this.recyclingService.setBranch(_.id, branch));
     forkJoin(tasks).subscribe(() => {
@@ -208,7 +209,13 @@ export class ActionButtonComponent implements OnInit {
     });
   }
 
-  setMaterial(cages: Array<Cage>, material: {code: number}) {
+  openEditDialog(cages: Array<Cage>): void {
+    const data = {cages: cages};
+    const dialogRef = this.dialog.open(CageEditDialogComponent, {width: '600px', data});
+    dialogRef.afterClosed().subscribe(() => this.onComplete());
+  }
+
+  setMaterial(cages: Array<Cage>, material: {code: number}): void {
     this.loading.next(true);
     const tasks = cages.map(_ => this.recyclingService.setMaterial(_.id, material['code']));
     forkJoin(tasks).subscribe(() => {
@@ -217,7 +224,7 @@ export class ActionButtonComponent implements OnInit {
     });
   }
 
-  setDepot(cages: Array<Cage>, depot: string) {
+  setDepot(cages: Array<Cage>, depot: string): void {
     this.loading.next(true);
     const tasks = cages.map(cage => this.recyclingService.setDepot(cage.id, depot));
     forkJoin(tasks).subscribe(() => this.onComplete());

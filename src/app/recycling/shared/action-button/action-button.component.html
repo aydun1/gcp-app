@@ -10,6 +10,10 @@
 <button mat-icon-button type="button" [matMenuTriggerFor]="menu" class="menu" *ngIf="cages.length > 0 && !hasComplete"><mat-icon>more_vert</mat-icon></button>
 <mat-menu #menu="matMenu" xPosition="before">
   <ng-template matMenuContent>
+    <button type="button" mat-menu-item (click)="openEditDialog(cages)" [disabled]="cages.length > 1">
+      <mat-icon>edit</mat-icon>
+      <span>Edit</span>
+    </button>
     <button type="button" mat-menu-item (click)="undo(cages)" [disabled]="statusId === 0">
       <mat-icon>undo</mat-icon>
       <span>Undo</span>

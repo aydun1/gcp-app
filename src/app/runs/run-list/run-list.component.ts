@@ -203,8 +203,7 @@ export class RunListComponent implements OnInit {
   openRunManager(): void {
     const data = {notes: true, address: true, runs: this.runs.filter(_ => _.fields.Title !== '')};
     const dialogRef = this.dialog.open(RunManagerDialogComponent, {width: '600px', data, autoFocus: false});
-    dialogRef.afterClosed().pipe(
-    ).subscribe((runName: string) => {
+    dialogRef.afterClosed().subscribe((runName: string) => {
       const runIndex = this.runs.findIndex(_ => _.fields.Title === runName);
       this.selectTab(runIndex);
     })
@@ -261,8 +260,7 @@ export class RunListComponent implements OnInit {
   editDelivery(delivery: Delivery): void {
     console.log(delivery)
     const data = {delivery};
-    const dialogRef = this.dialog.open(DeliveryEditorDialogComponent, {width: '600px', data});
-    dialogRef.afterClosed().subscribe();
+    this.dialog.open(DeliveryEditorDialogComponent, {width: '600px', data});
   }
 
   deleteDeliveries(deliveries: Array<Delivery>, runName: string): void {

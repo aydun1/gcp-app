@@ -1,0 +1,88 @@
+.header {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  margin-right: 16px;
+}
+
+.mat-mdc-dialog-content {
+  padding-top: 0;
+}
+
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-accordion {
+  display: block;
+  margin: 10px 0;
+}
+
+.mat-expansion-panel-header-title, .mat-expansion-panel-header-description {
+  flex: 265px;
+}
+
+.buttons {
+  align-items: center;
+  display: flex;
+  margin: 0 10px;
+}
+
+.mat-mdc-dialog-title {
+  flex: 1;
+  line-height: 48px;
+  margin: 0;
+}
+
+.section {
+  min-height: 198px;
+  position: relative;
+}
+
+.section-title {
+  flex: 1;
+  margin: 18px 0px;
+}
+
+.note {
+  margin: 60px;
+  text-align: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.note-available {
+  margin: 60px 0;
+  text-align: center;
+}
+
+.close-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.all-toggle {
+  margin-right: 50px;
+}
+
+.cage-number {
+  font-weight: bold;
+  font-weight: bold;
+  margin-right: 20px;
+  min-width: 20px;
+}
+
+.cage-type {
+  font-weight: 500;
+}
+
+.branch-picker {
+  margin-right: 16px;
+}
+
+.recycle-logo {
+  height: 32px;
+  margin-right: 16px;
+}

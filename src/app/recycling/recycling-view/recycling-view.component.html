@@ -3,22 +3,16 @@
     <mat-icon>arrow_back</mat-icon>
   </button>
   <ng-container>
-    <div class="top-title">Cage</div>
+    <div class="top-title">{{name || 'Cage'}}</div>
   </ng-container>
   <a *ngIf="getPrev() | async as n" mat-icon-button [routerLink]="['..', n]" [replaceUrl]="true" matTooltip="Previous cage"><mat-icon>chevron_left</mat-icon></a>
   <a *ngIf="getNext() | async as n" mat-icon-button [routerLink]="['..', n]" [replaceUrl]="true" matTooltip="Next cage"><mat-icon>chevron_right</mat-icon></a>
 </mat-toolbar>
 
-<gcp-loading-page *ngIf="loading | async"></gcp-loading-page>
 <div *ngIf="cage$ | async as cage" class="content">
   <div class="inner">
     <div class="header">
-      <div *ngIf="isCage" class="title">
-        <h2>{{ cage.fields.AssetTypeClean }} {{ cage.fields.CageNumber }}</h2>
-      </div>
-      <div *ngIf="!isCage" class="title">
-        <h2>{{ cage.fields.AssetType }}</h2>
-      </div>
+      <gcp-loading-page *ngIf="(loading | async) === true" class="loading-circ"></gcp-loading-page>
       <gcp-action-button [cages]="[cage]" (updated)="getCage()" (loading)="updating($event)" (dehired)="goBack()" class="actions"></gcp-action-button>
     </div>
     <mat-card appearance="outlined">
