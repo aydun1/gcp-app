@@ -307,10 +307,6 @@ export class RecyclingService {
   }
 
   consolidateMaterial(id: string, branch: string | null, material: number | null, quantity: number): Observable<Cage> {
-    if (!material) {
-      this.snackBar.open('Material type is not set', '', {duration: 3000});
-      return of();
-    }
     return this.getBranchQuantity(branch, material).pipe(
       map(_ => _['value']),
       switchMap(_ => {

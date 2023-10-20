@@ -14,6 +14,7 @@ import { RunPickerDialogComponent } from '../../../runs/shared/run-picker-dialog
 import { DeliveryService } from '../../../runs/shared/delivery.service';
 import { ConfirmationDialogComponent } from '../../../shared/confirmation-dialog/confirmation-dialog.component';
 import { CageEditDialogComponent } from '../cage-edit-dialog/cage-edit-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'gcp-action-button',
@@ -79,6 +80,7 @@ export class ActionButtonComponent implements OnInit {
   constructor(
     private router: Router,
     private dialog: MatDialog,
+    private snackBar: MatSnackBar,
     private sharedService: SharedService,
     private recyclingService: RecyclingService,
     private cutomersService: CustomersService,
@@ -124,6 +126,11 @@ export class ActionButtonComponent implements OnInit {
   }
 
   consolidateMaterial(cages: Array<Cage>): void {
+    const materials = cages.filter(_ => !_.fields.Material);
+    if (materials.length > 0) {
+      this.snackBar.open('Material type is not set', '', {duration: 3000});
+      return;
+    }
     this.loading.next(true);
     const tasks = cages.map(_ => {
       const quantity = _.fields.GrossWeight - (_.fields.CageWeight || 0);
