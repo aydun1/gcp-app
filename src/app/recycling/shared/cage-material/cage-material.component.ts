@@ -9,11 +9,13 @@ import { RecyclingService } from '../recycling.service';
   styleUrls: ['./cage-material.component.css']
 })
 export class CageMaterialComponent {
+  public canEdit = true;
 
   @Input()
   get cage(): Cage { return this._cage; }
   set cage(value: Cage) {
     this.cageMaterial = value.fields.Material;
+    this.canEdit = value.fields.Status !== 'Complete';
     this._cage = value;
   }
   private _cage!: Cage;

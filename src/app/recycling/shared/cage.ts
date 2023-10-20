@@ -18,7 +18,8 @@ export interface Cage {
     Date4: string | Date | null;
     ToLocalProcessing: string | Date | null;
     FromLocalProcessing: string | Date | null;
-    ToDepot: string | Date;
+    ToDepot: string | Date | null;
+    Consolidated: string | Date | null;
     CustomerNumber: string | null;
     Customer: string | null;
     Site: string | null;

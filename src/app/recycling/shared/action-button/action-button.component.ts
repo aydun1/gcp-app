@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { forkJoin, of, Subject, switchMap, take, tap } from 'rxjs';
+import { concatMap, forkJoin, of, Subject, switchMap, take, tap } from 'rxjs';
 
 import { RecyclingService } from '../recycling.service';
 import { Cage } from '../cage';
@@ -52,6 +52,11 @@ export class ActionButtonComponent implements OnInit {
     const statuses = new Set(this.cages.map(_ => _?.fields.Status));
     const [first] = statuses;
     return statuses.size === 1 ? first : undefined;
+  }
+
+  get areCages(): boolean {
+    const statuses = this.cages.filter(_ => !_.fields.CageNumber);
+    return statuses.length === 0;
   }
 
   get cageBranch(): string | undefined {
@@ -118,6 +123,17 @@ export class ActionButtonComponent implements OnInit {
     forkJoin(tasks).subscribe(() => this.onComplete());
   }
 
+  consolidateMaterial(cages: Array<Cage>): void {
+    this.loading.next(true);
+    const tasks = cages.map(_ => {
+      const quantity = _.fields.GrossWeight - (_.fields.CageWeight || 0);
+      return this.recyclingService.consolidateMaterial(_.id, _.fields.Branch, _.fields.Material, quantity);
+    });
+    of(...tasks).pipe(
+      concatMap(r => r)
+    ).subscribe(() => this.onComplete());
+  }
+
   markWithPolymer(cages: Array<Cage>): void {
     this.loading.next(true);
     const tasks = cages.map(_ => this.recyclingService.deliverToPolymer(_.id));
@@ -151,13 +167,13 @@ export class ActionButtonComponent implements OnInit {
 
   collectFromProcessing(cages: Array<Cage>): void {
     this.loading.next(true);
-    const tasks = cages.map(_ => _.fields.AssetType.startsWith('Cage') ? this.recyclingService.collectFromProcessing(_.id): this.recyclingService.collectAndComplete(_.id));
+    const tasks = cages.map(_ => _.fields.AssetType.startsWith('Cage') ? this.recyclingService.collectFromProcessing(_.id): this.recyclingService.collectAndComplete(_.id, 'polymer'));
     forkJoin(tasks).subscribe(() => this.onComplete());
   }
 
   collectFromPolymer(cages: Array<Cage>): void {
     this.loading.next(true);
-    const tasks = cages.map(_ => _.fields.AssetType.startsWith('Cage') ? this.recyclingService.collectFromPolymer(_.id): this.recyclingService.collectAndComplete(_.id));
+    const tasks = cages.map(_ => _.fields.AssetType.startsWith('Cage') ? this.recyclingService.collectFromPolymer(_.id): this.recyclingService.collectAndComplete(_.id, 'local'));
     forkJoin(tasks).subscribe(() => this.onComplete());
   }
 

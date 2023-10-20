@@ -2,6 +2,7 @@
 <button mat-raised-button type="button" color="primary" *ngIf="statusId === 0" (click)="openCustomerPicker(cages)" [disabled]="loading | async" class="action">Assign to customer</button>
 <button mat-raised-button type="button" color="primary" *ngIf="statusId === 1" (click)="markWithCustomer(cages)" [disabled]="loading | async" class="action">Deliver to customer</button>
 <button mat-raised-button type="button" color="primary" *ngIf="statusId === 2" (click)="markAsCollected(cages)" [disabled]="loading | async" class="action">Collect from customer</button>
+<button mat-raised-button type="button" color="primary" *ngIf="statusId === 3 && !areCages && status !== 'Ready for delivery to Polymer' && status !== 'Ready for delivery to local processing'" (click)="consolidateMaterial(cages)" [disabled]="loading | async" class="action">Consolidate</button>
 <button mat-raised-button type="button" color="primary" *ngIf="statusId === 3 && status !== 'Ready for delivery to Polymer'" (click)="markWithProcessing(cages)" [disabled]="loading | async" class="action">Send to local processing</button>
 <button mat-raised-button type="button" color="primary" *ngIf="statusId === 3 && status !== 'Ready for delivery to local processing'" (click)="markWithPolymer(cages)" [disabled]="loading | async" class="action">Send to Polymer</button>
 <button mat-raised-button type="button" color="primary" *ngIf="statusId === 4" (click)="collectFromProcessing(cages)" [disabled]="loading | async" class="action">Return from local processing</button>
