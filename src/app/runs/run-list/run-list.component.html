@@ -137,7 +137,9 @@
                       <mat-checkbox color="accent" [checked]="delivery.fields.Status === 'Complete'" (click)="markComplete($event, delivery.value, delivery.fields.Status)"></mat-checkbox>
                     </div>
                     <div class="menu">
-                      <button mat-icon-button [matMenuTriggerData]="{delivery}" [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()"><mat-icon>more_vert</mat-icon></button>
+                      <button mat-icon-button [matMenuTriggerData]="{delivery}" [matMenuTriggerFor]="dropMenu" (click)="$event.stopPropagation()">
+                        <mat-icon>more_vert</mat-icon>
+                      </button>
                     </div>
                   </mat-expansion-panel-header>
                   <ng-template matExpansionPanelContent>
@@ -147,9 +149,14 @@
                     <div *ngIf="delivery.hasNotes || !delivery.hasOrderNumbers">
                       <h3>Notes</h3>
                       <div *ngFor="let d of delivery.value" class="order-note">
-                        <button *ngIf="!d.fields.OrderNumber" mat-icon-button (click)="editDelivery(d)" [disabled]="loading" class="delivery-edit">
-                          <mat-icon>edit</mat-icon>
-                        </button>
+                        <div class="delivery-edit">
+                          <button *ngIf="!d.fields.OrderNumber" mat-icon-button (click)="editDelivery(d)" [disabled]="loading">
+                            <mat-icon>edit</mat-icon>
+                          </button>
+                          <button mat-icon-button [matMenuTriggerData]="{delivery: {value: [d], fields: {Title: delivery.fields.Title}}}" [matMenuTriggerFor]="dropMenu" (click)="$event.stopPropagation()">
+                            <mat-icon>more_vert</mat-icon>
+                          </button>
+                        </div>
                         <pre class="notes">{{ d.fields.Notes }}</pre>
                         <p *ngIf="delivery.requestedDate" class="request-date">Requested delivery: {{ delivery.requestedDate | date: 'd MMM yyyy' }}</p>
                         <p *ngIf="!delivery.hasOrderNumbers">- {{ d.createdBy?.user?.displayName }} | {{ d.createdDateTime | date:'d MMM yyyy' }}</p>
@@ -226,12 +233,12 @@
   </ng-template>
 </mat-menu>
 
-<mat-menu #menu="matMenu" xPosition="before">
+<mat-menu #dropMenu="matMenu" xPosition="before">
   <ng-template matMenuContent let-delivery="delivery">
-    <button mat-menu-item [matMenuTriggerFor]="runMenu" [matMenuTriggerData]="{delivery}" [disabled]="loading">
+    <button mat-menu-item [matMenuTriggerFor]="runMenu" [matMenuTriggerData]="{delivery}" [disabled]="loading" type="button">
       <mat-icon>move_down</mat-icon>Move to run
     </button>
-    <button mat-menu-item (click)="deleteDeliveries(delivery.value, delivery.fields.Title)" [disabled]="loading">
+    <button mat-menu-item (click)="deleteDeliveries(delivery.value, delivery.fields.Title)" [disabled]="loading" type="button">
       <mat-icon>delete</mat-icon>Remove
     </button>
   </ng-template>
@@ -240,7 +247,9 @@
 <mat-menu #runMenu="matMenu">
   <ng-template matMenuContent let-delivery="delivery">
     <button mat-menu-item *ngIf="runName" (click)="moveToOtherRun(delivery, '')">Default</button>
-    <button mat-menu-item *ngFor="let s of otherRuns" (click)="moveToOtherRun(delivery, s.fields.Title)">{{ s.fields.Title }}</button>
+    <button mat-menu-item *ngFor="let s of otherRuns" (click)="moveToOtherRun(delivery, s.fields.Title)" type="button">
+      {{ s.fields.Title }}
+    </button>
   </ng-template>
 </mat-menu>
 
