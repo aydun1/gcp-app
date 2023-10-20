@@ -147,13 +147,12 @@
                     <div class="site">{{ delivery.fields.Address || delivery.fields.Site }}</div>
                     <div *ngIf="delivery.fields.PhoneNumber" [innerHTML]="delivery.fields.PhoneNumber | phoneLink"></div>
                     <div *ngIf="delivery.hasNotes || !delivery.hasOrderNumbers">
-                      <h3>Notes</h3>
                       <div *ngFor="let d of delivery.value" class="order-note">
                         <div class="delivery-edit">
                           <button *ngIf="!d.fields.OrderNumber" mat-icon-button (click)="editDelivery(d)" [disabled]="loading">
                             <mat-icon>edit</mat-icon>
                           </button>
-                          <button mat-icon-button [matMenuTriggerData]="{delivery: {value: [d], fields: {Title: delivery.fields.Title}}}" [matMenuTriggerFor]="dropMenu" (click)="$event.stopPropagation()">
+                          <button *ngIf="delivery.value.length > 1" mat-icon-button [matMenuTriggerData]="{delivery: {value: [d], fields: {Title: delivery.fields.Title}}}" [matMenuTriggerFor]="dropMenu" (click)="$event.stopPropagation()">
                             <mat-icon>more_vert</mat-icon>
                           </button>
                         </div>

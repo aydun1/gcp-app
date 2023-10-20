@@ -155,7 +155,7 @@ h2 {
 .order-note {
   border-radius: 6px;
   padding: 0 10px;
-  margin-bottom: 12px;
+  margin: 12px 0;
   border: 1px solid;
   position: relative;
 }
