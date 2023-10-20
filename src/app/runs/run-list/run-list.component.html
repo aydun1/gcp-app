@@ -158,7 +158,7 @@
                         </div>
                         <pre class="notes">{{ d.fields.Notes }}</pre>
                         <p *ngIf="delivery.requestedDate" class="request-date">Requested delivery: {{ delivery.requestedDate | date: 'd MMM yyyy' }}</p>
-                        <p *ngIf="!delivery.hasOrderNumbers">- {{ d.createdBy?.user?.displayName }} | {{ d.createdDateTime | date:'d MMM yyyy' }}</p>
+                        <p *ngIf="!delivery.hasOrderNumbers">- {{ d.createdBy?.user?.displayName }} | <span [matTooltip]="(d.createdDateTime | date:'h:mm a') || ''">{{ d.createdDateTime | date:'d MMM yyyy' }}</span></p>
                       </div>
                       <p>
                       </p>
