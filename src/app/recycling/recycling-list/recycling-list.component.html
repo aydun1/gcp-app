@@ -51,6 +51,13 @@
     </div>
     <a mat-raised-button [routerLink]="['new']" color="primary" class="add-cage">Add New Cage</a>
   </div>
+  <div *ngIf="0">
+    <div *ngIf="branchQuantities | async as branchQtys">
+      <div *ngFor="let bq of branchQtys">
+        {{ bq.fields.Material }}: {{ bq.fields.Quantity }}
+      </div>
+    </div>
+  </div>
   <div *ngIf="!selection.isEmpty()" class="inner multi-action">
     <div class="cage-count mat-app-background">
       <div>{{ selection.selected.length }} cages</div>

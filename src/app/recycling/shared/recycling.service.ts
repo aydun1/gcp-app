@@ -308,7 +308,6 @@ export class RecyclingService {
 
   consolidateMaterial(id: string, branch: string | null, material: number | null, quantity: number): Observable<Cage> {
     return this.getBranchQuantity(branch, material).pipe(
-      map(_ => _['value']),
       switchMap(_ => {
         if (_.length === 0) {
           const payload = {fields: {Title: branch, Material: material, Quantity: quantity}};
@@ -463,7 +462,9 @@ export class RecyclingService {
     if (branch) filters.push(` fields/Title eq '${branch}'`);
     if (material) filters.push(` fields/Material eq ${material}`);
     url += filters.join(' and ')
-    return this.http.get<BranchTotal[]>(url);
+    return this.http.get<BranchTotal[]>(url).pipe(
+      map(_ => _['value'])
+    );
   }
 
   checkCageNumber(cageNumber: string, cageType: string): Observable<Cage> {

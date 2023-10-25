@@ -9,6 +9,7 @@ import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Obser
 import { SharedService } from '../../shared.service';
 import { Cage } from '../shared/cage';
 import { RecyclingService } from '../shared/recycling.service';
+import { BranchTotal } from '../shared/branch-total';
 
 interface choice {choice: {choices: Array<any>}, name: string};
 
@@ -21,6 +22,8 @@ export class RecyclingListComponent implements OnInit {
   private _loadList!: boolean;
   private lastClicked: number | undefined;
   private shiftHolding = false;
+  private branch$ = new BehaviorSubject<string>('');
+  public branchQuantities!: Observable<BranchTotal[]> | null;
   public cages$!: Observable<Cage[]>;
   public cageFilter = new FormControl<number | null>(null);
   public branchFilter = new FormControl('');
@@ -36,7 +39,7 @@ export class RecyclingListComponent implements OnInit {
   public choices$: Observable<{Status: choice, AssetType: choice, Branch: choice, Material: choice}> | undefined;
   public materials = this.recyclingService.materials;
   public statusPicked!: boolean;
-  public placeholder = {Status: {choice: {choices: []}, name: ''},Branch: {choice: {choices: []}, name: ''}};
+  public placeholder = {Status: {choice: {choices: []}, name: ''}, Branch: {choice: {choices: []}, name: ''}};
   public selection = new SelectionModel<Cage>(true, []);
   public date = new Date();
 
@@ -78,6 +81,7 @@ export class RecyclingListComponent implements OnInit {
         map(branch => params['branch'] === undefined ? {...params, branch} : params)
       )),
       tap((_: Params) => {
+        this.branch$.next(_['branch']);
         this.parseParams(_);
         this.weight = 0;
         this.count = 0;
@@ -90,6 +94,10 @@ export class RecyclingListComponent implements OnInit {
         this.count = cages.map(() => 1).reduce((acc, val) => acc + val, 0);
       })
     )
+
+    this.branch$.pipe(
+      distinctUntilChanged(),
+    ).subscribe(_ => this.getBranchQuantities(_))
 
     this.cageFilter.valueChanges.pipe(
       debounceTime(200),
@@ -227,6 +235,10 @@ export class RecyclingListComponent implements OnInit {
   hideStatus(hide: boolean): void {
     const displayedColumns = ['checked', 'fields/CageNumber', 'assetType', 'status', 'location', 'material', 'fields/Modified', 'weight'];
     this.displayedColumns = hide ? displayedColumns.filter(_ => _ !== 'status') : displayedColumns;
+  }
+
+  getBranchQuantities(branch: string): void {
+    this.branchQuantities = branch ? this.recyclingService.getBranchQuantity(branch, null) : null;
   }
 
   trackByFn(index: number, item: Cage): string {
