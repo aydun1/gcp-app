@@ -40,7 +40,7 @@ export class InterstateTransferSuggestedComponent implements OnInit {
   private sendIttEmail(fromState: string | null, toState: string, lines: SuggestedItem[], docId: string): void {
     const subject = `Items requested by ${toState}`;
     const rows = lines.map(_ => `<tr><td>${_.ItemNmbr}</td><td>${_.ToTransfer}</td></tr>`).join('');
-    const body = `<p><strong>Order no.:</strong> <a href="${environment.redirectUri}/transfers/active/${docId}">${docId}</a></p><table><tr><th>Item number</th><th>Qty Requested</th></tr>${rows}</table>`;
+    const body = `<p><strong>Order no.:</strong> <a href="${environment.baseUri}/transfers/active/${docId}">${docId}</a></p><table><tr><th>Item number</th><th>Qty Requested</th></tr>${rows}</table>`;
     const to = this.shared.emailMap.get(fromState || '') || [];
     const cc = this.shared.panMap.get(toState || '') || [];
     if (environment.production) this.shared.sendMail(to, subject, body, 'HTML', cc);

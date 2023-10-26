@@ -1,7 +1,9 @@
 const apiUrl = 'https://api.gardencityplastics.com';
+const baseUri = 'https://ims.gardencityplastics.com';
 export const environment = {
   production: true,
-  redirectUri: 'https://ims.gardencityplastics.com',
+  baseUri,
+  redirectUri: `${baseUri}/auth`,
   gpEndpoint: `${apiUrl}/gp`,
   cwEndpoint: `${apiUrl}/cw`,
   sdsEndpoint: `${apiUrl}/public`,

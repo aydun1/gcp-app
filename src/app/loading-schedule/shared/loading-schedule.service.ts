@@ -187,7 +187,7 @@ export class LoadingScheduleService {
       switchMap(lines => {
         const rows = lines.map(_ => `<tr><td>${_.fields.ItemNumber}</td><td>${_.fields.Quantity || 0}</td></tr>`).join('');
         const subject = `New pan list for ${ls.fields.To} #${id}-${panListId}`;
-        let body = `<p><i>Click <a href="${environment.redirectUri}/loading-schedule/${id}?pan=${panListId}">here</a> for more details and to print.</i></p>`
+        let body = `<p><i>Click <a href="${environment.baseUri}/loading-schedule/${id}?pan=${panListId}">here</a> for more details and to print.</i></p>`
         body += '<p>';
         if (ls.fields.LoadingDate) body += `<strong>Loading date:</strong> ${new Date(ls.fields.LoadingDate).toLocaleDateString('en-AU')}<br>`;
         if (ls.fields.ArrivalDate) body += `<strong>Delivery date:</strong> ${new Date(ls.fields.ArrivalDate).toLocaleDateString('en-AU')}<br>`;

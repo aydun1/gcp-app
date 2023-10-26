@@ -60,7 +60,7 @@ export class InterstateTransferNewComponent implements OnInit {
     const mpa = this._ownState === 'HEA';
     const subject = `Created ITT for ${fromState} to ${toState}`;
     const rows = lines.map(_ => `<tr><td>${_.ItemNmbr}</td><td>${_.ToTransfer}</td></tr>`).join('');
-    const body = `<p><strong>Order no.:</strong> <a href="${environment.redirectUri}/transfers/active/${docId}">${docId}</a></p><table><tr><th>Item number</th><th>Qty Requested</th></tr>${rows}</table>`;
+    const body = `<p><strong>Order no.:</strong> <a href="${environment.baseUri}/transfers/active/${docId}">${docId}</a></p><table><tr><th>Item number</th><th>Qty Requested</th></tr>${rows}</table>`;
     const to = [fromState, toState].filter(_ => _ !== this._ownState).map(_ => this.shared.emailMap.get(`${_}${mpa ? '_MPA' : ''}` || '')).flat(1).filter(_ => _) as string[];
     const cc = [fromState, toState].filter(_ => _ === this._ownState).map(_ => this.shared.panMap.get(`${_}${mpa ? '_MPA' : ''}` || '')).flat(1).filter(_ => _) as string[];
     if (environment.production) this.shared.sendMail(to, subject, body, 'HTML', cc);

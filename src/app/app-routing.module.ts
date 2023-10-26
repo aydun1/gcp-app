@@ -1,6 +1,6 @@
 import { Injectable, NgModule } from '@angular/core';
 import { RouterModule, RouterStateSnapshot, Routes, TitleStrategy } from '@angular/router';
-import { MsalGuard } from '@azure/msal-angular';
+import { MsalGuard, MsalRedirectComponent } from '@azure/msal-angular';
 import { Title } from '@angular/platform-browser';
 
 import { HomeComponent } from './home/home.component';
@@ -21,6 +21,7 @@ export class ImsTitleStrategy extends TitleStrategy {
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
+  { path: 'auth', component: MsalRedirectComponent },
   { path: 'logout', component: LogoutComponent },
   { path: 'customers', canActivate: [MsalGuard], loadChildren: () => import('./customers/customers.module').then(m => m.CustomersModule) },
   { path: 'recycling', canActivate: [MsalGuard], loadChildren: () => import('./recycling/recycling.module').then(m => m.RecyclingModule) },
