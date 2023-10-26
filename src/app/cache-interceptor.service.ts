@@ -6,13 +6,19 @@ import { Observable, Subject, catchError, debounceTime, of, tap, throwError } fr
 @Injectable()
 export class CacheInterceptor implements HttpInterceptor {
   private messages$ = new Subject<string>();
+  private urls = [
+    '/gp/orders/2/', // orders
+    '/d1874c62-66bf-4ce0-b177-ff5833de9b20/', // runs
+    '/b8088299-ac55-4e30-9977-4b0b20947b84/', // drops
+  ]
   constructor(
     private snackBar: MatSnackBar
   ) {
     this.messages$.pipe(debounceTime(200)).subscribe(_ => this.snackBar.open(_, '', {duration: 3000}));
   }
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>>{
-    if(req.method !== 'GET') return next.handle(req);
+    const shouldCache = this.urls.map(_ => req.url.includes(_)).some(_ => _);
+    if(!shouldCache || req.method !== 'GET') return next.handle(req);
     const key = req['url'].replace(/^https?:\/\/[a-z\.]+:?[0-9]*/, '');
     return next.handle(req).pipe(
       tap(stateEvent => {
