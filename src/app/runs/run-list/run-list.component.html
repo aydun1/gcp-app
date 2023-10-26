@@ -223,11 +223,8 @@
     <button mat-menu-item (click)="checkAllByRun(run, false)" type="button">
       <mat-icon>check_box_outline_blank</mat-icon>Uncheck all
     </button>
-    <button *ngIf="isVic === false" mat-menu-item (click)="archiveDeliveriesByRun(run)" type="button">
+    <button mat-menu-item (click)="archiveDeliveriesByRun(run)" type="button">
       <mat-icon>archive</mat-icon>Archive deliveries
-    </button>
-    <button *ngIf="isVic === true" mat-menu-item (click)="deleteDeliveriesByRun(run)" type="button">
-      <mat-icon>delete</mat-icon>Remove deliveries
     </button>
   </ng-template>
 </mat-menu>
