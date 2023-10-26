@@ -12,6 +12,7 @@ import { RecyclingService } from '../shared/recycling.service';
 import { BranchTotal } from '../shared/branch-total';
 
 interface choice {choice: {choices: Array<any>}, name: string};
+interface monthYear {year: number, month: number, monthName: string};
 
 @Component({
   selector: 'gcp-recycling-list',
@@ -23,11 +24,19 @@ export class RecyclingListComponent implements OnInit {
   private lastClicked: number | undefined;
   private shiftHolding = false;
   private branch$ = new BehaviorSubject<string>('');
+  private years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
+  private months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  private year = new Date().getFullYear();
+  private month = new Date().getMonth();
+  public monthDates = this.years.map(_ => {return {year: _, months: this.months.reverse()}}).reduce((a, b) => {
+    return a.concat(b.months.map((m, i) => {return {year: b.year, month: 11 - i, monthName: m}}))
+  }, [] as Array<monthYear>).filter(_ => !(_.year === this.year && _.month > this.month));
   public branchQuantities!: Observable<BranchTotal[]> | null;
   public cages$!: Observable<Cage[]>;
   public cageFilter = new FormControl<number | null>(null);
   public branchFilter = new FormControl('');
   public statusFilter = new FormControl('');
+  public monthFilter = new FormControl('');
   public assetTypeFilter = new FormControl('');
   public materialFilter = new FormControl<number | undefined>(undefined);
   public loading = this.recyclingService.loading;
@@ -126,29 +135,29 @@ export class RecyclingListComponent implements OnInit {
 
   parseParams(params: Params): void {
     if (!params) return;
-    const filters = {} as {branch: string, status: string, assetType: string, material: number, bin: string};
     if ('branch' in params) {
       this.branchFilter.patchValue(params['branch']);
-      filters['branch'] = params['branch'];
     } else {
       this.branchFilter.patchValue('');
     }
     if ('status' in params) {
       this.statusFilter.patchValue(params['status']);
-      filters['status'] = params['status'];
     } else {
       this.statusFilter.patchValue('');
     }
+    if ('month' in params) {
+      this.monthFilter.patchValue(params['month']);
+    } else {
+      this.monthFilter.patchValue('');
+    }
     if ('assetType' in params) {
       this.assetTypeFilter.patchValue(params['assetType']);
-      filters['assetType'] = params['assetType'];
     } else {
       this.assetTypeFilter.patchValue('');
     }
     if ('material' in params) {
       const material = parseInt(params['material'])
       this.materialFilter.patchValue(material);
-      filters['material'] = material;
     } else {
       this.materialFilter.patchValue(undefined);
     }
@@ -158,7 +167,6 @@ export class RecyclingListComponent implements OnInit {
     }
     if ('bin' in params) {
       this.cageFilter.patchValue(params['bin']);
-      filters['bin'] = params['bin'];
     } else {
       if (this.cageFilter.value) this.cageFilter.patchValue(null);
     }
@@ -176,6 +184,7 @@ export class RecyclingListComponent implements OnInit {
       prev['branch'] === curr['branch'],
       prev['bin'] === curr['bin'],
       prev['assetType'] === curr['assetType'],
+      prev['month'] === curr['month'],
       prev['material'] === curr['material'],
       prev['status'] === curr['status'],
       prev['sort'] === curr['sort'],
@@ -191,6 +200,10 @@ export class RecyclingListComponent implements OnInit {
   setStatus(status: MatSelectChange, choices: Array<string>): void {
     this.hideStatus(choices.includes(status.value));
     this.router.navigate([], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
+  }
+
+  setMonth(month: MatSelectChange): void {
+    this.router.navigate([], { queryParams: {month: month.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setAssetType(assetType: MatSelectChange): void {

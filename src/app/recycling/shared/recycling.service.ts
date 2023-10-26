@@ -90,6 +90,11 @@ export class RecyclingService {
           if (filters['assetType'] === 'Cage') return `fields/CageNumber ne null`;
           if (filters['assetType'] === 'Other') return `fields/CageNumber eq null`;
           return `fields/AssetType eq '${filters['assetType']}'`;
+        case 'month':
+          const yearMth = filters['month'].split('-').map((_: string) => parseInt(_));
+          const startDate = new Date(`${yearMth[0]}-${yearMth[1]+1}-1`)
+          const endDate = new Date(`${yearMth[1] < 11 ? yearMth[0] : yearMth[0] + 1}-${yearMth[1] < 11 ? yearMth[1]+2 : 1}-1`)
+          return `fields/Date2 gt '${startDate.toISOString()}' and fields/Date2 lt '${endDate.toISOString()}'`;
         case 'material':
           return `fields/Material eq '${filters['material']}'`;
         default:
@@ -97,7 +102,7 @@ export class RecyclingService {
       }
     }).filter(_ => _);
 
-    if (!filterKeys.includes('status')) parsed.unshift(`fields/Status ne 'Complete'`);
+    if (!filterKeys.includes('status') && !filterKeys.includes('month')) parsed.unshift(`fields/Status ne 'Complete'`);
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
     url += `&$orderby=${filters['sort'] ? filters['sort'] : filters['assetType'] === 'Other' ? 'fields/Modified' : 'fields/CageNumber'}`;
     url += ` ${filters['order'] ? filters['order'] : filters['assetType'] === 'Other' ? 'desc' : 'asc'}`;

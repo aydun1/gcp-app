@@ -11,7 +11,8 @@
 
 .mat-mdc-form-field {
   margin-right: 10px;
-  width: 160px;
+  margin-bottom: 10px;
+  width: 157px;
 }
 
 .mat-mdc-footer-row {
@@ -20,11 +21,10 @@
 
 .options {
   align-items: baseline;
-  display: flex;
   margin-top: 20px;
 }
 
-.buttons {
+.selectors {
   flex: 1;
 }
 
@@ -32,8 +32,8 @@
   display: none;
 }
 
-.add-cage {
-  margin-left: auto;
+.new-holder {
+  text-align: right;
 }
 
 .multi-action {
