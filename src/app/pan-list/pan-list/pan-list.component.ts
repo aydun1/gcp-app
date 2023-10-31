@@ -89,11 +89,10 @@ export class PanListComponent implements OnInit {
     {value: 'WA', name: 'Allied WA'}
   ];
   public branchVendors = [
-    {branch: 'NSW', vendors: ['100241', '300310', '404562', '502014']},
-    {branch: 'QLD', vendors: ['100086', '200001']},
-    {branch: 'SA', vendors: ['164403', '200387', '300299']},
-    //{branch: 'VIC', vendors: ['200113', '300365']},
-    {branch: 'WA', vendors: ['164802', '200231', '300298']}
+    {branch: 'NSW', vendors: ['900002', '502014']},
+    {branch: 'QLD', vendors: ['900003']},
+    {branch: 'SA', vendors: ['900005']},
+    {branch: 'WA', vendors: ['900004']}
   ];
   
   public get otherVendors(): Array<{branch: string, vendors: string[]}> {
