@@ -15,7 +15,7 @@ import { SharedService } from '../shared.service';
 })
 export class ScannerDialogComponent implements AfterViewInit, OnInit {
   @ViewChild('search') searchElement!: ElementRef;
-  private orderRe = /^(N|Q|V|SA|MPA|WEB|MSF)O?[0-9]{6,9}[A-Z]?$/ig;
+  private orderRe = /^(N|Q|V|SA|W|MPA|WEB|MSF)O?[0-9]{6,9}[A-Z]?$/ig;
   public availableDevices!: MediaDeviceInfo[];
   public currentDevice: MediaDeviceInfo | undefined;
   public cameraPicker = new FormControl<string | null>(null);
