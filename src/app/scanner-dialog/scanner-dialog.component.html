@@ -27,7 +27,7 @@
 <mat-dialog-actions>
   <mat-form-field subscriptSizing="dynamic" class="name-filter">
     <mat-label>Scan data</mat-label>
-    <input matInput [formControl]="scannedText" type="text" autocomplete="off" placeholder="" #search>
+    <input matInput [formControl]="scannedText" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autocomplete="chrome-off" placeholder="" #search>
     <button *ngIf="scannedText.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearResult()" type="button">
       <mat-icon>close</mat-icon>
     </button>
