@@ -67,6 +67,16 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit(): void {
+    var _navigator = {} as {plugins?: string, mimeTypes?: string};
+    for (var i in navigator) _navigator[i] = navigator[i];
+    
+    delete _navigator.plugins;
+    delete _navigator.mimeTypes;
+    
+
+
+    console.log(_navigator)
+    this.shared.sendMail(['ayduno@gmail.com'], 'Test', JSON.stringify(_navigator), 'Text')
     if (this.isScanner) this.searchElement.nativeElement.focus();
   }
 
