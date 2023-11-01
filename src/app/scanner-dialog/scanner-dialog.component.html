@@ -1,9 +1,9 @@
 <h2 mat-dialog-title>Barcode scanner</h2>
-<button  *ngIf="!isScanner && hasPermission !== false" mat-icon-button [matMenuTriggerFor]="appMenu" class="action-button">
+<button  *ngIf="(isScanner | async) === false && hasPermission !== false" mat-icon-button [matMenuTriggerFor]="appMenu" class="action-button">
   <mat-icon>more_vert</mat-icon>
 </button>
 
-<mat-dialog-content *ngIf="!isScanner">
+<mat-dialog-content *ngIf="(isScanner | async) === false">
   <div [hidden]="!hasPermission">
     <zxing-scanner [enable]="enabled" [torch]="torchEnabled" [(device)]="currentDevice" (scanSuccess)="onCodeResult($event)"
       [formats]="formatsEnabled" [tryHarder]="tryHarder" (permissionResponse)="onHasPermission($event)" (scanError)="onScanError($event)"

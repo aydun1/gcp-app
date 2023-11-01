@@ -26,7 +26,7 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
   public tryHarder = false;
   public enabled = true;
   public scannedText = new FormControl('');
-  public isScanner = /CK65/.test(navigator.userAgent);
+  public isScanner: Promise<boolean> = navigator['userAgentData'].getHighEntropyValues(['model']).then((ua: any) => ua['model'] !== 'CK65');
 
   public formatsEnabled: BarcodeFormat[] = [
     BarcodeFormat.CODE_39,
@@ -67,14 +67,9 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit(): void {
-    try {
-      navigator['userAgentData'].getHighEntropyValues(['model']).then((ua: any) => {
-        this.isScanner = ua['model'] === 'CK65';
-        if (this.isScanner) this.searchElement.nativeElement.focus();
-      });
-    } catch {
-      if (this.isScanner) this.searchElement.nativeElement.focus();
-    }
+    this.isScanner.then(_ => {
+      if (_) this.searchElement.nativeElement.focus();
+    });
   }
 
   setCamera(deviceId: string | null): void {
