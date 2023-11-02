@@ -39,7 +39,6 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
   constructor(
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private shared: SharedService,
     private dialogRef: MatDialogRef<ScannerDialogComponent>
   ) { }
 
@@ -60,7 +59,7 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
         b = b || '';
         const l = (a.length + b.length) / 2;
         const diff = l - [...a].reduce((acc, cur, i) => acc += (b ? b[i] : '') === cur ? 1 : 0, 0);
-        if (b.length > 0 && diff > 1) this.processCode(b);
+        if (b.length > 0 && diff > 1 && this.orderRe.test(b)) this.processCode(b);
         return false;
       })
     ).subscribe()
@@ -94,11 +93,7 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
 
   processCode(code: string | null): void {
     if (!code) return;
-    if (this.orderRe.test(code)) {
-      this.openReceipt(code);
-    } else {
-      this.snackBar.open('Did not recognise code', '', {duration: 3000});
-    }
+    this.openReceipt(code);
   }
 
   onHasPermission(has: boolean): void {

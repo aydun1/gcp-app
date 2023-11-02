@@ -18,24 +18,24 @@
   </div>
   <div *ngIf="hasDevices === false" class="message">
     <h3>No devices were found.</h3>
-    <p>
-      I believe your device has no media devices attached to.
+    <p>It seems your device has no camera.
     </p>
   </div>
 </mat-dialog-content>
-
-<mat-dialog-actions>
-  <mat-form-field subscriptSizing="dynamic" class="name-filter">
-    <mat-label>Scan data</mat-label>
-    <input matInput [formControl]="scannedText" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autocomplete="chrome-off" placeholder="" #search>
-    <button *ngIf="scannedText.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearResult()" type="button">
-      <mat-icon>close</mat-icon>
-    </button>
-    <button [disabled]="!scannedText.value" matSuffix mat-icon-button type="button" (click)="processCode(scannedText.value)">
-      <mat-icon>arrow_forward</mat-icon>
-    </button>
-  </mat-form-field>
-</mat-dialog-actions>
+<form (submit)="processCode(scannedText.value)">
+  <mat-dialog-actions>
+      <mat-form-field subscriptSizing="dynamic" class="name-filter">
+        <mat-label>Scan data</mat-label>
+        <input matInput [formControl]="scannedText" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autocomplete="chrome-off" placeholder="" #search>
+        <button *ngIf="scannedText.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearResult()" type="button">
+          <mat-icon>close</mat-icon>
+        </button>
+        <button [disabled]="!scannedText.value" matSuffix mat-icon-button type="submit">
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </mat-form-field>
+  </mat-dialog-actions>
+</form>
 
 <mat-menu #appMenu="matMenu">
   <mat-selection-list>

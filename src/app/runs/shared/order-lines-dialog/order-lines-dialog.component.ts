@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, Subject, catchError, of, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../../shared.service';
@@ -39,6 +40,7 @@ export class OrderLinesDialogComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
+    private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<OrderLinesDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Data,
     private sharedService: SharedService,
@@ -58,6 +60,7 @@ export class OrderLinesDialogComponent implements OnInit {
       }),
       catchError(_ => {
         this.closeDialog();
+        this.snackBar.open('Could not load order', '', {duration: 3000});
         return of(undefined);
       })
     );
