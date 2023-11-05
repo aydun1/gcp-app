@@ -89,7 +89,7 @@ export class PanListComponent implements OnInit {
     {value: 'WA', name: 'Allied WA'}
   ];
   public branchVendors = [
-    {branch: 'NSW', vendors: ['900002', '502014']},
+    {branch: 'NSW', vendors: ['100241', '300310', '404562', '502014', '900002']},
     {branch: 'QLD', vendors: ['900003']},
     {branch: 'SA', vendors: ['900005']},
     {branch: 'WA', vendors: ['900004']}
