@@ -139,6 +139,14 @@
     overflow-y: auto;
   }
 
+  .table-container {
+    overflow-x: hidden;
+  }
+
+  .mat-mdc-table {
+    width: auto;
+  }
+
   .status-header {
     display: block;
     font-size: 14px;
