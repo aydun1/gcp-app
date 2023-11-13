@@ -26,10 +26,10 @@ export class DeliveryCompletedService {
     let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,CustomerNumber,Customer,Status,OrderNumber,DeliveryDate,DeliveryType,Notes,CustomerType,PickStatus)`;
     const runString = runName ? `'${runName}'` : 'null';
     const filters: Array<string> = [];
-    filters.push('fields/Status eq \'Archived\'');
-    if (branch) filters.push(`fields/Branch eq '${branch}'`);
     if (deliveryType) filters.push(`fields/DeliveryType eq '${deliveryType}'`);
     if (runName !== undefined ) filters.push(`fields/Title eq ${runString}`);
+    if (branch) filters.push(`fields/Branch eq '${branch}'`);
+    filters.push('fields/Status eq \'Archived\'');
     if (filters.length > 0) url += `&filter=${filters.join(' and ')}`;
     url += `&orderby=fields/DeliveryDate desc&top=250`;
     return url;
