@@ -31,7 +31,7 @@
         <ng-container matColumnDef="run">
           <mat-header-cell *matHeaderCellDef> Run </mat-header-cell>
           <mat-cell *matCellDef="let order">
-            <span>{{ order.fields.Title || 'Default' }}</span>
+            <span>{{ order.fields.Run || 'Default' }}</span>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="order">
@@ -47,7 +47,7 @@
         <ng-container matColumnDef="customer">
           <mat-header-cell *matHeaderCellDef> Customer </mat-header-cell>
           <mat-cell *matCellDef="let order">
-            <span>{{ order.fields.Customer }}</span>
+            <span>{{ order.fields.CustomerName }}</span>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="notes">

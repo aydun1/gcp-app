@@ -9,7 +9,7 @@ export class CacheInterceptor implements HttpInterceptor {
   private urls = [
     '/gp/orders/2/', // orders
     '/d1874c62-66bf-4ce0-b177-ff5833de9b20/', // runs
-    '/b8088299-ac55-4e30-9977-4b0b20947b84/', // drops
+    '/gp/deliveries', // drops
   ]
   constructor(
     private snackBar: MatSnackBar

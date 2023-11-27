@@ -124,12 +124,12 @@
                           {{ i + 1 }}
                         </div>
                         <div class="customer">
-                          {{ delivery.fields.Customer }}
+                          {{ delivery.fields.CustomerName }}
                         </div>
                       </mat-panel-title>
                       <mat-panel-description>
                         <span *ngIf="delivery.hasNotes" class="run-note-icon">📝</span>
-                        {{ delivery.fields.City ? delivery.fields.City + ', ' + delivery.fields.PostCode : delivery.fields.Address }}
+                        <span class="addy">{{ delivery.fields.City ? delivery.fields.City + ', ' + delivery.fields.Postcode : delivery.fields.Address }}</span>
                         <span *ngIf="delivery.requestedDate" class="request-date">{{ delivery.requestedDate | date: 'dd/MM/yyyy' }}</span>
                       </mat-panel-description>
                     </div>
@@ -158,7 +158,7 @@
                         </div>
                         <pre class="notes">{{ d.fields.Notes }}</pre>
                         <p *ngIf="delivery.requestedDate" class="request-date">Requested delivery: {{ delivery.requestedDate | date: 'd MMM yyyy' }}</p>
-                        <p *ngIf="!delivery.hasOrderNumbers">- {{ d.createdBy?.user?.displayName }} | <span [matTooltip]="(d.createdDateTime | date:'h:mm a') || ''">{{ d.createdDateTime | date:'d MMM yyyy' }}</span></p>
+                        <p *ngIf="!delivery.hasOrderNumbers">- {{ d.fields.Creator }} | <span [matTooltip]="(d.fields.Created | date:'h:mm a') || ''">{{ d.fields.Created | date:'d MMM yyyy' }}</span></p>
                       </div>
                       <p>
                       </p>
@@ -184,8 +184,8 @@
                         <button mat-icon-button type="button" (click)="fileSelect.click()"><mat-icon>photo_camera</mat-icon></button>
                       </label>
                       <a mat-button color="primary" [routerLink]="['/customers', delivery.fields.CustomerNumber]" [queryParams]="{site:delivery.fields.Site}" class="customer-link">Customer</a>
-                      <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, delivery.fields.Site)">Pallets</button>
-                      <button mat-raised-button color="primary" (click)="openRecyclingDialog(delivery.fields.Customer, delivery.fields.CustomerNumber, delivery.fields.Site)">Recycling</button>
+                      <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.CustomerName, delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, delivery.fields.Site)">Pallets</button>
+                      <button mat-raised-button color="primary" (click)="openRecyclingDialog(delivery.fields.CustomerName, delivery.fields.CustomerNumber, delivery.fields.Site)">Recycling</button>
                       <button *ngIf="delivery.fields.OrderNumber" mat-icon-button ></button>
                     </mat-action-row>
                   </ng-template>

@@ -26,7 +26,7 @@ export class GroupByCustomerAddressPipe implements PipeTransform {
     if(!collection || collection.length === 0) return {drops: [], deliveries: {}, spaces: {}, weights: {}};
     const groupedCollection = collection.reduce((previous, current)=> {
       if (current['fields']['Address']) {
-        const nameAddress = current['fields']['CustomerNumber'] + current['fields']['Address'];
+        const nameAddress = current['fields']['CustomerNumber'].trimEnd() + current['fields']['Address'];
         if (!previous[nameAddress]) {
           previous[nameAddress] = [current];
           } else {
@@ -44,6 +44,7 @@ export class GroupByCustomerAddressPipe implements PipeTransform {
 
     const drops = Object.keys(groupedCollection).map(key => {
       const groups = groupedCollection[key] as Delivery[];
+      //groups.sort((a,b) => +a.id - +b.id)
       const hasNotes = groups.filter(_ => _.fields.Notes).length;
       const hasOrderNumbers = groups.filter(_ => _.fields.OrderNumber).length;
       const spaces = groups.filter(_ => _.fields.Spaces).reduce((acc, cur) => acc + +cur.fields.Spaces, 0);
@@ -52,33 +53,33 @@ export class GroupByCustomerAddressPipe implements PipeTransform {
       const id = groups[0]['id'];
       const fields = {
         CustomerNumber: groups[0]['fields']['CustomerNumber'],
-        Customer: groups[0]['fields']['Customer'],
+        CustomerName: groups[0]['fields']['CustomerName'],
         City: groups[0]['fields']['City'],
-        PostCode: groups[0]['fields']['PostCode'],
+        Postcode: groups[0]['fields']['Postcode'],
         ContactPerson: groups[0]['fields']['ContactPerson'],
         Address: groups[0]['fields']['Address'],
         PhoneNumber: groups[0]['fields']['PhoneNumber']?.replace(/,/g, ', '),
         Status: groups[0]['fields']['Status'],
         Site: groups[0]['fields']['Site'],
         Notes: groups[0]['fields']['Notes'],
-        Title: groups[0]['fields']['Title'],
+        Run: groups[0]['fields']['Run'],
         RequestedDate: groups[0]['fields']['RequestedDate']
       };
       return {key, id, fields, value: groupedCollection[key], hasOrderNumbers, hasNotes, spaces, weight, requestedDate};
     });
     const deliveries = drops.reduce((acc, cur) => {
-      const title = cur.fields.Title || '';
-      acc[title] = (acc[title] || 0) + 1;
+      const run = cur.fields.Run || '';
+      acc[run] = (acc[run] || 0) + 1;
       return acc;
     }, {}); 
     const spaces = drops.reduce((acc, cur) => {
-      const title = cur.fields.Title || '';
-      acc[title] = (acc[title] || 0) + cur.spaces;
+      const run = cur.fields.Run || '';
+      acc[run] = (acc[run] || 0) + cur.spaces;
       return acc;
     }, {});
     const weights = drops.reduce((acc, cur) => {
-      const title = cur.fields.Title || '';
-      acc[title] = (acc[title] || 0) + cur.weight;
+      const run = cur.fields.Run || '';
+      acc[run] = (acc[run] || 0) + cur.weight;
       return acc;
     }, {});
     return {drops, deliveries, spaces, weights};

@@ -281,6 +281,10 @@ h2 {
   color: red;  
 }
 
+.addy {
+  flex: 1;
+}
+
 @media (max-width: 1024px) {
   .mat-expansion-panel-header-title, .mat-expansion-panel-header-description {
     margin-right: 0;

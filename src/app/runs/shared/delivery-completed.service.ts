@@ -6,13 +6,15 @@ import { BehaviorSubject, catchError, lastValueFrom, map, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Delivery } from './delivery';
 
+interface BatchRes {
+  responses: {body: Delivery}[];
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class DeliveryCompletedService {
-  private _dropsUrl = 'lists/b8088299-ac55-4e30-9977-4b0b20947b84';
-  private _deliveryListUrl = `${environment.endpoint}/${environment.siteUrl}/${this._dropsUrl}`;
+  private _batchUrl = `${environment.gpEndpoint}/deliveries/batch`;
   private _deliveriesSubject$ = new BehaviorSubject<Delivery[]>([]);
 
   public loading = new BehaviorSubject<boolean>(true);
@@ -23,15 +25,14 @@ export class DeliveryCompletedService {
   ) { }
 
   private createUrl(branch: string, deliveryType: string, runName: string | null | undefined = undefined): string {
-    let url = `${this._deliveryListUrl}/items?expand=fields(select=Title,Sequence,Site,City,PostCode,CustomerNumber,Customer,Status,OrderNumber,DeliveryDate,DeliveryType,Notes,CustomerType,PickStatus)`;
-    const runString = runName ? `'${runName}'` : 'null';
+    let url = `${environment.gpEndpoint}/deliveries`;
+    const runString = runName ? `${runName}` : '';
     const filters: Array<string> = [];
-    if (deliveryType) filters.push(`fields/DeliveryType eq '${deliveryType}'`);
-    if (runName !== undefined ) filters.push(`fields/Title eq ${runString}`);
-    if (branch) filters.push(`fields/Branch eq '${branch}'`);
-    filters.push('fields/Status eq \'Archived\'');
-    if (filters.length > 0) url += `&filter=${filters.join(' and ')}`;
-    url += `&orderby=fields/DeliveryDate desc&top=250`;
+    if (deliveryType) filters.push(`deliveryType=${deliveryType}`);
+    if (runName !== undefined ) filters.push(`run=${runString}`);
+    if (branch) filters.push(`branch=${branch}`);
+    filters.push('status=Archived');
+    if (filters.length > 0) url += `?${filters.join('&')}`;
     return url;
   }
 
@@ -50,15 +51,17 @@ export class DeliveryCompletedService {
     return this._deliveriesSubject$;
   }
 
-  changeStatuses(ids: Array<string>, currentStatus: number): void {
-    const headers = {'Content-Type': 'application/json'};
+  changeStatuses(ids: Array<string>, currentStatus: number): Promise<Delivery[] | void> {
     const status = !currentStatus ? 1 : 0;
     const payload = {fields: {PickStatus: status}};
-    const requests = ids.map((id, index) => {
-      const url = `${environment.siteUrl}/${this._dropsUrl}/items/${id}`;
-      return {id: index + 1, method: 'PATCH', url, headers, body: payload};
+    const requests = ids.map(id => {
+      return {id, method: 'PATCH', body: payload};
     });
-    lastValueFrom(requests.length ? this.http.post(`${environment.endpoint}/$batch`, {requests}) : of());
+
+    const req = requests.length ? this.http.post<BatchRes>(this._batchUrl, {requests}).pipe(
+      map(_ => _.responses.map(r => r['body'])),
+    ) : of([] as Delivery[]);
+    return lastValueFrom(req);
   }
 
 }

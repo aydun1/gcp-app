@@ -11,24 +11,16 @@ export interface Delivery {
       id: string;
     }
   }
-  createdDateTime: string | Date;
-  createdBy?: {
-    user: {
-      displayName: string;
-      email: string;
-      id: string;
-    }
-  }
   order: Observable<Order>;
   fields: {
     id: string;
-    Title: string;
+    Run: string;
     Address: string;
     City: string;
     State: string;
-    PostCode: string;
+    Postcode: string;
     Branch: string;
-    Customer: string;
+    CustomerName: string;
     CustomerNumber: string;
     DeliveryDate: Date;
     RequestedDate: Date;
@@ -39,5 +31,7 @@ export interface Delivery {
     Spaces: number;
     Weight: number;
     Status: string;
+    Creator: string;
+    Created: Date;
   }
 }

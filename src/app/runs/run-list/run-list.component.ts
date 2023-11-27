@@ -156,10 +156,10 @@ export class RunListComponent implements OnInit {
   getDeliveries(params: Params): Observable<Delivery[]> {
     return this.deliveryService.getDeliveries(params['branch']).pipe(
       map(_ => {
-        this.populatedRuns = new Set(_.map(d => d.fields.Title || ''));
+        this.populatedRuns = new Set(_.map(d => d.fields.Run || ''));
         return _.filter(d => {
-          const run = this.runName || this.runs[this.route.snapshot.queryParamMap.get('tab') || 0]?.fields.Title || undefined;
-          return d.fields.Title === run;
+          const run = this.runName || this.runs[this.route.snapshot.queryParamMap.get('tab') || 0]?.fields.Title || '';
+          return d.fields.Run === run;
       }).map(
         _ => {
           _['order'] = this.deliveryService.getOrder(2, _.fields.OrderNumber);
@@ -294,7 +294,8 @@ export class RunListComponent implements OnInit {
       this.loading = true;
       this.deliveryService.archiveDeliveriesByRun(runName).then( _ => {
         this.snackBar.open('Archived deliveries', '', {duration: 3000});
-        this.loading = false
+        this.loading = false;
+        this._orderRefreshTrigger$.next(true);
       }).catch(_ => {
         this.snackBar.open('Could not archive deliveries', '', {duration: 3000});
         this.loading = false;
@@ -308,7 +309,7 @@ export class RunListComponent implements OnInit {
       this.snackBar.open(check ? 'Deliveries checked' : 'Deliveries unchecked', '', {duration: 3000});
       this.loading = false
     }).catch(_ => {
-      this.snackBar.open('Could not archive deliveries', '', {duration: 3000});
+      this.snackBar.open('Could not update deliveries', '', {duration: 3000});
       this.loading = false;
     });
   }
