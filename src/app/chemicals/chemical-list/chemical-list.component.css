@@ -136,6 +136,22 @@
   width: 30px;
 }
 
+@media (max-width: 800px) {
+  .options {
+    flex-direction: column;
+  }
+
+  .mat-mdc-form-field {
+    flex: auto;
+    margin-bottom: 10px;
+    margin-right: 0;
+  }
+
+  .mat-mdc-form-field:last-child {
+    margin-bottom: 0;
+  }
+}
+
 @media print {
   :host{
     overflow-y: auto;

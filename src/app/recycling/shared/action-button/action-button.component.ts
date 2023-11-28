@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { forkJoin, of, Subject, switchMap, take, tap } from 'rxjs';
+import { concatMap, forkJoin, of, Subject, switchMap, take, tap } from 'rxjs';
 
 import { RecyclingService } from '../recycling.service';
 import { Cage } from '../cage';
@@ -12,6 +12,9 @@ import { Site } from '../../../customers/shared/site';
 import { CustomerSiteDialogComponent } from '../../../customers/shared/customer-site-dialog/customer-site-dialog.component';
 import { RunPickerDialogComponent } from '../../../runs/shared/run-picker-dialog/run-picker-dialog.component';
 import { DeliveryService } from '../../../runs/shared/delivery.service';
+import { ConfirmationDialogComponent } from '../../../shared/confirmation-dialog/confirmation-dialog.component';
+import { CageEditDialogComponent } from '../cage-edit-dialog/cage-edit-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'gcp-action-button',
@@ -52,16 +55,21 @@ export class ActionButtonComponent implements OnInit {
     return statuses.size === 1 ? first : undefined;
   }
 
+  get areCages(): boolean {
+    const statuses = this.cages.filter(_ => !_.fields.CageNumber);
+    return statuses.length === 0;
+  }
+
   get cageBranch(): string | undefined {
     const statuses = new Set(this.cages.map(_ => _?.fields.Branch));
     const [first] = statuses;
     return statuses.size === 1 ? first : undefined;
   }
 
-  get cageMaterial(): number | undefined {
+  get cageMaterial(): number | null {
     const statuses = new Set(this.cages.map(_ => _?.fields.Material));
     const [first] = statuses;
-    return statuses.size === 1 ? first : undefined;
+    return statuses.size === 1 ? first : null;
   }
 
   public dialogRef!: MatDialogRef<CustomerPickerDialogComponent, any>;
@@ -70,8 +78,9 @@ export class ActionButtonComponent implements OnInit {
   public depots!: Array<Site>;
 
   constructor(
-    private dialog: MatDialog,
     private router: Router,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
     private sharedService: SharedService,
     private recyclingService: RecyclingService,
     private cutomersService: CustomersService,
@@ -116,6 +125,22 @@ export class ActionButtonComponent implements OnInit {
     forkJoin(tasks).subscribe(() => this.onComplete());
   }
 
+  consolidateMaterial(cages: Array<Cage>): void {
+    const materials = cages.filter(_ => !_.fields.Material);
+    if (materials.length > 0) {
+      this.snackBar.open('Material type is not set', '', {duration: 3000});
+      return;
+    }
+    this.loading.next(true);
+    const tasks = cages.map(_ => {
+      const quantity = _.fields.GrossWeight - (_.fields.CageWeight || 0);
+      return this.recyclingService.consolidateMaterial(_.id, _.fields.Branch, _.fields.Material, quantity);
+    });
+    of(...tasks).pipe(
+      concatMap(r => r)
+    ).subscribe(() => this.onComplete());
+  }
+
   markWithPolymer(cages: Array<Cage>): void {
     this.loading.next(true);
     const tasks = cages.map(_ => this.recyclingService.deliverToPolymer(_.id));
@@ -149,13 +174,13 @@ export class ActionButtonComponent implements OnInit {
 
   collectFromProcessing(cages: Array<Cage>): void {
     this.loading.next(true);
-    const tasks = cages.map(_ => _.fields.AssetType.startsWith('Cage') ? this.recyclingService.collectFromProcessing(_.id): this.recyclingService.collectAndComplete(_.id));
+    const tasks = cages.map(_ => _.fields.AssetType.startsWith('Cage') ? this.recyclingService.collectFromProcessing(_.id): this.recyclingService.collectAndComplete(_.id, 'polymer'));
     forkJoin(tasks).subscribe(() => this.onComplete());
   }
 
   collectFromPolymer(cages: Array<Cage>): void {
     this.loading.next(true);
-    const tasks = cages.map(_ => _.fields.AssetType.startsWith('Cage') ? this.recyclingService.collectFromPolymer(_.id): this.recyclingService.collectAndComplete(_.id));
+    const tasks = cages.map(_ => _.fields.AssetType.startsWith('Cage') ? this.recyclingService.collectFromPolymer(_.id): this.recyclingService.collectAndComplete(_.id, 'local'));
     forkJoin(tasks).subscribe(() => this.onComplete());
   }
 
@@ -198,7 +223,7 @@ export class ActionButtonComponent implements OnInit {
     });
   }
 
-  setBranch(cages: Array<Cage>, branch: string) {
+  setBranch(cages: Array<Cage>, branch: string): void {
     this.loading.next(true);
     const tasks = cages.map(_ => this.recyclingService.setBranch(_.id, branch));
     forkJoin(tasks).subscribe(() => {
@@ -207,7 +232,13 @@ export class ActionButtonComponent implements OnInit {
     });
   }
 
-  setMaterial(cages: Array<Cage>, material: {code: number}) {
+  openEditDialog(cages: Array<Cage>): void {
+    const data = {cages: cages};
+    const dialogRef = this.dialog.open(CageEditDialogComponent, {width: '600px', data});
+    dialogRef.afterClosed().subscribe(() => this.onComplete());
+  }
+
+  setMaterial(cages: Array<Cage>, material: {code: number}): void {
     this.loading.next(true);
     const tasks = cages.map(_ => this.recyclingService.setMaterial(_.id, material['code']));
     forkJoin(tasks).subscribe(() => {
@@ -216,7 +247,7 @@ export class ActionButtonComponent implements OnInit {
     });
   }
 
-  setDepot(cages: Array<Cage>, depot: string) {
+  setDepot(cages: Array<Cage>, depot: string): void {
     this.loading.next(true);
     const tasks = cages.map(cage => this.recyclingService.setDepot(cage.id, depot));
     forkJoin(tasks).subscribe(() => this.onComplete());
@@ -241,9 +272,14 @@ export class ActionButtonComponent implements OnInit {
   }
 
   reset(cages: Array<Cage>): void {
-    this.loading.next(true);
-    const tasks = cages.map(cage => this.recyclingService.resetCage(cage.id));
-    forkJoin(tasks).subscribe(_ => this.onComplete());
+    const data = {title: 'Reset cage', content: ['Are you sure you want to reset this cage?', 'This will clear the current status and customer and set it back to available.']};
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {width: '800px', data});
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (!result) return;
+      this.loading.next(true);
+      const tasks = cages.map(cage => this.recyclingService.resetCage(cage.id));
+      forkJoin(tasks).subscribe(_ => this.onComplete());
+    });
   }
 
   readyForCollection(cages: Array<Cage>): void {

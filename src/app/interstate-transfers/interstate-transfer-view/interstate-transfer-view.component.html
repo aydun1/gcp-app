@@ -55,7 +55,7 @@
   </div>
   <mat-divider></mat-divider>
   <div class="inner content">
-    <div *ngFor="let line of s.lines" class="line">
+    <div *ngFor="let line of s.lines; trackBy:trackByFn" class="line">
       <div class="bin">
         {{ line.Bin || '-' }}
       </div>

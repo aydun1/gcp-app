@@ -69,11 +69,6 @@ export class DocListComponent implements OnInit {
   }
 
   fileChangeEvent(e: any): void {
-    const files = e.target.files;
-    const keys = Array.from(Array(files.length).keys());
-    for (let key in keys) {
-      const file = files[key];
-      this.docsService.uploadFile(this.folder, this.subfolder, file);
-    }
+    this.docsService.fileChangeEvent(this.folder, this.subfolder, e);
   }
 }

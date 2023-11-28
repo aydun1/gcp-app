@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -6,14 +6,16 @@ import { BarcodeFormat } from '@zxing/library';
 import { BehaviorSubject, distinctUntilChanged, startWith, tap } from 'rxjs';
 
 import { OrderLinesDialogComponent } from '../runs/shared/order-lines-dialog/order-lines-dialog.component';
+import { SharedService } from '../shared.service';
 
 @Component({
   selector: 'gcp-scanner-dialog',
   templateUrl: 'scanner-dialog.component.html',
   styleUrls: ['./scanner-dialog.component.css']
 })
-export class ScannerDialogComponent implements OnInit {
-  private orderRe = /^QO[0-9]{7}|WEB[0-9]{9}$/ig;
+export class ScannerDialogComponent implements AfterViewInit, OnInit {
+  @ViewChild('search') searchElement!: ElementRef;
+  private orderRe = /^(N|Q|V|SA|W|MPA|WEB|MSF)O?[0-9]{6,9}[A-Z]?$/ig;
   public availableDevices!: MediaDeviceInfo[];
   public currentDevice: MediaDeviceInfo | undefined;
   public cameraPicker = new FormControl<string | null>(null);
@@ -24,6 +26,7 @@ export class ScannerDialogComponent implements OnInit {
   public tryHarder = false;
   public enabled = true;
   public scannedText = new FormControl('');
+  public isScanner: Promise<boolean> = navigator['userAgentData'].getHighEntropyValues(['model']).then((ua: any) => ua['model'] === 'CK65');
 
   public formatsEnabled: BarcodeFormat[] = [
     BarcodeFormat.CODE_39,
@@ -56,10 +59,16 @@ export class ScannerDialogComponent implements OnInit {
         b = b || '';
         const l = (a.length + b.length) / 2;
         const diff = l - [...a].reduce((acc, cur, i) => acc += (b ? b[i] : '') === cur ? 1 : 0, 0);
-        if (b.length > 0 && diff > 1) this.processCode(b);
+        if (b.length > 0 && diff > 1 && this.orderRe.test(b)) this.processCode(b);
         return false;
       })
     ).subscribe()
+  }
+
+  ngAfterViewInit(): void {
+    this.isScanner.then(_ => {
+      if (_) this.searchElement.nativeElement.focus();
+    });
   }
 
   setCamera(deviceId: string | null): void {
@@ -84,15 +93,12 @@ export class ScannerDialogComponent implements OnInit {
 
   processCode(code: string | null): void {
     if (!code) return;
-    if (this.orderRe.test(code)) {
-      this.openReceipt(code);
-    } else {
-      this.snackBar.open('Did not recognise code', '', {duration: 3000});
-    }
+    this.openReceipt(code);
   }
 
   onHasPermission(has: boolean): void {
     this.hasPermission = has;
+    if (!has) this.searchElement.nativeElement.focus();
   }
 
   onTorchCompatible(isCompatible: boolean): void {

@@ -1,42 +1,41 @@
 <h2 mat-dialog-title>Barcode scanner</h2>
-<button mat-icon-button [matMenuTriggerFor]="appMenu" class="action-button">
+<button  *ngIf="(isScanner | async) === false && hasPermission !== false" mat-icon-button [matMenuTriggerFor]="appMenu" class="action-button">
   <mat-icon>more_vert</mat-icon>
 </button>
 
-<mat-dialog-content>
-  <zxing-scanner [enable]="enabled" [torch]="torchEnabled" [(device)]="currentDevice" (scanSuccess)="onCodeResult($event)"
-    [formats]="formatsEnabled" [tryHarder]="tryHarder" (permissionResponse)="onHasPermission($event)" (scanError)="onScanError($event)"
-    (camerasFound)="onCamerasFound($event)" (torchCompatible)="onTorchCompatible($event)">
-  </zxing-scanner>
+<mat-dialog-content *ngIf="(isScanner | async) === false">
+  <div [hidden]="!hasPermission">
+    <zxing-scanner [enable]="enabled" [torch]="torchEnabled" [(device)]="currentDevice" (scanSuccess)="onCodeResult($event)"
+      [formats]="formatsEnabled" [tryHarder]="tryHarder" (permissionResponse)="onHasPermission($event)" (scanError)="onScanError($event)"
+      (camerasFound)="onCamerasFound($event)" (torchCompatible)="onTorchCompatible($event)">
+    </zxing-scanner>
+  </div>
   <div *ngIf="hasPermission === undefined" class="message">
     <h3>Waiting for permissions.</h3>
-    <blockquote>
+    <p>
       If your device does not have cameras, no permissions will be asked.
-    </blockquote>
-  </div>
-  <div *ngIf="hasPermission === false" class="message">
-    <h3>You denied the camera permission, we can't scan anything without it. 😪</h3>
+    </p>
   </div>
   <div *ngIf="hasDevices === false" class="message">
     <h3>No devices were found.</h3>
-    <blockquote>
-      I believe your device has no media devices attached to.
-    </blockquote>
+    <p>It seems your device has no camera.
+    </p>
   </div>
 </mat-dialog-content>
-
-<mat-dialog-actions>
-  <mat-form-field subscriptSizing="dynamic" class="name-filter">
-    <mat-label>Scan data</mat-label>
-    <input matInput [formControl]="scannedText" type="text" autocomplete="off" placeholder="">
-    <button *ngIf="scannedText.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearResult()" type="button">
-      <mat-icon>close</mat-icon>
-    </button>
-    <button [disabled]="!scannedText.value" matSuffix mat-icon-button type="button" (click)="processCode(scannedText.value)">
-      <mat-icon>arrow_forward</mat-icon>
-    </button>
-  </mat-form-field>
-</mat-dialog-actions>
+<form (submit)="processCode(scannedText.value)">
+  <mat-dialog-actions>
+      <mat-form-field subscriptSizing="dynamic" class="name-filter">
+        <mat-label>Scan data</mat-label>
+        <input matInput [formControl]="scannedText" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autocomplete="chrome-off" placeholder="" #search>
+        <button *ngIf="scannedText.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearResult()" type="button">
+          <mat-icon>close</mat-icon>
+        </button>
+        <button [disabled]="!scannedText.value" matSuffix mat-icon-button type="submit">
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </mat-form-field>
+  </mat-dialog-actions>
+</form>
 
 <mat-menu #appMenu="matMenu">
   <mat-selection-list>

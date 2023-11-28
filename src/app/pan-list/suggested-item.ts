@@ -12,7 +12,7 @@ export interface SuggestedItem {
   MinOrderQty: number;
   OrderPointQty: number;
   OrderUpToLvl: number;
-  PackSize: number;
+  PackSize: number | string;
   PalletQty: number;
   PalletHeight: number;
   QtyAllocated: number;
@@ -32,6 +32,17 @@ export interface SuggestedItem {
   AllocSA: number;
   AllocVIC: number;
   AllocWA: number;
+  AvailHEA: number;
+  AvailNSW: number;
+  AvailQLD: number;
+  AvailSA: number;
+  AvailVIC: number;
+  AvailWA: number;
   Notes: string;
-  ToTransfer?: number;
+  ToTransfer: number;
+  QtyRequired: number | null;
+  Suggested: number | null;
+  UnderStocked?: boolean;
+  ToFill?: number;
+  Spaces: number;
 }

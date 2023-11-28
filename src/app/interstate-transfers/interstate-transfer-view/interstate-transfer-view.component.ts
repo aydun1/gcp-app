@@ -1,11 +1,11 @@
 import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { catchError, concatMap, delay, Observable, of, retry, retryWhen, switchMap, take, tap, throwError } from 'rxjs';
+import { catchError, Observable, of, retry, switchMap } from 'rxjs';
 
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
 import { NavigationService } from '../../navigation.service';
 import { InTransitTransfer } from '../shared/intransit-transfer';
-import { PurchaseOrderLine } from '../shared/purchase-order-line';
+import { IntransitTransferLine } from '../shared/intransit-transfer-line';
 
 @Component({
   selector: 'gcp-interstate-transfer-view',
@@ -56,7 +56,7 @@ export class InterstateTransferViewComponent implements OnDestroy, OnInit {
     window.print();
   }
 
-  trackByFn(index: number, item: PurchaseOrderLine): string {
+  trackByFn(index: number, item: IntransitTransferLine): string {
     return item.Id;
   }
 

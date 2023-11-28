@@ -185,9 +185,9 @@ export class LoadingScheduleService {
       switchMap(_ => this.markPanSent(id)),
       switchMap(_ => this.panListService.getRequestedQuantitiesOnce(id, panListId)),
       switchMap(lines => {
-        const rows = lines.map(_ => `<tr><td>${_.fields.ItemNumber}</td><td>${_.fields.Quantity}</td></tr>`).join('');
+        const rows = lines.map(_ => `<tr><td>${_.fields.ItemNumber}</td><td>${_.fields.Quantity || 0}</td></tr>`).join('');
         const subject = `New pan list for ${ls.fields.To} #${id}-${panListId}`;
-        let body = `<p><i>Click <a href="${environment.redirectUri}/loading-schedule/${id}?pan=${panListId}">here</a> for more details and to print.</i></p>`
+        let body = `<p><i>Click <a href="${environment.baseUri}/loading-schedule/${id}?pan=${panListId}">here</a> for more details and to print.</i></p>`
         body += '<p>';
         if (ls.fields.LoadingDate) body += `<strong>Loading date:</strong> ${new Date(ls.fields.LoadingDate).toLocaleDateString('en-AU')}<br>`;
         if (ls.fields.ArrivalDate) body += `<strong>Delivery date:</strong> ${new Date(ls.fields.ArrivalDate).toLocaleDateString('en-AU')}<br>`;
@@ -197,8 +197,9 @@ export class LoadingScheduleService {
         if (ls.fields.Notes) body += `<strong>Notes:</strong> ${ls.fields.Notes}<br>`;
         body += '</p>';
         body += `<table><tr><th>Item number</th><th>Qty Requested</th></tr>${rows}</table>`;
-        const to = [ls.fields.From, ls.fields.To].map(_ => this.shared.panMap.get(`${_}` || '')).flat(1).filter(_ => _) as string[];
-        return this.shared.sendMail(to, subject, body, 'HTML');
+        const to = [ls.fields.From].map(_ => this.shared.panMap.get(`${_}` || '')).flat(1).filter(_ => _) as string[];
+        const cc = [ls.fields.To].map(_ => this.shared.panMap.get(`${_}` || '')).flat(1).filter(_ => _) as string[];
+        return this.shared.sendMail(to, subject, body, 'HTML', cc);
       })
     ));
   }

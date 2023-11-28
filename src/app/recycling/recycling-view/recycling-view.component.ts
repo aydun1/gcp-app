@@ -25,6 +25,7 @@ export class RecyclingViewComponent implements OnDestroy, OnInit {
   public isCage!: boolean;
   public loading = new BehaviorSubject<boolean>(true);
   public loadingHistory = new BehaviorSubject<boolean>(true);
+  public name!: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -43,6 +44,7 @@ export class RecyclingViewComponent implements OnDestroy, OnInit {
         this.cageId = _.fields.id;
         this.cageNumber = _.fields.CageNumber;
         this.isCage = _.fields.AssetType.startsWith('Cage');
+        this.name = this.isCage ? 'Cage' : _.fields.AssetType;
         this.getCageHistory(_.fields.CageNumber, _.fields.AssetType);
         this.loading.next(false);
       }),

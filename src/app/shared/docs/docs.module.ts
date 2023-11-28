@@ -7,14 +7,12 @@ import { DocListComponent } from './doc-list/doc-list.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { DocUploadComponent } from './doc-upload/doc-upload.component';
 import { DocsComponent } from './docs.component';
 
 @NgModule({
   declarations: [
     DocsComponent,
-    DocListComponent,
-    DocUploadComponent
+    DocListComponent
   ],
   imports: [
     CommonModule,

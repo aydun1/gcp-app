@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
 
 import { Site } from '../../../customers/shared/site';
 import { Customer } from '../../../customers/shared/customer';
@@ -69,7 +69,13 @@ export class PalletCustomerListDialogComponent implements OnInit, OnDestroy {
           this.totalOut += pallet.fields['Out'];
           return pallet;
         })
-      )
+      ),
+      catchError(
+        _ => {
+          this.loading$.next(false);
+          return of([] as Pallet[]);
+        }
+      ),
     );
   }
 

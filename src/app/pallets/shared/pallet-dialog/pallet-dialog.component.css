@@ -2,6 +2,11 @@
   width: 100%;
 }
 
+.section-divider {
+  margin: 16px 0;
+  visibility: hidden;
+}
+
 .name {
   background: rgb(255 255 255 / 68%);
   border-radius: 4px;
@@ -12,6 +17,15 @@
   line-height: 20px;
   padding: 4px 6px;
   position: absolute;
+}
+
+.direction-title {
+  font-weight: bold;
+  padding: 4px 5px;
+}
+
+.pallet-word {
+  text-align: right;
 }
 
 .pallet-grid {
@@ -31,8 +45,16 @@
 
 .pallet-cell {
   flex: 1;
+  overflow: hidden;
   position: relative;
   border-bottom: 1px solid;
+}
+
+.owing-cell {
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .pallet-input {
@@ -103,6 +125,6 @@
 
 .close-button {
   position: absolute;
-  right: 0;
-  top: 0;
+  right: 8px;
+  top: 8px;
 }

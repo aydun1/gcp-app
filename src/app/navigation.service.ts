@@ -19,6 +19,11 @@ export class NavigationService {
   }
 
   back(): void {
+    if (window.history.length > 1) this.location.back();
+    else this.router.navigate(['/']);
+  }
+
+  backOld(): void {
     this._history.pop();
     const hist = this._history[this._history.length - 1]?.split('/')?.length;
     const curr = this.router.url.split('/').length;

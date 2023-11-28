@@ -1,11 +1,16 @@
+::ng-deep  .mat-mdc-form-field-icon-suffix {
+  display: inline-flex;
+  align-items: center;
+}
+
 zxing-scanner {
   display: flex;
 }
 
 .action-button {
   position: absolute;
-  right: 6px;
-  top: 6px;
+  right: 8px;
+  top: 8px;
 }
 
 .mat-mdc-dialog-content,
@@ -13,15 +18,11 @@ zxing-scanner {
   padding: 0;
 }
 
-.message {
-  position: absolute;
-  top: 32%;
-}
-
 .mat-mdc-form-field {
   width: 100%;
 }
 
-h3 {
+h3,
+p {
   margin-left: 40px;
 }

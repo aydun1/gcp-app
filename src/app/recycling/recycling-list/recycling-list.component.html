@@ -1,11 +1,11 @@
 <div *ngIf="(cages$ | async) as cages"  class="outer">
   <gcp-letterhead class="print-heading">Recycling cages</gcp-letterhead>
   <div *ngIf="selection.isEmpty() && (choices$ | async) as choices"class="options inner">
-    <div class="buttons">
+    <div class="selectors">
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
         <mat-label>{{ choices.Branch.name }}</mat-label>
         <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
-          <mat-option>All</mat-option>
+          <mat-option value="">All</mat-option>
           <mat-option *ngFor="let s of choices.Branch.choice.choices" value="{{ s }}">{{ s }}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -13,7 +13,7 @@
         <mat-label>{{ choices.Status.name }}</mat-label>
         <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event, choices.Status.choice.choices)" panelClass="wide-select">
           <mat-option>All</mat-option>
-          <mat-option *ngFor="let s of choices.Status.choice.choices" value="{{ s }}">{{ s }}</mat-option>
+          <mat-option *ngFor="let s of choices.Status.choice.choices" [value]="s">{{ s }}</mat-option>
           <mat-optgroup label="Cage history">
             <mat-option value="Complete">All complete cages</mat-option>
             <mat-option value="Local processing">Local processing</mat-option>
@@ -21,11 +21,21 @@
           </mat-optgroup>
         </mat-select>
       </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
+        <mat-label>Month</mat-label>
+        <mat-select [formControl]="monthFilter" (selectionChange)="setMonth($event)">
+          <mat-option>All</mat-option>
+          <mat-option *ngFor="let d of monthDates" value="{{ d.year }}-{{ d.month }}">{{ d.monthName }} {{ d.year }}</mat-option>
+        </mat-select>
+      </mat-form-field>
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="asset-type">
         <mat-label>{{ choices.AssetType.name }}</mat-label>
         <mat-select [formControl]="assetTypeFilter" (selectionChange)="setAssetType($event)" panelClass="wide-select">
           <mat-option>All</mat-option>
-          <mat-option *ngFor="let s of choices.AssetType.choice.choices" [value]="s">{{ s }}</mat-option>
+          <mat-option value="Cage">Cage</mat-option>
+          <mat-option value="Cage - Solid (2.5m³)">Cage - Solid</mat-option>
+          <mat-option value="Cage - Folding (2.5m³)">Cage - Folding</mat-option>
+          <mat-option value="Other">Other</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="material">
@@ -35,18 +45,27 @@
           <mat-option *ngFor="let m of materials" [value]="m['code']">{{ m['name'] }}{{ m['code'] }}</mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="bin-filter">
-        <mat-label>Cage number</mat-label>
-        <input matInput [formControl]="binFilter" min="0" type="number" autocomplete="off" placeholder="Type to search...">
-        <button *ngIf="!binFilter.value" matSuffix mat-icon-button disabled type="button">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="cage-filter">
+        <mat-label>Cage Number</mat-label>
+        <input matInput [formControl]="cageFilter" min="0" type="number" autocomplete="off" placeholder="Type to search...">
+        <button *ngIf="!cageFilter.value" matSuffix mat-icon-button disabled type="button">
           <mat-icon>search</mat-icon>
         </button>
-        <button *ngIf="binFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearBinFilter()" type="button">
+        <button *ngIf="cageFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearCageFilter()" type="button">
           <mat-icon>close</mat-icon>
         </button>
       </mat-form-field>
     </div>
-    <a mat-raised-button [routerLink]="['new']" color="primary" class="add-cage">Add New Cage</a>
+    <div class="new-holder">
+      <a mat-raised-button [routerLink]="['new']" color="primary">Add New Cage</a>
+    </div>
+  </div>
+  <div *ngIf="0">
+    <div *ngIf="branchQuantities | async as branchQtys">
+      <div *ngFor="let bq of branchQtys">
+        {{ bq.fields.Material }}: {{ bq.fields.Quantity }}
+      </div>
+    </div>
   </div>
   <div *ngIf="!selection.isEmpty()" class="inner multi-action">
     <div class="cage-count mat-app-background">
@@ -63,7 +82,7 @@
     <div *ngIf="statusFilter.value"><strong>Status:</strong> {{ statusFilter.value }}</div>
   </div>
 
-  <mat-card appearance="outlined" class="inner">
+  <mat-card appearance="outlined" class="inner table-container">
     <mat-table #table [dataSource]="cages" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
 
       <ng-container matColumnDef="checked">

@@ -24,6 +24,16 @@
   align-items: center;
 }
 
-.upload-button {
+.file-select-label {
   margin-left: auto;
+}
+
+.file-select {
+  display: none;
+}
+
+@media print {
+  .file-select-label {
+    display: none;
+  }
 }

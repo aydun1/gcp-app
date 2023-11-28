@@ -2,7 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectionListChange } from '@angular/material/list';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { combineLatest, distinctUntilChanged, map, Observable, startWith, Subject, tap } from 'rxjs';
+
 import { Chemical } from '../chemical';
 import { ChemicalService } from '../chemical.service';
 
@@ -21,6 +23,7 @@ export class ChemicalBackpackDialogComponent implements OnInit {
   public searchControl = new FormControl('');
 
   constructor (
+    private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<ChemicalBackpackDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {chemical: Chemical},
     private chemicalService: ChemicalService
@@ -67,7 +70,10 @@ export class ChemicalBackpackDialogComponent implements OnInit {
     this.saving = true;
     this.chemicalService.linkChemicalToItem(this.data.chemical.ItemNmbr, this.selected.CwNo).then(
       _ =>  this.dialogRef.close()
-    ).catch(e => this.saving = false);
+    ).catch(e => {
+      this.saving = false;
+      this.snackBar.open(`Error: ${e?.error?.result}` || 'Error linking chemical', '', {duration: 3000})
+    });
   }
 
   clearSearch(): void {

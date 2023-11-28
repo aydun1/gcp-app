@@ -9,6 +9,7 @@ import { Site } from '../../customers/shared/site';
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
 import { Cage } from './cage';
+import { BranchTotal } from './branch-total';
 
 
 @Injectable({
@@ -21,8 +22,10 @@ export class RecyclingService {
   private _columns$ = new BehaviorSubject<any>(
     {Placeholder: true, AssetType: {choice: {choices: []}, name: ''}, Status: {choice: {choices: []}, name: ''}, Branch: {choice: {choices: []}, name: ''}}
   );
+  private _totalsUrl = 'lists/7354d3dc-88fe-4184-b069-13e5ee6cf56f';
   private _listUrl = 'lists/e96c2778-2322-46d6-8de9-3d0c8ca5aefd';
   private _cageTrackerUrl = `${environment.endpoint}/${environment.siteUrl}/${this._listUrl}`;
+  private _totalsTrackerUrl = `${environment.endpoint}/${environment.siteUrl}/${this._totalsUrl}`;
   private types = {
     'Cage - Solid (2.5m³)': 'Solid cage',
     'Cage - Folding (2.5m³)': 'Folding cage'
@@ -77,28 +80,33 @@ export class RecyclingService {
         case 'bin':
           return `fields/CageNumber eq ${filters['bin']}`;
         case 'branch':
+          if (!filters['branch']) return;
           return `fields/Branch eq '${filters['branch']}'`;
         case 'status':
           if (filters['status'] === 'Polymer') return `fields/Date3 ne null`;
           if (filters['status'] === 'Local processing') return `fields/ToLocalProcessing ne null`;
           return `fields/Status eq '${filters['status']}'`;
         case 'assetType':
+          if (filters['assetType'] === 'Cage') return `fields/CageNumber ne null`;
+          if (filters['assetType'] === 'Other') return `fields/CageNumber eq null`;
           return `fields/AssetType eq '${filters['assetType']}'`;
+        case 'month':
+          const yearMth = filters['month'].split('-').map((_: string) => parseInt(_));
+          const startDate = new Date(`${yearMth[0]}-${yearMth[1]+1}-1`)
+          const endDate = new Date(`${yearMth[1] < 11 ? yearMth[0] : yearMth[0] + 1}-${yearMth[1] < 11 ? yearMth[1]+2 : 1}-1`)
+          return `fields/Date2 gt '${startDate.toISOString()}' and fields/Date2 lt '${endDate.toISOString()}'`;
         case 'material':
           return `fields/Material eq '${filters['material']}'`;
-  
         default:
           return '';
       }
     }).filter(_ => _);
 
-    if (!filterKeys.includes('assetType')) parsed.push(`fields/CageNumber ne null`);
-    if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Complete'`);
-
+    if (!filterKeys.includes('status') && !filterKeys.includes('month')) parsed.unshift(`fields/Status ne 'Complete'`);
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
-    url += `&$orderby=${filters['sort'] ? filters['sort'] : 'fields/CageNumber'}`;
-    url += ` ${filters['order'] ? filters['order'] : 'asc'}`;
-    url += `&top=25`;
+    url += `&$orderby=${filters['sort'] ? filters['sort'] : filters['assetType'] === 'Other' ? 'fields/Modified' : 'fields/CageNumber'}`;
+    url += ` ${filters['order'] ? filters['order'] : filters['assetType'] === 'Other' ? 'desc' : 'asc'}`;
+    url += `&top=50`;
     return url;
   }
 
@@ -109,7 +117,6 @@ export class RecyclingService {
     cage['Cage'] = cage.fields.AssetType?.startsWith('Cage');
     cage['Type'] = cage['Cage'] ? cage.fields.AssetType.split('-', 2)[1].split(' ', 2)[1][0].toLowerCase() : null;
     cage.fields['AssetTypeClean'] = this.types[cage.fields.AssetType] || cage.fields.AssetType;
-
     if (cage.fields.Status === 'Available') {
       cage['statusId'] = 0;
       cage['location'] = cage.fields.Depot || cage.fields.Branch;
@@ -236,6 +243,18 @@ export class RecyclingService {
     )
   }
 
+  collectLooseFromCustomer(fields: Partial<Cage['fields']>): Observable<Cage> {
+    const url = this._cageTrackerUrl + `/items`;
+    fields['Date1'] = new Date();
+    fields['Date2'] = new Date();
+    fields['Status'] = 'Collected from customer';
+    fields['AssetType'] = 'Other';
+    const payload = {fields};
+    return this.http.post<Cage>(url, payload).pipe(
+      switchMap(_ => this.updateList(_))
+    );
+  }
+
   readyForCustomer(id: string): Observable<Cage> {
     const payload = {fields: {Status: 'Ready for delivery to customer'}};
     return this.updateStatus(id, payload);
@@ -286,9 +305,32 @@ export class RecyclingService {
     return this.updateStatus(id, payload);
   }
 
-  collectAndComplete(id: string): Observable<Cage> {
-    const payload = {fields: {Status: 'Complete', Date4: new Date()}};
+  collectAndComplete(id: string, where: string): Observable<Cage> {
+    const key = where === 'polymer' ? 'Date4' : 'FromLocalProcessing';
+    const payload = {fields: {Status: 'Complete', [key]: new Date()}};
     return this.updateStatus(id, payload);
+  }
+
+  consolidateMaterial(id: string, branch: string | null, material: number | null, quantity: number): Observable<Cage> {
+    return this.getBranchQuantity(branch, material).pipe(
+      switchMap(_ => {
+        if (_.length === 0) {
+          const payload = {fields: {Title: branch, Material: material, Quantity: quantity}};
+          const url = this._totalsTrackerUrl + `/items`;
+          return this.http.post<BranchTotal>(url, payload)
+        } else {
+          const item = _[0];
+          const payload = {fields: {Quantity: (item.fields.Quantity || 0) + (quantity || 0)}};
+          const url = this._totalsTrackerUrl + `/items('${item.id}')`;
+          return this.http.patch<BranchTotal>(url, payload);
+        }
+      }),
+      switchMap(_ => {
+        const date = new Date();
+        const payload = {fields: {Status: 'Complete', Consolidated: date}};
+        return this.updateStatus(id, payload);
+      })
+    );
   }
 
   undo(id: string, status: string): Observable<Cage> {
@@ -351,8 +393,13 @@ export class RecyclingService {
     );
   }
 
-  setMaterial(id: string, material: number): Observable<Cage> {
-    const payload = {fields: {Material: material}};
+  setCageDetails(id: string, cageWeight: number, grossWeight: number, notes: string, material: number | null): Observable<Cage> {
+    const payload = {fields: {Notes: notes, CageWeight: cageWeight, GrossWeight: grossWeight, Material: material}};
+    return this.updateStatus(id, payload);
+  }
+
+  setMaterial(id: string, material: number | null): Observable<Cage> {
+    const payload = {fields: {Material: material || null}};
     return this.updateStatus(id, payload).pipe(
       tap(() => this.snackBar.open('Collection material updated', '', {duration: 3000})),
     );
@@ -392,7 +439,9 @@ export class RecyclingService {
     const payload = {fields:
       {Status: 'Available', CustomerNumber: null, Customer: null, Date1: null, Date2: null, Date3: null, Date4: null, GrossWeight: null, Material: null, Notes: null}
     };
-    return this.updateStatus(id, payload);
+    return this.updateStatus(id, payload).pipe(
+      tap(() => this.snackBar.open('Cage reset', '', {duration: 3000})),
+    );
   }
 
   dehireCage(id: string): Observable<Cage> {
@@ -409,6 +458,18 @@ export class RecyclingService {
     if (branch) url += `and fields/Branch eq '${branch}'`
     url += '&orderby=fields/CageNumber asc';
     return this.getCages(url);
+  }
+
+  getBranchQuantity(branch: string | null, material: number | null): Observable<BranchTotal[]> {
+    const fields = ['Title', 'Quantity', 'Material'];
+    let url = this._totalsTrackerUrl + `/items?expand=fields(select=${fields.join(',')})&filter=`;
+    const filters = [];
+    if (branch) filters.push(` fields/Title eq '${branch}'`);
+    if (material) filters.push(` fields/Material eq ${material}`);
+    url += filters.join(' and ')
+    return this.http.get<BranchTotal[]>(url).pipe(
+      map(_ => _['value'])
+    );
   }
 
   checkCageNumber(cageNumber: string, cageType: string): Observable<Cage> {
