@@ -173,7 +173,7 @@ export class RunListComponent implements OnInit {
   openReceipt(orderNumber: string): void {
     const data = {
       sopType: 2,
-      sopNumber: orderNumber,
+      sopNumber: orderNumber.trimEnd()
     };
 
     this.dialog.open(OrderLinesDialogComponent, {width: '800px', data, autoFocus: false});
@@ -345,7 +345,7 @@ export class RunListComponent implements OnInit {
   }
 
   fileChangeEvent(folder: string, custNmbr: string, orderNmbr: string, e: Event): void {
-    const subfolder = [custNmbr, orderNmbr].filter(_ => _).join('/');
+    const subfolder = [custNmbr.trimEnd(), orderNmbr.trimEnd()].filter(_ => _).join('/');
     this.docsService.fileChangeEvent(folder, subfolder, e);
   }
   
