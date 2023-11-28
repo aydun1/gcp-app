@@ -1,0 +1,188 @@
+.outer {
+  margin: 0 auto;
+  max-width: 1024px;
+}
+
+.inner {
+  break-inside: avoid;
+}
+
+.doc-header {
+  position: relative;
+}
+
+.doc-header > h2 {
+  margin-left: 10px;
+}
+
+.doc-header > .buttons {
+  position: absolute;
+  right: 10px;
+  top: -8px;
+  display: flex;
+  align-items: center;
+}
+
+.doc-header > .buttons > button {
+  margin-left: 10px;
+}
+
+.options {
+  display: flex;
+}
+
+.loadDetails {
+  margin-left: auto;
+  text-align: right;
+}
+
+.section-head {
+  position: relative;
+}
+
+.class-description {
+  margin-block-end: 1em;
+  display: block;
+  margin-block-start: -1em;
+}
+
+.mat-mdc-form-field {
+  margin-right: 10px;
+}
+
+.mat-mdc-form-field:last-child {
+  margin-right: 0;
+}
+
+.branch-filter {
+  flex: 0 0 160px;
+}
+
+.mat-column-sds {
+  flex: 0 1 66px;
+}
+
+.mat-column-bin {
+  flex: 0 1 96px;
+}
+
+.mat-column-product {
+  flex: 1 1 250px;
+}
+
+.mat-column-issueDate {
+  flex: 0 1 128px;
+}
+
+.mat-column-onHand {
+  flex: 0 1 108px;
+}
+
+.mat-column-quantity {
+  flex: 0 1 108px;
+}
+
+.mat-column-packingGroup {
+  flex: 0 1 90px;
+}
+
+.mat-column-class {
+  flex: 0 1 90px;
+}
+
+.mat-column-hazardRating {
+  flex: 0 1 90px;
+}
+
+.mat-mdc-footer-cell {
+  font-weight: bold;
+}
+
+.missing {
+  color: #ff923c;
+}
+
+.hazard {
+  color: #ffffffa3;
+  padding: 3px;
+  border-radius: 4px;
+}
+
+.hazard-unknown {
+  background: #dfdfdf;
+}
+
+.hazard-0 {
+  background: #707070;
+}
+
+.hazard-1 {
+  background: #6FB0FF;
+}
+
+.hazard-2 {
+  background: #fff230;
+}
+
+.hazard-3 {
+  background: #ff923c;
+}
+
+.hazard-4 {
+  background: #EC5555;
+}
+
+.placard > img {
+  width: 30px;
+}
+
+@media (max-width: 800px) {
+  .options {
+    flex-direction: column;
+  }
+
+  .mat-mdc-form-field {
+    flex: auto;
+    margin-bottom: 10px;
+    margin-right: 0;
+  }
+
+  .mat-mdc-form-field:last-child {
+    margin-bottom: 0;
+  }
+}
+
+@media print {
+  :host{
+    overflow-y: auto;
+  }
+
+  .options {
+    display: none;
+  }
+
+  .doc-header {
+    display: none;
+  }
+
+  .mat-column-sds {
+    display: none;
+  }
+
+  .mat-column-hazardRating {
+    display: none;
+  }
+
+  .mat-column-issueDate {
+    display: none;
+  }
+
+  .print-header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .date {
+    margin-top: 12px;
+  }
+}

@@ -6,7 +6,7 @@ import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, sta
 
 import { SharedService } from '../../shared.service';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
-import { IntransitTransferLine } from '../shared/intransit-transfer-line';
+import { SuggestedItem } from '../../pan-list/suggested-item';
 
 @Component({
   selector: 'gcp-interstate-transfers-active',
@@ -16,8 +16,7 @@ import { IntransitTransferLine } from '../shared/intransit-transfer-line';
 export class InterstateTransfersActiveComponent implements OnInit {
   private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
   private _loadList!: boolean;
-  private ownState = this.shared.branch;
-  public fromBranchFilter = new FormControl({value: this.ownState, disabled: true});
+  public fromBranchFilter = new FormControl({value: '', disabled: true});
   public toBranchFilter = new FormControl('');
   public viewFilter = new FormControl('');
   public interstateTransfers$!: Observable<FormGroup<any>>;
@@ -35,8 +34,7 @@ export class InterstateTransfersActiveComponent implements OnInit {
   }
 
   public get transferQty(): number {
-    return this.lines.value.reduce((acc, cur) => acc + cur['toTransfer']
-  , 0);
+    return this.lines.value.reduce((acc, cur) => acc + cur['toTransfer'], 0);
   }
 
   constructor(
@@ -54,19 +52,14 @@ export class InterstateTransfersActiveComponent implements OnInit {
     });
 
     this.interstateTransfers$ = this.route.queryParams.pipe(
-      startWith({}),
+      startWith({} as Params),
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         map(() => _)
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
-      switchMap(params => state$.pipe(
-        map(state => {
-          this.ownState = state;
-          return !params['from'] ? {...params, from: state} : {...params};
-        })
-      )),
+      switchMap(params => state$.pipe(map(state => !params['from'] ? {...params, from: state} : params))),
       tap(_ => this.parseParams(_)),
       tap(_ => this.loading = true),
       switchMap(_ => this._loadList ? this.getInterstateTransfers(_) : []),
@@ -75,7 +68,7 @@ export class InterstateTransfersActiveComponent implements OnInit {
     )
   }
 
-  makeFormGroup(lines: Array<IntransitTransferLine>) {
+  makeFormGroup(lines: Array<any>): FormGroup<any> {
     this.lines.clear();
     let i = -1;
     lines.forEach(_ => 
@@ -101,7 +94,7 @@ export class InterstateTransfersActiveComponent implements OnInit {
     return this.transferForm;
   }
   
-  getInterstateTransfers(params: Params): Observable<IntransitTransferLine[]> {
+  getInterstateTransfers(params: Params): Observable<any[]> {
     const from = params['from'] || '';
     const to = params['to'] || '';
     if (!from) return of([]);

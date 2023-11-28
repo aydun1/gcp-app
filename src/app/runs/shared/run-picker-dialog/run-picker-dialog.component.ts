@@ -13,7 +13,7 @@ import { Run } from '../run';
 })
 export class RunPickerDialogComponent implements OnInit {
   public loading = true;
-  public runs$!: Observable<Run[]>;
+  public runs$!: Observable<Run[] | null>;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: {custNmbr: string, site: string, message: string},

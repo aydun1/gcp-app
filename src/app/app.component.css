@@ -79,7 +79,7 @@
 }
 
 .menu-icon {
-  color: inherit;
+  color: inherit !important;
   margin-right: 16px !important;
 }
 

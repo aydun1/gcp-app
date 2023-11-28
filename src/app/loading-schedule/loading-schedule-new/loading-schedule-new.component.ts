@@ -35,7 +35,7 @@ export class LoadingScheduleNewComponent implements OnInit {
   public savingData = false;
   public transportCompanies$!: Observable<TransportCompany[] | null>;
   public loadingScheduleForm!: FormGroup<LoadingScheduleForm>;
-  public states = this.sharedService.branches;
+  public states = [...this.sharedService.branches, 'International'];
   public state!: string;
   public choices!: {TransportCompany: choice, Driver: choice, AssetType: choice, Branch: choice, Status: choice};
   public id: string | null = null;
@@ -90,7 +90,7 @@ export class LoadingScheduleNewComponent implements OnInit {
     if (this.id) {
       firstValueFrom(this.loadingScheduleService.getLoadingScheduleEntry(this.id)).then(
         _ => {
-          const data = {};
+          const data = {} as any;
           data['status'] = _.fields['Status'];
           data['arrivalDate'] = _.fields['ArrivalDate'];
           data['loadingDate'] = _.fields['LoadingDate'];

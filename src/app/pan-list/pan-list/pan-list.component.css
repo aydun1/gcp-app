@@ -1,4 +1,4 @@
-textarea:focus {
+.main-notes:focus {
   height: 128px;
 }
 
@@ -24,7 +24,6 @@ h2 {
 .notes {
   position: sticky;
   bottom: 10px;
-  background: white;
   margin: 10px 283px 0 10px;
   padding: 10px 16px;
 }
@@ -49,7 +48,7 @@ h2 {
   width: 100%;
 }
 
-.mat-mdc-header-row {
+.mat-mdc-header-cell {
   font-size: 12px;
 }
 
@@ -90,7 +89,6 @@ h2 {
 
 .mat-column-product {
   flex: 1 1 250px;
-  padding: 0 4px;
   white-space: nowrap;
 }
 
@@ -137,20 +135,26 @@ h2 {
 
 .pallet-count {
   width: 50px;
-  margin-left: 5px;
+  margin-left: 2px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .mat-column-transfer {
   background: #a5a5a5 !important;
-  flex: 0 0 120px;
+  flex: 0 0 134px;
   padding-left: 12px;
 }
 
 .mat-column-notes {
   background: #a5a5a5;
-  flex: 0 0 150px;
-  padding-left: 12px;
-  padding-right: 12px;
+  flex: 0 0 128px;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .mat-column-menu {
@@ -162,7 +166,7 @@ h2 {
   border-radius: 4px;
   font-family: inherit;
   font-size: inherit;
-  padding: 6px;
+  padding: 6px 3px;
   width: 100%;
 }
 

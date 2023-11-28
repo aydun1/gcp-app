@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { MsalGuard } from '@azure/msal-angular';
 
 import { LoadingScheduleComponent } from './loading-schedule.component';
 import { LoadingScheduleListComponent } from './loading-schedule-list/loading-schedule-list.component';
@@ -15,36 +14,34 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        data: {title: 'Loading Schedule'},
+        title: 'Loading Schedule',
         component: LoadingScheduleListComponent,
         children: [
           {
             path: 'new',
-            data: {title: 'New entry'},
+            title: 'New entry',
             component: LoadingScheduleNewComponent
           },
           {
             path: ':id',
-            data: {title: 'View entry'},
+            title: 'View entry',
             component: LoadingScheduleViewComponent,
             children: [
               {
                 path: 'edit',
-                data: {title: 'Edit entry'},
+                title: 'Edit entry',
                 component: LoadingScheduleNewComponent,
               },
               {
                 path: 'panlist',
-                data: {title: 'Edit pan list'},
+                title: 'Edit pan list',
                 component: LoadingSchedulePanComponent,
               }
             ]
-          },
+          }
         ]
-      },
-
-    ],
-    canActivate: [MsalGuard]
+      }
+    ]
   }
 ]
 

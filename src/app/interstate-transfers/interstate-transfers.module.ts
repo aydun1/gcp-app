@@ -7,7 +7,6 @@ import { InterstateTransfersComponent } from './interstate-transfers.component';
 import { InterstateTransfersService } from './shared/interstate-transfers.service';
 import { InterstateTransfersRoutingModule } from './interstate-transfers-routing.module';
 import { InterstateTransferNewComponent } from './interstate-transfer-new/interstate-transfer-new.component';
-import { InterstateTransferRequestedComponent } from './interstate-transfer-requested/interstate-transfer-requested.component';
 import { InterstateTransferViewComponent } from './interstate-transfer-view/interstate-transfer-view.component';
 import { InterstateTransferSuggestedComponent } from './interstate-transfer-suggested/interstate-transfer-suggested.component';
 import { PipeModule } from '../shared/pipes/pipe.module';
@@ -19,7 +18,6 @@ import { InterstateTransfersActiveComponent } from './interstate-transfers-activ
   declarations: [
     InterstateTransfersComponent,
     InterstateTransferNewComponent,
-    InterstateTransferRequestedComponent,
     InterstateTransferSuggestedComponent,
     InterstateTransferViewComponent,
     InterstateTransfersActiveComponent,

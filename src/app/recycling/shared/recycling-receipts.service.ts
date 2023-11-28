@@ -40,7 +40,7 @@ export class RecyclingReceiptsService {
   }
 
   private getReceipts(url: string, paginate = false): Observable<Receipt[]> {
-    return this.http.get(url).pipe(
+    return this.http.get<any>(url).pipe(
       tap(_ => {
         if (paginate) this._nextPage = _[''];
       }),

@@ -4,7 +4,7 @@ import { Router, NavigationEnd } from '@angular/router'
 
 @Injectable({ providedIn: 'root' })
 export class NavigationService {
-  private history: string[] = []
+  private _history: string[] = [];
 
   constructor(
     private router: Router,
@@ -12,21 +12,25 @@ export class NavigationService {
   ) {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.history.push(event.urlAfterRedirects);
+        if (this.router.getCurrentNavigation()?.extras?.replaceUrl) this._history.pop();       
+        this._history.push(event.urlAfterRedirects);
       }
     })
   }
 
   back(): void {
-    this.history.pop();
-    const hist = this.history[this.history.length - 1]?.split('/')?.length;
+    if (window.history.length > 1) this.location.back();
+    else this.router.navigate(['/']);
+  }
+
+  backOld(): void {
+    this._history.pop();
+    const hist = this._history[this._history.length - 1]?.split('/')?.length;
     const curr = this.router.url.split('/').length;
-    const pan = this.router.url.match(/pan=([0-9]{1,2})/);
-    if (this.history.length > 0 && hist !== curr) {
+    if (this._history.length > 0 && hist !== curr) {
       this.location.back();
     } else {
-      const url = this.router.url.substring(0, this.router.url.lastIndexOf('/'));
-      this.router.navigate([url], {queryParams: {pan: pan && curr === 4 ? pan[1] : null}});
+      this.router.navigateByUrl(this._history[this._history.length - 1]);
     }
   }
 }

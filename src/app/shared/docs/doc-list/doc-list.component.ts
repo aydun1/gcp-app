@@ -11,8 +11,8 @@ import { DocsService } from '../docs.service';
   styleUrls: ['./doc-list.component.css']
 })
 export class DocListComponent implements OnInit {
-  @Input() id!: string;
   @Input() folder!: string;
+  @Input() subfolder!: string;
   public docs$!: Observable<Doc[]>;
   public docCount!: number;
 
@@ -35,9 +35,9 @@ export class DocListComponent implements OnInit {
   }
 
   deleteFile(fileName: string): void {
-    this.docsService.deleteFile(this.id, this.folder, fileName).then(_ => {
+    this.docsService.deleteFile(this.subfolder, this.folder, fileName).then(_ => {
       this.snackBar.open('File deleted!', '', {duration: 3000});
-      this.docsService.docStarter$.next(this.id);
+      this.docsService.docStarter$.next(this.subfolder);
     }).catch(err => {
       this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 6000});
       console.log(err);
@@ -69,11 +69,6 @@ export class DocListComponent implements OnInit {
   }
 
   fileChangeEvent(e: any): void {
-    const files = e.target.files;
-    const keys = Array.from(Array(files.length).keys());
-    for (let key in keys) {
-      const file = files[key];
-      this.docsService.uploadFile(this.id, this.folder, file);
-    }
+    this.docsService.fileChangeEvent(this.folder, this.subfolder, e);
   }
 }

@@ -23,5 +23,6 @@ export interface Reconciliation {
     Surplus: number;
     Deficit: number;
     Created: string;
+    Date: Date;
   }
 }

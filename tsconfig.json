@@ -14,7 +14,8 @@
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
-    "suppressImplicitAnyIndexErrors": true,
+    "suppressImplicitAnyIndexErrors": true, /* REMOVE */
+    "ignoreDeprecations": "5.0", /* REMOVE */
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "ES2022",

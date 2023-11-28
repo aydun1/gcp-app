@@ -44,17 +44,17 @@ export class PalletListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const state$ = this.sharedService.getBranch();
+    const branch$ = this.sharedService.getBranch();
 
     this.pallets$ = this.route.queryParams.pipe(
       startWith({}),
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-        map(() => _)
+        map(() => _ as {branch: string})
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
-      switchMap(_ => state$.pipe(map(state => !_['branch'] ? {..._, branch: state} : _))),
+      switchMap((_) => branch$.pipe(map(state => !_['branch'] ? {..._, branch: state} : _))),
       tap(_ => {
         this.parseParams(_);
         this.totalIn = 0;

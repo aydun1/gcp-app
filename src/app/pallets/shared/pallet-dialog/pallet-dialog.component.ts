@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { catchError, tap, throwError } from 'rxjs';
+import { catchError, startWith, tap, throwError } from 'rxjs';
 
 import { PalletsService } from '../pallets.service';
 import { SharedService } from '../../../shared.service';
@@ -35,10 +35,13 @@ export class PalletDialogComponent implements OnInit {
   public siteNames!: Array<string>;
   public direction = [{name: 'Sent', controlName: 'outQty'}, {name: 'Returned', controlName: 'inQty'}];
   public vertical = true;
+  public palletsOwed = this.palletsService.getPalletsOwedByCustomer(this.data.customer.custNmbr, undefined).pipe(
+    startWith(this.palletTypes.reduce((acc, cur) => {return {...acc, [cur.key]: {total: '...'}}}, {}))
+  );
 
   constructor(
       public dialogRef: MatDialogRef<PalletDialogComponent>,
-      @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>, site: string},
+      @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>, site: string, orderNmbr: string},
       private snackBar: MatSnackBar,
       private fb: FormBuilder,
       private sharedService: SharedService,
@@ -73,7 +76,7 @@ export class PalletDialogComponent implements OnInit {
     const date = this.palletForm.get('date')?.value as Date;
     const notes = this.palletForm.get('notes')?.value || '';
     const transfers = this.palletForm.get('quantities')?.value
-    this.palletsService.customerPalletTransferMulti(this.data.customer.name, this.data.customer.custNmbr, this._state, site, date, notes, transfers).pipe(
+    this.palletsService.customerPalletTransferMulti(this.data.customer.name, this.data.customer.custNmbr, this._state, site, date, this.data.orderNmbr, notes, transfers).pipe(
       tap(_ => {
         this.dialogRef.close();
         this.snackBar.open('Successfully transferred pallets', '', {duration: 3000});

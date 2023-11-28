@@ -12,33 +12,33 @@ import { RecyclingComponent } from './recycling.component';
 const routes: Routes = [
   {
     path: '',
-    data: {title: 'Recycling'},
+    title: 'Recycling',
     component: RecyclingComponent,
   },
   {
     path: 'cages',
-    data: {title: 'Recycling Cages'},
+    title: 'Recycling Cages',
     component: RecyclingListComponent,
     children: [
       {
-        data: {title: 'New Recycling Cage'},
+        title: 'New Recycling Cage',
         path: 'new',
         component: RecyclingNewComponent
       },
       {
         path: ':id',
-        data: {title: 'Recycling Cages'},
+        title: 'Recycling Cages',
         component: RecyclingViewComponent
       }
     ]
   },
   {
     path: 'receipts',
-    data: {title: 'Polymer Receipts'},
+    title: 'Polymer Receipts',
     component: RecyclingReceiptListComponent,
     children: [{
       path: 'new',
-      data: {title: 'New Polymer Receipt'},
+      title: 'New Polymer Receipt',
       component: RecyclingReceiptNewComponent
     }]
   }

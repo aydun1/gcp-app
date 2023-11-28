@@ -6,6 +6,15 @@ import { AccountInfo } from '@azure/msal-browser';
 import { BehaviorSubject, lastValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 
 import { environment } from '../environments/environment';
+import { Address } from './customers/shared/address';
+import { Order } from './runs/shared/order';
+
+interface userAddress {
+  state: string;
+  suburb: string;
+  address: string;
+  postalCode: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -13,10 +22,10 @@ import { environment } from '../environments/environment';
 export class SharedService {
   public territories = {
     'HEA': ['HEA'],
-    'NSW': ['NSW', 'NSWSALES'],
+    'NSW': ['NSW'],
     'QLD': ['QLD'],
-    'SA': ['SA'],
-    'VIC': ['ACT', 'HEATH', 'MISC', 'NT', 'NZ', 'OTHER', 'PRIMARY', 'TAS', 'VIC', 'VICSALES'],
+    'SA': ['SA', 'MPASA'],
+    'VIC': ['ACT', 'MISC', 'NT', 'OTHER', 'TAS', 'VIC', 'CUSTOM', 'CUSTOMBM'],
     'WA': ['WA']
   };
   private _pallets = [
@@ -27,9 +36,8 @@ export class SharedService {
   ];
   private _warehouseStaff = ['michael.johnson@gardencityplastics.com'];
   private _state$ = new BehaviorSubject<string>('');
-  private appTitle = this.titleService.getTitle();
+  private _address$ = new BehaviorSubject<string>('');
   public branches = Object.keys(this.territories);
-  public branch!: string;
   public territoryNames = this.branches.concat(['INT', 'NATIONAL']);
   public isWarehouse!: boolean;
 
@@ -40,24 +48,25 @@ export class SharedService {
     ['QLD_MPA', ['qld@gardencityplastics.com']],
     ['NSW', ['nsw@gardencityplastics.com']],
     ['NSW_MPA', ['nsw@gardencityplastics.com']],
-    ['SA', ['sa@gardencityplastics.com']],
+    ['SA', ['sa@gardencityplastics.com', 'robyn.nichol@gardencityplastics.com']],
     ['SA_MPA', ['sa@gardencityplastics.com']],
     ['WA', ['wa@gardencityplastics.com']],
     ['WA_MPA', ['wasales@micropellets.com.au']],
   ]);
 
   public panMap = new Map<string, Array<string>>([
-    ['VIC', ['melb.dispatch@gardencityplastics.com']]
+    ['VIC', ['melb.dispatch@gardencityplastics.com']],
+    ['SA', ['robyn.nichol@gardencityplastics.com']]
   ]);
 
-  public officesMap = new Map<string, string>([
-    ['Stapylton', 'QLD'],
-    ['Heatherton','HEA'],
-    ['Somersby', 'NSW'],
-    ['Wingfield', 'SA'],
-    ['Dandenong South', 'VIC'],
-    ['Forrestfield', 'WA']
-  ]);
+  public offices = [
+    {state: 'QLD', suburb: 'Stapylton', address: '19 Eastern Service Road', postalCode: '4207'},
+    {state: 'HEA', suburb: 'Heatherton', address: '6 Madden Road', postalCode: '3202'},
+    {state: 'NSW', suburb: 'Somersby', address: '4 - 6 Pinnacle Place', postalCode: '2250'},
+    {state: 'SA', suburb: 'Wingfield', address: '10-12 Hakkinen Road', postalCode: '5013'},
+    {state: 'VIC', suburb: 'Dandenong South', address: 'EJ Court (off Assembly Drive)', postalCode: '3175'},
+    {state: 'WA', suburb: 'Forrestfield', address: 'Facility 4, 271 Berkshire Rd', postalCode: '6058'}
+  ];
 
   get pallets(): string[] {
     return this._pallets.map(_ => _.name);
@@ -89,12 +98,23 @@ export class SharedService {
   getBranch(): Observable<string> {
     const url = `${environment.endpoint}/me/officeLocation`;
     return this._state$.pipe(
-      switchMap(cur => cur ? of(cur) : this.http.get(url).pipe(
-        map(_ => _['value'] ? this.officesMap.get(_['value']) || 'NA' : 'NA'),
-        tap(_ => {
-          this.branch = _;
-          this._state$.next(_);
-        })
+      switchMap(cur => cur ? of(cur) : this.http.get<{value: string}>(url).pipe(
+        map(_ => this.offices.find(o => o.suburb === _['value'])?.state || 'NA'),
+        tap(_ => this._state$.next(_))
+      ))
+    )
+  }
+
+  getBranchAddress(branch: string): userAddress {
+    return this.offices.find(o => o.state === branch) || {} as userAddress;
+  }
+
+  getOwnAddress(): Observable<{street: string, city: string, state: string, postalCode: string}> {
+    const url = `${environment.betaEndpoint}/me/profile/positions`;
+    return this._address$.pipe(
+      switchMap(cur => cur ? of(cur) : this.http.get<any>(url).pipe(
+        map(_ => _['value'] ? _['value'][0]?.detail?.company?.address || {} : {}),
+        tap(_ => this._address$.next(_))
       ))
     )
   }
@@ -114,30 +134,49 @@ export class SharedService {
     return activeAccount;
   }
 
+  getRoles(): {all: boolean, runs: boolean} {
+    const roles = this.getAccount()?.idTokenClaims?.roles || [];
+    return {all: roles.includes('Section.All'), runs: roles.includes('Section.Runs')};
+  }
+
   sanitiseName(name: string): string {
+    if (!name) return '';
     return encodeURIComponent(name.trim().replace('\'', '\'\'').replace('%2F', '/'));
   }
 
+  addressFormatter(address: Address | Order | null): string {
+    if (!address) return '';
+    const lastLine = [address['city'], address['state'], address['postcode'] || address['Postcode']].filter(_ => _).join(' ');
+    return [address['address1'], address['address2'], address['address3'], lastLine].filter(_ => _).join('\r\n');
+  }
+
   setTitle(pageTitle: string): void {
-    const title =  pageTitle ? `${pageTitle} - ${this.appTitle}` : this.appTitle;
+    const title = `${pageTitle} | IMS`;
     this.titleService.setTitle(title);
   }
 
-  getTransactions(branch: string | undefined, itemNmbr: string | undefined): Promise<any[]> {
+  getHistory(itemNmbr: string | undefined): Promise<any[]> {
+    const request = this.http.get<{history: any[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/history`).pipe(
+      map(_ => _.history)
+    );
+    return lastValueFrom(request);
+  }
+
+  getTransactions(branch: string | null, itemNmbr: string | undefined): Promise<any[]> {
     const request = this.http.get<{invoices: any[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/current?branch=${branch}`).pipe(
       map(_ => _.invoices)
     );
-    return lastValueFrom(request).catch(
-      e => {
-        console.log(e);
-        return [];
-      }
-    );
+    return lastValueFrom(request);
   }
 
-  sendMail(to: Array<string>, subject: string, body: string, contentType: 'Text' | 'HTML'): Promise<Object> {
+  getStock(itemNmbr: string | undefined): Promise<any> {
+    const request = this.http.get<any>(`${environment.gpEndpoint}/inventory/${itemNmbr}/stock`);
+    return lastValueFrom(request);
+  }
+
+  sendMail(to: Array<string>, subject: string, body: string, contentType: 'Text' | 'HTML', cc: Array<string> = []): Promise<Object> {
     const url = `${environment.endpoint}/me/sendMail`;
-    const cc = ['aidan.obrien@gardencityplastics.com', this.getOwnEmail()];
+    cc = [...new Set([...cc, this.getOwnEmail(), 'aidan.obrien@gardencityplastics.com'])];
     const payload  = {
       message: {
         subject: subject,

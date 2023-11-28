@@ -27,8 +27,8 @@
     </mat-form-field>
   </div>
 
-  <mat-card appearance="outlined" *ngIf="(customers$ | async) as customers" class="inner">
-    <mat-table #table [dataSource]="customers" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
+  <mat-card appearance="outlined"  class="inner">
+    <mat-table #table [dataSource]="customers$" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
         <mat-cell *matCellDef="let customer" [routerLink]="['/customers', customer.custNmbr]">
@@ -47,7 +47,7 @@
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
       <ng-container matColumnDef="loading">
-        <mat-footer-cell *matFooterCellDef>
+        <mat-footer-cell *matFooterCellDef class="loading-cell">
           <gcp-loading-row></gcp-loading-row>
         </mat-footer-cell>
       </ng-container>

@@ -1,18 +1,23 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Component, OnInit, Inject, OnDestroy, Renderer2 } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy, Renderer2, ViewChild } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { Location } from '@angular/common';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { SwUpdate, VersionEvent } from '@angular/service-worker';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSidenavContainer } from '@angular/material/sidenav';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { InteractionStatus, EventMessage, EventType, AccountInfo, RedirectRequest } from '@azure/msal-browser';
-import { filter, interval, map, Observable, Subject, takeUntil, tap } from 'rxjs';
+import { distinctUntilChanged, filter, interval, map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { authentication } from '@microsoft/teams-js';
 
 import { SharedService } from './shared.service';
 import { TeamsService } from './teams.service';
 import { ThemingService } from './theming.service';
 import { AutomateService } from './shared/automate.service';
+import { ScannerDialogComponent } from './scanner-dialog/scanner-dialog.component';
+import { DocsService } from './shared/docs/docs.service';
 
 @Component({
   selector: 'gcp-root',
@@ -20,8 +25,10 @@ import { AutomateService } from './shared/automate.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
+  @ViewChild('snav') public sidenav!: MatSidenavContainer;
   private readonly _destroying$ = new Subject<void>();
-  private checkInterval = 1000 * 60 * 60 * 6;  // 6 hours
+  private _checkInterval = 1000 * 60 * 60 * 6;  // 6 hours
+  private _darkClass = 'dark-theme';
   public loginDisplay = false;
   public accounts: AccountInfo[] = [];
   public photo$!: Observable<SafeUrl>;
@@ -31,13 +38,16 @@ export class AppComponent implements OnInit, OnDestroy {
   public token: string | undefined;
   public warehouse!: boolean;
   public isQld = false;
+  public canSee = {runs: false, all: false};
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
-    private activatedRoute: ActivatedRoute,
     private swUpdate: SwUpdate,
     private authService: MsalService,
     private location: Location,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private docsService: DocsService,
     private msalBroadcastService: MsalBroadcastService,
     private renderer: Renderer2,
     private router: Router,
@@ -49,39 +59,30 @@ export class AppComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.docsService.uploads$.pipe(
+      distinctUntilChanged((a, b) => {
+        if (b > a) {
+          this.snackBar.open('Uploading...', '', {duration: 3000})
+        } else if (b.length === 0 && a.length > 0) {
+          this.snackBar.open('Uploads complete', '', {duration: 3000})
+      }
+        return a.length === b.length;
+      })
+    ).subscribe(_ => console.log(_));
+
     this.themingService.theme.subscribe(_ => {
-      const darkClass = 'dark-theme';
-      _ ? this.renderer.addClass(document.body, darkClass) : this.renderer.removeClass(document.body, darkClass)
+      _ ? this.renderer.addClass(document.body, this._darkClass) : this.renderer.removeClass(document.body, this._darkClass)
     });
-
-    // this.automateService.updateYearlies().subscribe();
-
-    this.authService.instance.handleRedirectPromise().then(authResult => {
-      const account = this.authService.instance.getActiveAccount();
-      if (!account) this.checkAndSetActiveAccount();
-    }).catch(err=> console.log(err));
     this.setLoginDisplay();
     this.checkIfTeams();
     this.observer.observe(['(max-width: 600px)']).subscribe(_ => this.isMobile = _.matches);
     this.authService.instance.enableAccountStorageEvents();
     this.sharedService.getBranch().subscribe(_ => this.isQld = _ === 'QLD');
-
-    authentication.getAuthToken().then(
-      _ => this.token = _
-    ).catch(
-      _ => console.log(_)
-    )
-    
+    authentication.getAuthToken().then(_ => this.token = _).catch(_ => console.log(_));
     // Enables auto login/logout in other open windows/tabs
     this.msalBroadcastService.msalSubject$.pipe(
       filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED),
-      tap(() => {
-        if (this.authService.instance.getAllAccounts().length === 0) {
-          this.router.navigate(['/']);
-        } else {
-          this.setLoginDisplay();
-        }
-      })
+      tap(() => this.authService.instance.getAllAccounts().length === 0 ? this.router.navigate(['/']) : this.setLoginDisplay())
     ).subscribe();
 
     this.msalBroadcastService.msalSubject$.pipe(
@@ -105,20 +106,8 @@ export class AppComponent implements OnInit, OnDestroy {
         filter((evt: VersionEvent) => evt.type === 'VERSION_READY')
       ).subscribe(() => location.reload());
       this.checkForUpdates();
-      interval(this.checkInterval).subscribe(() => this.checkForUpdates());
+      interval(this._checkInterval).subscribe(() => this.checkForUpdates());
     }
-
-    // Set the page title based on what is set in the router
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-      map(_ => {
-        let child = this.activatedRoute.firstChild;
-        if (!child) return;
-        while (child.firstChild) child = child.firstChild;
-        return child.snapshot.data['title'];
-      }),
-      tap((ttl: string) => this.sharedService.setTitle(ttl))
-    ).subscribe();
   }
 
   checkForUpdates(): void {
@@ -129,17 +118,18 @@ export class AppComponent implements OnInit, OnDestroy {
     );
   }
 
-  checkIfTeams() {
+  checkIfTeams(): void {
     this.teamsService.isTeams.pipe(
       tap(_ => {
         if (_ !== undefined) this.checkedTeams = true;
         if (_) this.renderer.addClass(document.body, 'teams');
-    }),
-    ).subscribe()
+      })
+    ).subscribe();
   }
 
   setLoginDisplay(): void {
     this.accounts = this.authService.instance.getAllAccounts();
+    this.canSee = this.sharedService.getRoles();
     this.loginDisplay = this.accounts.length > 0;
     this.sharedService.checkIfWarehouse(this.accounts);
     this.warehouse = this.sharedService.isWarehouse;
@@ -156,6 +146,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const allAccounts = this.authService.instance.getAllAccounts();
     if (!activeAccount && allAccounts.length > 0) {
       this.authService.instance.setActiveAccount(allAccounts[0]);
+      this.canSee = this.sharedService.getRoles();
     }
   }
 
@@ -169,6 +160,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
   urlActive(url: string): boolean {
     return this.router.url.startsWith(url);
+  }
+
+  closeMenu(): void {
+    if (this.isMobile) this.sidenav.close();
+  }
+
+  openScannerDialog() {
+    this.dialog.open(ScannerDialogComponent, {width: '800px', autoFocus: false});
   }
 
   ngOnDestroy(): void {

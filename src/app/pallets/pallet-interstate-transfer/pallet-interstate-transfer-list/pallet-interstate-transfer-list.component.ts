@@ -67,22 +67,18 @@ export class PalletInterstateTransferListComponent implements OnInit {
 
   parseParams(params: Params): void {
     if (!params) return;
-    const filters = {};
     if ('from' in params) {
       this.fromFilter.patchValue(params['from']);
-      filters['from'] = params['from'];
     } else {
       this.fromFilter.patchValue('');
     }
     if ('to' in params) {
       this.toFilter.patchValue(params['to']);
-      filters['to'] = params['to'];
     } else {
       this.toFilter.patchValue('');
     }
     if ('status' in params) {
       this.statusFilter.patchValue(params['status']);
-      filters['status'] = params['status'];
     } else {
       this.statusFilter.patchValue('');
     }

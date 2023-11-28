@@ -1,0 +1,243 @@
+<div class="outer">
+  <div class="print-heading print-header">
+    <gcp-letterhead>Chemical Register</gcp-letterhead>
+    <div>
+      <div class="date">
+        <strong>Date: </strong>
+        <span>{{ date | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <div *ngIf="address" class="address">
+        <strong>Address:</strong>
+        <div>
+          <div>{{address.address}}</div>
+          <div>{{address.suburb}} {{address.state}} {{address.postalCode}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="doc-header">
+    <h2>Chemicals</h2>
+    <div class="buttons">
+      <button mat-stroked-button type="button" (click)="openChemicalManifest()">
+        <mat-icon>summarize</mat-icon>Manifest
+      </button>
+      <button mat-stroked-button type="button" (click)="exportChemicals()">
+        <mat-icon>download_file</mat-icon>Export
+      </button>
+      <button mat-icon-button type="button" [matMenuTriggerFor]="actionsMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+    </div>
+    <div class="options inner">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch-filter">
+        <mat-label>Branch</mat-label>
+        <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
+          <mat-option value="">All</mat-option>
+          <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
+        <mat-label>Category</mat-label>
+        <mat-select [formControl]="categoryFilter" (selectionChange)="setCategory($event)">
+          <mat-option *ngFor="let option of categories" [value]="option.key">{{ option.value }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
+        <mat-label>Group by</mat-label>
+        <mat-select [formControl]="groupFilter" (selectionChange)="setGroup($event)">
+          <mat-option *ngFor="let option of groups" [value]="option.key">{{ option.value }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="name-filter">
+        <mat-label>Search</mat-label>
+        <input matInput [formControl]="textFilter" type="text" autocomplete="off" placeholder="Type to search...">
+        <button *ngIf="!textFilter.value" matSuffix mat-icon-button type="button" disabled>
+          <mat-icon>search</mat-icon>
+        </button>
+        <button *ngIf="textFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearTextFilter()" type="button">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div>
+    <div *ngFor="let c of (chemicals$ | async) || [] | groupByProperty:(groupFilter.value || '');trackBy:trackByGroupsFn">
+      <div *ngIf="c" class="inner">
+        <div *ngIf="c.key !== 'undefined'" class="section-head">
+          <h3>{{ groupName }} {{ c.key !== 'null' && c.key !== '' ? c.key : 'Unknown' }}</h3> <span *ngIf="groupFilter.value === 'class' && classes[c.key]" class="class-description"> {{ classes[c.key] }}</span>
+        </div>
+        <mat-card appearance="outlined">
+          <mat-table #table [dataSource]="c.value" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
+            <ng-container matColumnDef="sds">
+              <mat-header-cell *matHeaderCellDef>
+                <div>
+                  SDS
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div>
+                  <mat-icon *ngIf="line['sdsExists'] && line['OnChemwatch']" color="primary">check</mat-icon>
+                  <mat-icon *ngIf="line['sdsExists'] && !line['OnChemwatch']" class="missing" matTooltip="This item is missing from Chemwatch. It will not receive updates.">check</mat-icon>
+                  <mat-icon *ngIf="!line['sdsExists']" matTooltip="Item has no SDS attached." color="warn">error</mat-icon>
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef>
+                Total
+              </mat-footer-cell>
+            </ng-container>
+      
+            <ng-container matColumnDef="bin">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <div>
+                  Bin
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div>
+                  {{ line['Bin'] }}
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+      
+            <ng-container matColumnDef="product">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Item </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div class="details">
+                  <a [routerLink]="[line['ItemNmbr']]">
+                    <strong>{{ line['ItemNmbr'] }}</strong>
+                  </a>
+                  <div class="description">
+                    {{ line['ItemDesc'] }}
+                  </div>
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="issueDate">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Issue date
+              </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div>{{ line['IssueDate'] | date:'dd/MM/yyyy'}}</div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="onHand">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Units
+              </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div class="loadDetails">
+                  <div>{{ line['onHand'] | number }}</div>
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef>
+                <div class="loadDetails">
+                  <div>{{ getTotalRequestedQty(c.value, 'onHand') | number: '1.0-0' }}</div>
+                </div>
+              </mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="quantity">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Quantity
+              </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div class="loadDetails">
+                  <div>{{ line['quantity'] | number: '1.0-0' }} {{ line['uofm'] }}</div>  
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef>
+                <div class="loadDetails">
+                  <div *ngIf="getTotalWeight(c.value, 'quantity', 'L') as volume">{{ volume | number: '1.0-0' }} L </div>
+                  <div *ngIf="getTotalWeight(c.value, 'quantity', 'kg') as weight"> {{ weight | number: '1.0-0' }} kg</div>
+                </div>
+              </mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="packingGroup">
+              <mat-header-cell *matHeaderCellDef>
+                <div class="loadDetails">
+                  Packing group
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div class="loadDetails">
+                  {{ line['packingGroup'] }}
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="class">
+              <mat-header-cell *matHeaderCellDef>
+                <div class="loadDetails">
+                  Class
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div *ngIf="line['class']" class="loadDetails placard">
+                  <img *ngIf="classes[line['class']] && line['class'] !== 'None';else other_content" [src]="'assets/placards/' + line['class'] + '.png'" alt="Class {{ line['class'] }}" [matTooltip]="classes[line['class']]">
+                  <ng-template #other_content>{{ line['class'] }}</ng-template>
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="hazardRating">
+              <mat-header-cell *matHeaderCellDef>
+                <div class="loadDetails">
+                  Hazard
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let line">
+                <div class="loadDetails">
+                  <mat-icon *ngIf="line['hazardRating'] === '-1'" class="hazard hazard-unknown">question_mark</mat-icon>
+                  <mat-icon *ngIf="line['hazardRating'] === '0'" class="hazard hazard-0">warning</mat-icon>
+                  <mat-icon *ngIf="line['hazardRating'] === '1'" class="hazard hazard-1">warning</mat-icon>
+                  <mat-icon *ngIf="line['hazardRating'] === '2'" class="hazard hazard-2">warning</mat-icon>
+                  <mat-icon *ngIf="line['hazardRating'] === '3'" class="hazard hazard-3">warning</mat-icon>
+                  <mat-icon *ngIf="line['hazardRating'] === '4'" class="hazard hazard-4">warning</mat-icon>
+                </div>
+              </mat-cell>
+              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+            </ng-container>
+      
+            <ng-container matColumnDef="loading">
+              <mat-footer-cell *matFooterCellDef>
+                <gcp-loading-row></gcp-loading-row>
+              </mat-footer-cell>
+            </ng-container>
+        
+            <ng-container matColumnDef="empty">
+              <mat-footer-cell *matFooterCellDef>
+                There are no chemicals in {{ branchFilter.value }}.
+              </mat-footer-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) ? false : true"></mat-footer-row>
+            <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(c)"></mat-footer-row>
+            <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+          </mat-table>  
+        </mat-card>
+  
+      </div>    
+    </div>
+  </div>
+</div>
+
+<mat-menu #actionsMenu="matMenu">
+  <ng-template matMenuContent>
+    <button type="button" mat-menu-item (click)="openOtherChemicals()">
+      <mat-icon>download_file</mat-icon>Manage non-inventory items
+    </button>
+  </ng-template>
+</mat-menu>
+
+<router-outlet></router-outlet>

@@ -3,26 +3,26 @@
     <mat-icon>arrow_back</mat-icon>
   </button>
   <ng-container>
-    <div class="top-title">Cage</div>
+    <div class="top-title">{{ name }}</div>
   </ng-container>
   <a *ngIf="getPrev() | async as n" mat-icon-button [routerLink]="['..', n]" [replaceUrl]="true" matTooltip="Previous cage"><mat-icon>chevron_left</mat-icon></a>
   <a *ngIf="getNext() | async as n" mat-icon-button [routerLink]="['..', n]" [replaceUrl]="true" matTooltip="Next cage"><mat-icon>chevron_right</mat-icon></a>
 </mat-toolbar>
 
-<gcp-loading-page *ngIf="loading | async"></gcp-loading-page>
 <div *ngIf="cage$ | async as cage" class="content">
   <div class="inner">
     <div class="header">
-      <div *ngIf="isCage" class="title">
-        <h2>{{ cage.fields.AssetTypeClean }} {{ cage.fields.CageNumber }}</h2>
-      </div>
-      <div *ngIf="!isCage" class="title">
-        <h2>{{ cage.fields.AssetType }}</h2>
-      </div>
+      <gcp-loading-page *ngIf="(loading | async) === true" class="loading-circ"></gcp-loading-page>
       <gcp-action-button [cages]="[cage]" (updated)="getCage()" (loading)="updating($event)" (dehired)="goBack()" class="actions"></gcp-action-button>
     </div>
     <mat-card appearance="outlined">
+      <mat-card-header *ngIf="isCage">
+        <mat-card-title>
+          {{ cage.fields.AssetTypeClean}} {{ cage.fields.CageNumber }}
+        </mat-card-title>
+      </mat-card-header>
       <mat-card-content>
+        <img *ngIf="cage['material'].image" class="material invert" [src]="'assets/' + cage['material'].image">
         <mat-list>
           <div mat-subheader><span class="subheader">Details</span></div>
           <mat-list-item *ngIf="cage.fields.Status">
@@ -47,23 +47,8 @@
           </a>
         </mat-nav-list>
         <mat-list>
-          <form (ngSubmit)="setCageNotes(cage.id)">
-            <mat-list-item>
-              <mat-icon matListItemIcon>tag</mat-icon>
-              <span *ngIf="editCageNotes" matListItemTitle>
-                <input [(ngModel)]="currentCageNotes" [ngModelOptions]="{standalone: true}" type="text" placeholder="Reference number or cage notes">
-              </span>
-              <span *ngIf="!editCageNotes" matListItemTitle>{{ currentCageNotes }}</span>
-              <span>Reference</span>
-              <ng-container matListItemMeta *ngIf="!editCageNotes">
-                <button mat-icon-button type="button" (click)="editCageNotes = true"><mat-icon>edit</mat-icon></button>
-              </ng-container>
-              <ng-container matListItemMeta *ngIf="editCageNotes">
-                <button mat-icon-button type="button" (click)="cancelEditCageNotes(cage.fields.Notes)"><mat-icon>close</mat-icon></button>
-                <button mat-icon-button type="submit"><mat-icon>check</mat-icon></button>
-              </ng-container>
-            </mat-list-item>
-          </form>
+          <gcp-cage-notes [cage]="cage" (updated)="getCage()"></gcp-cage-notes>
+          <gcp-cage-material [cage]="cage" (updated)="getCage()"></gcp-cage-material>
           <div mat-subheader>Weights</div>
           <gcp-cage-weights [cage]="cage" (updated)="getCage()"></gcp-cage-weights>
         </mat-list>

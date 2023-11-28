@@ -1,5 +1,5 @@
 <div class="outer">
-  <h2>Requested items (ITT)</h2>
+  <h2>Requested items</h2>
   <gcp-letterhead class="print-heading">Requested items</gcp-letterhead>
   <form [formGroup]="transferForm">
     <div class="options inner">
@@ -10,7 +10,7 @@
             <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
+        <mat-form-field *ngIf="fromBranchFilter" appearance="outline" subscriptSizing="dynamic" class="branch">
           <mat-label>To</mat-label>
           <mat-select [formControl]="toBranchFilter" (selectionChange)="setToBranch($event)">
             <mat-option>Show all</mat-option>
@@ -89,12 +89,6 @@
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
   
-            <ng-container matColumnDef="loading">
-              <mat-footer-cell *matFooterCellDef>
-                <gcp-loading-row></gcp-loading-row>
-              </mat-footer-cell>
-            </ng-container>
-  
             <ng-container matColumnDef="empty">
               <mat-footer-cell *matFooterCellDef>
                 There are no items requested from {{ fromBranchFilter.value }} by {{ toBranchFilter.value || 'other branches' }}.
@@ -102,7 +96,6 @@
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-            <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="!loading"></mat-footer-row>
             <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(t.value)"></mat-footer-row>
             <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
           </mat-table>  
@@ -111,6 +104,8 @@
     </div>
   </form>
 </div>
-
+<div *ngIf="loading">
+  <mat-spinner diameter="48" class="spinner"></mat-spinner>
+</div>
 
 <router-outlet></router-outlet>

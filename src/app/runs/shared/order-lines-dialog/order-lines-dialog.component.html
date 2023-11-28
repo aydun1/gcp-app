@@ -1,0 +1,65 @@
+<h2 mat-dialog-title>Delivery docket</h2>
+
+<mat-dialog-content>
+  <div *ngIf="order$ | async as o">
+    <div class="customer-details">
+      <div class="deets"><strong>Customer: </strong><span class="deets-inner">{{ o.custName }}</span></div>
+      <div class="deets"><strong>Order no.: </strong><span class="deets-inner">{{ o.sopNumber }}</span></div>
+      <div class="deets"><strong>Req. delivery date: </strong><span class="deets-inner">{{ o.reqShipDate | date: 'd MMM yyyy' }}</span></div>
+      <div class="deets"><strong>Address: </strong><div class="deets-inner address">{{ tidyAddress }}</div></div>
+      <div *ngIf="o.note" class="deets notes"><div class="notes-inner">{{ o.note }}</div></div>
+    </div>
+    <mat-divider class="section-divider"></mat-divider>
+    <div class="header row">
+      <div class="item-number">Item Number</div>
+      <div class="item-desc">Item Description</div>
+      <div class="quantity">Quantity</div>
+    </div>
+    <div *ngFor="let l of o.lines; last as last">
+      <div class="row">
+        <div class="item-number">{{ l.itemNmbr }}</div>
+        <div class="item-desc">{{ l.itemDesc }}</div>
+        <div class="quantity"><span class="mobile-show">Quantity: </span> {{ l.qtyPrInv | number }} <span *ngIf="l.qtyToInv">({{ l.qtyToInv | number }} uninvoiced)</span></div>
+      </div>
+      <mat-divider *ngIf="!last"></mat-divider>
+    </div>
+    <div class="note" *ngIf="o.lines.length === 0">
+      No allocations
+    </div>
+    <mat-divider class="section-divider"></mat-divider>
+    <div class="spaces">
+      <div><strong>Approx pallet spaces:</strong> {{ palletSpaces | number: '1.0-2' }}</div>
+      <div><strong>Approx net weight:</strong> {{ orderWeight | number: '1.0-2' }}kg</div>
+    </div>
+    <mat-divider class="section-divider"></mat-divider>
+
+    <div class="action-header">
+      <strong>Pallets</strong>
+      <button mat-stroked-button (click)="openPalletDialog(o.custName, o.custNumber, o.sopNumber, '')">Transfer pallets</button>
+    </div>
+
+    <div *ngIf="palletsOwing" class="pallets-owing">
+      <div class="pallet-type">
+        <div> </div>
+        <div class="pallet-total"><strong>Out</strong></div>
+        <div class="pallet-total"><strong>In</strong></div>
+      </div>
+      <div *ngFor="let pallet of pallets" class="pallet-type">
+        <div><strong>{{pallet.name}}</strong></div>
+        <div class="pallet-total">{{ palletsOwing[pallet.name]['outs'] }}</div>
+        <div class="pallet-total">{{ palletsOwing[pallet.name]['ins'] }}</div>
+      </div>
+    </div>
+    <div *ngIf="!palletsOwing">
+      <mat-spinner diameter="48" class="spinner"></mat-spinner>
+    </div>
+    <mat-divider class="section-divider"></mat-divider>
+    <div class="attachments">
+      <gcp-docs [folder]="'debtors/'+ o.custNumber" [subfolder]="data.sopNumber"><strong>Attachments</strong></gcp-docs>
+    </div>
+  </div>
+  <div *ngIf="loading">
+    <mat-spinner diameter="48" class="spinner"></mat-spinner>
+  </div>
+</mat-dialog-content>
+<button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>

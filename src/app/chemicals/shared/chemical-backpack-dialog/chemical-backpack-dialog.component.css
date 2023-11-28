@@ -1,0 +1,27 @@
+.header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.syncer {
+  display: flex;
+  align-items: center;
+}
+
+.syncer > .mat-mdc-button {
+  margin: 0 10px;
+}
+
+.mat-mdc-form-field {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.buttons {
+  margin-left: auto;
+}
+
+.selected {
+  margin: 0 16px;
+}

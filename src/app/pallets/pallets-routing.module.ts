@@ -14,32 +14,32 @@ import { PalletReconciliationViewComponent } from './pallet-reconciliation/palle
 const routes: Routes = [
   {
     path: '',
-    data: {title: 'Pallets'},
+    title: 'Pallets',
     component: PalletsComponent,
   },
   {
     path: 'history',
-    data: {title: 'Pallet Transfer History'},
+    title: 'Pallet Transfer History',
     component: PalletListComponent
   },
   {
     path: 'stocktake',
-    data: {title: 'Pallet stocktake'},
+    title: 'Pallet stocktake',
     component: PalletReconciliationListComponent,
     children: [
       {
         path: 'new',
-        data: {title: 'New Pallet stocktake'},
+        title: 'New Pallet Stocktake',
         component: PalletReconciliationNewComponent
       },
       {
         path: ':id',
-        data: {title: 'Pallet stocktake'},
+        title: 'Pallet Stocktake',
         component: PalletReconciliationViewComponent,
         children: [
           {
             path: 'edit',
-            data: {title: 'Edit entry'},
+            title: 'Edit Entry',
             component: PalletReconciliationNewComponent,
           }
         ]
@@ -48,17 +48,17 @@ const routes: Routes = [
   },
   {
     path: 'transfer',
-    data: {title: 'Interstate Pallet Transfers'},
+    title: 'Interstate Pallet Transfers',
     component: PalletInterstateTransferListComponent,
     children: [
       {
-        data: {title: 'New Interstate Pallet Transfer'},
+        title: 'New Interstate Pallet Transfer',
         path: 'new',
         component: PalletInterstateTransferNewComponent
       },
       {
         path: ':id',
-        data: {title: 'Interstate Pallet Transfers'},
+        title: 'Interstate Pallet Transfers',
         component: PalletInterstateTransferViewComponent
       }
     ]

@@ -1,0 +1,101 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.date {
+  margin-top: 12px;
+}
+
+.row-head {
+  font-weight: bold;
+}
+
+.row {
+  display: flex;
+  padding: 10px;
+  border-bottom: 1px solid rgb(128 128 128 / 39%);
+}
+
+.title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.key {
+  display: inline-block;
+  width: 80px;
+}
+
+.quantity {
+  flex: 0 1 150px;
+  text-align: right;
+}
+
+.contact {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+label {
+  display: flex;
+  justify-content: space-between;
+  margin: 2px 0;
+  width: 396px;
+}
+
+input {
+  font-size: 18px;
+}
+
+.mat-mdc-card {
+  margin: 10px 0;
+}
+
+@media print {
+  @page {
+    size: portrait;
+  }
+
+  label {
+    flex-direction: column;
+  }
+
+  .contact-label {
+    margin-right: auto;
+  }
+
+  .mobile-label {
+    width: 180px;
+  }
+
+  input {
+    border: none;
+  }
+
+  .buttons {
+    display: none;
+  }
+
+  .contact {
+    flex-direction: row;
+  }
+
+  .mat-mdc-card-header {
+    display: none;    
+  }
+
+  .mat-mdc-dialog-content {
+    height: calc(100vh - 158px);
+    max-height: none;
+    padding: 0;
+  }
+}

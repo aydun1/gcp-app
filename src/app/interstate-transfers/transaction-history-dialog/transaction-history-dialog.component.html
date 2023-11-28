@@ -1,21 +1,101 @@
-<h2 mat-dialog-title>Allocations</h2>
+<h2 mat-dialog-title>{{ data.item.ItemNmbr }}</h2>
+
+
 <mat-dialog-content>
+  <div>
+    {{ data.item.ItemDesc }}
+  </div>
+  <h3>National quantities</h3>
+  <p *ngIf="stockChanged" class="stock-changed">Stock for this item has been updated since you loaded the page.<br>
+  The latest values are below.<br>Refresh the page to see the lastest values on the list.</p>
+  <div class="availability-grid {{ data.branch }}">
+    <div></div>
+    <div class="grid-heading cell-top cell-vic">MAIN</div>
+    <div class="grid-heading cell-top cell-nsw">NSW</div>
+    <div class="grid-heading cell-top cell-qld">QLD</div>
+    <div class="grid-heading cell-top cell-sa">SA</div>
+    <div class="grid-heading cell-top cell-wa">WA</div>
+    <div class="grid-heading cell-top cell-hea">HEA</div>
+    <div class="grid-heading">On hand</div>
+    <div class="cell-vic">{{ item.OnHandVIC || 0 | number }}</div>
+    <div class="cell-nsw">{{ item.OnHandNSW || 0 | number }}</div>
+    <div class="cell-qld">{{ item.OnHandQLD || 0 | number }}</div>
+    <div class="cell-sa">{{ item.OnHandSA || 0 | number }}</div>
+    <div class="cell-wa">{{ item.OnHandWA || 0 | number }}</div>
+    <div class="cell-hea">{{ item.OnHandHEA || 0 | number }}</div>
+    <div class="grid-heading">Allocated</div>
+    <div class="cell-vic">{{ item.AllocVIC || 0 | number }}</div>
+    <div class="cell-nsw">{{ item.AllocNSW || 0 | number }}</div>
+    <div class="cell-qld">{{ item.AllocQLD || 0 | number }}</div>
+    <div class="cell-sa">{{ item.AllocSA || 0 | number }}</div>
+    <div class="cell-wa">{{ item.AllocWA || 0 | number }}</div>
+    <div class="cell-hea">{{ item.AllocHEA || 0 | number }}</div>
+    <div class="grid-heading">Sold per month</div>
+    <ng-container *ngIf="averages | async as a; else notyet">
+      <div class="cell-vic cell-bottom">{{ a.MAIN || 0 | number: '1.0-0' }}</div>
+      <div class="cell-nsw cell-bottom">{{ a.NSW || 0 | number: '1.0-0' }}</div>
+      <div class="cell-qld cell-bottom">{{ a.QLD || 0 | number: '1.0-0' }}</div>
+      <div class="cell-sa cell-bottom">{{ a.SA || 0 | number: '1.0-0' }}</div>
+      <div class="cell-wa cell-bottom">{{ a.WA || 0 | number: '1.0-0' }}</div>
+      <div class="cell-hea cell-bottom">{{ a.HEA || 0 | number: '1.0-0'}}</div>
+    </ng-container>
+    <ng-template #notyet>
+      <div class="cell-vic cell-bottom">...</div>
+      <div class="cell-nsw cell-bottom">...</div>
+      <div class="cell-qld cell-bottom">...</div>
+      <div class="cell-sa cell-bottom">...</div>
+      <div class="cell-wa cell-bottom">...</div>
+      <div class="cell-hea cell-bottom">...</div>
+    </ng-template>
+    <ng-template #notyet><mat-spinner diameter="24"></mat-spinner></ng-template>
+  </div>
+
+
+
+
+
+
+
+
+
+
+  <h3> {{data.branch}} limits</h3>
+  <div class="limits">
+    <div class="limit">
+      <div>Minimum: {{ data.item.MinOrderQty | number }}</div>
+      <div>Maximum: {{ data.item.MaxOrderQty | number }}</div>
+    </div>
+    <div class="limit">
+      <div>Order point qty: {{ data.item.OrderPointQty | number }}</div>
+      <div>Order up to lvl: {{ data.item.OrderUpToLvl | number }}</div>
+    </div>
+  </div>
+
+  <h3>{{data.branch}} allocations</h3>
   <div class="header row">
-    <div class="date">Date</div>
+    <div class="date">Doc date</div>
+    <div class="date">Req ship date</div>
     <div class="invoice-number">Doc number</div>
     <div class="customer">Customer</div>
     <div class="quantity">Qty</div>
   </div>
-  <div *ngFor="let h of locationHistory | async; last as last">
-    <div class="row">
-      <div class="date">{{ h.date | date: 'd MMM yyyy' }}</div>
-      <div class="invoice-number">{{ h.sopNmbr }}</div>
-      <div class="customer">{{ h.customer }}</div>
-      <div class="quantity">{{ h.quantity | number }}</div>
+  <div *ngIf="previousOrders | async as orders;else loading">
+    <div *ngFor="let o of orders; last as last">
+      <div class="row">
+        <div class="date">{{ o.date | date: 'd MMM yyyy' }}</div>
+        <div class="date">{{ o.reqShipDate | date: 'd MMM yyyy' }}</div>
+        <div class="invoice-number">{{ o.sopNmbr }}</div>
+        <div class="customer">{{ o.customer }}</div>
+        <div class="quantity">{{ o.quantity | number }}</div>
+      </div>
+      <div *ngIf="o.notes" class="notes">
+        {{ o.notes }}
+      </div>
+      <mat-divider *ngIf="!last"></mat-divider>
     </div>
-    <div *ngIf="h.notes" class="notes">
-      {{ h.notes }}
+    <div class="note" *ngIf="orders.length === 0">
+      No allocations
     </div>
-    <mat-divider *ngIf="!last"></mat-divider>
   </div>
+  <ng-template #loading><mat-spinner diameter="24"></mat-spinner></ng-template>
 </mat-dialog-content>

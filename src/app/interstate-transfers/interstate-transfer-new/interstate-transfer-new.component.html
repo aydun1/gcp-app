@@ -1,7 +1,7 @@
 <form (ngSubmit)="createTransfer()" [formGroup]="newTransferForm">
   <div class="outer">
     <div class="inner">
-      <h2>Transfer items</h2>
+      <h2>Quick transfer</h2>
       <gcp-pan-list [suggestions]="false" [autosave]="false" min="OrderPointQty" max="OrderUpToLvl"  (activeLines)="activeLines=$event" (lineCount)="lineCount=$event"></gcp-pan-list>    
     </div>
   </div>

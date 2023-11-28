@@ -1,8 +1,9 @@
 <div class="home-cards">
-  <gcp-big-button *ngIf="!warehouse" [target]="['customers']" icon="groups">Customers</gcp-big-button>
-  <gcp-big-button [target]="['pallets']" icon="view_list">Pallet Manager</gcp-big-button>
-  <gcp-big-button [target]="['recycling']" icon="recycling">Recycling Cages</gcp-big-button>
-  <gcp-big-button [target]="['transfers']" icon="trolley">Inventory</gcp-big-button>
-  <gcp-big-button [target]="['loading-schedule']" icon="departure_board">Loading Schedule</gcp-big-button>
-  <gcp-big-button [target]="['runs']" icon="local_shipping">Run list</gcp-big-button>
+  <gcp-big-button *ngIf="roles.all" [target]="['customers']" icon="groups">Customers</gcp-big-button>
+  <gcp-big-button *ngIf="roles.all" [target]="['pallets']" icon="view_list">Pallet Manager</gcp-big-button>
+  <gcp-big-button *ngIf="roles.all" [target]="['recycling']" icon="recycling">Recycling Cages</gcp-big-button>
+  <gcp-big-button *ngIf="roles.all" [target]="['transfers']" icon="trolley">Inventory</gcp-big-button>
+  <gcp-big-button *ngIf="roles.all" [target]="['loading-schedule']" icon="departure_board">Loading Schedule</gcp-big-button>
+  <gcp-big-button *ngIf="roles.all || roles.runs" [target]="['runs']" icon="local_shipping">Run list</gcp-big-button>
+  <gcp-big-button *ngIf="roles.all" [target]="['chemicals']" icon="science">Chemicals</gcp-big-button>
 </div>

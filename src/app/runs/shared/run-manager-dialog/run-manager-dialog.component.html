@@ -10,7 +10,7 @@
             <button color="warn" type="button" mat-raised-button class="icon" (click)="deleteRun()" [disabled]="loading" class="delete">Delete run</button>
           </ng-container>
           <ng-container matListItemMeta>
-            <button type="button" mat-icon-button (click)="openEditor(run.id, run.fields.Title)" class="icon"><mat-icon>edit</mat-icon></button>
+            <button type="button" mat-icon-button (click)="openEditor(run.id, run.fields.Title, run.fields.Owner)" class="icon"><mat-icon>edit</mat-icon></button>
           </ng-container>
         </mat-list-item>
         <mat-list-item *ngIf="!runs || !runs.length">
@@ -20,13 +20,17 @@
     </ng-container>
 
     <h3 *ngIf="!runId">Add a run</h3>
-    <h3 *ngIf="runId">Edit run name</h3>
+    <h3 *ngIf="runId">Edit run details</h3>
     <mat-form-field appearance="outline" class="name">
       <mat-label>Run name (i.e. Deliveries)</mat-label>
       <input matInput type="text" formControlName="run" autocomplete="off" placeholder="Run name (i.e. delivery)">
       <mat-error *ngIf="runForm.get('run')?.hasError('forbiddenName')">
         A run by this name already exists.
       </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="name">
+      <mat-label>Owner</mat-label>
+      <input matInput type="text" formControlName="owner" autocomplete="off" placeholder="First.Last@gardencityplastics.com">
     </mat-form-field>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
@@ -35,4 +39,4 @@
   </mat-dialog-actions>
 </form>
 
-<button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>
+<button mat-icon-button (click)="closeDialog(null)" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>

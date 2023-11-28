@@ -78,6 +78,10 @@ h3 {
   text-overflow: ellipsis;
 }
 
+.spinner {
+  margin: 0 auto;
+}
+
 @media (max-width: 800px) {
   .mat-mdc-cell {
     min-height: 0;

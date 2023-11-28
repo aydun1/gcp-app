@@ -10,6 +10,7 @@ import { SharedService } from '../../shared.service';
 import { Address } from './address';
 import { Customer } from './customer';
 import { Site } from './site';
+import { Vendor } from './vendor';
 
 @Injectable({
   providedIn: 'root'
@@ -36,11 +37,12 @@ export class CustomersService {
     let url = `${this._url}?`;
     const filterArray = [];
     if (filters['name']) filterArray.push(`search=${this.shared.sanitiseName(filters['name'])}`);
-    if (filters['territory']) {
-      if (filters['territory'] in this.shared.territories) {
-        this.shared.territories[filters['territory']].forEach((_: string) => filterArray.push(`branch=${_}`));
+    const territoryFilter = filters['territory'] as 'HEA' | 'NSW' | 'QLD' | 'SA' | 'VIC' | 'WA';
+    if (territoryFilter) {
+      if (territoryFilter in this.shared.territories) {
+        this.shared.territories[territoryFilter].forEach((_: string) => filterArray.push(`branch=${_}`));
       } else {
-        filterArray.push(`branch=${filters['territory']}`);
+        filterArray.push(`branch=${territoryFilter}`);
       }
     }
     const palletFilters = Array.isArray(filters['pallets']) ? filters['pallets'] : [filters['pallets']];
@@ -55,15 +57,25 @@ export class CustomersService {
 
   getCustomer(id: string): Observable<Customer> {
     let url = `${this._url}/${this.shared.sanitiseName(id)}`;
-    return this.http.get(url).pipe(map(_ => _['customer'])) as Observable<Customer>;
+    return this.http.get<{customer: Customer}>(url).pipe(map(_ => _['customer']));
   }
 
-  getFirstPage(filters: Params): BehaviorSubject<Customer[]> {
+  getVendors(search: string): Observable<Vendor[]> {
+    const url = `${environment.gpEndpoint}/vendors?search=${search ? search : ''}`;
+    return this.http.get<{vendors: Vendor[]}>(url).pipe(map(_ => _['vendors']));;
+  }
+
+  getFirstPage(filters: Params): Observable<Customer[]> {
     this._nextPage = 1;
     this._loadingCustomers = false;
     this._currentUrl = this.createUrl(filters);
-    this.getCustomers(this._currentUrl).subscribe(_ => this._customersSubject$.next(_));
-    return this._customersSubject$;
+
+    return this._customersSubject$.pipe(
+      take(1),
+      switchMap(() => this.getCustomers(this._currentUrl)),
+      tap(_ => this._customersSubject$.next(_)),
+      switchMap(() => this._customersSubject$)
+    );
   }
 
   getNextPage(): void {
@@ -79,7 +91,7 @@ export class CustomersService {
   getCustomers(url: string): Observable<Customer[]> {
     this._loadingCustomers = true;
     this.loading.next(true);
-    return this.http.get(`${url}&page=${this._nextPage}`).pipe(
+    return this.http.get<{customers: Customer[]}>(`${url}&page=${this._nextPage}`).pipe(
       tap(_ => {
         this._nextPage += 1;
         if (_['customers'].length < this.pageSize) this._nextPage = 0;
@@ -101,21 +113,27 @@ export class CustomersService {
     );
   }
 
-  getAddresses(customer: string | null): Observable<Address[]> {
+  getCustomerAddresses(customer: string | null): Observable<Address[]> {
     if (!customer) return of([]);
     let url = `${this._url}/${this.shared.sanitiseName(customer)}/addresses`;
-    return this.http.get(url).pipe(map(_ => _['addresses']));
+    return this.http.get<{addresses: Address[]}>(url).pipe(map(_ => _['addresses']));
   }
 
-  getRegions(): Observable<Object> {
+  getVendorAddresses(customer: string | null): Observable<Address[]> {
+    if (!customer) return of([]);
+    let url = `${environment.gpEndpoint}/vendors/${this.shared.sanitiseName(customer)}/addresses`;
+    return this.http.get<{addresses: Address[]}>(url).pipe(map(_ => _['addresses']));
+  }
+
+  getRegions(): Observable<any> {
     const url = `${this._url}/territories?$select=name`;
-    return this.http.get(url);
+    return this.http.get<any>(url);
   }
 
   getSites(customer: string): Observable<Site[]> {
     if (!customer) return of([]);
     const url = `${this._sitesUrl}/items?expand=fields(select=Title,Address,Customer)&filter=fields/Customer eq '${this.shared.sanitiseName(customer)}'`;
-    return this.http.get(url).pipe(map(_ => _['value']));
+    return this.http.get<{value: Site[]}>(url).pipe(map(_ => _['value']));
   }
 
   editSite(customer: Customer, siteId: string, newName: string, oldName: string, newAddress: string | null | undefined): Observable<Object> {

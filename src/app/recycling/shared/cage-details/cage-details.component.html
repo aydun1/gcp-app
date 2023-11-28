@@ -1,5 +1,9 @@
 <mat-list>
   <div mat-subheader *ngIf="cage.fields.Date1 || cage.fields.Date2 || cage.fields.Date3 || cage.fields.Date4 || cage.fields.ToDepot">Dates</div>
+  <mat-list-item *ngIf="cage.fields.Consolidated">
+    <span matListItemTitle>{{ cage.fields.Consolidated | date: 'dd/MM/yyyy' }}</span>
+    <span>Consolidated</span>
+  </mat-list-item>
   <mat-list-item *ngIf="cage.fields.Date4">
     <span matListItemTitle>{{ cage.fields.Date4 | date: 'dd/MM/yyyy' }}</span>
     <span>Collected from Polymer</span>
@@ -27,6 +31,8 @@
   <mat-list-item *ngIf="cage.fields.ToDepot">
     <span matListItemTitle>{{ cage.fields.ToDepot | date: 'dd/MM/yyyy' }}</span>
     <span>Delivered to depot ({{ cage.fields.Depot }})</span>
-    <button *ngIf="!cage.statusId || cage.statusId < 2" mat-icon-button type="button" (click)="removeDepot()"><mat-icon matListItemIcon class="last-icon">close</mat-icon></button>
+    <ng-container *ngIf="!cage.statusId || cage.statusId < 2" matListItemMeta>
+      <button mat-icon-button type="button" (click)="removeDepot()"><mat-icon class="last-icon">close</mat-icon></button>
+    </ng-container>
   </mat-list-item>
 </mat-list>

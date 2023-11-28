@@ -1,9 +1,9 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
-import { Sort } from '@angular/material/sort';
+import { Sort, SortDirection } from '@angular/material/sort';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { Customer } from '../shared/customer';
@@ -28,10 +28,10 @@ export class CustomerListComponent implements OnInit {
   public territories$!: Observable<Territory[]>;
   public get territories(): Array<string> {return this.sharedService.territoryNames};
   public loading = this.customersService.loading;
-  public sortSort!: string;
-  public sortOrder!: 'asc' | 'desc';
+  public sortSort = this.route.snapshot.queryParamMap.get('sort') || '';
+  public sortOrder = this.route.snapshot.queryParamMap.get('order') as SortDirection;
   public pallets = this.sharedService.palletDetails;
-  public palletTotals = this.pallets.reduce((acc, curr) => (acc[curr.key]='',acc),{});
+  public palletTotals = this.pallets.reduce((acc, curr) => (acc[curr.key]='',acc), {} as any);
   public displayedColumns = ['name', 'custNmbr', ...this.pallets.map(_ => _.key)];
 
   constructor(
@@ -51,14 +51,14 @@ export class CustomerListComponent implements OnInit {
   ngOnInit(): void {
     const state$ = this.sharedService.getBranch();
     this.customers$ = this.route.queryParams.pipe(
-      startWith({}),
+      startWith({} as Params),
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         map(() => _)
       )),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
-      switchMap(_ => state$.pipe(map(state => !_['territory'] ? {..._, territory: state} : _))),
+      switchMap(params => state$.pipe(map(state => !params['territory'] ? {...params, territory: state} : params))),
       tap(_ => {
         this.parseParams(_);
         this.pallets.forEach(p => this.palletTotals[p.key] = 0);
@@ -84,7 +84,7 @@ export class CustomerListComponent implements OnInit {
     );
   }
 
-  getFirstPage(_: Params): BehaviorSubject<Customer[]> {
+  getFirstPage(_: Params): Observable<Customer[]> {
     return this.customersService.getFirstPage(_);
   }
 
@@ -141,7 +141,7 @@ export class CustomerListComponent implements OnInit {
     this.nameFilter.patchValue('');
   }
 
-  announceSortChange(e: Sort) {
+  announceSortChange(e: Sort): void {
     const sort = e.direction ? e.active : null;
     const order = e.direction || null;
     this.router.navigate([], { queryParams: {sort, order}, queryParamsHandling: 'merge', replaceUrl: true});

@@ -27,6 +27,7 @@ import { MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 
 import { BigButtonComponent } from './big-button/big-button.component';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { PipeModule } from './pipes/pipe.module';
 import { ControlsModule } from './controls/controls.module';
 import { DocsModule } from './docs/docs.module';
@@ -38,6 +39,7 @@ import { FooterComponent } from './footer/footer.component';
 @NgModule({
   declarations: [
     BigButtonComponent,
+    ConfirmationDialogComponent,
     LoadingDotsComponent,
     LetterheadComponent,
     FooterComponent
@@ -45,8 +47,10 @@ import { FooterComponent } from './footer/footer.component';
   imports: [
     CommonModule,
     RouterModule,
+    MatDialogModule,
+    MatButtonModule,
     MatIconModule,
-    MatRippleModule
+    MatRippleModule,
   ],
   exports: [
     MatAutocompleteModule,
@@ -75,6 +79,7 @@ import { FooterComponent } from './footer/footer.component';
     FormsModule,
     ReactiveFormsModule,
     BigButtonComponent,
+    ConfirmationDialogComponent,
     LoadingDotsComponent,
     LetterheadComponent,
     FooterComponent,

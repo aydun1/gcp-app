@@ -9,6 +9,7 @@ import { SharedService } from '../shared.service';
 })
 export class HomeComponent implements OnInit {
   public warehouse!: boolean;
+  public roles!: any;
 
   constructor(
    private sharedService: SharedService
@@ -16,5 +17,6 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.warehouse = this.sharedService.isWarehouse;
+    this.roles = this.sharedService.getRoles();
   }
 }

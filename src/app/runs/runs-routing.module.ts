@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RunListComponent } from './run-list/run-list.component';
-
 import { RunsComponent } from './runs.component';
+import { RunListComponent } from './run-list/run-list.component';
+import { RunListCompletedComponent } from './run-list-completed/run-list-completed.component';
 
 
 const routes: Routes = [
@@ -12,8 +12,13 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        data: {title: 'Runs'},
+        title: 'Runs',
         component: RunListComponent
+      },
+      {
+        path: 'delivered',
+        title: 'Delivered',
+        component: RunListCompletedComponent 
       }
     ]
   }

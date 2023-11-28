@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
@@ -27,22 +27,29 @@ export class LoadingScheduleListComponent implements OnInit {
   public listSize!: number;
   public groups!: Array<string>;
   public grouped!: boolean;
-  public totals!: object;
+  public totals!: any;
   public states = this.shared.branches;
   public state = '';
 
   constructor(
+    private el: ElementRef,
     private route: ActivatedRoute,
     private router: Router,
     private shared: SharedService,
     private loadingScheduleService: LoadingScheduleService
   ) { }
 
+  @HostListener('scroll', ['$event'])
+  onScroll(e: Event): void {
+    const bottomPosition = this.el.nativeElement.offsetHeight + this.el.nativeElement.scrollTop - this.el.nativeElement.scrollHeight;
+    if (bottomPosition >= -250) this.loadingScheduleService.getNextPage();
+  }
+
   ngOnInit(): void {
     const state$ = this.shared.getBranch();
 
     this.loadingSchedules$ = this.route.queryParams.pipe(
-      startWith({}),
+      startWith({} as any),
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
@@ -61,12 +68,13 @@ export class LoadingScheduleListComponent implements OnInit {
         this.displayedColumns = _['view'] === 'grouped' ?
           ['reference', 'loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'notes', 'menu'] :
           ['reference', 'loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'status', 'notes', 'menu'];
-
       }),
       switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
       tap(_ => this._loadingScheduleSubject$.next(_)),
       tap(_ => {
-        this.totals = this.groups.reduce((acc, curr) => (acc[curr] = _.filter(res => res.fields?.Status === curr).reduce((a, b) =>  a + (b.fields?.Spaces || 0), 0), acc), {});
+        this.totals = this.groups.reduce((acc, curr) =>
+          (acc[curr] = _.filter(res => res.fields?.Status === curr).reduce((a, b) =>  a + (b.fields?.Spaces || 0), 0), acc), {} as any
+        );
         this.totals['total'] = _.reduce((a, b) =>  a + (b.fields?.Spaces || 0), 0);
       }),
       switchMap(_ => this._loadingScheduleSubject$)
@@ -121,12 +129,16 @@ export class LoadingScheduleListComponent implements OnInit {
     this.router.navigate([], { queryParams: {view: view.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  markDelivered(id: string) {
+  markPanListSent(id: string): void {
+    this.loadingScheduleService.markPanSent(id).subscribe();
+  }
+
+  markDelivered(id: string): void {
     this.loadingScheduleService.markDelivered(id).subscribe();
   }
 
-  deleteEntry(id: string) {
-
+  allowNext(to: string, from: string): boolean {
+    return !(to === this.state || from === this.state && to === 'International');
   }
 
   trackByFn(index: number, item: LoadingSchedule): string {

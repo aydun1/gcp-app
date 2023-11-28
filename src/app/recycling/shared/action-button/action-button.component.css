@@ -1,17 +1,17 @@
+:host {
+  display: flex;
+  align-items: center;
+}
+
 .weight-form {
   display: flex;
   flex-direction: column;
 }
 
 .action {
-  flex: 1;
   white-space: nowrap;
 }
 
 .menu, .action {
   margin-left: 10px;
-}
-
-.mat-mdc-raised-button {
-  margin-bottom: 12px;
 }
