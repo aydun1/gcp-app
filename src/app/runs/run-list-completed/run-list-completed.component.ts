@@ -87,7 +87,7 @@ export class RunListCompletedComponent implements OnInit {
   openReceipt(orderNumber: string): void {
     const data = {
       sopType: 2,
-      sopNumber: orderNumber,
+      sopNumber: orderNumber.trimEnd(),
     };
 
     this.dialog.open(OrderLinesDialogComponent, {width: '800px', data, autoFocus: false});
