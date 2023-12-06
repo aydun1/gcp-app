@@ -36,7 +36,7 @@ export class RunListComponent implements OnInit {
   private _openingAll = false;
 
   @ViewChild('groupedRuns') public accordion!: MatAccordion;
-  public dateFilter = new FormControl(this.getDate());
+  public dateFilter = new FormControl(this.deliveryService.getDate());
   public orders$!: Observable<Order[]>;
   public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
@@ -72,15 +72,6 @@ export class RunListComponent implements OnInit {
     private docsService: DocsService
   ) { }
 
-  private getDate(): Date {
-    const date = new Date();
-    const day = date.getDay();
-    const nextDay = day > 4 ? 8 - day : 1;
-    date.setDate(date.getDate() + nextDay);
-    date.setHours(0,0,0,0);
-    return date;
-  }
-
   nextDay(): void {
     if (!this.dateFilter.value) return;
     const date = this.dateFilter.value;
@@ -109,7 +100,7 @@ export class RunListComponent implements OnInit {
 
     this.orders$ = combineLatest([state$, date$, this._orderRefreshTrigger$]).pipe(
       tap(() => this.loadingOrders = true),
-      switchMap(([state, date, _]) => this.deliveryService.syncOrders(state, date || this.getDate())),
+      switchMap(([state, date, _]) => this.deliveryService.syncOrders(state, date || this.deliveryService.getDate())),
       tap(() => this.loadingOrders = false)
     );
 

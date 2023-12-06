@@ -143,9 +143,21 @@ export class DeliveryService {
     );
   }
 
+  getDate(): Date {
+    const date = new Date();
+    const day = date.getDay();
+    const nextDay = day > 4 ? 8 - day : 1;
+    date.setDate(date.getDate() + nextDay);
+    date.setHours(0,0,0,0);
+    return date;
+  }
+
   syncOrders(branch: string, date: Date): Observable<Order[]> {
     const d = (date).toLocaleString( 'sv', { timeZoneName: 'short' } ).split(' ', 1)[0];
-    const request = this.http.get<{orders: Order[]}>(`${environment.gpEndpoint}/orders?branch=${branch}&date=${d}`).pipe(
+    const today = (this.getDate()).toLocaleString( 'sv', { timeZoneName: 'short' } ).split(' ', 1)[0];
+    let url = `${environment.gpEndpoint}/orders?branch=${branch}`;
+    if (d !== today) url += `&date=${d}`;
+    const request = this.http.get<{orders: Order[]}>(url).pipe(
       map(_ => _.orders),
       switchMap(orders => {
         return this._deliveriesSubject$.pipe(
@@ -153,6 +165,10 @@ export class DeliveryService {
             return orders.filter(_ => !this._validBatches.includes(_.batchNumber)).filter(_ => !deliveries.map(d => d.fields.OrderNumber).includes(_.sopNumber)).filter(_ => !this.recentlyArchived.includes(_.sopNumber))
           })
         )
+      }),
+      catchError(err => {
+        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
+        return of([]);
       })
     );
     return request;
