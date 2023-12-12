@@ -67,7 +67,7 @@
         <div *ngIf="c.key !== 'undefined'" class="section-head">
           <h3>{{ groupName }} {{ c.key !== 'null' && c.key !== '' ? c.key : 'Unknown' }}</h3> <span *ngIf="groupFilter.value === 'class' && classes[c.key]" class="class-description"> {{ classes[c.key] }}</span>
         </div>
-        <mat-card appearance="outlined">
+        <mat-card appearance="outlined" class="table-container">
           <mat-table #table [dataSource]="c.value" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
             <ng-container matColumnDef="sds">
               <mat-header-cell *matHeaderCellDef>

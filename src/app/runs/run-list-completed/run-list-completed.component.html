@@ -20,7 +20,7 @@
         </mat-form-field>
       </div>
     </div>
-    <mat-card appearance="outlined" *ngIf="deliveries$ | async as groupedDeliveries" class="inner card-container">
+    <mat-card appearance="outlined" *ngIf="deliveries$ | async as groupedDeliveries" class="inner table-container">
       <mat-table #table [dataSource]="groupedDeliveries" [trackBy]="trackByGroupsFn">
         <ng-container matColumnDef="date">
           <mat-header-cell *matHeaderCellDef> Delivery date </mat-header-cell>

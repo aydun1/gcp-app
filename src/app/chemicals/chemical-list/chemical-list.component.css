@@ -58,6 +58,10 @@
   flex: 0 0 160px;
 }
 
+.table-container {
+  overflow-x: auto;
+}
+
 .mat-column-sds {
   flex: 0 1 66px;
 }
@@ -149,6 +153,10 @@
 
   .mat-mdc-form-field:last-child {
     margin-bottom: 0;
+  }
+
+  .mat-mdc-table {
+    width: 1024px;
   }
 }
 

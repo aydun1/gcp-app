@@ -14,7 +14,7 @@ h2 {
   margin-left: 10px;
 }
 
-.card-container {
+.table-container {
   overflow-x: auto;
 }
 
@@ -53,8 +53,10 @@ h2 {
   text-overflow: ellipsis;
 }
 
-@media (max-width: 1024px) {
-
+@media (max-width: 800px) {
+  .mat-mdc-table {
+    width: 1024px;
+  }
 }
 
 @media print {
