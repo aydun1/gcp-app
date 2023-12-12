@@ -8,6 +8,7 @@ import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, 
 import { Site } from '../../customers/shared/site';
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
+import { Choice } from '../../shared/choice';
 import { Cage } from './cage';
 import { BranchTotal } from './branch-total';
 
@@ -19,7 +20,7 @@ export class RecyclingService {
   private _loadingCages!: boolean;
   private _nextPage!: string;
   private _cagesSubject$ = new BehaviorSubject<Cage[]>([]);
-  private _columns$ = new BehaviorSubject<any>(
+  private _columns$ = new BehaviorSubject<{Placeholder: boolean, AssetType: Choice, Status: Choice, Branch: Choice}>(
     {Placeholder: true, AssetType: {choice: {choices: []}, name: ''}, Status: {choice: {choices: []}, name: ''}, Branch: {choice: {choices: []}, name: ''}}
   );
   private _totalsUrl = 'lists/7354d3dc-88fe-4184-b069-13e5ee6cf56f';

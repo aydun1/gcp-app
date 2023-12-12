@@ -152,7 +152,7 @@
                           <button *ngIf="!d.fields.OrderNumber" mat-icon-button (click)="editDelivery(d)" [disabled]="loading">
                             <mat-icon>edit</mat-icon>
                           </button>
-                          <button *ngIf="delivery.value.length > 1" mat-icon-button [matMenuTriggerData]="{delivery: {value: [d], fields: {Title: delivery.fields.Title}}}" [matMenuTriggerFor]="dropMenu" (click)="$event.stopPropagation()">
+                          <button *ngIf="delivery.value.length > 1" mat-icon-button [matMenuTriggerData]="{delivery: {value: [d], fields: {Title: delivery.fields.Run}}}" [matMenuTriggerFor]="dropMenu" (click)="$event.stopPropagation()">
                             <mat-icon>more_vert</mat-icon>
                           </button>
                         </div>
@@ -186,7 +186,6 @@
                       <a mat-button color="primary" [routerLink]="['/customers', delivery.fields.CustomerNumber]" [queryParams]="{site:delivery.fields.Site}" class="customer-link">Customer</a>
                       <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.CustomerName, delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, delivery.fields.Site)">Pallets</button>
                       <button mat-raised-button color="primary" (click)="openRecyclingDialog(delivery.fields.CustomerName, delivery.fields.CustomerNumber, delivery.fields.Site)">Recycling</button>
-                      <button *ngIf="delivery.fields.OrderNumber" mat-icon-button ></button>
                     </mat-action-row>
                   </ng-template>
                 </mat-expansion-panel>
@@ -234,7 +233,7 @@
     <button mat-menu-item [matMenuTriggerFor]="runMenu" [matMenuTriggerData]="{delivery}" [disabled]="loading" type="button">
       <mat-icon>move_down</mat-icon>Move to run
     </button>
-    <button mat-menu-item (click)="deleteDeliveries(delivery.value, delivery.fields.Title)" [disabled]="loading" type="button">
+    <button mat-menu-item (click)="deleteDeliveries(delivery.value, delivery.fields.Run)" [disabled]="loading" type="button">
       <mat-icon>delete</mat-icon>Remove
     </button>
   </ng-template>

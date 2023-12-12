@@ -42,7 +42,7 @@ export class StringColourPipe implements PipeTransform {
     return hexCol;
   }
 
-  transform(input: any): string {
+  transform(input: string): string {
     if (!input) return '#000000';
     let color = this.getColor(input);
     if (color) return color;

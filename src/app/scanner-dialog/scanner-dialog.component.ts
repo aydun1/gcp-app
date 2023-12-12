@@ -26,7 +26,7 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
   public tryHarder = false;
   public enabled = true;
   public scannedText = new FormControl('');
-  public isScanner: Promise<boolean> = navigator['userAgentData'].getHighEntropyValues(['model']).then((ua: any) => ua['model'] === 'CK65');
+  public isScanner: Promise<boolean> = navigator['userAgentData'].getHighEntropyValues(['model']).then((ua: {model: string}) => ua['model'] === 'CK65');
 
   public formatsEnabled: BarcodeFormat[] = [
     BarcodeFormat.CODE_39,
@@ -122,7 +122,7 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
     this.dialog.open(OrderLinesDialogComponent, {width: '800px', data});
   }
 
-  onScanError(event: any): void {
+  onScanError(event: Error): void {
     console.log(event);
   }
 

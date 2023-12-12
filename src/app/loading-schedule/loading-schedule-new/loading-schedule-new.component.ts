@@ -6,10 +6,9 @@ import { BehaviorSubject, catchError, firstValueFrom, Observable, switchMap, tap
 
 import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
+import { Choice } from '../../shared/choice';
 import { LoadingScheduleService } from '../shared/loading-schedule.service';
 import { TransportCompany } from '../shared/transport-company';
-
-interface choice {choice: {choices: Array<any>}, name: string};
 
 interface LoadingScheduleForm {
   status: FormControl<string | null>;
@@ -37,7 +36,7 @@ export class LoadingScheduleNewComponent implements OnInit {
   public loadingScheduleForm!: FormGroup<LoadingScheduleForm>;
   public states = [...this.sharedService.branches, 'International'];
   public state!: string;
-  public choices!: {TransportCompany: choice, Driver: choice, AssetType: choice, Branch: choice, Status: choice};
+  public choices!: {TransportCompany: Choice, Driver: Choice, AssetType: Choice, Branch: Choice, Status: Choice};
   public id: string | null = null;
 
   get targetStates(): Array<string> {

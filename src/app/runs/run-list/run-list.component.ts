@@ -140,7 +140,7 @@ export class RunListComponent implements OnInit {
     if (tab === null) return;
     this.openedTab = tab;
     this.locked = tab !== 0;
-    const queryParams: any = {tab};
+    const queryParams = {tab};
     this.router.navigate([], {queryParams, replaceUrl: true, queryParamsHandling: 'merge'});
   }
 
@@ -151,12 +151,10 @@ export class RunListComponent implements OnInit {
         return _.filter(d => {
           const run = this.runName || this.runs[this.route.snapshot.queryParamMap.get('tab') || 0]?.fields.Title || '';
           return d.fields.Run === run;
-      }).map(
-        _ => {
-          _['order'] = this.deliveryService.getOrder(2, _.fields.OrderNumber);
-          return _
-        }
-      )
+      }).map(_ => {
+        _['order'] = this.deliveryService.getOrder(2, _.fields.OrderNumber);
+        return _;
+      })
     })
     )
   }
@@ -242,7 +240,7 @@ export class RunListComponent implements OnInit {
     return this.deliveryService.addDrop(delivery, undefined);
   }
 
-  markComplete(e: any, deliveries: Array<Delivery>, currentStatus: string): void {
+  markComplete(e: Event, deliveries: Array<Delivery>, currentStatus: string): void {
     e.stopPropagation();
     const ids = deliveries.map(_ => _.id);
     this.deliveryService.changeStatuses(ids, currentStatus);
@@ -280,7 +278,7 @@ export class RunListComponent implements OnInit {
   archiveDeliveriesByRun(runName: string): void {
     const data = {title: 'Archive run', content: ['Are you sure you want to archive these deliveries?']};
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {width: '800px', data});
-    dialogRef.afterClosed().subscribe((result: any) => {
+    dialogRef.afterClosed().subscribe(result => {
       if (!result) return;
       this.loading = true;
       this.deliveryService.archiveDeliveriesByRun(runName).then( _ => {
@@ -364,7 +362,7 @@ export class RunListComponent implements OnInit {
     return item.id;
   }
 
-  trackByGroupsFn(index: number, item: any): string {
+  trackByGroupsFn(index: number, item: {key: string}): string {
     return item.key;
   }
 

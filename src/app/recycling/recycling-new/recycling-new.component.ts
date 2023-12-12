@@ -7,6 +7,7 @@ import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 import { RecyclingService } from '../shared/recycling.service';
 import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
+import { Choice } from '../../shared/choice';
 
 interface CageForm {
   assetType: FormControl<string | null>;
@@ -31,7 +32,7 @@ export class RecyclingNewComponent implements OnInit {
   public multi!: number;
   public cageForm!: FormGroup<CageForm>;
   public loading!: boolean;
-  public choices$!: BehaviorSubject<any>;
+  public choices$!: BehaviorSubject<{Branch: Choice, AssetType: Choice}>;
 
   public get isCage(): boolean {
     return this.cageForm.value.assetType?.startsWith('Cage') || false;

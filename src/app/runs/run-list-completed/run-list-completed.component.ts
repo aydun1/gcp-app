@@ -137,8 +137,8 @@ export class RunListCompletedComponent implements OnInit {
     return item.id;
   }
 
-  trackByGroupsFn(index: number, item: any): string {
-    return item.key;
+  trackByGroupsFn(index: number, item: {id: string}): string {
+    return item.id;
   }
 
 }

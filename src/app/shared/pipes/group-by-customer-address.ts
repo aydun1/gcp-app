@@ -4,8 +4,20 @@ import { Delivery } from '../../runs/shared/delivery';
 
 interface groupedDelivery {
   drops: Array<{
+    key: string;
     id: string;
-    fields: any;
+    fields: {
+      ContactPerson: string;
+      Run: string;
+      Address: string;
+      City: string;
+      Postcode: string;
+      PhoneNumber: string;
+      CustomerName: string;
+      CustomerNumber: string;
+      Site: string;
+      Status: string;
+    };
     value: Delivery[];
     hasNotes: number;
     hasOrderNumbers: number;

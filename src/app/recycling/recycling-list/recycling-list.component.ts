@@ -7,11 +7,11 @@ import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
+import { Choice } from '../../shared/choice';
 import { Cage } from '../shared/cage';
 import { RecyclingService } from '../shared/recycling.service';
 import { BranchTotal } from '../shared/branch-total';
 
-interface choice {choice: {choices: Array<any>}, name: string};
 interface monthYear {year: number, month: number, monthName: string};
 
 @Component({
@@ -45,10 +45,9 @@ export class RecyclingListComponent implements OnInit {
   public displayedColumns: Array<string> = [];
   public sortSort!: string;
   public sortOrder!: 'asc' | 'desc';
-  public choices$: Observable<{Status: choice, AssetType: choice, Branch: choice, Material: choice}> | undefined;
+  public choices$: Observable<{Status: Choice, AssetType: Choice, Branch: Choice, Material: Choice}> | undefined;
   public materials = this.recyclingService.materials;
   public statusPicked!: boolean;
-  public placeholder = {Status: {choice: {choices: []}, name: ''}, Branch: {choice: {choices: []}, name: ''}};
   public selection = new SelectionModel<Cage>(true, []);
   public date = new Date();
 
@@ -120,7 +119,7 @@ export class RecyclingListComponent implements OnInit {
       tap(_ => {
         if (!_) return;
         _['Status']['choice']['choices'] = _['Status']['choice']['choices'].filter((c: string) => c !== 'Complete');
-        this.hideStatus(_.Status.choice.choices.includes(this.statusFilter.value));
+        this.hideStatus(_.Status.choice.choices.includes(this.statusFilter.value || ''));
       })
     );
   }

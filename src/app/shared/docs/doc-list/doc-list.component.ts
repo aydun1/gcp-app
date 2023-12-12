@@ -68,7 +68,7 @@ export class DocListComponent implements OnInit {
     return this.docsService.icon(mime);
   }
 
-  fileChangeEvent(e: any): void {
+  fileChangeEvent(e: Event): void {
     this.docsService.fileChangeEvent(this.folder, this.subfolder, e);
   }
 }
