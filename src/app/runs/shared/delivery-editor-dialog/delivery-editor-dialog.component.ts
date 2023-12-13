@@ -32,14 +32,17 @@ export class DeliveryEditorDialogComponent implements OnInit {
     this.deliveryForm = this.fb.group({
       address: this.data.delivery.fields.Address,
       notes: this.data.delivery.fields.Notes,
-      requested: this.data.delivery.fields.RequestedDate
+      requested: new Date(this.data.delivery.fields.RequestedDate)
     });
   }
 
   updateDelivery(): void {
     this.loading = true;
     const notes = this.deliveryForm.value.notes || '';
-    const requestedDate = this.deliveryForm.value.requested;
+    let requestedDate = this.deliveryForm.value.requested;
+    if (requestedDate) {
+      requestedDate = new Date(`${requestedDate.getFullYear()}-${requestedDate.getMonth() + 1}-${requestedDate.getDate()}`);
+    }
     const action = this.deliveryService.updateDelivery(this.data.delivery.id, notes, requestedDate);
     action.then(() =>
       this.dialogRef.close()
