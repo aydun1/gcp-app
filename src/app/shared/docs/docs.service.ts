@@ -4,7 +4,6 @@ import { BehaviorSubject, catchError, combineLatest, expand, from, lastValueFrom
 
 import { environment } from '../../../environments/environment';
 import { Doc } from './doc';
-import { TransportCompany } from '../../loading-schedule/shared/transport-company';
 
 @Injectable({ providedIn: 'root' })
 export class DocsService {
@@ -20,7 +19,7 @@ export class DocsService {
     private http: HttpClient
   ) { }
 
-  private readFragment(file: File, start: number, res: {next: number}): Observable<any> {
+  private readFragment(file: File, start: number, res: {next: number}): Observable<Doc> {
     return from(file.slice(start, start + this._chunkLength).arrayBuffer()).pipe(
       switchMap(chunk => {
         const crHeader = `bytes ${start}-${start + chunk.byteLength - 1}/${file.size}`;
@@ -122,7 +121,8 @@ export class DocsService {
     const keys = Array.from(Array(files?.length).keys());
     for (let key in keys) {
       const file = files[key];
-      this.uploadFile(folder, subfolder, file);
+      console.log(file);
+      //this.uploadFile(folder, subfolder, file);
     }
   }
 

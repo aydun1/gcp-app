@@ -22,7 +22,7 @@
         </mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <img *ngIf="cage['material'].image" class="material invert" [src]="'assets/' + cage['material'].image">
+        <img *ngIf="cage.material?.image" class="material invert" [src]="'assets/' + cage.material?.image">
         <mat-list>
           <div mat-subheader><span class="subheader">Details</span></div>
           <mat-list-item *ngIf="cage.fields.Status">

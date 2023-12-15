@@ -156,7 +156,7 @@ export class ActionButtonComponent implements OnInit {
           const curVal = acc[key] ? acc[key]['message'] : [];
           const newVal = curVal.concat(`Cage ${cur.fields.CageNumber} ready for delivery to local processing`);
           return {...acc, [key]: {message: newVal, site: cur.fields.Site, customerNumber: cur.fields.CustomerNumber}};
-        }, {} as any);
+        }, {} as Cage);
         const tasks = Object.keys(chunks).map(_ => this.deliveryService.requestCageTransfer(run, chunks[_].customerNumber, chunks[_].Site, chunks[_].message.join('<br>')).pipe(take(1)))
         return forkJoin(tasks);
       })

@@ -31,8 +31,8 @@ export interface Cage {
     Edit: string;
     AssetTypeClean?: string;
   },
-  material?: any;
-  Date?: any;
+  material?: { code: number; name: string; image: string; } | null;
+  Date?: string | Date;
   Cage?: boolean;
   Type?: string | null;
   location?: string | null;

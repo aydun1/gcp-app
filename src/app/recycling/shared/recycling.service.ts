@@ -113,7 +113,7 @@ export class RecyclingService {
 
   private assignStatus(cage: Cage): Cage {
     if (!cage.fields) return cage;
-    cage['material'] = this.materials.find(_ => _.code === cage.fields.Material) || {};
+    cage['material'] = this.materials.find(_ => _.code === cage.fields.Material) || null;
     cage['Date'] = cage.fields.Date4 || cage.fields.Date3 || cage.fields.ToLocalProcessing || cage.fields.Date2 || cage.fields.Date1 || cage.fields.Created;
     cage['Cage'] = cage.fields.AssetType?.startsWith('Cage');
     cage['Type'] = cage['Cage'] ? cage.fields.AssetType.split('-', 2)[1].split(' ', 2)[1][0].toLowerCase() : null;
