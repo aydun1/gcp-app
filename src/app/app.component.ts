@@ -76,7 +76,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private themingService: ThemingService
   ) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    await this.authService.instance.initialize();
     this.docsService.uploads$.pipe(
       distinctUntilChanged((a, b) => {
         if (b > a) {

@@ -33,7 +33,6 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
   public torchAvailable$ = new BehaviorSubject<boolean>(false);
   public tryHarder = false;
   public enabled = true;
-  public scannedTextControl = new FormControl('');
   public scannedText = '';
   public isScanner: Promise<boolean> = navigator['userAgentData'].getHighEntropyValues(['model']).then((ua: {model: string}) => ua['model'] === 'CK65');
 
@@ -62,12 +61,10 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
   }
 
   fieldUpdated(newValue: string): void {
-    console.log(newValue)
-    let oldValue = this.scannedText;
-    this.scannedText = newValue;
-    if (newValue === oldValue) return;
+    if (newValue === this.scannedText) return;
     const b = newValue || '';
-    const a = oldValue || '';
+    const a = this.scannedText || '';
+    this.scannedText = newValue;
     const l = (a.length + b.length) / 2;
     const diff = l - [...a].reduce((acc, cur, i) => acc += (b ? b[i] : '') === cur ? 1 : 0, 0);
     if (b.length > 0 && diff > 1 && this.orderRe.test(b)) this.processCode(b);
@@ -86,7 +83,7 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
   }
 
   clearResult(): void {
-    this.scannedTextControl.patchValue('');
+    this.scannedText = '';
   }
 
   onCamerasFound(devices: MediaDeviceInfo[]): void {
@@ -96,7 +93,7 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
   }
 
   onCodeResult(resultString: string): void {
-    this.scannedTextControl.patchValue(resultString);
+    this.scannedText = resultString;
   }
 
   processCode(code: string | null): void {
