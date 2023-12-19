@@ -26,7 +26,7 @@
   <mat-dialog-actions>
     <mat-form-field subscriptSizing="dynamic" class="name-filter">
       <mat-label>Scan data</mat-label>
-      <input matInput [ngModel]="scannedText" (ngModelChange)="fieldUpdated($event)" [ngModelOptions]="{standalone: true}" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autocomplete="chrome-off" placeholder="">
+      <input matInput [ngModel]="scannedText" (ngModelChange)="fieldUpdated($event)" [ngModelOptions]="{standalone: true}" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autocomplete="chrome-off" placeholder="" #search>
       <button *ngIf="scannedText" matSuffix mat-icon-button aria-label="Clear" (click)="clearResult()" type="button">
         <mat-icon>close</mat-icon>
       </button>

@@ -20,7 +20,7 @@ import { distinctUntilChanged, filter, interval, Observable, Subject, takeUntil,
 import { SharedService } from './shared.service';
 import { TeamsService } from './teams.service';
 import { ThemingService } from './theming.service';
-import { ScannerDialogComponent } from './scanner-dialog/scanner-dialog.component';
+import { ScannerDialogComponent } from './shared/scanner-dialog/scanner-dialog.component';
 import { DocsService } from './shared/docs/docs.service';
 import { SwUpdate, VersionEvent } from '@angular/service-worker';
 

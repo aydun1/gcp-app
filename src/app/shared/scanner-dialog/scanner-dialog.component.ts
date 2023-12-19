@@ -12,7 +12,7 @@ import { BarcodeFormat } from '@zxing/library';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { BehaviorSubject, tap } from 'rxjs';
 
-import { OrderLinesDialogComponent } from '../runs/shared/order-lines-dialog/order-lines-dialog.component';
+import { OrderLinesDialogComponent } from '../../runs/shared/order-lines-dialog/order-lines-dialog.component';
 
 @Component({
   selector: 'gcp-scanner-dialog',
