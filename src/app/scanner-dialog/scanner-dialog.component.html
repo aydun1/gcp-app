@@ -22,21 +22,20 @@
     </p>
   </div>
 </mat-dialog-content>
-<form (submit)="processCode(scannedText.value)">
+<form (submit)="processCode(scannedText)">
   <mat-dialog-actions>
     <mat-form-field subscriptSizing="dynamic" class="name-filter">
       <mat-label>Scan data</mat-label>
-      <input matInput [formControl]="scannedText" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autocomplete="chrome-off" placeholder="" #search>
-      <button *ngIf="scannedText.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearResult()" type="button">
+      <input matInput [ngModel]="scannedText" (ngModelChange)="fieldUpdated($event)" [ngModelOptions]="{standalone: true}" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autocomplete="chrome-off" placeholder="">
+      <button *ngIf="scannedText" matSuffix mat-icon-button aria-label="Clear" (click)="clearResult()" type="button">
         <mat-icon>close</mat-icon>
       </button>
-      <button [disabled]="!scannedText.value" matSuffix mat-icon-button type="submit">
+      <button [disabled]="!scannedText" matSuffix mat-icon-button type="submit">
         <mat-icon>arrow_forward</mat-icon>
       </button>
     </mat-form-field>
   </mat-dialog-actions>
 </form>
-
 <mat-menu #appMenu="matMenu">
   <mat-selection-list>
     <mat-list-option (click)="toggleTryHarder()" [selected]="tryHarder">

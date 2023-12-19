@@ -1,16 +1,16 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { BarcodeFormat } from '@zxing/library';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
-import { BehaviorSubject, distinctUntilChanged, startWith, tap } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
 
 import { OrderLinesDialogComponent } from '../runs/shared/order-lines-dialog/order-lines-dialog.component';
 
@@ -19,7 +19,7 @@ import { OrderLinesDialogComponent } from '../runs/shared/order-lines-dialog/ord
   templateUrl: 'scanner-dialog.component.html',
   styleUrls: ['./scanner-dialog.component.css'],
   standalone: true,
-  imports: [AsyncPipe, NgFor, NgIf, ReactiveFormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, ZXingScannerModule]
+  imports: [AsyncPipe, NgFor, NgIf, FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, ZXingScannerModule]
 })
 export class ScannerDialogComponent implements AfterViewInit, OnInit {
   @ViewChild('search') searchElement!: ElementRef;
@@ -33,7 +33,8 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
   public torchAvailable$ = new BehaviorSubject<boolean>(false);
   public tryHarder = false;
   public enabled = true;
-  public scannedText = new FormControl('');
+  public scannedTextControl = new FormControl('');
+  public scannedText = '';
   public isScanner: Promise<boolean> = navigator['userAgentData'].getHighEntropyValues(['model']).then((ua: {model: string}) => ua['model'] === 'CK65');
 
   public formatsEnabled: BarcodeFormat[] = [
@@ -58,18 +59,18 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
     this.cameraPicker.valueChanges.pipe(
       tap(_ => this.setCamera(_))
     ).subscribe();
+  }
 
-    this.scannedText.valueChanges.pipe(
-      startWith(''),
-      distinctUntilChanged((a, b) => {
-        a = a || '';
-        b = b || '';
-        const l = (a.length + b.length) / 2;
-        const diff = l - [...a].reduce((acc, cur, i) => acc += (b ? b[i] : '') === cur ? 1 : 0, 0);
-        if (b.length > 0 && diff > 1 && this.orderRe.test(b)) this.processCode(b);
-        return false;
-      })
-    ).subscribe();
+  fieldUpdated(newValue: string): void {
+    console.log(newValue)
+    let oldValue = this.scannedText;
+    this.scannedText = newValue;
+    if (newValue === oldValue) return;
+    const b = newValue || '';
+    const a = oldValue || '';
+    const l = (a.length + b.length) / 2;
+    const diff = l - [...a].reduce((acc, cur, i) => acc += (b ? b[i] : '') === cur ? 1 : 0, 0);
+    if (b.length > 0 && diff > 1 && this.orderRe.test(b)) this.processCode(b);
   }
 
   ngAfterViewInit(): void {
@@ -85,7 +86,7 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
   }
 
   clearResult(): void {
-    this.scannedText.patchValue('');
+    this.scannedTextControl.patchValue('');
   }
 
   onCamerasFound(devices: MediaDeviceInfo[]): void {
@@ -95,7 +96,7 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
   }
 
   onCodeResult(resultString: string): void {
-    this.scannedText.patchValue(resultString);
+    this.scannedTextControl.patchValue(resultString);
   }
 
   processCode(code: string | null): void {
