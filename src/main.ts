@@ -16,6 +16,7 @@ import { AppComponent } from './app/app.component';
 import { ThemingService } from './app/theming.service';
 import { CacheInterceptor } from './app/cache-interceptor.service';
 import { routes } from './app/app-routes';
+import { GroupByCustomerAddressPipe } from './app/shared/pipes/group-by-customer-address';
 
 if (environment.production) {
   enableProdMode();
@@ -113,6 +114,7 @@ bootstrapApplication(AppComponent, {
     MsalGuard,
     MsalBroadcastService,
     ThemingService,
+    GroupByCustomerAddressPipe,
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'

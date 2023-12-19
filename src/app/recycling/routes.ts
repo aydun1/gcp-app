@@ -6,9 +6,6 @@ import { RecyclingReceiptListComponent } from './recycling-receipt-list/recyclin
 import { RecyclingReceiptNewComponent } from './recycling-receipt-new/recycling-receipt-new.component';
 import { RecyclingViewComponent } from './recycling-view/recycling-view.component';
 import { RecyclingComponent } from './recycling.component';
-import { GroupByCustomerAddressPipe } from '../shared/pipes/group-by-customer-address';
-import { DeliveryService } from '../runs/shared/delivery.service';
-
 
 export default [
   {
@@ -29,7 +26,6 @@ export default [
       {
         path: ':id',
         title: 'Recycling Cages',
-        providers: [GroupByCustomerAddressPipe, DeliveryService],
         component: RecyclingViewComponent
       }
     ]

@@ -44,7 +44,6 @@ import { PhoneLinkPipe } from '../../shared/pipes/phone-link';
   styleUrls: ['./run-list.component.css'],
   standalone: true,
   imports: [AsyncPipe, DatePipe, DecimalPipe, NgIf, NgClass, NgForOf, DragDropModule, MatButtonModule, MatDatepickerModule, ReactiveFormsModule, MatCheckboxModule, MatExpansionModule, MatIconModule, MatListModule, MatMenuModule, MatProgressSpinnerModule, MatTabsModule, MatTooltipModule, RouterModule, GroupByCustomerAddressPipe, PhoneLinkPipe, GroupByPropertyPipe, LetterheadComponent],
-  providers: [GroupByCustomerAddressPipe]
 })
 export class RunListComponent implements OnInit {
   private _branch!: string;
