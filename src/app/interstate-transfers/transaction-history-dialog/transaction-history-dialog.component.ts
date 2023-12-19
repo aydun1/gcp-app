@@ -1,5 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { SharedService } from '../../../app/shared.service';
 import { SuggestedItem } from '../../pan-list/suggested-item';
@@ -13,7 +16,9 @@ interface Data {
 @Component({
   selector: 'gcp-transaction-history-dialog',
   templateUrl: './transaction-history-dialog.component.html',
-  styleUrls: ['./transaction-history-dialog.component.css']
+  styleUrls: ['./transaction-history-dialog.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf, MatDialogModule, MatDividerModule, MatProgressSpinnerModule]
 })
 export class TransactionHistoryDialogComponent implements OnInit {
   public previousOrders!: Promise<Array<any>>;

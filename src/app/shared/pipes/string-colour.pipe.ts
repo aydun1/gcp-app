@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'stringColour',
+  standalone: true
 })
 export class StringColourPipe implements PipeTransform {
 

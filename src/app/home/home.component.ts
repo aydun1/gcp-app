@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { NgIf } from '@angular/common';
 
 import { SharedService } from '../shared.service';
+import { BigButtonComponent } from '../shared/big-button/big-button.component';
 
 @Component({
   selector: 'gcp-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styles: ['.container { max-width: 1024px; margin: 0 auto; }'],
+  standalone: true,
+  imports: [NgIf, BigButtonComponent]
 })
 export class HomeComponent implements OnInit {
   public warehouse!: boolean;
@@ -15,7 +19,7 @@ export class HomeComponent implements OnInit {
    private sharedService: SharedService
   ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.warehouse = this.sharedService.isWarehouse;
     this.roles = this.sharedService.getRoles();
   }

@@ -1,10 +1,16 @@
 import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { NgForOf, NgIf, TitleCasePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { map, switchMap, tap } from 'rxjs';
 
 import { Pallet } from '../pallet';
 import { PalletsService } from '../pallets.service';
+import { LetterheadComponent } from '../../../shared/letterhead/letterhead.component';
 
 interface PalletQuantity {stateCounts: Array<{name: string, count: number}>, states: Array<string>, total: number};
 interface PalletQuantities {
@@ -18,7 +24,9 @@ interface PalletQuantities {
 @Component({
   selector: 'gcp-pallet-docket-dialog',
   templateUrl: './pallet-docket-dialog.component.html',
-  styleUrls: ['./pallet-docket-dialog.component.css']
+  styleUrls: ['./pallet-docket-dialog.component.css'],
+  standalone: true,
+  imports: [NgForOf, NgIf, TitleCasePipe, MatButtonModule, MatDialogModule, MatIconModule, MatListModule, MatProgressSpinnerModule, LetterheadComponent]
 })
 export class PalletDocketDialogComponent implements OnInit, OnDestroy {
 

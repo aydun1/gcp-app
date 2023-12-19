@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'groupBy',
+  standalone: true
 })
 export class GroupByPipe implements PipeTransform {
   private extras = 'Other';

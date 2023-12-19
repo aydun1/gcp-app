@@ -1,6 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectModule } from '@angular/material/select';
 import { Observable, tap } from 'rxjs';
 
 import { Address } from '../address';
@@ -9,6 +15,7 @@ import { Site } from '../site';
 import { CustomersService } from '../customers.service';
 import { SharedService } from '../../../shared.service';
 import { Vendor } from '../vendor';
+import { ControlsModule } from '../../../shared/controls/controls.module';
 
 interface CustomerForm {
   customer: FormControl<Customer | null>;
@@ -21,7 +28,9 @@ interface CustomerForm {
 @Component({
   selector: 'gcp-customer-picker-dialog',
   templateUrl: './customer-picker-dialog.component.html',
-  styleUrls: ['./customer-picker-dialog.component.css']
+  styleUrls: ['./customer-picker-dialog.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, NgForOf, NgIf, ReactiveFormsModule, MatButtonModule, MatDialogModule, MatInputModule, MatSelectModule, MatIconModule, MatMenuModule, ControlsModule]
 })
 export class CustomerPickerDialogComponent implements OnInit {
   public loading = false;

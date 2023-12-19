@@ -1,4 +1,4 @@
-<mat-toolbar>
+<mat-toolbar class="site-toolbar">
   <button mat-icon-button (click)="goBack()" class="mobile-button" type="button">
     <mat-icon>arrow_back</mat-icon>
   </button>
@@ -8,7 +8,7 @@
   </ng-container>
 </mat-toolbar>
 
-<div class="outer" *ngIf="interstateTransfer$ | async as s; else loadingPage" >
+<div class="outer" *ngIf="interstateTransfer$ | async as s; else loadingPage">
   <div class="inner header-wrap">
     <gcp-letterhead class="print-header">Interstate Transfer</gcp-letterhead>
     <h2 class="header">Interstate Transfer</h2>

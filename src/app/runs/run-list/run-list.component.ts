@@ -1,10 +1,20 @@
-import { CdkDrag, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { AsyncPipe, DatePipe, DecimalPipe, NgClass, NgForOf, NgIf } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
+import { CdkDrag, CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
-import { MatAccordion } from '@angular/material/expansion';
+import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 import { Customer } from '../../customers/shared/customer';
@@ -23,11 +33,18 @@ import { OrderLinesDialogComponent } from '../shared/order-lines-dialog/order-li
 import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog.component';
 import { DocsService } from '../../shared/docs/docs.service';
 import { Address } from '../../customers/shared/address';
+import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
+import { GroupByPropertyPipe } from '../../shared/pipes/group-by-property';
+import { GroupByCustomerAddressPipe } from '../../shared/pipes/group-by-customer-address';
+import { PhoneLinkPipe } from '../../shared/pipes/phone-link';
 
 @Component({
   selector: 'gcp-run-list',
   templateUrl: './run-list.component.html',
-  styleUrls: ['./run-list.component.css']
+  styleUrls: ['./run-list.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, DecimalPipe, NgIf, NgClass, NgForOf, DragDropModule, MatButtonModule, MatDatepickerModule, ReactiveFormsModule, MatCheckboxModule, MatExpansionModule, MatIconModule, MatListModule, MatMenuModule, MatProgressSpinnerModule, MatTabsModule, MatTooltipModule, RouterModule, GroupByCustomerAddressPipe, PhoneLinkPipe, GroupByPropertyPipe, LetterheadComponent],
+  providers: [GroupByCustomerAddressPipe]
 })
 export class RunListComponent implements OnInit {
   private _branch!: string;

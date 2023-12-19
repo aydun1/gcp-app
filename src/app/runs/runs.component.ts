@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'gcp-runs',
-  templateUrl: './runs.component.html',
-  styleUrls: ['./runs.component.css']
+  standalone: true,
+  imports: [RouterModule],
+  template: '<router-outlet></router-outlet>'
 })
 export class RunsComponent {
 

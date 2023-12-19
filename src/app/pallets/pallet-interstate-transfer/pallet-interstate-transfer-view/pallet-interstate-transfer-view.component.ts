@@ -1,17 +1,28 @@
 import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { BehaviorSubject, catchError, combineLatest, map, Observable, Subject, switchMap, tap, throwError } from 'rxjs';
 
 import { PalletsService } from '../../shared/pallets.service';
 import { SharedService } from '../../../shared.service';
 import { NavigationService } from '../../../navigation.service';
+import { DocsComponent } from '../../../shared/docs/docs.component';
+import { LoadingPageComponent } from '../../../shared/loading/loading-page/loading-page.component';
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer-view',
   templateUrl: './pallet-interstate-transfer-view.component.html',
-  styleUrls: ['./pallet-interstate-transfer-view.component.css']
+  styleUrls: ['./pallet-interstate-transfer-view.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, NgForOf, NgIf, FormsModule, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatToolbarModule, DocsComponent, LoadingPageComponent]
 })
 export class PalletInterstateTransferViewComponent implements OnDestroy, OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';

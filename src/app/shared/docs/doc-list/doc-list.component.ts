@@ -1,14 +1,23 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { map, Observable, tap } from 'rxjs';
 
 import { Doc } from '../doc';
 import { DocsService } from '../docs.service';
 
+
 @Component({
   selector: 'gcp-doc-list',
   templateUrl: './doc-list.component.html',
-  styleUrls: ['./doc-list.component.css']
+  styleUrls: ['./doc-list.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, NgForOf, NgIf, MatButtonModule, MatIconModule, MatListModule, MatMenuModule, MatProgressSpinnerModule]
 })
 export class DocListComponent implements OnInit {
   @Input() folder!: string;

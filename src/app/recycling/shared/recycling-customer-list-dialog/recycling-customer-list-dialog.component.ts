@@ -1,17 +1,26 @@
 import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { BehaviorSubject, Observable, startWith, Subject, tap } from 'rxjs';
+import { AsyncPipe, DatePipe, DecimalPipe, NgIf } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 import { Site } from '../../../customers/shared/site';
 import { Customer } from '../../../customers/shared/customer';
 import { SharedService } from '../../../shared.service';
 import { Cage } from '../cage';
 import { RecyclingService } from '../recycling.service';
+import { LetterheadComponent } from '../../../shared/letterhead/letterhead.component';
+import { LoadingRowComponent } from '../../../shared/loading/loading-row/loading-row.component';
 
 @Component({
   selector: 'gcp-recycling-customer-list-dialog',
   templateUrl: './recycling-customer-list-dialog.component.html',
-  styleUrls: ['./recycling-customer-list-dialog.component.css']
+  styleUrls: ['./recycling-customer-list-dialog.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, DecimalPipe, NgIf, RouterModule, MatButtonModule, MatDialogModule, MatIconModule, MatTableModule, LetterheadComponent, LoadingRowComponent]
 })
 export class RecyclingCustomerListDialogComponent implements OnInit, OnDestroy {
   public cages$!: Observable<Cage[]>;

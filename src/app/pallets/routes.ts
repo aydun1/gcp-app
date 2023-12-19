@@ -1,5 +1,4 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Route } from '@angular/router';
 
 import { PalletsComponent } from './pallets.component';
 import { PalletListComponent } from './pallet-list/pallet-list.component';
@@ -11,7 +10,7 @@ import { PalletReconciliationNewComponent } from './pallet-reconciliation/pallet
 import { PalletReconciliationViewComponent } from './pallet-reconciliation/pallet-reconciliation-view/pallet-reconciliation-view.component';
 
 
-const routes: Routes = [
+export default [
   {
     path: '',
     title: 'Pallets',
@@ -63,14 +62,4 @@ const routes: Routes = [
       }
     ]
   }
-]
-
-@NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports: [
-    RouterModule
-  ]
-})
-export class PalletsRoutingModule { }
+] satisfies Route[];

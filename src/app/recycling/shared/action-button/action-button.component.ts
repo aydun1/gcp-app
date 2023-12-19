@@ -1,6 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { concatMap, forkJoin, of, Subject, switchMap, take, tap } from 'rxjs';
 
 import { RecyclingService } from '../recycling.service';
@@ -14,12 +19,13 @@ import { RunPickerDialogComponent } from '../../../runs/shared/run-picker-dialog
 import { DeliveryService } from '../../../runs/shared/delivery.service';
 import { ConfirmationDialogComponent } from '../../../shared/confirmation-dialog/confirmation-dialog.component';
 import { CageEditDialogComponent } from '../cage-edit-dialog/cage-edit-dialog.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'gcp-action-button',
   templateUrl: './action-button.component.html',
-  styleUrls: ['./action-button.component.css']
+  styleUrls: ['./action-button.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, NgForOf, NgIf, MatButtonModule, MatIconModule, MatMenuModule],
 })
 export class ActionButtonComponent implements OnInit {
 

@@ -1,9 +1,16 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { NgForOf, NgIf } from '@angular/common';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { catchError, tap, throwError } from 'rxjs';
-
 import { SharedService } from '../../../shared.service';
 import { NavigationService } from '../../../navigation.service';
 import { PalletsService } from '../../shared/pallets.service';
@@ -23,7 +30,9 @@ interface PalletTransferForm {
 @Component({
   selector: 'gcp-pallet-interstate-transfer-new',
   templateUrl: './pallet-interstate-transfer-new.component.html',
-  styleUrls: ['./pallet-interstate-transfer-new.component.css']
+  styleUrls: ['./pallet-interstate-transfer-new.component.css'],
+  standalone: true,
+  imports: [NgForOf, NgIf, ReactiveFormsModule, MatButtonModule, MatCardModule, MatDatepickerModule, MatIconModule, MatInputModule, MatSelectModule, MatToolbarModule]
 })
 export class PalletInterstateTransferNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';

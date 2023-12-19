@@ -1,10 +1,18 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Sort, SortDirection } from '@angular/material/sort';
-import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
+import { MatSortModule, Sort, SortDirection } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
@@ -12,12 +20,17 @@ import { Chemical } from '../shared/chemical';
 import { ChemicalManifestDialogComponent } from '../shared/chemical-manifest-dialog/chemical-manifest-dialog.component';
 import { ChemicalOthersDialogComponent } from '../shared/chemical-others-dialog/chemical-others-dialog.component';
 import { ChemicalService } from '../shared/chemical.service';
+import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
+import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-row.component';
+import { GroupByPropertyPipe } from '../../shared/pipes/group-by-property';
 
 @Component({
   selector: 'gcp-chemical-list',
   templateUrl: './chemical-list.component.html',
   styleUrls: ['./chemical-list.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatInputModule, MatMenuModule, MatSelectModule, MatSortModule, MatTableModule, MatTooltipModule, GroupByPropertyPipe, LetterheadComponent, LoadingRowComponent]
 })
 export class ChemicalListComponent implements OnInit {
   private loadList!: boolean;

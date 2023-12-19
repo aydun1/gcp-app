@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'gcp-loading-schedule',
-  templateUrl: './loading-schedule.component.html',
-  styleUrls: ['./loading-schedule.component.css']
+  template: '<router-outlet></router-outlet>',
+  standalone: true,
+  imports: [RouterModule]
 })
 export class LoadingScheduleComponent {
 

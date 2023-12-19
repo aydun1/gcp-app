@@ -1,10 +1,14 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { MatTable } from '@angular/material/table';
+import { AsyncPipe, DecimalPipe, NgClass, NgForOf, NgIf } from '@angular/common';
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTable, MatTableModule } from '@angular/material/table';
 import { BehaviorSubject, catchError, debounceTime, distinctUntilChanged, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { TransactionHistoryDialogComponent } from '../../interstate-transfers/transaction-history-dialog/transaction-history-dialog.component';
@@ -13,6 +17,8 @@ import { SharedService } from '../../shared.service';
 import { PanListService } from '../pan-list.service';
 import { RequestLine } from '../request-line';
 import { SuggestedItem } from '../suggested-item';
+import { ControlsModule } from '../../shared/controls/controls.module';
+import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-row.component';
 
 interface TransferForm {
   lines: FormArray<FormGroup<LineForm>>;
@@ -28,7 +34,9 @@ interface LineForm {
   selector: 'gcp-pan-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './pan-list.component.html',
-  styleUrls: ['./pan-list.component.css']
+  styleUrls: ['./pan-list.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DecimalPipe, NgClass, NgForOf, NgIf, FormsModule, ReactiveFormsModule, MatButtonToggleModule, MatCardModule, MatInputModule, MatSelectModule, MatSlideToggleModule, MatTableModule, ControlsModule, LoadingRowComponent]
 })
 export class PanListComponent implements OnInit {
 

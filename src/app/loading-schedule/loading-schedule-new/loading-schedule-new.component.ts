@@ -1,7 +1,17 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { BehaviorSubject, catchError, firstValueFrom, Observable, switchMap, tap, throwError } from 'rxjs';
 
 import { NavigationService } from '../../navigation.service';
@@ -9,6 +19,7 @@ import { SharedService } from '../../shared.service';
 import { Choice } from '../../shared/choice';
 import { LoadingScheduleService } from '../shared/loading-schedule.service';
 import { TransportCompany } from '../shared/transport-company';
+import { LoadingPageComponent } from '../../shared/loading/loading-page/loading-page.component';
 
 interface LoadingScheduleForm {
   status: FormControl<string | null>;
@@ -25,7 +36,9 @@ interface LoadingScheduleForm {
 @Component({
   selector: 'gcp-loading-schedule-new',
   templateUrl: './loading-schedule-new.component.html',
-  styleUrls: ['./loading-schedule-new.component.css']
+  styleUrls: ['./loading-schedule-new.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, NgForOf, NgIf, ReactiveFormsModule, MatAutocompleteModule, MatButtonModule, MatCardModule, MatDatepickerModule, MatDividerModule, MatIconModule, MatInputModule, MatSelectModule, MatToolbarModule, LoadingPageComponent]
 })
 export class LoadingScheduleNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';

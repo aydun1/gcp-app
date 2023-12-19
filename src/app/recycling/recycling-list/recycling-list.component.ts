@@ -1,9 +1,16 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
-import { MatSelectChange } from '@angular/material/select';
-import { Sort } from '@angular/material/sort';
-import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatSortModule, Sort } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
@@ -11,13 +18,18 @@ import { Choice } from '../../shared/choice';
 import { Cage } from '../shared/cage';
 import { RecyclingService } from '../shared/recycling.service';
 import { BranchTotal } from '../shared/branch-total';
+import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
+import { ActionButtonComponent } from '../shared/action-button/action-button.component';
+import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-row.component';
 
 interface monthYear {year: number, month: number, monthName: string};
 
 @Component({
   selector: 'gcp-recycling-list',
   templateUrl: './recycling-list.component.html',
-  styleUrls: ['./recycling-list.component.css']
+  styleUrls: ['./recycling-list.component.css'],
+  standalone: true,
+  imports: [NgForOf, NgIf, AsyncPipe, DatePipe, DecimalPipe, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatCheckboxModule, MatIconModule, MatInputModule, MatSelectModule, MatSortModule, MatTableModule, ActionButtonComponent, LetterheadComponent, LoadingRowComponent]
 })
 export class RecyclingListComponent implements OnInit {
   private _loadList!: boolean;

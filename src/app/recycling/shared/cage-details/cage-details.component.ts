@@ -1,13 +1,20 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { DatePipe, NgIf } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 import { tap } from 'rxjs';
 
 import { Cage } from '../cage';
 import { RecyclingService } from '../recycling.service';
 
+
 @Component({
   selector: 'gcp-cage-details',
   templateUrl: './cage-details.component.html',
-  styleUrls: ['./cage-details.component.css']
+  styleUrls: ['./cage-details.component.css'],
+  standalone: true,
+  imports: [NgIf, DatePipe, MatButtonModule, MatIconModule, MatListModule]
 })
 export class CageDetailsComponent {
 

@@ -1,17 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
-import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
+import { AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { Receipt } from '../shared/receipt';
 import { RecyclingReceiptsService } from '../shared/recycling-receipts.service';
+import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
 
 @Component({
   selector: 'gcp-recycling-receipt-list',
   templateUrl: './recycling-receipt-list.component.html',
-  styleUrls: ['./recycling-receipt-list.component.css']
+  styleUrls: ['./recycling-receipt-list.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf, RouterModule, ReactiveFormsModule, MatCardModule, MatSelectModule, MatTableModule, LetterheadComponent]
 })
 export class RecyclingReceiptListComponent implements OnInit {
   private _loadList!: boolean;

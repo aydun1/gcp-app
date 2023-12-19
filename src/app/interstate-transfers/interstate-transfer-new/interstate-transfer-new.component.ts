@@ -1,13 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { NgForOf } from '@angular/common';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { of } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
 import { SuggestedItem } from '../../pan-list/suggested-item';
+import { PanListComponent } from '../../pan-list/pan-list/pan-list.component';
 
 interface NewTransferForm {
   fromState: FormControl<string | null>;
@@ -17,7 +21,9 @@ interface NewTransferForm {
 @Component({
   selector: 'gcp-interstate-transfer-new',
   templateUrl: './interstate-transfer-new.component.html',
-  styleUrls: ['./interstate-transfer-new.component.css']
+  styleUrls: ['./interstate-transfer-new.component.css'],
+  standalone: true,
+  imports: [NgForOf, ReactiveFormsModule, MatButtonModule, MatSelectModule, PanListComponent]
 })
 export class InterstateTransferNewComponent implements OnInit {
   private _ownState!: string;

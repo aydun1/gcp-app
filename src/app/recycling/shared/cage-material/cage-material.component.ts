@@ -1,12 +1,21 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { NgForOf, NgIf } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatSelectModule } from '@angular/material/select';
 import { tap } from 'rxjs';
+
 import { Cage } from '../cage';
 import { RecyclingService } from '../recycling.service';
 
 @Component({
   selector: 'gcp-cage-material',
   templateUrl: './cage-material.component.html',
-  styleUrls: ['./cage-material.component.css']
+  styleUrls: ['./cage-material.component.css'],
+  standalone: true,
+  imports: [NgForOf, NgIf, FormsModule, MatButtonModule, MatIconModule, MatListModule, MatSelectModule]
 })
 export class CageMaterialComponent {
   public canEdit = true;

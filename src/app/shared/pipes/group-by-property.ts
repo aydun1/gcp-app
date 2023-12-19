@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'groupByProperty'
+  name: 'groupByProperty',
+  standalone: true
 })
 export class GroupByPropertyPipe implements PipeTransform {
   transform(collection: Array<any>, property: string): Array<any> | null {

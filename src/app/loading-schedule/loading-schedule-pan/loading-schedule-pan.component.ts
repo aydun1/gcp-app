@@ -1,13 +1,19 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { NavigationService } from '../../navigation.service';
 import { LoadingScheduleService } from '../shared/loading-schedule.service';
+import { PanListComponent } from '../../pan-list/pan-list/pan-list.component';
 
 @Component({
   selector: 'gcp-loading-schedule-pan',
   templateUrl: './loading-schedule-pan.component.html',
-  styleUrls: ['./loading-schedule-pan.component.css']
+  styleUrls: ['./loading-schedule-pan.component.css'],
+  standalone: true,
+  imports: [MatButtonModule, MatIconModule, MatToolbarModule, PanListComponent]
 })
 export class LoadingSchedulePanComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';

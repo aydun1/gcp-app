@@ -1,16 +1,26 @@
 import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { catchError, Observable, of, retry, switchMap } from 'rxjs';
 
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
 import { NavigationService } from '../../navigation.service';
 import { InTransitTransfer } from '../shared/intransit-transfer';
 import { IntransitTransferLine } from '../shared/intransit-transfer-line';
+import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
+import { FooterComponent } from '../../shared/footer/footer.component';
+import { LoadingPageComponent } from '../../shared/loading/loading-page/loading-page.component';
 
 @Component({
   selector: 'gcp-interstate-transfer-view',
   templateUrl: './interstate-transfer-view.component.html',
-  styleUrls: ['./interstate-transfer-view.component.css']
+  styleUrls: ['./interstate-transfer-view.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf, MatDividerModule, MatButtonModule, MatIconModule, MatToolbarModule, FooterComponent, LetterheadComponent, LoadingPageComponent]
 })
 export class InterstateTransferViewComponent implements OnDestroy, OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';

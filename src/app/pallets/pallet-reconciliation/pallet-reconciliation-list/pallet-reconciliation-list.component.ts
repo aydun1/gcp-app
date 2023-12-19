@@ -1,17 +1,25 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
-import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
+import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../../shared.service';
 import { PalletsReconciliationService } from '../../shared/pallets-reconciliation.service';
 import { Reconciliation } from '../../shared/reconciliation';
+import { LetterheadComponent } from '../../../shared/letterhead/letterhead.component';
+import { LoadingRowComponent } from '../../../shared/loading/loading-row/loading-row.component';
 
 @Component({
   selector: 'gcp-pallet-reconciliation-list',
   templateUrl: './pallet-reconciliation-list.component.html',
-  styleUrls: ['./pallet-reconciliation-list.component.css']
+  styleUrls: ['./pallet-reconciliation-list.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, NgForOf, NgIf, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatSelectModule, MatTableModule, LetterheadComponent, LoadingRowComponent]
 })
 export class PalletReconciliationListComponent implements OnInit {
   private _loadList!: boolean;

@@ -31,7 +31,8 @@ interface groupedDelivery {
 }
 
 @Pipe({
-  name: 'groupByCustomerAddress'
+  name: 'groupByCustomerAddress',
+  standalone: true
 })
 export class GroupByCustomerAddressPipe implements PipeTransform {
   transform(collection: Array<Delivery> | null): groupedDelivery {

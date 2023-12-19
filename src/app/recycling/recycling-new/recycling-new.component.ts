@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostBinding, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
@@ -8,6 +8,12 @@ import { RecyclingService } from '../shared/recycling.service';
 import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
 import { Choice } from '../../shared/choice';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCardModule } from '@angular/material/card';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 
 interface CageForm {
   assetType: FormControl<string | null>;
@@ -19,7 +25,9 @@ interface CageForm {
 @Component({
   selector: 'gcp-recycling-new',
   templateUrl: './recycling-new.component.html',
-  styleUrls: ['./recycling-new.component.css']
+  styleUrls: ['./recycling-new.component.css'],
+  standalone: true,
+  imports: [NgForOf, NgIf, AsyncPipe, RouterModule, ReactiveFormsModule, MatButtonModule, MatCardModule, MatIconModule, MatSelectModule, MatToolbarModule]
 })
 export class RecyclingNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component  mat-app-background';

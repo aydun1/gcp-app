@@ -1,17 +1,29 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
-import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
+import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { LoadingSchedule } from '../shared/loading-schedule';
 import { LoadingScheduleService } from '../shared/loading-schedule.service';
+import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
+import { StringColourPipe } from '../../shared/pipes/string-colour.pipe';
+import { GroupByPipe } from '../../shared/pipes/group-by.pipe';
+import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-row.component';
 
 @Component({
   selector: 'gcp-loading-schedule-list',
   templateUrl: './loading-schedule-list.component.html',
-  styleUrls: ['./loading-schedule-list.component.css']
+  styleUrls: ['./loading-schedule-list.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, NgForOf, NgIf, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatMenuModule, MatSelectModule, MatTableModule, LetterheadComponent, GroupByPipe, StringColourPipe, LoadingRowComponent]
 })
 export class LoadingScheduleListComponent implements OnInit {
   private _loadingScheduleSubject$ = new BehaviorSubject<LoadingSchedule[]>([]);

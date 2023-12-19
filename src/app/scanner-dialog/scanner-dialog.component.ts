@@ -1,17 +1,25 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { BarcodeFormat } from '@zxing/library';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { BehaviorSubject, distinctUntilChanged, startWith, tap } from 'rxjs';
 
 import { OrderLinesDialogComponent } from '../runs/shared/order-lines-dialog/order-lines-dialog.component';
-import { SharedService } from '../shared.service';
 
 @Component({
   selector: 'gcp-scanner-dialog',
   templateUrl: 'scanner-dialog.component.html',
-  styleUrls: ['./scanner-dialog.component.css']
+  styleUrls: ['./scanner-dialog.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, NgFor, NgIf, ReactiveFormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, ZXingScannerModule]
 })
 export class ScannerDialogComponent implements AfterViewInit, OnInit {
   @ViewChild('search') searchElement!: ElementRef;
@@ -38,7 +46,6 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private snackBar: MatSnackBar,
     private dialogRef: MatDialogRef<ScannerDialogComponent>
   ) { }
 
@@ -62,7 +69,7 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
         if (b.length > 0 && diff > 1 && this.orderRe.test(b)) this.processCode(b);
         return false;
       })
-    ).subscribe()
+    ).subscribe();
   }
 
   ngAfterViewInit(): void {

@@ -1,17 +1,26 @@
 import { Component, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { NgForOf } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { of } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
 import { SuggestedItem } from '../../pan-list/suggested-item';
+import { PanListComponent } from '../../pan-list/pan-list/pan-list.component';
+import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
+
 
 @Component({
   selector: 'gcp-interstate-transfer-suggested',
   templateUrl: './interstate-transfer-suggested.component.html',
-  styleUrls: ['./interstate-transfer-suggested.component.css']
+  styleUrls: ['./interstate-transfer-suggested.component.css'],
+  standalone: true,
+  imports: [NgForOf, FormsModule, MatButtonModule, MatSelectModule, PanListComponent, LetterheadComponent]
 })
 export class InterstateTransferSuggestedComponent implements OnInit {
   private _ownState!: string;

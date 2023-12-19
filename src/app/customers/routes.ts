@@ -1,11 +1,10 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Route } from '@angular/router';
 
 import { CustomersComponent } from './customers.component';
 import { CustomerListComponent } from './customer-list/customer-list.component';
 import { CustomerViewComponent } from './customer-view/customer-view.component';
 
-const routes: Routes = [
+export default [
   {
     path: '',
     component: CustomersComponent,
@@ -21,14 +20,4 @@ const routes: Routes = [
     ]
     }]
   }
-]
-
-@NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports: [
-    RouterModule
-  ]
-})
-export class CustomerRoutingModule { }
+] satisfies Route[];

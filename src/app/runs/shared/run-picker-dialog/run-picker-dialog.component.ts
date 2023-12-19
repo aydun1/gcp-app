@@ -1,15 +1,22 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Observable, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../../shared.service';
 import { DeliveryService } from '../delivery.service';
 import { Run } from '../run';
 
+
 @Component({
   selector: 'gcp-run-picker-dialog',
   templateUrl: './run-picker-dialog.component.html',
-  styleUrls: ['./run-picker-dialog.component.css']
+  styleUrls: ['./run-picker-dialog.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, NgForOf, NgIf, MatDialogModule, MatIconModule, MatListModule, MatProgressSpinnerModule]
 })
 export class RunPickerDialogComponent implements OnInit {
   public loading = true;
@@ -37,9 +44,6 @@ export class RunPickerDialogComponent implements OnInit {
     } else {
       this.closeDialog(run);
     }
-
-
-
   }
 
   closeDialog(run?: string): void {

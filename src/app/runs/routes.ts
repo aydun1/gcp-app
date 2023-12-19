@@ -1,11 +1,13 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Route } from '@angular/router';
+
 import { RunsComponent } from './runs.component';
 import { RunListComponent } from './run-list/run-list.component';
 import { RunListCompletedComponent } from './run-list-completed/run-list-completed.component';
+import { GroupByCustomerAddressPipe } from '../shared/pipes/group-by-customer-address';
+import { DeliveryService } from './shared/delivery.service';
 
 
-const routes: Routes = [
+export default [
   {
     path: '',
     component: RunsComponent,
@@ -13,6 +15,7 @@ const routes: Routes = [
       {
         path: '',
         title: 'Runs',
+        providers: [GroupByCustomerAddressPipe, DeliveryService],
         component: RunListComponent
       },
       {
@@ -22,14 +25,4 @@ const routes: Routes = [
       }
     ]
   }
-]
-
-@NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports: [
-    RouterModule
-  ]
-})
-export class RunsRoutingModule { }
+] satisfies Route[];

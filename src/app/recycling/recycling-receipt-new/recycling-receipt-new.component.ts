@@ -1,11 +1,19 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, tap, throwError } from 'rxjs';
 
 import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
 import { RecyclingReceiptsService } from '../shared/recycling-receipts.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatCardModule } from '@angular/material/card';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { NgForOf } from '@angular/common';
 
 interface NewReceiptForm {
   date: FormControl<Date | null>;
@@ -17,7 +25,9 @@ interface NewReceiptForm {
 @Component({
   selector: 'gcp-recycling-receipt-new',
   templateUrl: './recycling-receipt-new.component.html',
-  styleUrls: ['./recycling-receipt-new.component.css']
+  styleUrls: ['./recycling-receipt-new.component.css'],
+  standalone: true,
+  imports: [NgForOf, ReactiveFormsModule, MatButtonModule, MatCardModule, MatIconModule, MatInputModule, MatDatepickerModule, MatSelectModule, MatToolbarModule]
 })
 export class RecyclingReceiptNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';

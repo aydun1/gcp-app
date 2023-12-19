@@ -1,5 +1,4 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Route } from '@angular/router';
 
 import { LoadingScheduleComponent } from './loading-schedule.component';
 import { LoadingScheduleListComponent } from './loading-schedule-list/loading-schedule-list.component';
@@ -7,7 +6,7 @@ import { LoadingScheduleNewComponent } from './loading-schedule-new/loading-sche
 import { LoadingScheduleViewComponent } from './loading-schedule-view/loading-schedule-view.component';
 import { LoadingSchedulePanComponent } from './loading-schedule-pan/loading-schedule-pan.component';
 
-const routes: Routes = [
+export default [
   {
     path: '',
     component: LoadingScheduleComponent,
@@ -43,14 +42,4 @@ const routes: Routes = [
       }
     ]
   }
-]
-
-@NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports: [
-    RouterModule
-  ]
-})
-export class LoadingScheduleRoutingModule { }
+] satisfies Route[];

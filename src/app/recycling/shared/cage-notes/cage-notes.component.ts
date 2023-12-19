@@ -2,11 +2,18 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { tap } from 'rxjs';
 import { Cage } from '../cage';
 import { RecyclingService } from '../recycling.service';
+import { MatListModule } from '@angular/material/list';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'gcp-cage-notes',
   templateUrl: './cage-notes.component.html',
-  styleUrls: ['./cage-notes.component.css']
+  styleUrls: ['./cage-notes.component.css'],
+  standalone: true,
+  imports: [NgIf, FormsModule, MatButtonModule, MatIconModule, MatListModule]
 })
 export class CageNotesComponent {
 

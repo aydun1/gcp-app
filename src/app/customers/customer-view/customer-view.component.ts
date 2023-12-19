@@ -1,6 +1,12 @@
 import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { catchError, combineLatest, distinctUntilChanged, filter, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { Customer } from '../shared/customer';
@@ -18,6 +24,9 @@ import { Address } from '../shared/address';
 import { RunPickerDialogComponent } from '../../runs/shared/run-picker-dialog/run-picker-dialog.component';
 import { PalletCustomerListDialogComponent } from '../../pallets/shared/pallet-customer-list-dialog/pallet-customer-list-dialog.component';
 import { RecyclingCustomerListDialogComponent } from '../../recycling/shared/recycling-customer-list-dialog/recycling-customer-list-dialog.component';
+import { BigButtonComponent } from '../../shared/big-button/big-button.component';
+import { DocsComponent } from '../../shared/docs/docs.component';
+import { LoadingPageComponent } from '../../shared/loading/loading-page/loading-page.component';
 
 interface PalletQuantity {stateCounts: Array<{name: string, count: number}>, states: Array<string>, total: number};
 interface PalletQuantities {
@@ -30,7 +39,9 @@ interface PalletQuantities {
 @Component({
   selector: 'gcp-customer-view',
   templateUrl: './customer-view.component.html',
-  styleUrls: ['./customer-view.component.css']
+  styleUrls: ['./customer-view.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, NgForOf, NgIf, RouterModule, MatButtonModule, MatIconModule, MatListModule, MatMenuModule, MatToolbarModule, BigButtonComponent, DocsComponent, LoadingPageComponent]
 })
 export class CustomerViewComponent implements OnInit, OnDestroy {
   @HostBinding('class') class = 'app-component mat-app-background';

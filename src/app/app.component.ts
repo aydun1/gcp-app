@@ -1,27 +1,47 @@
-import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, OnInit, Inject, OnDestroy, Renderer2, ViewChild } from '@angular/core';
+import { AsyncPipe, Location, NgForOf, NgIf } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
-import { Location } from '@angular/common';
-import { Router } from '@angular/router';
-import { SwUpdate, VersionEvent } from '@angular/service-worker';
+import { Router, RouterModule } from '@angular/router';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSidenavContainer } from '@angular/material/sidenav';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSidenavContainer, MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { InteractionStatus, EventMessage, EventType, AccountInfo, RedirectRequest } from '@azure/msal-browser';
-import { distinctUntilChanged, filter, interval, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { authentication } from '@microsoft/teams-js';
+import { distinctUntilChanged, filter, interval, Observable, Subject, takeUntil, tap } from 'rxjs';
 
 import { SharedService } from './shared.service';
 import { TeamsService } from './teams.service';
 import { ThemingService } from './theming.service';
 import { ScannerDialogComponent } from './scanner-dialog/scanner-dialog.component';
 import { DocsService } from './shared/docs/docs.service';
+import { SwUpdate, VersionEvent } from '@angular/service-worker';
 
 @Component({
   selector: 'gcp-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    NgForOf,
+    NgIf,
+    RouterModule,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatListModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    MatMenuModule
+  ]
 })
 export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('snav') public sidenav!: MatSidenavContainer;
@@ -97,7 +117,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.checkAndSetActiveAccount();
       })
     ).subscribe();
-
     // Periodically check for software updates
     if (this.swUpdate.isEnabled) {
       this.swUpdate.versionUpdates.pipe(

@@ -1,12 +1,11 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Route } from '@angular/router';
 
 import { ChemicalListComponent } from './chemical-list/chemical-list.component';
 import { ChemicalViewComponent } from './chemical-view/chemical-view.component';
 import { ChemicalsComponent } from './chemicals.component';
 
 
-const routes: Routes = [
+export default [
   {
     path: '',
     component: ChemicalsComponent,
@@ -24,14 +23,4 @@ const routes: Routes = [
       }
     ]
   }
-]
-
-@NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports: [
-    RouterModule
-  ]
-})
-export class ChemicalsRoutingModule { }
+] satisfies Route[];

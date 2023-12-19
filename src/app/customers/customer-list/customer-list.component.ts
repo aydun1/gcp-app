@@ -1,13 +1,21 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
-import { Sort, SortDirection } from '@angular/material/sort';
-import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatTableModule } from '@angular/material/table';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatSortModule, Sort, SortDirection } from '@angular/material/sort';
 import { debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { Customer } from '../shared/customer';
 import { CustomersService } from '../shared/customers.service';
+import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
+import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-row.component';
 
 type Territory = {
   name?: string,
@@ -17,7 +25,9 @@ type Territory = {
 @Component({
   selector: 'gcp-customer-list',
   templateUrl: './customer-list.component.html',
-  styleUrls: ['./customer-list.component.css']
+  styleUrls: ['./customer-list.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, NgForOf, NgIf, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatInputModule, MatSelectModule, MatSortModule, MatTableModule, LetterheadComponent, LoadingRowComponent]
 })
 export class CustomerListComponent implements OnInit {
   private loadList!: boolean;
