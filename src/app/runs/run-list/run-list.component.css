@@ -312,11 +312,20 @@ h2 {
 }
 
 @media print {
-  .scroller {
-    overflow-y: auto;
+  .deliveries-card {
+    border: none;
   }
 
-  h2, .options {
+  .fulfilled,
+  .run-head-buttons,
+  .expansion-controls,
+  .status,
+  .menu {
     display: none;
+  }
+
+  .mat-expansion-panel {
+    background: none;
+    box-shadow: none !important;
   }
 }

@@ -237,9 +237,13 @@ export class DeliveryService {
     return this._deliveriesSubject$;
   }
 
-  getChemicalsOnRun(run: string, branch: string): Observable<Chemical[]> {
+  getRunChemicalsUrl(runName: string, branch: string) {
     const key = 'ycoX2aIWkKqGzUjCf1gvtFxB';
-    const url = `${environment.apiUrl}/chemicals/outbound?key=${key}&run=${run}&branch=${branch}`
+    return `${environment.apiUrl}/chemicals/outbound?key=${key}&run=${runName}&branch=${branch}`;
+  }
+
+  getChemicalsOnRun(runName: string, branch: string): Observable<Chemical[]> {
+    const url = this.getRunChemicalsUrl(runName, branch);
     return this.http.get<{chemicals: Chemical[]}>(url, {headers: {'Accept': 'application/json'}, responseType: 'json'}).pipe(
       map(res => res.chemicals)
     );
