@@ -6,7 +6,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavContainer, MatSidenavModule } from '@angular/material/sidenav';
@@ -63,6 +63,7 @@ export class AppComponent implements OnInit, OnDestroy {
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
     private swUpdate: SwUpdate,
     private authService: MsalService,
+    private iconRegistry: MatIconRegistry,
     private location: Location,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
@@ -74,7 +75,9 @@ export class AppComponent implements OnInit, OnDestroy {
     private observer: BreakpointObserver,
     private teamsService: TeamsService,
     private themingService: ThemingService
-  ) { }
+  ) {
+    this.iconRegistry.setDefaultFontSetClass('material-symbols-outlined');
+  }
 
   async ngOnInit(): Promise<void> {
     await this.authService.instance.initialize();

@@ -6,7 +6,7 @@
     <a class="title" [routerLink]="['/']">Inventory Management System</a>
     <div class="toolbar-spacer"></div>
     <button *ngIf="isMobile" mat-icon-button (click)="openScannerDialog()" type="button">
-      <mat-icon>qr_code_scanner</mat-icon>
+      <mat-icon>barcode_scanner</mat-icon>
     </button>
     <div *ngIf="photo$ | async as photo; else noPic" class="photo-button" mat-button [matMenuTriggerFor]="menu"><img [src]="photo" [alt]="accounts[0].name" alt="Avatar"></div>
     <ng-template #noPic>
