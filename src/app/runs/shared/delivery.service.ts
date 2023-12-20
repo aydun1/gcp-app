@@ -15,6 +15,7 @@ import { Delivery } from './delivery';
 import { Run } from './run';
 import { Order } from './order';
 import { Address } from '../../customers/shared/address';
+import { Chemical } from '../../chemicals/shared/chemical';
 
 interface BatchRes {
   responses: {body: Delivery}[];
@@ -234,6 +235,14 @@ export class DeliveryService {
       })
     ).subscribe(_ => this._deliveriesSubject$.next(_));
     return this._deliveriesSubject$;
+  }
+
+  getChemicalsOnRun(run: string, branch: string): Observable<Chemical[]> {
+    const key = 'ycoX2aIWkKqGzUjCf1gvtFxB';
+    const url = `${environment.apiUrl}/chemicals/outbound?key=${key}&run=${run}&branch=${branch}`
+    return this.http.get<{chemicals: Chemical[]}>(url, {headers: {'Accept': 'application/json'}, responseType: 'json'}).pipe(
+      map(res => res.chemicals)
+    );
   }
 
   reloadRunDeliveries(runName: string | null, branch: string): Promise<Delivery[]> {

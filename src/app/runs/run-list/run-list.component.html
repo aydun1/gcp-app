@@ -216,6 +216,10 @@
 
 <mat-menu #runMore="matMenu" xPosition="before">
   <ng-template matMenuContent let-run="run">
+    <button mat-menu-item (click)="openSdsDialog(run)" type="button">
+      <mat-icon>science</mat-icon>View chemicals
+    </button>
+    <mat-divider></mat-divider>
     <button mat-menu-item (click)="checkAllByRun(run, true)" type="button">
       <mat-icon>check_box</mat-icon>Check all
     </button>

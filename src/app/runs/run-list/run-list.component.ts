@@ -37,6 +37,7 @@ import { LetterheadComponent } from '../../shared/letterhead/letterhead.componen
 import { GroupByPropertyPipe } from '../../shared/pipes/group-by-property';
 import { GroupByCustomerAddressPipe } from '../../shared/pipes/group-by-customer-address';
 import { PhoneLinkPipe } from '../../shared/pipes/phone-link';
+import { RunChemicalsDialogComponent } from '../shared/run-chemicals-dialog/run-chemicals-dialog.component';
 
 @Component({
   selector: 'gcp-run-list',
@@ -198,6 +199,16 @@ export class RunListComponent implements OnInit {
   openCustomerPicker(): void {
     const data = {notes: true, address: true, title: 'Delivery details'};
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px', data});
+    dialogRef.afterClosed().pipe(
+      switchMap(_ => _ ? this.addCustomerDelivery(_.customer, _.site, _.address, _.notes, _.customerType) : of()),
+    ).subscribe(() => {
+      this.loading = false;
+    });
+  }
+
+  openSdsDialog(run: string) {
+    const data = {run, branch: this._branch};
+    const dialogRef = this.dialog.open(RunChemicalsDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().pipe(
       switchMap(_ => _ ? this.addCustomerDelivery(_.customer, _.site, _.address, _.notes, _.customerType) : of()),
     ).subscribe(() => {
