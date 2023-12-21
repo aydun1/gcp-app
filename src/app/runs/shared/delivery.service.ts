@@ -234,7 +234,7 @@ export class DeliveryService {
     return this._deliveriesSubject$;
   }
 
-  getRunChemicalsUrl(runName: string, branch: string) {
+  getRunChemicalsUrl(runName: string, branch: string): string {
     const key = 'ycoX2aIWkKqGzUjCf1gvtFxB';
     return `${environment.apiUrl}/chemicals/outbound?key=${key}&run=${runName}&branch=${branch}`;
   }

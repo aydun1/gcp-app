@@ -50,8 +50,8 @@ export class RunChemicalsDialogComponent implements OnInit {
         this.loading = false;
       }),
       catchError(_ => {
-        this.closeDialog();
-        this.snackBar.open('Could not load run', '', {duration: 3000});
+        this.snackBar.open('Could not load chemicals', '', {duration: 3000});
+        this.loading = false;
         return of(undefined);
       })
     );

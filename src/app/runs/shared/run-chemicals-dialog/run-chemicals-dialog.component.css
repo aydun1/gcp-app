@@ -71,7 +71,8 @@
   }
 
   .buttons,
-  .mat-mdc-dialog-title {
+  .mat-mdc-dialog-title,
+  .loading {
     display: none;
   }
 }
