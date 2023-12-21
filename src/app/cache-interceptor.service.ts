@@ -39,17 +39,18 @@ export class CacheInterceptor implements HttpInterceptor {
         if (stateEvent.status === 0) {
           const data = localStorage.getItem(trimmedUrl);
           if (data) {
-            this.messages$.next('Using offline data. No internet?');
+            this.messages$.next('Using offline data.');
             return of(new HttpResponse(JSON.parse(data)));
           } else {
-            this.messages$.next('Cannot load page. No internet?');
+            this.messages$.next('Cannot load data.');
             return throwError(() => new Error(stateEvent));
           };
         } else if (stateEvent.status === 404) {
           return throwError(() => new Error(stateEvent));
-        }
-        else {
-          if (stateEvent instanceof HttpErrorResponse) localStorage?.setItem(trimmedUrl, JSON.stringify(stateEvent));
+        } else if (stateEvent.status === 504) {
+          return throwError(() => new Error(stateEvent));
+        } else {
+          // if (stateEvent instanceof HttpErrorResponse) localStorage.setItem(trimmedUrl, JSON.stringify(stateEvent)); // why???
           return of(new HttpResponse());
         }
       })

@@ -168,7 +168,6 @@ export class DeliveryService {
         )
       }),
       catchError(err => {
-        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         return of([]);
       })
     );
@@ -191,7 +190,6 @@ export class DeliveryService {
       }),
       tap(_ => this._runsSubject$.next(_)),
       catchError(err => {
-        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         return of([]);
       })
     ).subscribe(_ => this._runsSubject$.next(_));
@@ -229,7 +227,6 @@ export class DeliveryService {
       tap(_ => this.loading.next(false)),
       map(res => res.value),
       catchError(err => {
-        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         this.loading.next(false);
         return of([]);
       })
