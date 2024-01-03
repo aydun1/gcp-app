@@ -2,21 +2,25 @@
   <div class="outer">
     <div class="inner">
       <h2>Quick transfer</h2>
-      <gcp-pan-list [suggestions]="false" [autosave]="false" min="OrderPointQty" max="OrderUpToLvl"  (activeLines)="activeLines=$event" (lineCount)="lineCount=$event"></gcp-pan-list>    
+      <gcp-pan-list [suggestions]="false" [autosave]="false" min="OrderPointQty" max="OrderUpToLvl" (activeLines)="activeLines=$event" (lineCount)="lineCount=$event"></gcp-pan-list>
+    </div>
+    <div class="inner">
+      <mat-form-field subscriptSizing="dynamic" class="notes-form">
+        <mat-label>Notes</mat-label>
+        <textarea matInput class="main-notes" type="text" formControlName="notes" autocomplete="off"></textarea>
+      </mat-form-field>
     </div>
   </div>
-
   <div class="buttons mat-app-background">
     Transferring {{ lineCount || 0 }} lines from
-    <mat-form-field subscriptSizing="dynamic">
+    <mat-form-field subscriptSizing="dynamic" class="ml">
       <mat-label>Branch</mat-label>
       <mat-select formControlName="fromState">
         <mat-option *ngFor="let b of allStates" [value]="b">{{ b }}</mat-option>
       </mat-select>
     </mat-form-field>
-
-    <span class="to">to</span>
-    <mat-form-field subscriptSizing="dynamic">
+    <span class="ml">to</span>
+    <mat-form-field subscriptSizing="dynamic" class="ml">
       <mat-label>Branch</mat-label>
       <mat-select formControlName="toState">
         <mat-option *ngFor="let b of otherStates" [value]="b">{{ b }}</mat-option>

@@ -16,8 +16,12 @@
   margin-left: auto;
 }
 
-.mat-mdc-form-field {
+.ml {
   margin-left: 10px;
+}
+
+.notes-form {
+  width: 100%;
 }
 
 @media print {
