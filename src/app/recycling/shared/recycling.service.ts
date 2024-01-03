@@ -218,7 +218,7 @@ export class RecyclingService {
   }
 
   getAllCustomerCages(custnmbr: string, site = ''): Observable<Cage[]> {
-    const fields = ['AssetType', 'CageNumber', 'CageWeight', 'Created', 'Date1', 'Date2', 'Date3', 'Date4', 'GrossWeight', 'Modified', 'NetWeight', 'Site', 'Status', 'ToLocalProcessing'];
+    const fields = ['AssetType', 'CageNumber', 'CageWeight', 'Created', 'Date1', 'Date2', 'Date3', 'Date4', 'GrossWeight', 'Modified', 'NetWeight', 'Site', 'Status', 'ToLocalProcessing', 'FromLocalProcessing'];
     let url = this._cageTrackerUrl + `/items?expand=fields(select=${fields.join(',')})`;
     url += '&orderby=fields/Modified desc';
     url += `&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
@@ -227,7 +227,7 @@ export class RecyclingService {
   }
 
   getActiveCustomerCages(custnmbr: string, site = '', includeReturned: boolean): Observable<Cage[]> {
-    const fields = ['AssetType', 'CageNumber', 'CageWeight', 'Created', 'Branch', 'CustomerNumber', 'Notes', 'Material', 'Date1', 'Date2', 'Date3', 'Date4', 'GrossWeight', 'Modified', 'NetWeight', 'Site', 'Status', 'ToLocalProcessing'];
+    const fields = ['AssetType', 'CageNumber', 'CageWeight', 'Created', 'Branch', 'CustomerNumber', 'Notes', 'Material', 'Date1', 'Date2', 'Date3', 'Date4', 'GrossWeight', 'Modified', 'NetWeight', 'Site', 'Status', 'ToLocalProcessing', 'FromLocalProcessing'];
     let url = this._cageTrackerUrl + `/items?expand=fields(select=${fields.join(',')})&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
     if (!includeReturned) url += ` and fields/Date2 eq null`;
     url += ` and fields/Status ne 'Complete'`;

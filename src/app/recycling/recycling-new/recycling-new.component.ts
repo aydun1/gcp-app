@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { MatInputModule } from '@angular/material/input';
 
 interface CageForm {
   assetType: FormControl<string | null>;
@@ -27,7 +28,7 @@ interface CageForm {
   templateUrl: './recycling-new.component.html',
   styleUrls: ['./recycling-new.component.css'],
   standalone: true,
-  imports: [NgForOf, NgIf, AsyncPipe, RouterModule, ReactiveFormsModule, MatButtonModule, MatCardModule, MatIconModule, MatSelectModule, MatToolbarModule]
+  imports: [NgForOf, NgIf, AsyncPipe, RouterModule, ReactiveFormsModule, MatButtonModule, MatCardModule, MatIconModule, MatInputModule, MatSelectModule, MatToolbarModule]
 })
 export class RecyclingNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component  mat-app-background';

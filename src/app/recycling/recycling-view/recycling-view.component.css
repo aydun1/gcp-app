@@ -8,7 +8,7 @@ input {
 }
 
 .loading-circ {
-  position: absolute;
+  margin: 0;
 }
 
 .header {
@@ -16,6 +16,7 @@ input {
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 10px;
+  justify-content: flex-end;
 }
 
 .top-title {
@@ -58,10 +59,6 @@ input {
 
 .mat-column-nav {
   flex: 0 1 88px;
-}
-
-.actions {
-  margin-left: auto;
 }
 
 .material {
