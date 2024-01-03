@@ -18,7 +18,7 @@ export default [
       {
         path: 'delivered',
         title: 'Delivered',
-        component: RunListCompletedComponent 
+        component: RunListCompletedComponent
       }
     ]
   }

@@ -27,7 +27,7 @@ export class ItemControlComponent implements ControlValueAccessor, MatFormFieldC
   public touched = false;
   public describedBy = '';
   public item: SuggestedItem | null = null;
-  public filteredOptions!: Observable<SuggestedItem[]>;  
+  public filteredOptions!: Observable<SuggestedItem[]>;
   public isDisabled = false;
   public myControl = new FormControl<SuggestedItem | null>(null, this.itemPickedValidator);
   public loading = false;

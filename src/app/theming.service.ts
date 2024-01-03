@@ -9,7 +9,7 @@ export class ThemingService {
     // initially trigger dark mode if preference is set to dark mode on system
     const darkModeOn = window.matchMedia('(prefers-color-scheme: dark)')?.matches;
     if (darkModeOn) this.theme.next(true);
-    
+
     // watch for changes of the preference
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
       const isDark = e.matches;

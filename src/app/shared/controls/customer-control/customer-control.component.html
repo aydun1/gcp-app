@@ -1,6 +1,6 @@
 
 <div class="customer-input-container" (focusin)="onFocusIn($event)" (focusout)="onFocusOut($event)">
-  <input matInput #customerInput [placeholder]="placeholder" type="search" aria-label="Customer" [formControl]="myControl" 
+  <input matInput #customerInput [placeholder]="placeholder" type="search" aria-label="Customer" [formControl]="myControl"
     [matAutocomplete]="auto" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autocomplete="chrome-off">
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="addCustomer()" [displayWith]="customerDisplayFn">
     <mat-option *ngFor="let option of filteredOptions | async" [value]="option">

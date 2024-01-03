@@ -98,7 +98,7 @@ export class PanListSimpleComponent implements OnInit {
     });
     return this.transferForm;
   }
-  
+
   getRequestedQuantities(params: Params): Observable<RequestLine[]> {
     if (!params['pan']) return of([]);
     return this.panListService.getRequestedQuantities(this.scheduleId, params['pan']);

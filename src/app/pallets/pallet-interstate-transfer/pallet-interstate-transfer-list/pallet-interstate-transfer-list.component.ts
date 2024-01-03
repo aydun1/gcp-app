@@ -118,7 +118,6 @@ export class PalletInterstateTransferListComponent implements OnInit {
   setStatus(status: MatSelectChange): void {
     this.router.navigate([], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
-  
 
   setAssetType(assetType: MatSelectChange): void {
     this.router.navigate([], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});

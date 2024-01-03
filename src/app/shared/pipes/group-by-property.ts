@@ -15,7 +15,7 @@ export class GroupByPropertyPipe implements PipeTransform {
         }
         return previous;
     }, {});
-    return Object.keys(groupedCollection).map(key => ({ key, value: groupedCollection[key] })).sort((a, b) => 
+    return Object.keys(groupedCollection).map(key => ({ key, value: groupedCollection[key] })).sort((a, b) =>
       a.key === '' ? 1 : b.key === '' ? -1 : a.key.localeCompare(b.key)
     );
   }

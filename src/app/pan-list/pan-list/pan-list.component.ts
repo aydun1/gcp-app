@@ -102,7 +102,7 @@ export class PanListComponent implements OnInit {
     {branch: 'SA', vendors: ['900005']},
     {branch: 'WA', vendors: ['900004']}
   ];
-  
+
   public get otherVendors(): Array<{branch: string, vendors: string[]}> {
     return this.branchVendors.filter(_ => _.branch !== this.branchFilter.value);
   }
@@ -121,7 +121,7 @@ export class PanListComponent implements OnInit {
     return this.transferForm.get('lines') as FormArray;
   }
 
-  public get vendorCodes(): Array<string> {  
+  public get vendorCodes(): Array<string> {
     return this.chosenVendors.map(branch => this.branchVendors.find(_ => _.branch === branch)?.vendors || []).reduce((acc, cur) => [...acc, ...cur], []);
   }
 
@@ -337,7 +337,7 @@ export class PanListComponent implements OnInit {
     if ('wa' in params) this.hideNoStockWa = params['wa'] === 'true';
     if ('Suggested' in params) this.hideUnsuggesteds = params['Suggested'] === 'true';
     if ('Required' in params) this.hideUnrequireds = params['Required'] === 'true';
-    if ('Tofill' in params) this.hideNoMaxes = params['Tofill'] === 'true';    
+    if ('Tofill' in params) this.hideNoMaxes = params['Tofill'] === 'true';
   }
 
   compareQueryStrings(prev: Params, curr: Params): boolean {

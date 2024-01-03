@@ -90,7 +90,7 @@ input {
   .header, .attachments, .mat-mdc-card-title {
     display: none;
   }
-  
+
   .mat-mdc-card {
     padding-top: 0;
   }

@@ -78,7 +78,7 @@ export class InterstateTransfersActiveComponent implements OnInit {
   makeFormGroup(lines: Array<any>): FormGroup<any> {
     this.lines.clear();
     let i = -1;
-    lines.forEach(_ => 
+    lines.forEach(_ =>
       this.lines.push(this.fb.group({
         index: [i += 1],
         id: [_.Id],
@@ -100,7 +100,7 @@ export class InterstateTransfersActiveComponent implements OnInit {
     this.loading = false;
     return this.transferForm;
   }
-  
+
   getInterstateTransfers(params: Params): Observable<any[]> {
     const from = params['from'] || '';
     const to = params['to'] || '';

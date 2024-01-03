@@ -79,7 +79,7 @@ export class CustomerPickerDialogComponent implements OnInit {
       }
     });
 
-    this.customerForm.get('address')?.valueChanges.subscribe(_ => 
+    this.customerForm.get('address')?.valueChanges.subscribe(_ =>
       this.tidyAddress = _ ? this.shared.addressFormatter(_) : ''
     );
     this.customerForm.get('site')?.valueChanges.subscribe(_ => {

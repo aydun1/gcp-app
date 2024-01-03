@@ -137,7 +137,7 @@ export class PanListService {
         if (matches.length > 0) {
           const id = matches[0].id;
           const fields = {Quantity: quantity, Notes: notes};
-          query = this.http.patch<RequestLine>(`${this._panListLinesUrl}/items('${id}')`, {fields});   
+          query = this.http.patch<RequestLine>(`${this._panListLinesUrl}/items('${id}')`, {fields});
         } else {
           const fields = {ItemNumber: itemNumber, ItemDescription: itemDescription, Quantity: quantity, Notes: notes, Title: loadingScheduleId, PanList: panListId}
           query = this.http.post<RequestLine>(`${this._panListLinesUrl}/items`, {fields});

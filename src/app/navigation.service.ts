@@ -12,7 +12,7 @@ export class NavigationService {
   ) {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        if (this.router.getCurrentNavigation()?.extras?.replaceUrl) this._history.pop();       
+        if (this.router.getCurrentNavigation()?.extras?.replaceUrl) this._history.pop();
         this._history.push(event.urlAfterRedirects);
       }
     })

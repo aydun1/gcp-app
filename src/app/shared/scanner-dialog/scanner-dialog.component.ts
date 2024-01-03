@@ -53,7 +53,7 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
   visibilitychange() {
     this.enabled = !document.hidden;
   }
-  
+
   ngOnInit(): void {
     this.cameraPicker.valueChanges.pipe(
       tap(_ => this.setCamera(_))

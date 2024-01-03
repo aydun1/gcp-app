@@ -117,7 +117,7 @@ export class PalletReconciliationNewComponent implements OnInit {
         })
       ).subscribe();
       this.palletRecForm.get('date')?.valueChanges.subscribe(() => this.updateTransits());
-      this.palletRecForm.get('pallet')?.valueChanges.subscribe(() => this.updateTransits());    
+      this.palletRecForm.get('pallet')?.valueChanges.subscribe(() => this.updateTransits());
       this.loadingData.next(true);
     }
 

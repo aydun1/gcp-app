@@ -27,7 +27,7 @@ export class CustomerControlComponent implements ControlValueAccessor, MatFormFi
   public touched = false;
   public describedBy = '';
   public customer: Customer | null = null;
-  public filteredOptions!: Observable<Customer[]>;  
+  public filteredOptions!: Observable<Customer[]>;
   public isDisabled = false;
   public myControl = new FormControl<Customer | null>(null, this.customerPickedValidator);
 

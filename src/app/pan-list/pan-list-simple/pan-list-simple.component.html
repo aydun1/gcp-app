@@ -19,7 +19,7 @@
       <a *ngIf="!sent && selectedPanId && panLists" mat-button type="button" [routerLink]="['panlist']" [queryParams]="{pan: selectedPanId}" class="edit">Edit list</a>
       <button *ngIf="selectedPanId && panLists" mat-icon-button type="button" class="menu" [matMenuTriggerFor]="actionsMenu">
         <mat-icon>more_vert</mat-icon>
-      </button>  
+      </button>
     </div>
 
     <div *ngIf="interstateTransfers$ | async as interstateTransfers">
@@ -62,7 +62,7 @@
         <ng-container matColumnDef="transfer">
           <mat-header-cell *matHeaderCellDef>
             <div class="load-details right">
-              Requested 
+              Requested
             </div>
           </mat-header-cell>
           <mat-cell *matCellDef="let line">

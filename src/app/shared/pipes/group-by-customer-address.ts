@@ -84,7 +84,7 @@ export class GroupByCustomerAddressPipe implements PipeTransform {
       const run = cur.fields.Run || '';
       acc[run] = (acc[run] || 0) + 1;
       return acc;
-    }, {}); 
+    }, {});
     const spaces = drops.reduce((acc, cur) => {
       const run = cur.fields.Run || '';
       acc[run] = (acc[run] || 0) + cur.spaces;

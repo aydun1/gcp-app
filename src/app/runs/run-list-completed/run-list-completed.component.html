@@ -63,7 +63,7 @@
           </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>    
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
       </mat-table>
       <div *ngIf="(loadingList$ | async) ? true : false">
         <mat-spinner diameter="36" class="loading-page"></mat-spinner>

@@ -39,7 +39,7 @@
         <mat-nav-list>
           <a mat-list-item *ngIf="cage.fields.CustomerNumber" [routerLink]="['/customers', cage.fields.CustomerNumber]">
             <mat-icon matListItemIcon>business</mat-icon>
-            <span matListItemTitle>{{ cage.fields.Customer }} 
+            <span matListItemTitle>{{ cage.fields.Customer }}
               <span>({{ cage.fields.CustomerNumber }})</span>
               <span *ngIf="cage.fields.Site">({{ cage.fields.Site }})</span>
             </span>

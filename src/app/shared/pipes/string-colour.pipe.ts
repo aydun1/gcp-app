@@ -10,14 +10,14 @@ export class StringColourPipe implements PipeTransform {
   private textWeight = 0.25;
   private seed = 16777219;
   private factor = 49979693;
-    
+
   private colors = {
     'Scheduled': '#2851e7',
     'Pan list sent': '#41a900'
   };
 
   constructor() { }
-  
+
   getColor(text: string): string | null {
     const key = Object.entries(this.colors).find(_ => _[0] === text);
     return key ? key[1] : null;

@@ -27,7 +27,7 @@ export class VendorControlComponent implements ControlValueAccessor, MatFormFiel
   public touched = false;
   public describedBy = '';
   public vendor: Vendor | null = null;
-  public filteredOptions!: Observable<Vendor[]>;  
+  public filteredOptions!: Observable<Vendor[]>;
   public isDisabled = false;
   public myControl = new FormControl<Vendor | null>(null, this.vendorPickedValidator);
 

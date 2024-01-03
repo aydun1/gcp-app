@@ -51,7 +51,7 @@ export class TransactionHistoryDialogComponent implements OnInit {
         this.item['AllocWA'] !== _['AllocWA'] ||
         this.item['AllocHEA'] !== _['AllocHEA']
       ) this.stockChanged = true;
-      
+
       this.item['OnHandVIC'] = _['OnHandVIC'];
       this.item['OnHandNSW'] = _['OnHandNSW'];
       this.item['OnHandQLD'] = _['OnHandQLD'];
@@ -65,5 +65,5 @@ export class TransactionHistoryDialogComponent implements OnInit {
       this.item['AllocWA'] = _['AllocWA'];
       this.item['AllocHEA'] = _['AllocHEA'];
     });
-  }  
+  }
 }

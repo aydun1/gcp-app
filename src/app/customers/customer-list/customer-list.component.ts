@@ -112,7 +112,7 @@ export class CustomerListComponent implements OnInit {
     if ('pallets' in params) {
       const pallets = Array.isArray(params['pallets']) ? params['pallets'] : [params['pallets']];
       this.palletsFilter.patchValue(pallets);
-    } 
+    }
     if ('sort' in params) {
       this.sortSort = params['sort'];
       this.sortOrder = params['order'];

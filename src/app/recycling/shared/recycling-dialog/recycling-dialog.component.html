@@ -32,7 +32,7 @@
     <mat-dialog-actions align="end">
       <div class="buttons">
         <button type="button" mat-button [disabled]="sending" (click)="backToMain()" tabindex=-1>Cancel</button>
-        <button type="submit" mat-raised-button [disabled]="sending" color="primary">Collect</button>  
+        <button type="submit" mat-raised-button [disabled]="sending" color="primary">Collect</button>
       </div>
     </mat-dialog-actions>
   </form>
@@ -150,7 +150,7 @@
               <mat-list-item *ngIf="cage.fields.Site">
                 <mat-icon matListItemIcon>business</mat-icon>
                 <span matListItemTitle>{{ cage.fields.Site }}</span>
-                <span>Site</span>            
+                <span>Site</span>
               </mat-list-item>
               <gcp-cage-notes [cage]="cage" (updated)="getCagesWithCustomer()"></gcp-cage-notes>
               <gcp-cage-material [cage]="cage" (updated)="getCagesWithCustomer()"></gcp-cage-material>

@@ -364,7 +364,7 @@ export class RunListComponent implements OnInit {
     const subfolder = [custNmbr.trimEnd(), orderNmbr.trimEnd()].filter(_ => _).join('/');
     this.docsService.fileChangeEvent(folder, subfolder, e);
   }
-  
+
   openAll(): void {
     this._openingAll = true;
     this.accordion.openAll();

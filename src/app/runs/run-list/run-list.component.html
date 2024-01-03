@@ -109,7 +109,7 @@
               </div>
               <div class="expansion-controls">
                 <button mat-button (click)="accordion.closeAll()" class="menu-item" type="button">Collapse All</button>
-                <button mat-button (click)="openAll()" class="menu-item" type="button">Expand All</button>  
+                <button mat-button (click)="openAll()" class="menu-item" type="button">Expand All</button>
               </div>
             </div>
             <div class="inner run-list" id="delivery-list" cdkDropList (cdkDropListDropped)="moveItem($event)" [cdkDropListEnterPredicate]="allowPredicate">

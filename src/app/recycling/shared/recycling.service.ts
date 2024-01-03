@@ -68,7 +68,7 @@ export class RecyclingService {
         const index = _.findIndex(_ => _.id === id);
         if (_.length - index < 5 ) this.getNextPage();
         const direction = prev ? -1 : 1;
-        return _[index + direction]?.id; 
+        return _[index + direction]?.id;
     }))
   }
 
@@ -300,7 +300,7 @@ export class RecyclingService {
     const payload = {fields: {Status: 'Collected from local processing', FromLocalProcessing: new Date()}};
     return this.updateStatus(id, payload);
   }
-  
+
   markCageComplete(id: string): Observable<Cage> {
     const payload = {fields: {Status: 'Complete'}};
     return this.updateStatus(id, payload);

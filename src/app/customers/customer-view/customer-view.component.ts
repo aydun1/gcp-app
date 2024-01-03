@@ -85,7 +85,7 @@ export class CustomerViewComponent implements OnInit, OnDestroy {
       distinctUntilChanged((prev, curr) => prev[0].get('id') === curr[0].get('id')),
       switchMap(([paramMap, params]) => this.getCustomer(paramMap.get('id')))
     );
-  
+
     this.sitesSubject$.pipe(
       switchMap(id => this.cutomersService.getSites(id)),
       tap(sites => this.sites = sites)

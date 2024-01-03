@@ -86,7 +86,7 @@
                 Total
               </mat-footer-cell>
             </ng-container>
-      
+
             <ng-container matColumnDef="bin">
               <mat-header-cell *matHeaderCellDef mat-sort-header>
                 <div>
@@ -100,7 +100,7 @@
               </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
-      
+
             <ng-container matColumnDef="product">
               <mat-header-cell *matHeaderCellDef mat-sort-header> Item </mat-header-cell>
               <mat-cell *matCellDef="let line">
@@ -148,7 +148,7 @@
               </mat-header-cell>
               <mat-cell *matCellDef="let line">
                 <div class="loadDetails">
-                  <div>{{ line['quantity'] | number: '1.0-0' }} {{ line['uofm'] }}</div>  
+                  <div>{{ line['quantity'] | number: '1.0-0' }} {{ line['uofm'] }}</div>
                 </div>
               </mat-cell>
               <mat-footer-cell *matFooterCellDef>
@@ -206,13 +206,13 @@
               </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
-      
+
             <ng-container matColumnDef="loading">
               <mat-footer-cell *matFooterCellDef>
                 <gcp-loading-row></gcp-loading-row>
               </mat-footer-cell>
             </ng-container>
-        
+
             <ng-container matColumnDef="empty">
               <mat-footer-cell *matFooterCellDef>
                 There are no chemicals in {{ branchFilter.value }}.
@@ -224,10 +224,9 @@
             <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) ? false : true"></mat-footer-row>
             <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(c)"></mat-footer-row>
             <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
-          </mat-table>  
+          </mat-table>
         </mat-card>
-  
-      </div>    
+      </div>
     </div>
   </div>
 </div>
