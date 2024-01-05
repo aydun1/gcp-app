@@ -1,18 +1,24 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
+import { NgFor, AsyncPipe } from '@angular/common';
 import { Component, ElementRef, HostBinding, Input, OnDestroy, OnInit, Optional, Self, ViewChild } from '@angular/core';
-import { ControlValueAccessor, NgControl, FormControl, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ControlValueAccessor, NgControl, FormControl, ValidatorFn, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject, switchMap, tap } from 'rxjs';
 
 import { CustomersService } from '../../../customers/shared/customers.service';
 import { Customer } from '../../../customers/shared/customer';
 
 @Component({
-  selector: 'gcp-customer-control',
-  templateUrl: 'customer-control.component.html',
-  styleUrls: ['customer-control.component.css'],
-  providers: [{provide: MatFormFieldControl, useExisting: CustomerControlComponent}]
+    selector: 'gcp-customer-control',
+    templateUrl: 'customer-control.component.html',
+    styleUrls: ['customer-control.component.css'],
+    providers: [{ provide: MatFormFieldControl, useExisting: CustomerControlComponent }],
+    standalone: true,
+    imports: [AsyncPipe, NgFor, ReactiveFormsModule, MatAutocompleteModule, MatInputModule, MatOptionModule]
 })
 export class CustomerControlComponent implements ControlValueAccessor, MatFormFieldControl<Customer>, OnDestroy, OnInit {
   @HostBinding() id = `customer-input-${CustomerControlComponent.nextId++}`;

@@ -1,18 +1,24 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Component, ElementRef, HostBinding, Input, OnDestroy, OnInit, Optional, Self, ViewChild } from '@angular/core';
-import { ControlValueAccessor, NgControl, FormControl, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ControlValueAccessor, NgControl, FormControl, ValidatorFn, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatOptionModule } from '@angular/material/core';
+import { NgFor, AsyncPipe } from '@angular/common';
 import { MatFormFieldControl } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { combineLatest, debounceTime, map, Observable, Subject, switchMap, tap } from 'rxjs';
 
 import { CustomersService } from '../../../customers/shared/customers.service';
 import { Vendor } from '../../../customers/shared/vendor';
 
 @Component({
-  selector: 'gcp-vendor-control',
-  templateUrl: 'vendor-control.component.html',
-  styleUrls: ['vendor-control.component.css'],
-  providers: [{provide: MatFormFieldControl, useExisting: VendorControlComponent}]
+    selector: 'gcp-vendor-control',
+    templateUrl: 'vendor-control.component.html',
+    styleUrls: ['vendor-control.component.css'],
+    providers: [{ provide: MatFormFieldControl, useExisting: VendorControlComponent }],
+    standalone: true,
+    imports: [AsyncPipe, NgFor, ReactiveFormsModule, MatAutocompleteModule, MatInputModule, MatOptionModule]
 })
 export class VendorControlComponent implements ControlValueAccessor, MatFormFieldControl<Vendor>, OnDestroy, OnInit {
   @HostBinding() id = `vendor-input-${VendorControlComponent.nextId++}`;

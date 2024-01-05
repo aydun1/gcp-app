@@ -15,7 +15,8 @@ import { Site } from '../site';
 import { CustomersService } from '../customers.service';
 import { SharedService } from '../../../shared.service';
 import { Vendor } from '../vendor';
-import { ControlsModule } from '../../../shared/controls/controls.module';
+import { CustomerControlComponent } from '../../../shared/controls/customer-control/customer-control.component';
+import { VendorControlComponent } from '../../../shared/controls/vendor-control/vendor-control.component';
 
 interface CustomerForm {
   customer: FormControl<Customer | null>;
@@ -30,7 +31,7 @@ interface CustomerForm {
   templateUrl: './customer-picker-dialog.component.html',
   styleUrls: ['./customer-picker-dialog.component.css'],
   standalone: true,
-  imports: [AsyncPipe, NgForOf, NgIf, ReactiveFormsModule, MatButtonModule, MatDialogModule, MatInputModule, MatSelectModule, MatIconModule, MatMenuModule, ControlsModule]
+  imports: [AsyncPipe, NgForOf, NgIf, ReactiveFormsModule, MatButtonModule, MatDialogModule, MatInputModule, MatSelectModule, MatIconModule, MatMenuModule, CustomerControlComponent, VendorControlComponent]
 })
 export class CustomerPickerDialogComponent implements OnInit {
   public loading = false;

@@ -17,8 +17,8 @@ import { SharedService } from '../../shared.service';
 import { PanListService } from '../pan-list.service';
 import { RequestLine } from '../request-line';
 import { SuggestedItem } from '../suggested-item';
-import { ControlsModule } from '../../shared/controls/controls.module';
 import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-row.component';
+import { ItemControlComponent } from '../../shared/controls/item-control/item-control.component';
 
 interface TransferForm {
   lines: FormArray<FormGroup<LineForm>>;
@@ -36,7 +36,7 @@ interface LineForm {
   templateUrl: './pan-list.component.html',
   styleUrls: ['./pan-list.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DecimalPipe, NgClass, NgForOf, NgIf, FormsModule, ReactiveFormsModule, MatButtonToggleModule, MatCardModule, MatInputModule, MatSelectModule, MatSlideToggleModule, MatTableModule, ControlsModule, LoadingRowComponent]
+  imports: [AsyncPipe, DecimalPipe, NgClass, NgForOf, NgIf, FormsModule, ReactiveFormsModule, MatButtonToggleModule, MatCardModule, MatInputModule, MatSelectModule, MatSlideToggleModule, MatTableModule, ItemControlComponent, LoadingRowComponent]
 })
 export class PanListComponent implements OnInit {
 

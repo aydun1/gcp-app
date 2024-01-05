@@ -1,18 +1,24 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { Component, ElementRef, HostBinding, Input, OnDestroy, OnInit, Optional, Self, ViewChild } from '@angular/core';
-import { ControlValueAccessor, NgControl, FormControl, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ControlValueAccessor, NgControl, FormControl, ValidatorFn, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject, switchMap, tap } from 'rxjs';
 
 import { PanListService } from '../../../pan-list/pan-list.service';
 import { SuggestedItem } from '../../../pan-list/suggested-item';
 
 @Component({
-  selector: 'gcp-item-control',
-  templateUrl: 'item-control.component.html',
-  styleUrls: ['item-control.component.css'],
-  providers: [{provide: MatFormFieldControl, useExisting: ItemControlComponent}]
+    selector: 'gcp-item-control',
+    templateUrl: 'item-control.component.html',
+    styleUrls: ['item-control.component.css'],
+    providers: [{ provide: MatFormFieldControl, useExisting: ItemControlComponent }],
+    standalone: true,
+    imports: [AsyncPipe, NgFor, NgIf, ReactiveFormsModule, MatAutocompleteModule, MatInputModule, MatOptionModule]
 })
 export class ItemControlComponent implements ControlValueAccessor, MatFormFieldControl<SuggestedItem>, OnDestroy, OnInit {
   @HostBinding() id = `item-input-${ItemControlComponent.nextId++}`;
