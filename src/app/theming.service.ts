@@ -1,7 +1,9 @@
 import { ApplicationRef, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ThemingService {
   public theme = new BehaviorSubject(false);
 
