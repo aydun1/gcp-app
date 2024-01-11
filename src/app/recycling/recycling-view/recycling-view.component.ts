@@ -1,16 +1,32 @@
 import { ChangeDetectionStrategy, Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { BehaviorSubject, combineLatest, map, Observable, switchMap, tap } from 'rxjs';
 
 import { RecyclingService } from '../shared/recycling.service';
 import { NavigationService } from '../../navigation.service';
 import { Cage } from '../shared/cage';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatCardModule } from '@angular/material/card';
+import { ActionButtonComponent } from '../shared/action-button/action-button.component';
+import { AsyncPipe, DatePipe, NgIf } from '@angular/common';
+import { MatTableModule } from '@angular/material/table';
+import { CageDetailsComponent } from '../shared/cage-details/cage-details.component';
+import { CageWeightsComponent } from '../shared/cage-weights/cage-weights.component';
+import { CageMaterialComponent } from '../shared/cage-material/cage-material.component';
+import { CageNotesComponent } from '../shared/cage-notes/cage-notes.component';
+import { LoadingPageComponent } from '../../shared/loading/loading-page/loading-page.component';
+import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-row.component';
 
 @Component({
   selector: 'gcp-recycling-view',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './recycling-view.component.html',
-  styleUrls: ['./recycling-view.component.css']
+  styleUrls: ['./recycling-view.component.css'],
+  standalone: true,
+  imports: [NgIf, AsyncPipe, DatePipe, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatTableModule, MatToolbarModule, ActionButtonComponent, CageDetailsComponent, CageMaterialComponent, CageNotesComponent, CageWeightsComponent, LoadingPageComponent, LoadingRowComponent]
 })
 export class RecyclingViewComponent implements OnDestroy, OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';

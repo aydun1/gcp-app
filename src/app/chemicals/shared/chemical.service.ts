@@ -169,7 +169,7 @@ export class ChemicalService {
         const link = document.createElement('a');
         link.download = `${itemNmbr}.pdf`;
         link.href = blobUrl;
-        link.dispatchEvent(new MouseEvent(`click`, {bubbles: true, cancelable: true, view: window}));  
+        link.dispatchEvent(new MouseEvent(`click`, {bubbles: true, cancelable: true, view: window}));
       })
     );
     lastValueFrom(request);

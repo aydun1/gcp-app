@@ -12,20 +12,16 @@
   align-items: center;
 }
 
-.mat-mdc-form-field {
-  width: 120px;
-}
-
-.to {
-  margin-left: 10px;
-}
-
 .save-button {
   margin-left: auto;
 }
 
-.mat-mdc-form-field {
+.ml {
   margin-left: 10px;
+}
+
+.notes-form {
+  width: 100%;
 }
 
 @media print {

@@ -4,6 +4,7 @@ import { Cage } from '../../recycling/shared/cage';
 
 @Pipe({
   name: 'groupCages',
+  standalone: true
 })
 export class GroupCagesPipe implements PipeTransform {
   private extras = 'Other';

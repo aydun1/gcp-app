@@ -1,8 +1,13 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { NgForOf, NgIf } from '@angular/common';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 
 import { Site } from '../site';
@@ -17,7 +22,9 @@ interface SiteForm {
 @Component({
   selector: 'gcp-customer-site-dialog',
   templateUrl: './customer-site-dialog.component.html',
-  styleUrls: ['./customer-site-dialog.component.css']
+  styleUrls: ['./customer-site-dialog.component.css'],
+  standalone: true,
+  imports: [NgForOf, NgIf, ReactiveFormsModule, MatButtonModule, MatDialogModule, MatIconModule, MatInputModule, MatListModule]
 })
 export class CustomerSiteDialogComponent implements OnInit {
   public siteForm!: FormGroup<SiteForm>;

@@ -7,7 +7,7 @@
 .header {
   display: flex;
   justify-content: space-between;
-  margin: 24px; 
+  margin: 24px;
 }
 
 .header-items {
@@ -70,7 +70,7 @@
   .buttons {
     display: none;
   }
- 
+
   .header, .customer {
     margin-left: 0;
     margin-right: 0;

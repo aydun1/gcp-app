@@ -1,13 +1,23 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { BehaviorSubject, catchError, combineLatest, lastValueFrom, tap, throwError } from 'rxjs';
 
 import { PalletsService } from '../../shared/pallets.service';
 import { PalletsReconciliationService } from '../../shared/pallets-reconciliation.service';
 import { SharedService } from '../../../shared.service';
 import { NavigationService } from '../../../navigation.service';
+import { LoadingPageComponent } from '../../../shared/loading/loading-page/loading-page.component';
 
 interface PalletRecForm {
   date: FormControl<Date | null>;
@@ -26,7 +36,9 @@ interface PalletRecForm {
 @Component({
   selector: 'gcp-pallet-reconciliation-new',
   templateUrl: './pallet-reconciliation-new.component.html',
-  styleUrls: ['./pallet-reconciliation-new.component.css']
+  styleUrls: ['./pallet-reconciliation-new.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, NgForOf, NgIf, FormsModule, ReactiveFormsModule, MatButtonModule, MatCardModule, MatDatepickerModule, MatDividerModule, MatIconModule, MatInputModule, MatSelectModule, MatToolbarModule, LoadingPageComponent]
 })
 export class PalletReconciliationNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';
@@ -105,7 +117,7 @@ export class PalletReconciliationNewComponent implements OnInit {
         })
       ).subscribe();
       this.palletRecForm.get('date')?.valueChanges.subscribe(() => this.updateTransits());
-      this.palletRecForm.get('pallet')?.valueChanges.subscribe(() => this.updateTransits());    
+      this.palletRecForm.get('pallet')?.valueChanges.subscribe(() => this.updateTransits());
       this.loadingData.next(true);
     }
 

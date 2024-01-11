@@ -1,15 +1,22 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { DecimalPipe, NgIf } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 import { tap } from 'rxjs';
+
 import { Cage } from '../cage';
 import { RecyclingService } from '../recycling.service';
 
 @Component({
   selector: 'gcp-cage-weights',
   templateUrl: './cage-weights.component.html',
-  styleUrls: ['./cage-weights.component.css']
+  styleUrls: ['./cage-weights.component.css'],
+  standalone: true,
+  imports: [DecimalPipe, NgIf, FormsModule, MatButtonModule, MatIconModule, MatListModule]
 })
 export class CageWeightsComponent {
-
   @Input()
   get cage(): Cage { return this._cage; }
   set cage(value: Cage) {

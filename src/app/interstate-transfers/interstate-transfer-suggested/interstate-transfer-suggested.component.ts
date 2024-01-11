@@ -1,32 +1,47 @@
-import { Component, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { NgForOf } from '@angular/common';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { of } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
 import { SuggestedItem } from '../../pan-list/suggested-item';
+import { PanListComponent } from '../../pan-list/pan-list/pan-list.component';
+import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
+
+interface NewTransferForm {
+  fromState: FormControl<string | null>;
+  notes: FormControl<string | null>;
+}
 
 @Component({
   selector: 'gcp-interstate-transfer-suggested',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './interstate-transfer-suggested.component.html',
-  styleUrls: ['./interstate-transfer-suggested.component.css']
+  styleUrls: ['./interstate-transfer-suggested.component.css'],
+  standalone: true,
+  imports: [NgForOf, ReactiveFormsModule, MatButtonModule, MatInputModule, MatSelectModule, PanListComponent, LetterheadComponent]
 })
 export class InterstateTransferSuggestedComponent implements OnInit {
   private _ownState!: string;
   private _states = this.shared.branches;
 
-  public fromState!: string | null;
   public lineCount!: number;
   public activeLines!: Array<SuggestedItem>;
   public creating!: boolean;
+  public newTransferForm!: FormGroup<NewTransferForm>;
 
   public get otherStates(): Array<string> {
     return this._states.filter(_ => _ !== this._ownState);
   }
 
   constructor(
+    private fb: FormBuilder,
     private router: Router,
     private snackBar: MatSnackBar,
     private shared: SharedService,
@@ -35,25 +50,23 @@ export class InterstateTransferSuggestedComponent implements OnInit {
 
   ngOnInit(): void {
     this.shared.getBranch().subscribe(_ => this._ownState = _);
-  }
-
-  private sendIttEmail(fromState: string | null, toState: string, lines: SuggestedItem[], docId: string): void {
-    const subject = `Items requested by ${toState}`;
-    const rows = lines.map(_ => `<tr><td>${_.ItemNmbr}</td><td>${_.ToTransfer}</td></tr>`).join('');
-    const body = `<p><strong>Order no.:</strong> <a href="${environment.baseUri}/transfers/active/${docId}">${docId}</a></p><table><tr><th>Item number</th><th>Qty Requested</th></tr>${rows}</table>`;
-    const to = this.shared.emailMap.get(fromState || '') || [];
-    const cc = this.shared.panMap.get(toState || '') || [];
-    if (environment.production) this.shared.sendMail(to, subject, body, 'HTML', cc);
+    this.newTransferForm = this.fb.group({
+      fromState: ['', Validators.required],
+      notes: [''],
+    });
   }
 
   createTransfer(): void {
+    const fromState = this.newTransferForm.value.fromState || '';
+    const toState = this._ownState;
+    const notes = this.newTransferForm.value.notes || '';
+    if (!this.activeLines || this.activeLines.length === 0 || !toState || !this.newTransferForm.valid) return;
     this.creating = true;
-    if (!this.activeLines || this.activeLines.length === 0 || !this._ownState || !this.fromState) return;
     const lines = this.activeLines.filter(_ => _.ToTransfer);
-    this.interstateTransfersService.createInTransitTransfer(this.fromState, this._ownState, lines).then(_ => {
+    this.interstateTransfersService.createInTransitTransfer(fromState, toState, lines).then(_ => {
       this.snackBar.open('Successfully created ITT.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
       this.router.navigate(['transfers/active', _.docId]);
-      this.sendIttEmail(this.fromState, this._ownState, lines, _.docId);
+      this.interstateTransfersService.sendIttRequestEmail(fromState, toState, lines, _.docId, notes);
       this.creating = false;
     }).catch(err => {
       this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-warn']});

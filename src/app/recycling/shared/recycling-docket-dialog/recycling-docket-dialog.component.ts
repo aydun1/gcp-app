@@ -1,6 +1,11 @@
 import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
 import { Router } from '@angular/router';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { Observable, tap } from 'rxjs';
 
 import { RecyclingService } from '../recycling.service';
@@ -8,11 +13,14 @@ import { Cage } from '../cage';
 import { Address } from '../../../customers/shared/address';
 import { Customer } from '../../../customers/shared/customer';
 import { Site } from '../../../customers/shared/site';
+import { LetterheadComponent } from '../../../shared/letterhead/letterhead.component';
 
 @Component({
   selector: 'gcp-recycling-docket-dialog',
   templateUrl: './recycling-docket-dialog.component.html',
-  styleUrls: ['./recycling-docket-dialog.component.css']
+  styleUrls: ['./recycling-docket-dialog.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, NgForOf, NgIf, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule, MatMenuModule, LetterheadComponent]
 })
 export class RecyclingDocketDialogComponent implements OnDestroy, OnInit {
   public address!: Address | undefined;

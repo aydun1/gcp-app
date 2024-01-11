@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core'
 import { Location } from '@angular/common'
 import { Router, NavigationEnd } from '@angular/router'
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class NavigationService {
   private _history: string[] = [];
 
@@ -12,7 +14,7 @@ export class NavigationService {
   ) {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        if (this.router.getCurrentNavigation()?.extras?.replaceUrl) this._history.pop();       
+        if (this.router.getCurrentNavigation()?.extras?.replaceUrl) this._history.pop();
         this._history.push(event.urlAfterRedirects);
       }
     })

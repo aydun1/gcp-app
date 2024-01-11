@@ -15,6 +15,7 @@ import { Delivery } from './delivery';
 import { Run } from './run';
 import { Order } from './order';
 import { Address } from '../../customers/shared/address';
+import { Chemical } from '../../chemicals/shared/chemical';
 
 interface BatchRes {
   responses: {body: Delivery}[];
@@ -143,9 +144,21 @@ export class DeliveryService {
     );
   }
 
+  getDate(): Date {
+    const date = new Date();
+    const day = date.getDay();
+    const nextDay = day > 4 ? 8 - day : 1;
+    date.setDate(date.getDate() + nextDay);
+    date.setHours(0,0,0,0);
+    return date;
+  }
+
   syncOrders(branch: string, date: Date): Observable<Order[]> {
     const d = (date).toLocaleString( 'sv', { timeZoneName: 'short' } ).split(' ', 1)[0];
-    const request = this.http.get<{orders: Order[]}>(`${environment.gpEndpoint}/orders?branch=${branch}&date=${d}`).pipe(
+    const today = (this.getDate()).toLocaleString( 'sv', { timeZoneName: 'short' } ).split(' ', 1)[0];
+    let url = `${environment.gpEndpoint}/orders?branch=${branch}`;
+    if (d !== today) url += `&date=${d}`;
+    const request = this.http.get<{orders: Order[]}>(url).pipe(
       map(_ => _.orders),
       switchMap(orders => {
         return this._deliveriesSubject$.pipe(
@@ -153,6 +166,9 @@ export class DeliveryService {
             return orders.filter(_ => !this._validBatches.includes(_.batchNumber)).filter(_ => !deliveries.map(d => d.fields.OrderNumber).includes(_.sopNumber)).filter(_ => !this.recentlyArchived.includes(_.sopNumber))
           })
         )
+      }),
+      catchError(err => {
+        return of([]);
       })
     );
     return request;
@@ -174,7 +190,6 @@ export class DeliveryService {
       }),
       tap(_ => this._runsSubject$.next(_)),
       catchError(err => {
-        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         return of([]);
       })
     ).subscribe(_ => this._runsSubject$.next(_));
@@ -212,12 +227,23 @@ export class DeliveryService {
       tap(_ => this.loading.next(false)),
       map(res => res.value),
       catchError(err => {
-        this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000});
         this.loading.next(false);
         return of([]);
       })
     ).subscribe(_ => this._deliveriesSubject$.next(_));
     return this._deliveriesSubject$;
+  }
+
+  getRunChemicalsUrl(runName: string, branch: string): string {
+    const key = 'ycoX2aIWkKqGzUjCf1gvtFxB';
+    return `${environment.apiUrl}/chemicals/outbound?key=${key}&run=${runName}&branch=${branch}`;
+  }
+
+  getChemicalsOnRun(runName: string, branch: string): Observable<Chemical[]> {
+    const url = this.getRunChemicalsUrl(runName, branch);
+    return this.http.get<{chemicals: Chemical[]}>(url, {headers: {'Accept': 'application/json'}, responseType: 'json'}).pipe(
+      map(res => res.chemicals)
+    );
   }
 
   reloadRunDeliveries(runName: string | null, branch: string): Promise<Delivery[]> {

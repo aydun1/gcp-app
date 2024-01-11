@@ -1,4 +1,4 @@
-<mat-toolbar>
+<mat-toolbar class="site-toolbar">
   <button mat-icon-button (click)="goBack()" class="mobile-button" type="button">
     <mat-icon>arrow_back</mat-icon>
   </button>
@@ -44,7 +44,7 @@
             <mat-label>Loading date</mat-label>
             <input matInput [matDatepicker]="picker1" formControlName="loadingDate" title="Loading date">
             <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-            <mat-datepicker  #picker1></mat-datepicker>
+            <mat-datepicker #picker1></mat-datepicker>
           </mat-form-field>
           <mat-icon class="arrow">arrow_forward</mat-icon>
           <mat-form-field appearance="fill">

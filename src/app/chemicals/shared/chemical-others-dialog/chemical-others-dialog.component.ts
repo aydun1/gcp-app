@@ -1,8 +1,14 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSelectionListChange } from '@angular/material/list';
-import { MatTabGroup } from '@angular/material/tabs';
+import { AsyncPipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule, MatSelectionListChange } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
 import { Observable, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { Chemical } from '../chemical';
@@ -11,7 +17,9 @@ import { ChemicalService } from '../chemical.service';
 @Component({
   selector: 'gcp-chemical-others-dialog',
   templateUrl: './chemical-others-dialog.component.html',
-  styleUrls: ['./chemical-others-dialog.component.css']
+  styleUrls: ['./chemical-others-dialog.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DecimalPipe, NgForOf, NgIf, FormsModule, ReactiveFormsModule, MatButtonModule, MatDialogModule, MatIconModule, MatInputModule, MatListModule, MatProgressSpinnerModule, MatSelectModule, MatTabsModule]
 })
 export class ChemicalOthersDialogComponent implements OnInit {
   @ViewChild('tabs') tabGroup!: MatTabGroup;

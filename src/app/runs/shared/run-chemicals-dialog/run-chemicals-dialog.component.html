@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>Chemicals</h2>
+
+<mat-dialog-content>
+  <div *ngIf="chemicals$ | async as o">
+    <div *ngIf="!share">
+      <div class="header row">
+        <div class="item-desc">Item</div>
+        <div class="quantity">Quantity</div>
+      </div>
+      <div *ngFor="let l of o; last as last">
+        <div class="row">
+          <div class="item-desc"><a [href]="getPdfPath(l.ItemNmbr)" target="_blank">{{ l.ItemDesc }}</a></div>
+          <div class="quantity"><span class="mobile-show">Quantity: </span> {{ l.Quantity | number }}</div>
+        </div>
+        <mat-divider *ngIf="!last"></mat-divider>
+      </div>
+      <div class="note" *ngIf="o.length === 0">
+        No chemicals
+      </div>
+    </div>
+  </div>
+  <div *ngIf="loading" class="loading">
+    <mat-spinner diameter="48" class="spinner"></mat-spinner>
+  </div>
+  <div *ngIf="share" class="share-page">
+    <h1 class="print-head">Outbound Chemical Register</h1>
+    <qr-code [value]="url" size="300" errorCorrectionLevel="M" class="qr-code"></qr-code>
+    <h2>Delivery run: {{ data.run }}</h2>
+  </div>
+</mat-dialog-content>
+<div class="buttons">
+  <button mat-icon-button (click)="share = !share" type="button" class="close-button" tabindex="-1" ><mat-icon>qr_code</mat-icon></button>
+  <button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>
+</div>

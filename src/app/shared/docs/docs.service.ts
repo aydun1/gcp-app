@@ -4,7 +4,6 @@ import { BehaviorSubject, catchError, combineLatest, expand, from, lastValueFrom
 
 import { environment } from '../../../environments/environment';
 import { Doc } from './doc';
-import { TransportCompany } from '../../loading-schedule/shared/transport-company';
 
 @Injectable({ providedIn: 'root' })
 export class DocsService {
@@ -20,7 +19,7 @@ export class DocsService {
     private http: HttpClient
   ) { }
 
-  private readFragment(file: File, start: number, res: any): Observable<any> {
+  private readFragment(file: File, start: number, res: {next: number}): Observable<Doc> {
     return from(file.slice(start, start + this._chunkLength).arrayBuffer()).pipe(
       switchMap(chunk => {
         const crHeader = `bytes ${start}-${start + chunk.byteLength - 1}/${file.size}`;
@@ -37,7 +36,7 @@ export class DocsService {
     )
   }
 
-  private createUploadSession(folder: string, subfolder: string, file: File): Observable<any> {
+  private createUploadSession(folder: string, subfolder: string, file: File): Observable<{percent: number, name: string, file: Object, webUrl: string, createdBy: Object}> {
     const url = `${this._endpoint}/drive/root:/${folder}/${subfolder}/${file.name}:/createUploadSession`;
     const payload = {
       'item': {

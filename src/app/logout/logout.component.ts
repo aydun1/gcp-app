@@ -5,7 +5,8 @@ import { SharedService } from '../shared.service';
 
 @Component({
   selector: 'gcp-logout',
-  template: ''
+  template: '',
+  standalone: true
 })
 export class LogoutComponent implements OnInit {
 

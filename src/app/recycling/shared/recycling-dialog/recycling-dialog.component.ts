@@ -1,7 +1,16 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, map, Observable, switchMap, tap } from 'rxjs';
 
@@ -10,6 +19,12 @@ import { RecyclingService } from '../../shared/recycling.service';
 import { Cage } from '../../shared/cage';
 import { Customer } from '../../../customers/shared/customer';
 import { Site } from '../../../customers/shared/site';
+import { ActionButtonComponent } from '../action-button/action-button.component';
+import { CageNotesComponent } from '../cage-notes/cage-notes.component';
+import { CageMaterialComponent } from '../cage-material/cage-material.component';
+import { CageWeightsComponent } from '../cage-weights/cage-weights.component';
+import { CageDetailsComponent } from '../cage-details/cage-details.component';
+import { GroupCagesPipe } from '../../../shared/pipes/group-cages';
 
 interface AllocatorForm {
   site: FormControl<string | null>;
@@ -25,7 +40,9 @@ interface CollectorForm {
 @Component({
   selector: 'gcp-recycling-dialog',
   templateUrl: './recycling-dialog.component.html',
-  styleUrls: ['./recycling-dialog.component.css']
+  styleUrls: ['./recycling-dialog.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, ReactiveFormsModule, NgForOf, NgIf, MatButtonModule, MatDialogModule, MatExpansionModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, MatSelectModule, MatSlideToggleModule, ActionButtonComponent, CageDetailsComponent, CageNotesComponent, CageMaterialComponent, CageWeightsComponent, GroupCagesPipe]
 })
 export class RecyclingDialogComponent implements OnInit {
   readonly allocated = 1;

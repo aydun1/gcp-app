@@ -41,7 +41,7 @@
               </mat-cell>
               <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
             </ng-container>
-  
+
             <ng-container matColumnDef="product">
               <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
               <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
@@ -56,7 +56,7 @@
               </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
-  
+
             <ng-container matColumnDef="quantity">
               <mat-header-cell *matHeaderCellDef>
                 <div class="loadDetails">
@@ -74,7 +74,7 @@
                 </div>
               </mat-footer-cell>
             </ng-container>
-  
+
             <ng-container matColumnDef="available">
               <mat-header-cell *matHeaderCellDef>
                 <div class="loadDetails">
@@ -88,7 +88,7 @@
               </mat-cell>
               <mat-footer-cell *matFooterCellDef></mat-footer-cell>
             </ng-container>
-  
+
             <ng-container matColumnDef="empty">
               <mat-footer-cell *matFooterCellDef>
                 There are no items requested from {{ fromBranchFilter.value }} by {{ toBranchFilter.value || 'other branches' }}.
@@ -98,7 +98,7 @@
             <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
             <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(t.value)"></mat-footer-row>
             <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
-          </mat-table>  
+          </mat-table>
         </mat-card>
       </div>
     </div>

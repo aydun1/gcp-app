@@ -1,19 +1,29 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
-import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 import { debounceTime, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { Pallet } from '../shared/pallet';
 import { PalletDocketDialogComponent } from '../shared/pallet-docket-dialog/pallet-docket-dialog.component';
 import { PalletsService } from '../shared/pallets.service';
+import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
+import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-row.component';
 
 @Component({
   selector: 'gcp-pallet-list',
   templateUrl: './pallet-list.component.html',
-  styleUrls: ['./pallet-list.component.css']
+  styleUrls: ['./pallet-list.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, NgForOf, NgIf, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatInputModule, MatSelectModule, MatTableModule, LetterheadComponent, LoadingRowComponent]
 })
 export class PalletListComponent implements OnInit {
   private _loadList!: boolean;

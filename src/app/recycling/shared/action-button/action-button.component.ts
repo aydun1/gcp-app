@@ -1,6 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { concatMap, forkJoin, of, Subject, switchMap, take, tap } from 'rxjs';
 
 import { RecyclingService } from '../recycling.service';
@@ -14,12 +19,13 @@ import { RunPickerDialogComponent } from '../../../runs/shared/run-picker-dialog
 import { DeliveryService } from '../../../runs/shared/delivery.service';
 import { ConfirmationDialogComponent } from '../../../shared/confirmation-dialog/confirmation-dialog.component';
 import { CageEditDialogComponent } from '../cage-edit-dialog/cage-edit-dialog.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'gcp-action-button',
   templateUrl: './action-button.component.html',
-  styleUrls: ['./action-button.component.css']
+  styleUrls: ['./action-button.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, NgForOf, NgIf, MatButtonModule, MatIconModule, MatMenuModule],
 })
 export class ActionButtonComponent implements OnInit {
 
@@ -27,6 +33,12 @@ export class ActionButtonComponent implements OnInit {
   get cages(): Array<Cage> { return this._cages; }
   set cages(value: Array<Cage>) {
     this._cages = value;
+    this.hasComplete = value.filter(_ => _.statusId === 7).length > 0;
+    this.setStatusId(value);
+    this.setStatus(value);
+    this.setCageBranch(value);
+    this.setCageMaterial(value);
+    this.setAreCages(value);
     this.loading.next(false);
   }
   private _cages!: Array<Cage>;
@@ -38,44 +50,45 @@ export class ActionButtonComponent implements OnInit {
   @Output() dehired = new EventEmitter<boolean>();
   @Output() completed = new EventEmitter<boolean>();
 
-
-  get statusId(): number | undefined {
-    const statuses = new Set(this.cages.map(_ => _.statusId));
+  private setStatusId(cages: Cage[]): void {
+    const statuses = new Set(cages.map(_ => _.statusId));
     const [first] = statuses;
-    return statuses.size === 1 ? first : undefined;
+    this.statusId = statuses.size === 1 ? first : undefined;
   }
 
-  get hasComplete(): boolean | undefined {
-    return this.cages.filter(_ => _.statusId === 7).length > 0;
-  }
-
-  get status(): string | undefined {
-    const statuses = new Set(this.cages.map(_ => _?.fields.Status));
+  private setStatus(cages: Cage[]): void {
+    const statuses = new Set(cages.map(_ => _?.fields.Status));
     const [first] = statuses;
-    return statuses.size === 1 ? first : undefined;
+    this.status = statuses.size === 1 ? first : undefined;
   }
 
-  get areCages(): boolean {
-    const statuses = this.cages.filter(_ => !_.fields.CageNumber);
-    return statuses.length === 0;
+  private setAreCages(cages: Cage[]): void {
+    const statuses = cages.filter(_ => !_.fields.CageNumber);
+    this.areCages = statuses.length === 0;
   }
 
-  get cageBranch(): string | undefined {
-    const statuses = new Set(this.cages.map(_ => _?.fields.Branch));
+  private setCageBranch(cages: Cage[]): void {
+    const statuses = new Set(cages.map(_ => _?.fields.Branch));
     const [first] = statuses;
-    return statuses.size === 1 ? first : undefined;
+    this.cageBranch = 1 ? first : undefined;
   }
 
-  get cageMaterial(): number | null {
-    const statuses = new Set(this.cages.map(_ => _?.fields.Material));
+  private setCageMaterial(cages: Cage[]): void {
+    const statuses = new Set(cages.map(_ => _?.fields.Material));
     const [first] = statuses;
-    return statuses.size === 1 ? first : null;
+    this.cageMaterial = statuses.size === 1 ? first : null;
   }
 
   public dialogRef!: MatDialogRef<CustomerPickerDialogComponent, any>;
   public branches = this.sharedService.branches;
   public materials = this.recyclingService.materials;
   public depots!: Array<Site>;
+  public statusId: number | undefined;
+  public hasComplete!: boolean;
+  public cageBranch: string | undefined;
+  public cageMaterial!: number | null;
+  public status: string | undefined;
+  public areCages!: boolean;
 
   constructor(
     private router: Router,
@@ -156,7 +169,7 @@ export class ActionButtonComponent implements OnInit {
           const curVal = acc[key] ? acc[key]['message'] : [];
           const newVal = curVal.concat(`Cage ${cur.fields.CageNumber} ready for delivery to local processing`);
           return {...acc, [key]: {message: newVal, site: cur.fields.Site, customerNumber: cur.fields.CustomerNumber}};
-        }, {} as any);
+        }, {} as Cage);
         const tasks = Object.keys(chunks).map(_ => this.deliveryService.requestCageTransfer(run, chunks[_].customerNumber, chunks[_].Site, chunks[_].message.join('<br>')).pipe(take(1)))
         return forkJoin(tasks);
       })

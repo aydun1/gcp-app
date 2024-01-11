@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'stringColour',
+  standalone: true
 })
 export class StringColourPipe implements PipeTransform {
 
@@ -9,14 +10,14 @@ export class StringColourPipe implements PipeTransform {
   private textWeight = 0.25;
   private seed = 16777219;
   private factor = 49979693;
-    
+
   private colors = {
     'Scheduled': '#2851e7',
     'Pan list sent': '#41a900'
   };
 
   constructor() { }
-  
+
   getColor(text: string): string | null {
     const key = Object.entries(this.colors).find(_ => _[0] === text);
     return key ? key[1] : null;
@@ -42,7 +43,7 @@ export class StringColourPipe implements PipeTransform {
     return hexCol;
   }
 
-  transform(input: any): string {
+  transform(input: string): string {
     if (!input) return '#000000';
     let color = this.getColor(input);
     if (color) return color;

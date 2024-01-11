@@ -6,6 +6,7 @@ const baseUri = 'http://localhost:4200';
 export const environment = {
   production: false,
   baseUri,
+  apiUrl,
   redirectUri: `${baseUri}/auth`,
   gpEndpoint: `${apiUrl}/gp`,
   cwEndpoint: `${apiUrl}/cw`,

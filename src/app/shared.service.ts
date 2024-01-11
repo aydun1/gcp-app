@@ -60,12 +60,12 @@ export class SharedService {
   ]);
 
   public offices = [
-    {state: 'QLD', suburb: 'Stapylton', address: '19 Eastern Service Road', postalCode: '4207'},
-    {state: 'HEA', suburb: 'Heatherton', address: '6 Madden Road', postalCode: '3202'},
-    {state: 'NSW', suburb: 'Somersby', address: '4 - 6 Pinnacle Place', postalCode: '2250'},
-    {state: 'SA', suburb: 'Wingfield', address: '10-12 Hakkinen Road', postalCode: '5013'},
-    {state: 'VIC', suburb: 'Dandenong South', address: 'EJ Court (off Assembly Drive)', postalCode: '3175'},
-    {state: 'WA', suburb: 'Forrestfield', address: 'Facility 4, 271 Berkshire Rd', postalCode: '6058'}
+    {state: 'QLD', suburb: 'Stapylton', suburbs: ['Stapylton'], address: '19 Eastern Service Road', postalCode: '4207'},
+    {state: 'HEA', suburb: 'Heatherton', suburbs: ['Heatherton'], address: '6 Madden Road', postalCode: '3202'},
+    {state: 'NSW', suburb: 'Somersby', suburbs: ['Somersby'], address: '4 - 6 Pinnacle Place', postalCode: '2250'},
+    {state: 'SA', suburb: 'Wingfield', suburbs: ['Wingfield'], address: '10-12 Hakkinen Road', postalCode: '5013'},
+    {state: 'VIC', suburb: 'Dandenong South', suburbs: ['Dandenong South'], address: 'EJ Court (off Assembly Drive)', postalCode: '3175'},
+    {state: 'WA', suburb: 'Forrestdale', suburbs: ['Forrestdale', 'Forrestfield'], address: '2 Turley Street', postalCode: '6058'}
   ];
 
   get pallets(): string[] {
@@ -99,7 +99,7 @@ export class SharedService {
     const url = `${environment.endpoint}/me/officeLocation`;
     return this._state$.pipe(
       switchMap(cur => cur ? of(cur) : this.http.get<{value: string}>(url).pipe(
-        map(_ => this.offices.find(o => o.suburb === _['value'])?.state || 'NA'),
+        map(_ => this.offices.find(o => o.suburbs.includes(_['value']))?.state || 'NA'),
         tap(_ => this._state$.next(_))
       ))
     )

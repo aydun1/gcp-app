@@ -252,7 +252,7 @@ export class PalletsService {
         }};
         if (oldSite) transferFrom['fields']['Site'] = oldSite;
         requests.push({id: i += 1, method: 'POST', url, headers, body: transferFrom});
-  
+
         const transferTo = {fields: {
           Title: custName,
           Branch: branch,

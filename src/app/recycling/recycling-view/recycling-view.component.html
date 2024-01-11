@@ -1,4 +1,4 @@
-<mat-toolbar>
+<mat-toolbar class="site-toolbar">
   <button mat-icon-button (click)="goBack()" class="mobile-button">
     <mat-icon>arrow_back</mat-icon>
   </button>
@@ -22,7 +22,7 @@
         </mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <img *ngIf="cage['material'].image" class="material invert" [src]="'assets/' + cage['material'].image">
+        <img *ngIf="cage.material?.image" class="material invert" [src]="'assets/' + cage.material?.image">
         <mat-list>
           <div mat-subheader><span class="subheader">Details</span></div>
           <mat-list-item *ngIf="cage.fields.Status">
@@ -39,7 +39,7 @@
         <mat-nav-list>
           <a mat-list-item *ngIf="cage.fields.CustomerNumber" [routerLink]="['/customers', cage.fields.CustomerNumber]">
             <mat-icon matListItemIcon>business</mat-icon>
-            <span matListItemTitle>{{ cage.fields.Customer }} 
+            <span matListItemTitle>{{ cage.fields.Customer }}
               <span>({{ cage.fields.CustomerNumber }})</span>
               <span *ngIf="cage.fields.Site">({{ cage.fields.Site }})</span>
             </span>

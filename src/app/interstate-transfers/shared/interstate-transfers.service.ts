@@ -5,6 +5,7 @@ import { BehaviorSubject, map, Observable, lastValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { InTransitTransfer } from './intransit-transfer';
 import { SuggestedItem } from '../../pan-list/suggested-item';
+import { SharedService } from '../../shared.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,8 @@ export class InterstateTransfersService {
   public loading = new BehaviorSubject<boolean>(false);
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private shared: SharedService
   ) { }
 
   getInterstateTransfers(from: string, to: string): Observable<SuggestedItem[]> {
@@ -44,4 +46,37 @@ export class InterstateTransfersService {
     return lastValueFrom(request);
   }
 
+  private emailBody(docId: string, lines: SuggestedItem[], notes: string): string {
+    const rows = lines.map(_ => `<tr><td>${_.ItemNmbr}</td><td>${_.ToTransfer}</td></tr>`).join('');
+    return `
+    <p>
+      <strong>Order no.:</strong> <a href="${environment.baseUri}/transfers/active/${docId}">${docId}</a>
+    </p>
+    <table>
+      <tr><th>Item number</th><th>Qty Requested</th></tr>
+      ${rows}
+    </table>
+    <br>
+    <strong>Notes:</strong>
+    <pre>${notes}</pre>
+    `;
+  }
+
+  sendQuickRequestEmail(fromState: string, toState: string, ownState: string, lines: SuggestedItem[], docId: string, notes: string): void {
+    const mpa = ownState === 'HEA';
+    const subject = `Created ITT for ${fromState} to ${toState}`;
+    const body = this.emailBody(docId, lines, notes);
+    const to = [fromState, toState].filter(_ => _ !== ownState).map(_ => this.shared.emailMap.get(`${_}${mpa ? '_MPA' : ''}` || '')).flat(1).filter(_ => _) as string[];
+    const cc = [fromState, toState].filter(_ => _ === ownState).map(_ => this.shared.panMap.get(`${_}${mpa ? '_MPA' : ''}` || '')).flat(1).filter(_ => _) as string[];
+    if (environment.production) this.shared.sendMail(to, subject, body, 'HTML', cc);
+  }
+
+  sendIttRequestEmail(fromState: string | null, toState: string, lines: SuggestedItem[], docId: string, notes: string): void {
+    const subject = `Items requested by ${toState}`;
+    const body = this.emailBody(docId, lines, notes);
+    const to = this.shared.emailMap.get(fromState || '') || [];
+    const cc = this.shared.panMap.get(toState || '') || [];
+    console.log(body);
+    if (environment.production) this.shared.sendMail(to, subject, body, 'HTML', cc);
+  }
 }

@@ -1,7 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { NgForOf, NgIf } from '@angular/common';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 import { Observable } from 'rxjs';
 
 import { DeliveryService } from '../delivery.service';
@@ -15,7 +19,9 @@ interface RunForm {
 @Component({
   selector: 'gcp-run-manager-dialog',
   templateUrl: './run-manager-dialog.component.html',
-  styleUrls: ['./run-manager-dialog.component.css']
+  styleUrls: ['./run-manager-dialog.component.css'],
+  standalone: true,
+  imports: [NgForOf, NgIf, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatListModule]
 })
 export class RunManagerDialogComponent implements OnInit {
   public loading = true;

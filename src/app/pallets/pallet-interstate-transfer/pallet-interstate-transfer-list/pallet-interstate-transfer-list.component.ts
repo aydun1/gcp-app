@@ -1,17 +1,26 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
-import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
+import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../../shared.service';
 import { PalletsService } from '../../shared/pallets.service';
 import { Pallet } from '../../shared/pallet';
+import { LetterheadComponent } from '../../../shared/letterhead/letterhead.component';
+import { LoadingRowComponent } from '../../../shared/loading/loading-row/loading-row.component';
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer-list',
   templateUrl: './pallet-interstate-transfer-list.component.html',
-  styleUrls: ['./pallet-interstate-transfer-list.component.css']
+  styleUrls: ['./pallet-interstate-transfer-list.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, NgForOf, NgIf, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatSelectModule, MatTableModule, LetterheadComponent, LoadingRowComponent]
 })
 export class PalletInterstateTransferListComponent implements OnInit {
   private _loadList!: boolean;
@@ -109,7 +118,6 @@ export class PalletInterstateTransferListComponent implements OnInit {
   setStatus(status: MatSelectChange): void {
     this.router.navigate([], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
-  
 
   setAssetType(assetType: MatSelectChange): void {
     this.router.navigate([], { queryParams: {assetType: assetType.value}, queryParamsHandling: 'merge', replaceUrl: true});

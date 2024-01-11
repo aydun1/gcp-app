@@ -1,6 +1,12 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { BehaviorSubject, combineLatest, Observable, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
@@ -9,10 +15,13 @@ import { Chemical } from '../shared/chemical';
 import { ChemicalService } from '../shared/chemical.service';
 import { ChemicalBackpackDialogComponent } from '../shared/chemical-backpack-dialog/chemical-backpack-dialog.component';
 
+
 @Component({
   selector: 'gcp-chemical-view',
   templateUrl: './chemical-view.component.html',
-  styleUrls: ['./chemical-view.component.css']
+  styleUrls: ['./chemical-view.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, NgForOf, NgIf, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatToolbarModule]
 })
 export class ChemicalViewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';

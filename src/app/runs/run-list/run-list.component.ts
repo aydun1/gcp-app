@@ -1,10 +1,20 @@
-import { CdkDrag, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { AsyncPipe, DatePipe, DecimalPipe, NgClass, NgForOf, NgIf } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
+import { CdkDrag, CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
-import { MatAccordion } from '@angular/material/expansion';
+import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 import { Customer } from '../../customers/shared/customer';
@@ -23,11 +33,18 @@ import { OrderLinesDialogComponent } from '../shared/order-lines-dialog/order-li
 import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog.component';
 import { DocsService } from '../../shared/docs/docs.service';
 import { Address } from '../../customers/shared/address';
+import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
+import { GroupByPropertyPipe } from '../../shared/pipes/group-by-property';
+import { GroupByCustomerAddressPipe } from '../../shared/pipes/group-by-customer-address';
+import { PhoneLinkPipe } from '../../shared/pipes/phone-link';
+import { RunChemicalsDialogComponent } from '../shared/run-chemicals-dialog/run-chemicals-dialog.component';
 
 @Component({
   selector: 'gcp-run-list',
   templateUrl: './run-list.component.html',
-  styleUrls: ['./run-list.component.css']
+  styleUrls: ['./run-list.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, DecimalPipe, NgIf, NgClass, NgForOf, DragDropModule, MatButtonModule, MatDatepickerModule, ReactiveFormsModule, MatCheckboxModule, MatExpansionModule, MatIconModule, MatListModule, MatMenuModule, MatProgressSpinnerModule, MatTabsModule, MatTooltipModule, RouterModule, GroupByCustomerAddressPipe, PhoneLinkPipe, GroupByPropertyPipe, LetterheadComponent],
 })
 export class RunListComponent implements OnInit {
   private _branch!: string;
@@ -36,7 +53,7 @@ export class RunListComponent implements OnInit {
   private _openingAll = false;
 
   @ViewChild('groupedRuns') public accordion!: MatAccordion;
-  public dateFilter = new FormControl(this.getDate());
+  public dateFilter = new FormControl(this.deliveryService.getDate());
   public orders$!: Observable<Order[]>;
   public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryService.loading;
@@ -72,15 +89,6 @@ export class RunListComponent implements OnInit {
     private docsService: DocsService
   ) { }
 
-  private getDate(): Date {
-    const date = new Date();
-    const day = date.getDay();
-    const nextDay = day > 4 ? 8 - day : 1;
-    date.setDate(date.getDate() + nextDay);
-    date.setHours(0,0,0,0);
-    return date;
-  }
-
   nextDay(): void {
     if (!this.dateFilter.value) return;
     const date = this.dateFilter.value;
@@ -109,7 +117,7 @@ export class RunListComponent implements OnInit {
 
     this.orders$ = combineLatest([state$, date$, this._orderRefreshTrigger$]).pipe(
       tap(() => this.loadingOrders = true),
-      switchMap(([state, date, _]) => this.deliveryService.syncOrders(state, date || this.getDate())),
+      switchMap(([state, date, _]) => this.deliveryService.syncOrders(state, date || this.deliveryService.getDate())),
       tap(() => this.loadingOrders = false)
     );
 
@@ -149,7 +157,7 @@ export class RunListComponent implements OnInit {
     if (tab === null) return;
     this.openedTab = tab;
     this.locked = tab !== 0;
-    const queryParams: any = {tab};
+    const queryParams = {tab};
     this.router.navigate([], {queryParams, replaceUrl: true, queryParamsHandling: 'merge'});
   }
 
@@ -160,12 +168,10 @@ export class RunListComponent implements OnInit {
         return _.filter(d => {
           const run = this.runName || this.runs[this.route.snapshot.queryParamMap.get('tab') || 0]?.fields.Title || '';
           return d.fields.Run === run;
-      }).map(
-        _ => {
-          _['order'] = this.deliveryService.getOrder(2, _.fields.OrderNumber);
-          return _
-        }
-      )
+      }).map(_ => {
+        _['order'] = this.deliveryService.getOrder(2, _.fields.OrderNumber);
+        return _;
+      })
     })
     )
   }
@@ -193,6 +199,16 @@ export class RunListComponent implements OnInit {
   openCustomerPicker(): void {
     const data = {notes: true, address: true, title: 'Delivery details'};
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px', data});
+    dialogRef.afterClosed().pipe(
+      switchMap(_ => _ ? this.addCustomerDelivery(_.customer, _.site, _.address, _.notes, _.customerType) : of()),
+    ).subscribe(() => {
+      this.loading = false;
+    });
+  }
+
+  openSdsDialog(run: string) {
+    const data = {run, branch: this._branch};
+    const dialogRef = this.dialog.open(RunChemicalsDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().pipe(
       switchMap(_ => _ ? this.addCustomerDelivery(_.customer, _.site, _.address, _.notes, _.customerType) : of()),
     ).subscribe(() => {
@@ -251,7 +267,7 @@ export class RunListComponent implements OnInit {
     return this.deliveryService.addDrop(delivery, undefined);
   }
 
-  markComplete(e: any, deliveries: Array<Delivery>, currentStatus: string): void {
+  markComplete(e: Event, deliveries: Array<Delivery>, currentStatus: string): void {
     e.stopPropagation();
     const ids = deliveries.map(_ => _.id);
     this.deliveryService.changeStatuses(ids, currentStatus);
@@ -289,7 +305,7 @@ export class RunListComponent implements OnInit {
   archiveDeliveriesByRun(runName: string): void {
     const data = {title: 'Archive run', content: ['Are you sure you want to archive these deliveries?']};
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {width: '800px', data});
-    dialogRef.afterClosed().subscribe((result: any) => {
+    dialogRef.afterClosed().subscribe(result => {
       if (!result) return;
       this.loading = true;
       this.deliveryService.archiveDeliveriesByRun(runName).then( _ => {
@@ -348,7 +364,7 @@ export class RunListComponent implements OnInit {
     const subfolder = [custNmbr.trimEnd(), orderNmbr.trimEnd()].filter(_ => _).join('/');
     this.docsService.fileChangeEvent(folder, subfolder, e);
   }
-  
+
   openAll(): void {
     this._openingAll = true;
     this.accordion.openAll();
@@ -373,7 +389,7 @@ export class RunListComponent implements OnInit {
     return item.id;
   }
 
-  trackByGroupsFn(index: number, item: any): string {
+  trackByGroupsFn(index: number, item: {key: string}): string {
     return item.key;
   }
 

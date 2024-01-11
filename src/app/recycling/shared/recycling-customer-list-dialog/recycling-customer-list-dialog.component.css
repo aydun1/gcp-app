@@ -6,7 +6,7 @@
 
 .header {
   display: flex;
-  margin: 24px; 
+  margin: 24px;
 }
 
 .customer {
@@ -54,7 +54,7 @@
   .buttons {
     display: none;
   }
- 
+
   .header, .customer {
     margin-left: 0;
     margin-right: 0;

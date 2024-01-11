@@ -1,7 +1,12 @@
 import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
 import { FormControl } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectChange } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
 
 import { Site } from '../../../customers/shared/site';
@@ -9,11 +14,15 @@ import { Customer } from '../../../customers/shared/customer';
 import { SharedService } from '../../../shared.service';
 import { Pallet } from '../pallet';
 import { PalletsService } from '../pallets.service';
+import { LetterheadComponent } from '../../../shared/letterhead/letterhead.component';
+import { LoadingRowComponent } from '../../../shared/loading/loading-row/loading-row.component';
 
 @Component({
   selector: 'gcp-pallet-customer-list-dialog',
   templateUrl: './pallet-customer-list-dialog.component.html',
-  styleUrls: ['./pallet-customer-list-dialog.component.css']
+  styleUrls: ['./pallet-customer-list-dialog.component.css'],
+  standalone: true,
+  imports: [NgForOf, NgIf, AsyncPipe, DatePipe, MatButtonModule, MatDialogModule, MatIconModule, MatMenuModule, MatTableModule, LetterheadComponent, LoadingRowComponent]
 })
 export class PalletCustomerListDialogComponent implements OnInit, OnDestroy {
   public pallets$!: Observable<Pallet[]>;

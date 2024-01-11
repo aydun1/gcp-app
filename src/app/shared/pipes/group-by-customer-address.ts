@@ -4,8 +4,20 @@ import { Delivery } from '../../runs/shared/delivery';
 
 interface groupedDelivery {
   drops: Array<{
+    key: string;
     id: string;
-    fields: any;
+    fields: {
+      ContactPerson: string;
+      Run: string;
+      Address: string;
+      City: string;
+      Postcode: string;
+      PhoneNumber: string;
+      CustomerName: string;
+      CustomerNumber: string;
+      Site: string;
+      Status: string;
+    };
     value: Delivery[];
     hasNotes: number;
     hasOrderNumbers: number;
@@ -19,7 +31,8 @@ interface groupedDelivery {
 }
 
 @Pipe({
-  name: 'groupByCustomerAddress'
+  name: 'groupByCustomerAddress',
+  standalone: true
 })
 export class GroupByCustomerAddressPipe implements PipeTransform {
   transform(collection: Array<Delivery> | null): groupedDelivery {
@@ -71,7 +84,7 @@ export class GroupByCustomerAddressPipe implements PipeTransform {
       const run = cur.fields.Run || '';
       acc[run] = (acc[run] || 0) + 1;
       return acc;
-    }, {}); 
+    }, {});
     const spaces = drops.reduce((acc, cur) => {
       const run = cur.fields.Run || '';
       acc[run] = (acc[run] || 0) + cur.spaces;

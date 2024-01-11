@@ -1,5 +1,10 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, Subject, catchError, of, switchMap, tap } from 'rxjs';
 
@@ -8,7 +13,7 @@ import { DeliveryService } from '../delivery.service';
 import { Order } from '../order';
 import { PalletDialogComponent } from '../../../pallets/shared/pallet-dialog/pallet-dialog.component';
 import { PalletsService } from '../../../pallets/shared/pallets.service';
-
+import { DocsComponent } from '../../../shared/docs/docs.component';
 
 interface Data {
   sopType: number;
@@ -25,7 +30,9 @@ interface PalletQuantities {
 @Component({
   selector: 'gcp-order-lines-dialog',
   templateUrl: './order-lines-dialog.component.html',
-  styleUrls: ['./order-lines-dialog.component.css']
+  styleUrls: ['./order-lines-dialog.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule, MatProgressSpinnerModule, DocsComponent]
 })
 export class OrderLinesDialogComponent implements OnInit {
   private _palletsSubject$ = new Subject<string>();

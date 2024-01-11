@@ -1,7 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSelectionListChange } from '@angular/material/list';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule, MatSelectionListChange } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { combineLatest, distinctUntilChanged, map, Observable, startWith, Subject, tap } from 'rxjs';
 
@@ -11,7 +16,9 @@ import { ChemicalService } from '../chemical.service';
 @Component({
   selector: 'gcp-chemical-backpack-dialog',
   templateUrl: './chemical-backpack-dialog.component.html',
-  styleUrls: ['./chemical-backpack-dialog.component.css']
+  styleUrls: ['./chemical-backpack-dialog.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, NgForOf, NgIf, ReactiveFormsModule, MatButtonModule, MatDialogModule, MatIconModule, MatInputModule, MatListModule, MatProgressSpinnerModule]
 })
 export class ChemicalBackpackDialogComponent implements OnInit {
   private _subject = new Subject<boolean>();

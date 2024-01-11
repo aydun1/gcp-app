@@ -74,7 +74,7 @@
         <mat-icon>close</mat-icon>
       </button>
     </div>
-    <gcp-action-button [cages]="selection.selected" class="actions"></gcp-action-button>  
+    <gcp-action-button [cages]="selection.selected" class="actions"></gcp-action-button>
   </div>
 
   <div class="status-header inner">
@@ -151,7 +151,7 @@
       <ng-container matColumnDef="material">
         <mat-header-cell *matHeaderCellDef> Material </mat-header-cell>
         <mat-cell *matCellDef="let cage">
-          {{cage.material.name}}
+          {{ cage.material?.name }}
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>

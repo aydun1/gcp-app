@@ -1,16 +1,25 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { AsyncPipe, NgIf } from '@angular/common';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { Observable, of, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../../shared.service';
 import { NavigationService } from '../../../navigation.service';
 import { PalletsReconciliationService } from '../../shared/pallets-reconciliation.service';
 import { Reconciliation } from '../../shared/reconciliation';
+import { LoadingPageComponent } from '../../../shared/loading/loading-page/loading-page.component';
 
 @Component({
   selector: 'gcp-pallet-reconciliation-view',
   templateUrl: './pallet-reconciliation-view.component.html',
-  styleUrls: ['./pallet-reconciliation-view.component.css']
+  styleUrls: ['./pallet-reconciliation-view.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, NgIf, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatToolbarModule, LoadingPageComponent]
 })
 export class PalletReconciliationViewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';

@@ -1,17 +1,24 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
-import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
+import { AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
-import { SuggestedItem } from '../../pan-list/suggested-item';
+import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
+import { GroupByPropertyPipe } from '../../shared/pipes/group-by-property';
 
 @Component({
   selector: 'gcp-interstate-transfers-active',
   templateUrl: './interstate-transfers-active.component.html',
-  styleUrls: ['./interstate-transfers-active.component.css']
+  styleUrls: ['./interstate-transfers-active.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf, ReactiveFormsModule, RouterModule, MatCardModule, MatProgressSpinnerModule, MatSelectModule, MatTableModule, LetterheadComponent, GroupByPropertyPipe]
 })
 export class InterstateTransfersActiveComponent implements OnInit {
   private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
@@ -71,7 +78,7 @@ export class InterstateTransfersActiveComponent implements OnInit {
   makeFormGroup(lines: Array<any>): FormGroup<any> {
     this.lines.clear();
     let i = -1;
-    lines.forEach(_ => 
+    lines.forEach(_ =>
       this.lines.push(this.fb.group({
         index: [i += 1],
         id: [_.Id],
@@ -93,7 +100,7 @@ export class InterstateTransfersActiveComponent implements OnInit {
     this.loading = false;
     return this.transferForm;
   }
-  
+
   getInterstateTransfers(params: Params): Observable<any[]> {
     const from = params['from'] || '';
     const to = params['to'] || '';

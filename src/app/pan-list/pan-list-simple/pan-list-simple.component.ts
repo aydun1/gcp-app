@@ -1,15 +1,24 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { AsyncPipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTableModule } from '@angular/material/table';
 import { BehaviorSubject, distinctUntilChanged, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 import { PanListService } from '../pan-list.service';
 import { RequestLine } from '../request-line';
+import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-row.component';
 
 @Component({
   selector: 'gcp-pan-list-simple',
   templateUrl: './pan-list-simple.component.html',
-  styleUrls: ['./pan-list-simple.component.css']
+  styleUrls: ['./pan-list-simple.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DecimalPipe, NgForOf, NgIf, FormsModule, ReactiveFormsModule, RouterModule, MatButtonToggleModule, MatButtonModule, MatIconModule, MatMenuModule, MatTableModule, LoadingRowComponent]
 })
 export class PanListSimpleComponent implements OnInit {
   @Input() panLists!: Array<string[]>;
@@ -89,7 +98,7 @@ export class PanListSimpleComponent implements OnInit {
     });
     return this.transferForm;
   }
-  
+
   getRequestedQuantities(params: Params): Observable<RequestLine[]> {
     if (!params['pan']) return of([]);
     return this.panListService.getRequestedQuantities(this.scheduleId, params['pan']);

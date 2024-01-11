@@ -1,18 +1,21 @@
 import { ViewportRuler } from '@angular/cdk/scrolling';
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { Subscription } from 'rxjs';
 import SignaturePad from 'signature_pad';
 
 @Component({
   selector: 'gcp-signature-pad',
   templateUrl: './signature-pad.component.html',
-  styleUrls: ['./signature-pad.component.css']
+  styleUrls: ['./signature-pad.component.css'],
+  standalone: true,
+  imports: [MatButtonModule, MatCardModule]
 })
 export class SignaturePadComponent implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('sPad', {static: true}) signaturePadElement!: ElementRef<HTMLCanvasElement>;
   private signaturePad!: SignaturePad;
   private viewportChange!: Subscription;
-
 
   constructor(
     private viewportRuler: ViewportRuler,

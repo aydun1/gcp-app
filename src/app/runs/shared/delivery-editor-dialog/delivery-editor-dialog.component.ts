@@ -1,6 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+
 import { throwError } from 'rxjs';
 
 import { Delivery } from '../delivery';
@@ -15,7 +19,9 @@ interface DeliveryForm {
 @Component({
   selector: 'gcp-delivery-editor-dialog',
   templateUrl: './delivery-editor-dialog.component.html',
-  styleUrls: ['./delivery-editor-dialog.component.css']
+  styleUrls: ['./delivery-editor-dialog.component.css'],
+  standalone: true,
+  imports: [ReactiveFormsModule, MatDatepickerModule, MatDialogModule, MatFormFieldModule, MatIconModule]
 })
 export class DeliveryEditorDialogComponent implements OnInit {
   public loading = false;
@@ -32,14 +38,17 @@ export class DeliveryEditorDialogComponent implements OnInit {
     this.deliveryForm = this.fb.group({
       address: this.data.delivery.fields.Address,
       notes: this.data.delivery.fields.Notes,
-      requested: this.data.delivery.fields.RequestedDate
+      requested: new Date(this.data.delivery.fields.RequestedDate)
     });
   }
 
   updateDelivery(): void {
     this.loading = true;
     const notes = this.deliveryForm.value.notes || '';
-    const requestedDate = this.deliveryForm.value.requested;
+    let requestedDate = this.deliveryForm.value.requested;
+    if (requestedDate) {
+      requestedDate = new Date(`${requestedDate.getFullYear()}-${requestedDate.getMonth() + 1}-${requestedDate.getDate()}`);
+    }
     const action = this.deliveryService.updateDelivery(this.data.delivery.id, notes, requestedDate);
     action.then(() =>
       this.dialogRef.close()

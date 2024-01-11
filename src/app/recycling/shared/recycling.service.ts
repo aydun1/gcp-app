@@ -8,6 +8,7 @@ import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, 
 import { Site } from '../../customers/shared/site';
 import { environment } from '../../../environments/environment';
 import { SharedService } from '../../shared.service';
+import { Choice } from '../../shared/choice';
 import { Cage } from './cage';
 import { BranchTotal } from './branch-total';
 
@@ -19,7 +20,7 @@ export class RecyclingService {
   private _loadingCages!: boolean;
   private _nextPage!: string;
   private _cagesSubject$ = new BehaviorSubject<Cage[]>([]);
-  private _columns$ = new BehaviorSubject<any>(
+  private _columns$ = new BehaviorSubject<{Placeholder: boolean, AssetType: Choice, Status: Choice, Branch: Choice}>(
     {Placeholder: true, AssetType: {choice: {choices: []}, name: ''}, Status: {choice: {choices: []}, name: ''}, Branch: {choice: {choices: []}, name: ''}}
   );
   private _totalsUrl = 'lists/7354d3dc-88fe-4184-b069-13e5ee6cf56f';
@@ -67,7 +68,7 @@ export class RecyclingService {
         const index = _.findIndex(_ => _.id === id);
         if (_.length - index < 5 ) this.getNextPage();
         const direction = prev ? -1 : 1;
-        return _[index + direction]?.id; 
+        return _[index + direction]?.id;
     }))
   }
 
@@ -112,7 +113,7 @@ export class RecyclingService {
 
   private assignStatus(cage: Cage): Cage {
     if (!cage.fields) return cage;
-    cage['material'] = this.materials.find(_ => _.code === cage.fields.Material) || {};
+    cage['material'] = this.materials.find(_ => _.code === cage.fields.Material) || null;
     cage['Date'] = cage.fields.Date4 || cage.fields.Date3 || cage.fields.ToLocalProcessing || cage.fields.Date2 || cage.fields.Date1 || cage.fields.Created;
     cage['Cage'] = cage.fields.AssetType?.startsWith('Cage');
     cage['Type'] = cage['Cage'] ? cage.fields.AssetType.split('-', 2)[1].split(' ', 2)[1][0].toLowerCase() : null;
@@ -217,7 +218,7 @@ export class RecyclingService {
   }
 
   getAllCustomerCages(custnmbr: string, site = ''): Observable<Cage[]> {
-    const fields = ['AssetType', 'CageNumber', 'CageWeight', 'Created', 'Date1', 'Date2', 'Date3', 'Date4', 'GrossWeight', 'Modified', 'NetWeight', 'Site', 'Status', 'ToLocalProcessing'];
+    const fields = ['AssetType', 'CageNumber', 'CageWeight', 'Created', 'Date1', 'Date2', 'Date3', 'Date4', 'GrossWeight', 'Modified', 'NetWeight', 'Site', 'Status', 'ToLocalProcessing', 'FromLocalProcessing'];
     let url = this._cageTrackerUrl + `/items?expand=fields(select=${fields.join(',')})`;
     url += '&orderby=fields/Modified desc';
     url += `&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
@@ -226,7 +227,7 @@ export class RecyclingService {
   }
 
   getActiveCustomerCages(custnmbr: string, site = '', includeReturned: boolean): Observable<Cage[]> {
-    const fields = ['AssetType', 'CageNumber', 'CageWeight', 'Created', 'Branch', 'CustomerNumber', 'Notes', 'Material', 'Date1', 'Date2', 'Date3', 'Date4', 'GrossWeight', 'Modified', 'NetWeight', 'Site', 'Status', 'ToLocalProcessing'];
+    const fields = ['AssetType', 'CageNumber', 'CageWeight', 'Created', 'Branch', 'CustomerNumber', 'Notes', 'Material', 'Date1', 'Date2', 'Date3', 'Date4', 'GrossWeight', 'Modified', 'NetWeight', 'Site', 'Status', 'ToLocalProcessing', 'FromLocalProcessing'];
     let url = this._cageTrackerUrl + `/items?expand=fields(select=${fields.join(',')})&filter=fields/CustomerNumber eq '${this.shared.sanitiseName(custnmbr)}'`;
     if (!includeReturned) url += ` and fields/Date2 eq null`;
     url += ` and fields/Status ne 'Complete'`;
@@ -299,7 +300,7 @@ export class RecyclingService {
     const payload = {fields: {Status: 'Collected from local processing', FromLocalProcessing: new Date()}};
     return this.updateStatus(id, payload);
   }
-  
+
   markCageComplete(id: string): Observable<Cage> {
     const payload = {fields: {Status: 'Complete'}};
     return this.updateStatus(id, payload);

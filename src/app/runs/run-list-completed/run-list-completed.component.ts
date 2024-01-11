@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
-import { ActivatedRoute, NavigationEnd, Params, Router } from '@angular/router';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 import { distinctUntilChanged, filter, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { Delivery } from '../shared/delivery';
@@ -11,11 +16,14 @@ import { Run } from '../shared/run';
 import { SharedService } from '../../shared.service';
 import { OrderLinesDialogComponent } from '../shared/order-lines-dialog/order-lines-dialog.component';
 import { DeliveryCompletedService } from '../shared/delivery-completed.service';
+import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
 
 @Component({
   selector: 'gcp-run-list-completed',
   templateUrl: './run-list-completed.component.html',
-  styleUrls: ['./run-list-completed.component.css']
+  styleUrls: ['./run-list-completed.component.css'],
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, NgForOf, NgIf, RouterModule, MatCardModule, MatCheckboxModule, MatProgressSpinnerModule, MatSelectModule, MatTableModule, ReactiveFormsModule, LetterheadComponent]
 })
 export class RunListCompletedComponent implements OnInit {
   private _loadList = false;
@@ -137,8 +145,8 @@ export class RunListCompletedComponent implements OnInit {
     return item.id;
   }
 
-  trackByGroupsFn(index: number, item: any): string {
-    return item.key;
+  trackByGroupsFn(index: number, item: {id: string}): string {
+    return item.id;
   }
 
 }

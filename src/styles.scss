@@ -107,6 +107,14 @@ input {
   filter: invert(1);
 }
 
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+
 .mat-mdc-cell:hover a {
   text-decoration: underline;
 }
@@ -311,6 +319,7 @@ gcp-big-button > .link {
   .print gcp-recycling-list,
   .print gcp-loading-schedule-list,
   .print gcp-interstate-transfers-active,
+  .print gcp-run-list > .scroller,
   .print gcp-pallet-interstate-transfer-list {
     height: 0;
   }
@@ -320,7 +329,7 @@ gcp-big-button > .link {
     min-height: 100vh!important;
     width: 100%!important;
   }
-  
+
   .cdk-overlay-container, .cdk-global-overlay-wrapper {
     position: relative;
     height: auto;
