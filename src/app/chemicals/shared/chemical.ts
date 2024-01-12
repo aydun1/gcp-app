@@ -3,6 +3,7 @@ export interface Chemical {
   ItemNmbr: string;
   ItemDesc: string;
   CwNo: string;
+  Dgc: string;
   Name: string;
   sdsExists: number;
   DocNo: string;
@@ -10,6 +11,5 @@ export interface Chemical {
   Quantity: number;
   Bin?: string;
   QtyOnHand?: number;
-  class?: string;
   key: string;
 }

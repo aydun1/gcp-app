@@ -16,8 +16,8 @@
   flex: 1;
 }
 
-.quantity {
-  flex: 0 0 60px;
+.class, .quantity {
+  flex: 0 0 80px;
   text-align: right;
 }
 
@@ -79,20 +79,26 @@
 
 @media (max-width: 800px) {
   .row {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .item-desc {
+    flex: inherit;
+    width: 100%;
+  }
+
+  .class {
+    flex: 0 0 120px;
+    text-align: left;
+  }
+  
+  .quantity {
+    flex: 0 0 120px;
   }
 
   .header {
     display: none;
-  }
-
-  .item-number {
-    font-weight: bold;
-  }
-
-  .item-number, .item-desc, .quantity {
-    flex: inherit
   }
 
   .mobile-show {
