@@ -1,10 +1,11 @@
 {
   "packageId": "com.gardencityplastics.ims",
-  "host": "pallets.gardencityplastics.com",
+  "host": "ims.gardencityplastics.com",
   "name": "Inventory Management System",
   "launcherName": "IMS",
   "display": "standalone",
   "themeColor": "#309962",
+  "themeColorDark": "#000000",
   "navigationColor": "#000000",
   "navigationColorDark": "#000000",
   "navigationDividerColor": "#000000",
@@ -12,18 +13,18 @@
   "backgroundColor": "#FAFAFA",
   "enableNotifications": true,
   "startUrl": "/",
-  "iconUrl": "https://pallets.gardencityplastics.com/assets/icons/icon-512x512.png",
-  "maskableIconUrl": "https://pallets.gardencityplastics.com/assets/icons/maskable-icon-512x512.png",
+  "iconUrl": "https://ims.gardencityplastics.com/assets/icons/icon-512x512.png",
+  "maskableIconUrl": "https://ims.gardencityplastics.com/assets/icons/maskable-icon-512x512.png",
   "splashScreenFadeOutDuration": 300,
   "signingKey": {
-    "path": "C:\\Users\\aidan.obrien.gcp\\dev\\gcp-app\\android.keystore",
+    "path": "D:\\gcp-app\\android.keystore",
     "alias": "android"
   },
-  "appVersionName": "3",
-  "appVersionCode": 3,
+  "appVersionName": "6",
+  "appVersionCode": 6,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
-  "webManifestUrl": "https://pallets.gardencityplastics.com/manifest.webmanifest",
+  "webManifestUrl": "https://ims.gardencityplastics.com/manifest.webmanifest",
   "fallbackType": "customtabs",
   "features": {},
   "alphaDependencies": {
@@ -32,11 +33,13 @@
   "enableSiteSettingsShortcut": true,
   "isChromeOSOnly": false,
   "isMetaQuest": false,
-  "fullScopeUrl": "https://pallets.gardencityplastics.com/",
+  "fullScopeUrl": "https://ims.gardencityplastics.com/",
   "minSdkVersion": 19,
   "orientation": "default",
   "fingerprints": [],
-  "additionalTrustedOrigins": [],
+  "additionalTrustedOrigins": [
+    "https://login.microsoftonline.com"
+  ],
   "retainedBundles": [],
-  "appVersion": "3"
+  "appVersion": "6"
 }

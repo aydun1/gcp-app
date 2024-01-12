@@ -16,6 +16,12 @@
 -->
 <resources>
   
+    <string-array name="additional_trusted_origins">
+    
+      <item>https://https://login.microsoftonline.com</item>
+    
+    </string-array>
+  
 
   <!--
     This variable below expresses the relationship between the app and the site,
@@ -28,9 +34,17 @@
         \"relation\": [\"delegate_permission/common.handle_all_urls\"],
         \"target\": {
             \"namespace\": \"web\",
-            \"site\": \"https://pallets.gardencityplastics.com\"
+            \"site\": \"https://ims.gardencityplastics.com\"
         }
     }]
+    
+      ,[{
+          \"relation\": [\"delegate_permission/common.handle_all_urls\"],
+          \"target\": {
+              \"namespace\": \"web\",
+              \"site\": \"https://https://login.microsoftonline.com\"
+          }
+      }]        
     
   </string>  
 </resources>
