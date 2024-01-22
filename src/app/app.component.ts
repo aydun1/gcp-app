@@ -14,6 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { InteractionStatus, EventMessage, EventType, AccountInfo, RedirectRequest } from '@azure/msal-browser';
+import { SwUpdate, VersionEvent } from '@angular/service-worker';
 import { authentication } from '@microsoft/teams-js';
 import { distinctUntilChanged, filter, interval, Observable, Subject, takeUntil, tap } from 'rxjs';
 
@@ -22,38 +23,25 @@ import { TeamsService } from './teams.service';
 import { ThemingService } from './theming.service';
 import { ScannerDialogComponent } from './shared/scanner-dialog/scanner-dialog.component';
 import { DocsService } from './shared/docs/docs.service';
-import { SwUpdate, VersionEvent } from '@angular/service-worker';
 
 @Component({
   selector: 'gcp-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   standalone: true,
-  imports: [
-    AsyncPipe,
-    NgForOf,
-    NgIf,
-    RouterModule,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatListModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatMenuModule
-  ]
+  imports: [AsyncPipe, NgForOf, NgIf, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatSidenavModule, MatToolbarModule, MatMenuModule]
 })
 export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('snav') public sidenav!: MatSidenavContainer;
   private readonly _destroying$ = new Subject<void>();
   private _checkInterval = 1000 * 60 * 60 * 6;  // 6 hours
   private _darkClass = 'dark-theme';
-  public loginDisplay = false;
+  public loginDisplay!: boolean;
   public accounts: AccountInfo[] = [];
   public photo$!: Observable<SafeUrl>;
   public isMobile = false;
   public appTitle = '';
-  public checkedTeams = false;
+  public checkedTeams!: boolean;
   public token: string | undefined;
   public warehouse!: boolean;
   public isQld = false;
@@ -103,13 +91,11 @@ export class AppComponent implements OnInit, OnDestroy {
     authentication.getAuthToken().then(_ => this.token = _).catch(_ => console.log(_));
     // Enables auto login/logout in other open windows/tabs
     this.msalBroadcastService.msalSubject$.pipe(
-      filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED),
-      tap(() => this.authService.instance.getAllAccounts().length === 0 ? this.router.navigate(['/']) : this.setLoginDisplay())
-    ).subscribe();
-
-    this.msalBroadcastService.msalSubject$.pipe(
-      filter((msg: EventMessage) => msg.eventType === EventType.LOGIN_SUCCESS && msg.payload && msg.payload['account']),
-      tap((msg: EventMessage) => this.authService.instance.setActiveAccount(msg.payload ? msg.payload['account'] : null))
+      filter(msg => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED),
+      tap(msg => {
+        this.authService.instance.setActiveAccount(msg.payload as AccountInfo);
+        this.setLoginDisplay(msg.eventType === EventType.ACCOUNT_ADDED);
+      })
     ).subscribe();
 
     // On interaction
@@ -148,14 +134,15 @@ export class AppComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  setLoginDisplay(): void {
+  setLoginDisplay(preset = false): void {
     this.accounts = this.authService.instance.getAllAccounts();
     this.canSee = this.sharedService.getRoles();
-    this.loginDisplay = this.accounts.length > 0;
+    const isLoggedIn = this.accounts.length > 0;
+    this.loginDisplay = preset || isLoggedIn;
     this.sharedService.checkIfWarehouse(this.accounts);
     this.warehouse = this.sharedService.isWarehouse;
-    if (!this.loginDisplay && this.location.path() === '/logout') this.router.navigate(['/']);
-    if (this.loginDisplay) this.getPhoto();
+    if (!isLoggedIn && this.location.path() === '/logout') this.router.navigate(['/']);
+    if (isLoggedIn) this.getPhoto();
   }
 
   getPhoto(): void {

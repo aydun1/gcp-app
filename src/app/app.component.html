@@ -93,19 +93,6 @@
       <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>
-
-  <mat-menu #menu="matMenu" class="app-menu">
-    <div class="menu-upper">
-      <div class="menu-company">Garden City Plastics</div>
-      <a mat-button routerLink="/logout" class="menu-logout">Logout</a>
-    </div>
-    <mat-list>
-      <mat-list-item class="menu-accounts" *ngFor="let account of accounts">
-        <span matListItemTitle>{{ account.name }}</span>
-        <span>{{ account.username }}</span>
-      </mat-list-item>
-    </mat-list>
-  </mat-menu>
 </ng-container>
 
 <div *ngIf="!loginDisplay" class="login">
@@ -120,3 +107,16 @@
     </mat-card-actions>
   </mat-card>
 </div>
+
+<mat-menu #menu="matMenu" class="app-menu">
+  <div class="menu-upper">
+    <div class="menu-company">Garden City Plastics</div>
+    <a mat-button routerLink="/logout" class="menu-logout">Logout</a>
+  </div>
+  <mat-list>
+    <mat-list-item class="menu-accounts" *ngFor="let account of accounts">
+      <span matListItemTitle>{{ account.name }}</span>
+      <span>{{ account.username }}</span>
+    </mat-list-item>
+  </mat-list>
+</mat-menu>

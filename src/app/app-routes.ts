@@ -5,9 +5,9 @@ import { HomeComponent } from './home/home.component';
 import { LogoutComponent } from './logout/logout.component';
 
 export const routes: Route[] = [
-  { path: '', loadChildren: () => [{path: '', component: HomeComponent}] },
-  { path: 'auth', loadChildren: () => [{path: '', component: MsalRedirectComponent}] },
-  { path: 'logout', loadChildren: () => [{path: '', component: LogoutComponent}] },
+  { path: '', component: HomeComponent },
+  { path: 'auth', component: MsalRedirectComponent },
+  { path: 'logout', component: LogoutComponent },
   { path: 'customers', canActivate: [MsalGuard], loadChildren: () => import('./customers/routes') },
   { path: 'recycling', canActivate: [MsalGuard], loadChildren: () => import('./recycling/routes') },
   { path: 'pallets', canActivate: [MsalGuard], loadChildren: () => import('./pallets/routes') },
