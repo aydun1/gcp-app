@@ -18,6 +18,10 @@
             <mat-option value="Recycling">Recycling</mat-option>
           </mat-select>
         </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
+          <mat-label>Order number</mat-label>
+          <input matInput [formControl]="orderNumberFilter" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autocomplete="chrome-off" placeholder="">
+        </mat-form-field>
       </div>
     </div>
     <mat-card appearance="outlined" *ngIf="deliveries$ | async as groupedDeliveries" class="inner table-container">
@@ -37,7 +41,7 @@
         <ng-container matColumnDef="order">
           <mat-header-cell *matHeaderCellDef> Order no. </mat-header-cell>
           <mat-cell *matCellDef="let order">
-            <a *ngIf="order.fields.OrderNumber; else noNumber" (click)="openReceipt(order.fields.OrderNumber)" routerLink=".">{{ order.fields.OrderNumber }}</a>
+            <span class="link" *ngIf="order.fields.OrderNumber; else noNumber" (click)="openReceipt(order.fields.OrderNumber)">{{ order.fields.OrderNumber }}</span>
             <ng-template #noNumber>
               <span *ngIf="typeFilter.value === 'Pickups'">{{ order.fields.CustomerType === 'Vendor' ? 'Purchase' : 'Return' || order.fields.DeliveryType }}</span>
               <span *ngIf="typeFilter.value === 'Recycling'">{{ order.fields.DeliveryType }}</span>

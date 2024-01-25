@@ -24,20 +24,21 @@ export class DeliveryCompletedService {
     private snackBar: MatSnackBar
   ) { }
 
-  private createUrl(branch: string, deliveryType: string, runName: string | null | undefined = undefined): string {
+  private createUrl(branch: string, deliveryType: string, runName: string | null | undefined, orderNumber: string | undefined): string {
     let url = `${environment.gpEndpoint}/deliveries`;
     const runString = runName ? `${runName}` : '';
     const filters: Array<string> = [];
     if (deliveryType) filters.push(`deliveryType=${deliveryType}`);
     if (runName !== undefined ) filters.push(`run=${runString}`);
+    if (orderNumber !== undefined ) filters.push(`orderNumberQuery=${orderNumber}`);
     if (branch) filters.push(`branch=${branch}`);
     filters.push('status=Archived');
     if (filters.length > 0) url += `?${filters.join('&')}`;
     return url;
   }
 
-  getDeliveries(branch: string, deliveryType: string): BehaviorSubject<Delivery[]> {
-    const url = this.createUrl(branch, deliveryType);
+  getDeliveries(branch: string, deliveryType: string, orderNumber = undefined): BehaviorSubject<Delivery[]> {
+    const url = this.createUrl(branch, deliveryType, undefined, orderNumber);
     this.loading.next(true);
     this.http.get<{value: Delivery[]}>(url).pipe(
       tap(_ => this.loading.next(false)),

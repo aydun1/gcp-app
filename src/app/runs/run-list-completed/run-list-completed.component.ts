@@ -5,10 +5,11 @@ import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@an
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
-import { distinctUntilChanged, filter, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
 import { Delivery } from '../shared/delivery';
 import { Order } from '../shared/order';
@@ -23,7 +24,7 @@ import { LetterheadComponent } from '../../shared/letterhead/letterhead.componen
   templateUrl: './run-list-completed.component.html',
   styleUrls: ['./run-list-completed.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DatePipe, NgForOf, NgIf, RouterModule, MatCardModule, MatCheckboxModule, MatProgressSpinnerModule, MatSelectModule, MatTableModule, ReactiveFormsModule, LetterheadComponent]
+  imports: [AsyncPipe, DatePipe, NgForOf, NgIf, RouterModule, MatCardModule, MatCheckboxModule, MatInputModule, MatProgressSpinnerModule, MatSelectModule, MatTableModule, ReactiveFormsModule, LetterheadComponent]
 })
 export class RunListCompletedComponent implements OnInit {
   private _loadList = false;
@@ -31,6 +32,7 @@ export class RunListCompletedComponent implements OnInit {
   private allColumns = ['date', 'run', 'order', 'customer', 'notes', 'checked'];
   public branchFilter = new FormControl('');
   public typeFilter = new FormControl('');
+  public orderNumberFilter = new FormControl('');
   public dateFilter = new FormControl(this.getDate());
   public orders$!: Observable<Order[]>;
   public deliveries$!: Observable<Delivery[]>;
@@ -86,10 +88,15 @@ export class RunListCompletedComponent implements OnInit {
         this.loadingPage = false;
       })
     )
+
+    this.orderNumberFilter.valueChanges.pipe(
+      debounceTime(200),
+      tap(_ => this.router.navigate([], { queryParams: {orderNumber: _}, queryParamsHandling: 'merge', replaceUrl: true}))
+    ).subscribe()
   }
 
   getDeliveries(params: Params): Observable<Delivery[]> {
-    return this.deliveryCompletedService.getDeliveries(params['branch'], params['type']);
+    return this.deliveryCompletedService.getDeliveries(params['branch'], params['type'], params['orderNumber']);
   }
 
   openReceipt(orderNumber: string): void {
@@ -115,6 +122,11 @@ export class RunListCompletedComponent implements OnInit {
       this.displayedColumns = [...this.allColumns].slice(0, -1);
       this.typeFilter.patchValue('');
     }
+    if ('orderNumber' in params) {
+      this.orderNumberFilter.patchValue(params['orderNumber']);
+    } else {
+      this.typeFilter.patchValue('');
+    }
   }
 
   compareQueryStrings(prev: Params, curr: Params): boolean {
@@ -126,7 +138,8 @@ export class RunListCompletedComponent implements OnInit {
     if (this.route.firstChild != null) return true;
     const sameBranch = prev['branch'] === curr['branch'];
     const sameType = prev['type'] === curr['type'];
-    return sameBranch && sameType && this._loadList;
+    const sameOrderNumber = prev['orderNumber'] === curr['orderNumber'];
+    return sameBranch && sameType && this._loadList && sameOrderNumber;
   }
 
   markComplete(delivery: Delivery, currentStatus: number): void {
