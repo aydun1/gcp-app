@@ -1,6 +1,5 @@
 import { Route } from '@angular/router';
 
-import { LoadingScheduleComponent } from './loading-schedule.component';
 import { LoadingScheduleListComponent } from './loading-schedule-list/loading-schedule-list.component';
 import { LoadingScheduleNewComponent } from './loading-schedule-new/loading-schedule-new.component';
 import { LoadingScheduleViewComponent } from './loading-schedule-view/loading-schedule-view.component';
@@ -9,7 +8,6 @@ import { LoadingSchedulePanComponent } from './loading-schedule-pan/loading-sche
 export default [
   {
     path: '',
-    component: LoadingScheduleComponent,
     children: [
       {
         path: '',

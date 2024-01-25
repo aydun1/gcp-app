@@ -1,6 +1,5 @@
 import { Route } from '@angular/router';
 
-import { RunsComponent } from './runs.component';
 import { RunListComponent } from './run-list/run-list.component';
 import { RunListCompletedComponent } from './run-list-completed/run-list-completed.component';
 
@@ -8,7 +7,6 @@ import { RunListCompletedComponent } from './run-list-completed/run-list-complet
 export default [
   {
     path: '',
-    component: RunsComponent,
     children: [
       {
         path: '',
