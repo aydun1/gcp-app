@@ -124,7 +124,7 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
       sopType: 2,
       sopNumber: orderNumber
     };
-    this.dialog.open(OrderLinesDialogComponent, {width: '800px', data});
+    this.dialog.open(OrderLinesDialogComponent, {width: '800px', data, autoFocus: false});
   }
 
   onScanError(event: Error): void {

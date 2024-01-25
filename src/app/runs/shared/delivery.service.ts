@@ -412,6 +412,7 @@ export class DeliveryService {
 
   archiveDeliveriesByRun(runName: string): Promise<Delivery[]> {
     const req = this.getDeliveriesByRun(runName).pipe(
+      map(_ => _.filter(d => d.fields.Status === 'Complete')),
       map(_ => _.map(run => run.id)),
       switchMap(_ => this.archiveDeliveries(_, runName))
     );

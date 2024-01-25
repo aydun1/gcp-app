@@ -303,7 +303,7 @@ export class RunListComponent implements OnInit {
   }
 
   archiveDeliveriesByRun(runName: string): void {
-    const data = {title: 'Archive run', content: ['Are you sure you want to archive these deliveries?']};
+    const data = {title: 'Archive deliveries', content: ['Are you sure you want to archive these deliveries?', 'Only completed (ticked) deliveries will be archived.', 'The rest will remain on the run for later.']};
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {width: '800px', data});
     dialogRef.afterClosed().subscribe(result => {
       if (!result) return;
