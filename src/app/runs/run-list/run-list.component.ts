@@ -274,7 +274,6 @@ export class RunListComponent implements OnInit {
   }
 
   editDelivery(delivery: Delivery): void {
-    console.log(delivery)
     const data = {delivery};
     this.dialog.open(DeliveryEditorDialogComponent, {width: '600px', data});
   }
