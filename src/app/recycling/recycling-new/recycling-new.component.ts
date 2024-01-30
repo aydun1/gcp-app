@@ -94,7 +94,7 @@ export class RecyclingNewComponent implements OnInit {
     if (this.cageForm.invalid || !d.branch || !d.assetType) {
       this.snackBar.open('Unable to add cage. Double check form values.', '', {duration: 3000});
       return;
-    };
+    }
     this.loading = true;
     this.recyclingService.addNewCage(d.cageNumber, d.branch, d.assetType, d.cageWeight).pipe(
       tap( _ => {

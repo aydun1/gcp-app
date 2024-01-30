@@ -28,13 +28,17 @@ import { BigButtonComponent } from '../../shared/big-button/big-button.component
 import { DocsComponent } from '../../shared/docs/docs.component';
 import { LoadingPageComponent } from '../../shared/loading/loading-page/loading-page.component';
 
-interface PalletQuantity {stateCounts: Array<{name: string, count: number}>, states: Array<string>, total: number};
+interface PalletQuantity {
+  stateCounts: Array<{name: string, count: number}>,
+  states: Array<string>,
+  total: number
+}
 interface PalletQuantities {
   Loscam: PalletQuantity;
   Chep: PalletQuantity;
   GCP: PalletQuantity;
   Plain: PalletQuantity;
-};
+}
 
 @Component({
   selector: 'gcp-customer-view',

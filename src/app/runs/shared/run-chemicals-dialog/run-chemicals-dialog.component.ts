@@ -17,7 +17,7 @@ import { ChemicalService } from '../../../chemicals/shared/chemical.service';
 interface Data {
   branch: string;
   run: string;
-};
+}
 
 @Component({
   selector: 'gcp-run-chemicals-dialog',

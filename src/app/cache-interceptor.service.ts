@@ -44,7 +44,7 @@ export class CacheInterceptor implements HttpInterceptor {
           } else {
             this.messages$.next('Cannot load data.');
             return throwError(() => new Error(stateEvent));
-          };
+          }
         } else if (stateEvent.status === 404) {
           return throwError(() => new Error(stateEvent));
         } else if (stateEvent.status === 504) {

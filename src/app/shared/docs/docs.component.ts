@@ -48,8 +48,8 @@ export class DocsComponent implements OnInit {
     e.preventDefault();
     this.dragOver = false;
     const items = e.dataTransfer?.items;
-    for (let key in items) {
-      let item = items[+key];
+    for (const key in items) {
+      const item = items[+key];
       if (item.kind === 'file') {
         const file = item.getAsFile();
         if (file) this.docsService.uploadFile(this.folder, this.subfolder, file);

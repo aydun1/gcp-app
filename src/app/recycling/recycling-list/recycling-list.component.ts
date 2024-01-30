@@ -22,7 +22,7 @@ import { LetterheadComponent } from '../../shared/letterhead/letterhead.componen
 import { ActionButtonComponent } from '../shared/action-button/action-button.component';
 import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-row.component';
 
-interface monthYear {year: number, month: number, monthName: string};
+interface monthYear {year: number, month: number, monthName: string}
 
 @Component({
   selector: 'gcp-recycling-list',

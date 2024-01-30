@@ -114,7 +114,7 @@ export class RunListCompletedComponent implements OnInit {
       this.branchFilter.patchValue(params['branch']);
     } else {
       this.branchFilter.patchValue('');
-    };
+    }
     if ('type' in params) {
       this.displayedColumns = [...this.allColumns];
       this.typeFilter.patchValue(params['type']);

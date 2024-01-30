@@ -47,9 +47,9 @@ export class PanListComponent implements OnInit {
   @Input() autosave!: boolean;
   @Input() defaultCategories: Array<string> = [];
   @Input() defaultColumns: Array<string> = [];
-  @Input() showSuppliers: boolean = true;
-  @Input() showNotes: boolean = false;
-  @Input() estimatePallets: boolean = false;
+  @Input() showSuppliers = true;
+  @Input() showNotes = false;
+  @Input() estimatePallets = false;
   @Input() min: 'MinOrderQty' | 'OrderPointQty' = 'MinOrderQty';
   @Input() max: 'MaxOrderQty' | 'OrderUpToLvl' = 'MaxOrderQty';
   @Input() panNote!: string;

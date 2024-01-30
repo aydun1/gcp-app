@@ -62,7 +62,7 @@ export class RecyclingDialogComponent implements OnInit {
   public loadingAvailableCages$ = new BehaviorSubject<boolean>(true);
   public sites!: Array<string>;
   public site!: string | undefined;
-  public get branches(): Array<string> {return this.shared.branches};
+  public get branches(): Array<string> {return this.shared.branches}
   public materialTypes = this.recyclingService.materials;
   public sending = false;
 

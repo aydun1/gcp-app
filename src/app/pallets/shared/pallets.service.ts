@@ -15,7 +15,7 @@ interface PalletQuantity {
   total: number;
   ins: number;
   outs: number;
-};
+}
 
 interface PalletQuantities {
   Loscam: PalletQuantity;
@@ -23,7 +23,7 @@ interface PalletQuantities {
   GCP: PalletQuantity;
   Plain: PalletQuantity;
   [key: string]: PalletQuantity;
-};
+}
 
 interface TransferSummary {
   versions: number;
@@ -44,7 +44,7 @@ interface TransferSummary {
   approver?: {displayName: string, email: string, id: string};
   cancelled?: string | Date;
   canceller?: {displayName: string, email: string, id: string};
-};
+}
 
 @Injectable({
   providedIn: 'root'
@@ -97,7 +97,7 @@ export class PalletsService {
     if (limit) {
       const earlier = new Date(new Date().getTime() - 1000*60*60*24*60).toISOString();
       parsed.unshift(`fields/Date ge '${earlier}'`);
-  };
+  }
     if(parsed.length > 0) url += '&filter=' + parsed.join(' and ');
     url += `&orderby=fields/Date desc&top=25`;
     return url;
@@ -518,7 +518,7 @@ export class PalletsService {
                 if (this.shared.pallets.includes(curr.fields.Pallet)) {
                   const pal = curr.fields.Pallet.toLowerCase() as 'loscam' | 'chep' | 'gcp' | 'plain';
                   acc[pal] = curr.fields.Quantity;
-              };
+                }
               }
             } else if (!acc['transferred']) {
               if (curr.fields.Status === 'Transferred') {

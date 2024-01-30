@@ -56,13 +56,13 @@ export class CustomersService {
   }
 
   getCustomer(id: string): Observable<Customer> {
-    let url = `${this._url}/${this.shared.sanitiseName(id)}`;
+    const url = `${this._url}/${this.shared.sanitiseName(id)}`;
     return this.http.get<{customer: Customer}>(url).pipe(map(_ => _['customer']));
   }
 
   getVendors(search: string): Observable<Vendor[]> {
     const url = `${environment.gpEndpoint}/vendors?search=${search ? search : ''}`;
-    return this.http.get<{vendors: Vendor[]}>(url).pipe(map(_ => _['vendors']));;
+    return this.http.get<{vendors: Vendor[]}>(url).pipe(map(_ => _['vendors']));
   }
 
   getFirstPage(filters: Params): Observable<Customer[]> {
@@ -115,13 +115,13 @@ export class CustomersService {
 
   getCustomerAddresses(customer: string | null): Observable<Address[]> {
     if (!customer) return of([]);
-    let url = `${this._url}/${this.shared.sanitiseName(customer)}/addresses`;
+    const url = `${this._url}/${this.shared.sanitiseName(customer)}/addresses`;
     return this.http.get<{addresses: Address[]}>(url).pipe(map(_ => _['addresses']));
   }
 
   getVendorAddresses(customer: string | null): Observable<Address[]> {
     if (!customer) return of([]);
-    let url = `${environment.gpEndpoint}/vendors/${this.shared.sanitiseName(customer)}/addresses`;
+    const url = `${environment.gpEndpoint}/vendors/${this.shared.sanitiseName(customer)}/addresses`;
     return this.http.get<{addresses: Address[]}>(url).pipe(map(_ => _['addresses']));
   }
 

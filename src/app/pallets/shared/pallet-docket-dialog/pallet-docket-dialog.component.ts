@@ -12,14 +12,14 @@ import { Pallet } from '../pallet';
 import { PalletsService } from '../pallets.service';
 import { LetterheadComponent } from '../../../shared/letterhead/letterhead.component';
 
-interface PalletQuantity {stateCounts: Array<{name: string, count: number}>, states: Array<string>, total: number};
+interface PalletQuantity {stateCounts: Array<{name: string, count: number}>, states: Array<string>, total: number}
 interface PalletQuantities {
   Loscam: PalletQuantity;
   Chep: PalletQuantity;
   GCP: PalletQuantity;
   Plain: PalletQuantity;
   [key: string]: PalletQuantity;
-};
+}
 
 @Component({
   selector: 'gcp-pallet-docket-dialog',

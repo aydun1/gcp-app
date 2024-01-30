@@ -119,7 +119,7 @@ export class DocsService {
     const files = (e.target as HTMLInputElement).files;
     if (!files) return;
     const keys = Array.from(Array(files?.length).keys());
-    for (let key in keys) {
+    for (const key in keys) {
       const file = files[key];
       this.uploadFile(folder, subfolder, file);
     }

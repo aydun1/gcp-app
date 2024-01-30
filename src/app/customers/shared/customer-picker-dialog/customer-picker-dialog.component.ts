@@ -41,8 +41,8 @@ export class CustomerPickerDialogComponent implements OnInit {
   public sites$!: Observable<Site[]>;
   public addresses$!: Observable<Address[]>;
   public branch!: string;
-  public searchType: string = 'Customers';
-  public get branches(): Array<string> {return this.shared.branches};
+  public searchType = 'Customers';
+  public get branches(): Array<string> {return this.shared.branches}
   public tidyAddress!: string;
 
   constructor(
@@ -93,7 +93,7 @@ export class CustomerPickerDialogComponent implements OnInit {
     if (this.data?.address) {
       this.loadingAddresses = true;
       addField?.disable();
-    };
+    }
     this.addresses$ = this.customersService.getCustomerAddresses(customer.custNmbr).pipe(
       tap(_ => {
         this.loadingAddresses = false;
@@ -107,7 +107,7 @@ export class CustomerPickerDialogComponent implements OnInit {
     if (this.data?.address) {
       this.loadingAddresses = true;
       addField?.disable();
-    };
+    }
     this.addresses$ = this.customersService.getVendorAddresses(vendor.vendId).pipe(
       tap(_ => {
         this.loadingAddresses = false;

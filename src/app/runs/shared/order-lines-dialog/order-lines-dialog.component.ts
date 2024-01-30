@@ -18,14 +18,19 @@ import { DocsComponent } from '../../../shared/docs/docs.component';
 interface Data {
   sopType: number;
   sopNumber: string;
-};
-interface PalletQuantity {ins: number, outs: number};
+}
+
+interface PalletQuantity {
+  ins: number,
+  outs: number
+}
+
 interface PalletQuantities {
   Loscam: PalletQuantity;
   Chep: PalletQuantity;
   GCP: PalletQuantity;
   Plain: PalletQuantity;
-};
+}
 
 @Component({
   selector: 'gcp-order-lines-dialog',

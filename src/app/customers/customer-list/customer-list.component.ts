@@ -36,7 +36,7 @@ export class CustomerListComponent implements OnInit {
   public territoryFilter = new FormControl('');
   public customers$!: Observable<Customer[]>;
   public territories$!: Observable<Territory[]>;
-  public get territories(): Array<string> {return this.sharedService.territoryNames};
+  public get territories(): Array<string> {return this.sharedService.territoryNames}
   public loading = this.customersService.loading;
   public sortSort = this.route.snapshot.queryParamMap.get('sort') || '';
   public sortOrder = this.route.snapshot.queryParamMap.get('order') as SortDirection;

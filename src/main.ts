@@ -43,9 +43,9 @@ class CustomDateAdapter extends NativeDateAdapter {
     let day: number = currentDate.getDate();
     if ((typeof value === 'string') && ((value.indexOf('/') > -1) || (value.indexOf('.') > -1)  || (value.indexOf('-') > -1))) {
       const str = value.split(/[\./-]/);
-      day = !!str[0] ? +str[0] : day;
-      month = !!str[1] ? +str[1] - 1 : month;
-      year = !!str[2] ? +str[2].length <= 3 ? +str[2] + 2000 : +str[2] : year ;
+      day = str[0] ? +str[0] : day;
+      month = str[1] ? +str[1] - 1 : month;
+      year = str[2] ? +str[2].length <= 3 ? +str[2] + 2000 : +str[2] : year;
       return new Date(year, month, day);
     }
     return null;
