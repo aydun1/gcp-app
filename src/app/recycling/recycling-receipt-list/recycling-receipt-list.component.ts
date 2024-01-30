@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
@@ -17,7 +18,7 @@ import { LetterheadComponent } from '../../shared/letterhead/letterhead.componen
   templateUrl: './recycling-receipt-list.component.html',
   styleUrls: ['./recycling-receipt-list.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf, RouterModule, ReactiveFormsModule, MatCardModule, MatSelectModule, MatTableModule, LetterheadComponent]
+  imports: [AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf, RouterModule, ReactiveFormsModule, MatButtonModule, MatCardModule, MatSelectModule, MatTableModule, LetterheadComponent]
 })
 export class RecyclingReceiptListComponent implements OnInit {
   private _loadList!: boolean;
