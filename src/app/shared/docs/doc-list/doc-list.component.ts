@@ -44,7 +44,7 @@ export class DocListComponent implements OnInit {
   }
 
   deleteFile(fileName: string): void {
-    this.docsService.deleteFile(this.subfolder, this.folder, fileName).then(_ => {
+    this.docsService.deleteFile(this.subfolder, this.folder, fileName).then(() => {
       this.snackBar.open('File deleted!', '', {duration: 3000});
       this.docsService.docStarter$.next(this.subfolder);
     }).catch(err => {

@@ -36,7 +36,7 @@ export class DocsService {
     )
   }
 
-  private createUploadSession(folder: string, subfolder: string, file: File): Observable<{percent: number, name: string, file: Object, webUrl: string, createdBy: Object}> {
+  private createUploadSession(folder: string, subfolder: string, file: File): Observable<Doc> {
     const url = `${this._endpoint}/drive/root:/${folder}/${subfolder}/${file.name}:/createUploadSession`;
     const payload = {
       'item': {
@@ -106,9 +106,9 @@ export class DocsService {
     return lastValueFrom(uploadSession);
   }
 
-  deleteFile(id: string, folder: string, fileName: string): Promise<Object> {
+  deleteFile(id: string, folder: string, fileName: string): Promise<null> {
     const url = `${this._endpoint}/drive/root:/${folder}/${id}/${fileName}:`;
-    return lastValueFrom(this.http.delete(url));
+    return lastValueFrom(this.http.delete(url).pipe(map(() => null)));
   }
 
   downloadFile(url: string): Observable<Blob> {

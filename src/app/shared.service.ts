@@ -8,6 +8,7 @@ import { BehaviorSubject, lastValueFrom, map, Observable, of, switchMap, tap } f
 import { environment } from '../environments/environment';
 import { Address } from './customers/shared/address';
 import { Order } from './runs/shared/order';
+import { SuggestedItem } from './pan-list/suggested-item';
 
 interface userAddress {
   state: string;
@@ -83,7 +84,7 @@ export class SharedService {
     private titleService: Title
   ) { }
 
-  checkIfWarehouse(accounts: Array<any>) {
+  checkIfWarehouse(accounts: Array<AccountInfo>): void {
     this.isWarehouse = this._warehouseStaff.includes(accounts[0]?.username);
   }
 
@@ -112,7 +113,7 @@ export class SharedService {
   getOwnAddress(): Observable<{street: string, city: string, state: string, postalCode: string}> {
     const url = `${environment.betaEndpoint}/me/profile/positions`;
     return this._address$.pipe(
-      switchMap(cur => cur ? of(cur) : this.http.get<any>(url).pipe(
+      switchMap(cur => cur ? of(cur) : this.http.get<{value: unknown}>(url).pipe(
         map(_ => _['value'] ? _['value'][0]?.detail?.company?.address || {} : {}),
         tap(_ => this._address$.next(_))
       ))
@@ -155,26 +156,26 @@ export class SharedService {
     this.titleService.setTitle(title);
   }
 
-  getHistory(itemNmbr: string | undefined): Promise<any[]> {
-    const request = this.http.get<{history: any[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/history`).pipe(
+  getHistory(itemNmbr: string | undefined): Promise<unknown[]> {
+    const request = this.http.get<{history: unknown[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/history`).pipe(
       map(_ => _.history)
     );
     return lastValueFrom(request);
   }
 
-  getTransactions(branch: string | null, itemNmbr: string | undefined): Promise<any[]> {
-    const request = this.http.get<{invoices: any[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/current?branch=${branch}`).pipe(
+  getTransactions(branch: string | null, itemNmbr: string | undefined): Promise<unknown[]> {
+    const request = this.http.get<{invoices: unknown[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/current?branch=${branch}`).pipe(
       map(_ => _.invoices)
     );
     return lastValueFrom(request);
   }
 
-  getStock(itemNmbr: string | undefined): Promise<any> {
-    const request = this.http.get<any>(`${environment.gpEndpoint}/inventory/${itemNmbr}/stock`);
+  getStock(itemNmbr: string | undefined): Promise<SuggestedItem> {
+    const request = this.http.get<SuggestedItem>(`${environment.gpEndpoint}/inventory/${itemNmbr}/stock`);
     return lastValueFrom(request);
   }
 
-  sendMail(to: Array<string>, subject: string, body: string, contentType: 'Text' | 'HTML', cc: Array<string> = []): Promise<Object> {
+  sendMail(to: Array<string>, subject: string, body: string, contentType: 'Text' | 'HTML', cc: Array<string> = []): Promise<null> {
     const url = `${environment.endpoint}/me/sendMail`;
     cc = [...new Set([...cc, this.getOwnEmail(), 'aidan.obrien@gardencityplastics.com'])];
     const payload  = {
@@ -189,6 +190,6 @@ export class SharedService {
       },
       saveToSentItems: false
     }
-    return lastValueFrom(this.http.post(url, payload));
+    return lastValueFrom(this.http.post(url, payload).pipe(map(() => null)));
   }
 }

@@ -16,8 +16,6 @@ export class StringColourPipe implements PipeTransform {
     'Pan list sent': '#41a900'
   };
 
-  constructor() { }
-
   getColor(text: string): string | null {
     const key = Object.entries(this.colors).find(_ => _[0] === text);
     return key ? key[1] : null;

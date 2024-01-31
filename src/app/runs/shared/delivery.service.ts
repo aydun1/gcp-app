@@ -203,14 +203,14 @@ export class DeliveryService {
     );
   }
 
-  deleteRun(runId: string, oldName: string): Observable<Object> {
+  deleteRun(runId: string, oldName: string): Observable<number | BatchRes> {
     const url = `${this._runsListUrl}/items('${runId}')`
     return this.http.delete(url).pipe(
       switchMap(_ => this.transferRunDeliveries(oldName, ''))
     );
   }
 
-  renameRun(runId: string, newName: string, oldName: string, owner: string): Observable<Object> {
+  renameRun(runId: string, newName: string, oldName: string, owner: string): Observable<number | BatchRes> {
     const fields = {
       Title: newName,
       Owner: owner

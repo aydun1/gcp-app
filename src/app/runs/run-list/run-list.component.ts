@@ -292,10 +292,10 @@ export class RunListComponent implements OnInit {
 
   deleteDeliveriesByRun(runName: string): void {
     this.loading = true;
-    this.deliveryService.deleteDeliveriesByRun(runName).then( _ => {
+    this.deliveryService.deleteDeliveriesByRun(runName).then(() => {
       this.snackBar.open('Removed deliveries', '', {duration: 3000});
       this.loading = false
-    }).catch(_ => {
+    }).catch(() => {
       this.snackBar.open('Could not remove deliveries', '', {duration: 3000});
       this.loading = false;
     });
@@ -307,11 +307,11 @@ export class RunListComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (!result) return;
       this.loading = true;
-      this.deliveryService.archiveDeliveriesByRun(runName).then( _ => {
+      this.deliveryService.archiveDeliveriesByRun(runName).then(_ => {
         this.snackBar.open('Archived deliveries', '', {duration: 3000});
         this.loading = false;
         this._orderRefreshTrigger$.next(true);
-      }).catch(_ => {
+      }).catch(() => {
         this.snackBar.open('Could not archive deliveries', '', {duration: 3000});
         this.loading = false;
       });
@@ -348,8 +348,8 @@ export class RunListComponent implements OnInit {
   refresh(runName: string | null): void {
     this.loading = true;
     this.deliveryService.reloadRunDeliveries(runName, this._branch)
-    .then(_ => this.loading = false)
-    .catch(_ => {
+    .then(() => this.loading = false)
+    .catch(() => {
       this.snackBar.open('Could not refresh deliveries', '', {duration: 3000});
       this.loading = false;
     })

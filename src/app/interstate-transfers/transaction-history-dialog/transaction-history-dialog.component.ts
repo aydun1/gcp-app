@@ -21,7 +21,7 @@ interface Data {
   imports: [AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf, MatDialogModule, MatDividerModule, MatProgressSpinnerModule]
 })
 export class TransactionHistoryDialogComponent implements OnInit {
-  public previousOrders!: Promise<Array<any>>;
+  public previousOrders!: Promise<any[]>;
   public averages!: Promise<any>;
   public item: SuggestedItem = {} as SuggestedItem;
   public stockChanged!: boolean;
@@ -38,32 +38,32 @@ export class TransactionHistoryDialogComponent implements OnInit {
     this.averages = this.sharedService.getHistory(this.data.itemNmbr);
     this.sharedService.getStock(this.data.itemNmbr).then(_ => {
       if (
-        this.item['OnHandVIC'] !== _['OnHandVIC'] ||
-        this.item['OnHandNSW'] !== _['OnHandNSW'] ||
-        this.item['OnHandQLD'] !== _['OnHandQLD'] ||
-        this.item['OnHandSA'] !== _['OnHandSA'] ||
-        this.item['OnHandWA'] !== _['OnHandWA'] ||
-        this.item['OnHandHEA'] !== _['OnHandHEA'] ||
-        this.item['AllocVIC'] !== _['AllocVIC'] ||
-        this.item['AllocNSW'] !== _['AllocNSW'] ||
-        this.item['AllocQLD'] !== _['AllocQLD'] ||
-        this.item['AllocSA'] !== _['AllocSA'] ||
-        this.item['AllocWA'] !== _['AllocWA'] ||
-        this.item['AllocHEA'] !== _['AllocHEA']
+        this.item.OnHandVIC !== _.OnHandVIC ||
+        this.item.OnHandNSW !== _.OnHandNSW ||
+        this.item.OnHandQLD !== _.OnHandQLD ||
+        this.item.OnHandSA !== _.OnHandSA ||
+        this.item.OnHandWA !== _.OnHandWA ||
+        this.item.OnHandHEA !== _.OnHandHEA ||
+        this.item.AllocVIC !== _.AllocVIC ||
+        this.item.AllocNSW !== _.AllocNSW ||
+        this.item.AllocQLD !== _.AllocQLD ||
+        this.item.AllocSA !== _.AllocSA ||
+        this.item.AllocWA !== _.AllocWA ||
+        this.item.AllocHEA !== _.AllocHEA
       ) this.stockChanged = true;
 
-      this.item['OnHandVIC'] = _['OnHandVIC'];
-      this.item['OnHandNSW'] = _['OnHandNSW'];
-      this.item['OnHandQLD'] = _['OnHandQLD'];
-      this.item['OnHandSA'] = _['OnHandSA'];
-      this.item['OnHandWA'] = _['OnHandWA'];
-      this.item['OnHandHEA'] = _['OnHandHEA'];
-      this.item['AllocVIC'] = _['AllocVIC'];
-      this.item['AllocNSW'] = _['AllocNSW'];
-      this.item['AllocQLD'] = _['AllocQLD'];
-      this.item['AllocSA'] = _['AllocSA'];
-      this.item['AllocWA'] = _['AllocWA'];
-      this.item['AllocHEA'] = _['AllocHEA'];
+      this.item['OnHandVIC'] = _.OnHandVIC;
+      this.item['OnHandNSW'] = _.OnHandNSW;
+      this.item['OnHandQLD'] = _.OnHandQLD;
+      this.item['OnHandSA'] = _.OnHandSA;
+      this.item['OnHandWA'] = _.OnHandWA;
+      this.item['OnHandHEA'] = _.OnHandHEA;
+      this.item['AllocVIC'] = _.AllocVIC;
+      this.item['AllocNSW'] = _.AllocNSW;
+      this.item['AllocQLD'] = _.AllocQLD;
+      this.item['AllocSA'] = _.AllocSA;
+      this.item['AllocWA'] = _.AllocWA;
+      this.item['AllocHEA'] = _.AllocHEA;
     });
   }
 }
