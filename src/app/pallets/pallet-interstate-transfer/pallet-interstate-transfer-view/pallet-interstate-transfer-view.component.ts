@@ -1,5 +1,5 @@
 import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -22,7 +22,7 @@ import { LoadingPageComponent } from '../../../shared/loading/loading-page/loadi
   templateUrl: './pallet-interstate-transfer-view.component.html',
   styleUrls: ['./pallet-interstate-transfer-view.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DatePipe, NgForOf, NgIf, FormsModule, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatToolbarModule, DocsComponent, LoadingPageComponent]
+  imports: [AsyncPipe, DatePipe, FormsModule, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatToolbarModule, DocsComponent, LoadingPageComponent]
 })
 export class PalletInterstateTransferViewComponent implements OnDestroy, OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';
