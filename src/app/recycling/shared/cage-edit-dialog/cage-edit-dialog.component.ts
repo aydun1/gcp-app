@@ -1,4 +1,3 @@
-import { NgForOf } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -24,7 +23,7 @@ interface CollectorForm {
   templateUrl: './cage-edit-dialog.component.html',
   styleUrls: ['./cage-edit-dialog.component.css'],
   standalone: true,
-  imports: [NgForOf, MatDialogModule, ReactiveFormsModule, MatButtonModule, MatIconModule, MatInputModule, MatSelectModule]
+  imports: [MatDialogModule, ReactiveFormsModule, MatButtonModule, MatIconModule, MatInputModule, MatSelectModule]
 })
 export class CageEditDialogComponent implements OnInit {
 

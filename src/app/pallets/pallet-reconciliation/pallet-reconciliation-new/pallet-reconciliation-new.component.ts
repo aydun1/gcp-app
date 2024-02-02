@@ -1,5 +1,5 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -38,7 +38,7 @@ interface PalletRecForm {
   templateUrl: './pallet-reconciliation-new.component.html',
   styleUrls: ['./pallet-reconciliation-new.component.css'],
   standalone: true,
-  imports: [AsyncPipe, NgForOf, NgIf, FormsModule, ReactiveFormsModule, MatButtonModule, MatCardModule, MatDatepickerModule, MatDividerModule, MatIconModule, MatInputModule, MatSelectModule, MatToolbarModule, LoadingPageComponent]
+  imports: [AsyncPipe, FormsModule, ReactiveFormsModule, MatButtonModule, MatCardModule, MatDatepickerModule, MatDividerModule, MatIconModule, MatInputModule, MatSelectModule, MatToolbarModule, LoadingPageComponent]
 })
 export class PalletReconciliationNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';

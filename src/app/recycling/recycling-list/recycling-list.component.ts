@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
-import { AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -22,14 +22,14 @@ import { LetterheadComponent } from '../../shared/letterhead/letterhead.componen
 import { ActionButtonComponent } from '../shared/action-button/action-button.component';
 import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-row.component';
 
-interface monthYear {year: number, month: number, monthName: string}
+interface monthYear {year: number, month: number, monthName: string, key: string}
 
 @Component({
   selector: 'gcp-recycling-list',
   templateUrl: './recycling-list.component.html',
   styleUrls: ['./recycling-list.component.css'],
   standalone: true,
-  imports: [NgForOf, NgIf, AsyncPipe, DatePipe, DecimalPipe, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatCheckboxModule, MatIconModule, MatInputModule, MatSelectModule, MatSortModule, MatTableModule, ActionButtonComponent, LetterheadComponent, LoadingRowComponent]
+  imports: [AsyncPipe, DatePipe, DecimalPipe, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatCheckboxModule, MatIconModule, MatInputModule, MatSelectModule, MatSortModule, MatTableModule, ActionButtonComponent, LetterheadComponent, LoadingRowComponent]
 })
 export class RecyclingListComponent implements OnInit {
   private _loadList!: boolean;
@@ -41,7 +41,7 @@ export class RecyclingListComponent implements OnInit {
   private year = new Date().getFullYear();
   private month = new Date().getMonth();
   public monthDates = this.years.map(_ => {return {year: _, months: this.months.reverse()}}).reduce((a, b) => {
-    return a.concat(b.months.map((m, i) => {return {year: b.year, month: 11 - i, monthName: m}}))
+    return a.concat(b.months.map((m, i) => {return {year: b.year, month: 11 - i, monthName: m, key: `${b.year}-${11 - i}`}}))
   }, [] as Array<monthYear>).filter(_ => !(_.year === this.year && _.month > this.month));
   public branchQuantities!: Observable<BranchTotal[]> | null;
   public cages$!: Observable<Cage[]>;

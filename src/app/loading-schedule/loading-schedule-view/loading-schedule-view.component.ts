@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { AsyncPipe, DatePipe, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { FormControl } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -24,7 +24,7 @@ import { LoadingPageComponent } from '../../shared/loading/loading-page/loading-
   templateUrl: './loading-schedule-view.component.html',
   styleUrls: ['./loading-schedule-view.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DatePipe, NgIf, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatToolbarModule, DocsComponent, LetterheadComponent, PanListSimpleComponent, LoadingPageComponent]
+  imports: [AsyncPipe, DatePipe, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatToolbarModule, DocsComponent, LetterheadComponent, PanListSimpleComponent, LoadingPageComponent]
 })
 export class LoadingScheduleViewComponent implements OnDestroy, OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';

@@ -2,98 +2,122 @@
   <button mat-icon-button (click)="goBack()" class="mobile-button" type="button">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <ng-container>
-    <div class="title">Customer</div>
-  </ng-container>
+  <div class="title">Customer</div>
 </mat-toolbar>
 
-<div *ngIf="customer$ | async as customer; else loadingPage" class="content">
-  <div class="top-buttons">
-    <div class="details">
-      <h2 class="name">{{ customer.name || 'Unnamed customer' }}</h2>
-      <p class="number">{{ customer.custNmbr }}</p>
+@if (customer$ | async; as customer) {
+  <div class="content">
+    <div class="top-buttons">
+      <div class="details">
+        <h2 class="name">{{ customer.name || 'Unnamed customer' }}</h2>
+        <p class="number">{{ customer.custNmbr }}</p>
+      </div>
+      <button mat-stroked-button type="button" [matMenuTriggerFor]="sitesMenu" [matMenuTriggerData]="{customer: customer}" [disabled]="!sites">
+        {{ site || 'All sites' }}
+      </button>
+      <button mat-icon-button aria-label="Sites menu" type="button" class="menu" [matMenuTriggerFor]="actionsMenu" [matMenuTriggerData]="{customer: customer}">
+        <mat-icon>more_vert</mat-icon>
+      </button>
     </div>
-    <button mat-stroked-button type="button" [matMenuTriggerFor]="sitesMenu" [matMenuTriggerData]="{customer: customer}" [disabled]="!sites">
-      {{ site || 'All sites' }}
-    </button>
-    <button mat-icon-button aria-label="Sites menu" type="button" class="menu" [matMenuTriggerFor]="actionsMenu" [matMenuTriggerData]="{customer: customer}">
-      <mat-icon>more_vert</mat-icon>
-    </button>
-  </div>
-  <div class="inner">
-    <div class="cards">
-      <mat-divider></mat-divider>
-      <div class="status-card">
-        <div class="section-heading">
-          <h3>
-            Pallets with customer
-          </h3>
-          <button mat-stroked-button (click)="openPalletHistory(customer)" type="button">History</button>
-        </div>
-        <mat-nav-list>
-          <mat-list-item *ngFor="let pallet of pallets" (click)="openPalletHistory(customer, pallet.name)">
-            <img matListItemAvatar [src]="pallet.image">
-            <div matListItemTitle>
-              <span *ngIf="palletsOwing; else loadingDots">
-                <span class="pallet-total">{{ palletsOwing[pallet.name]['total'] }}</span>
-                <span>&nbsp;</span>
-                <span *ngIf="palletsOwing[pallet.name]['states'].length > 1" class="pallet-summary"><span *ngFor="let branch of palletsOwing[pallet.name]['states']; let isLast=last">{{branch}}: {{palletsOwing[pallet.name]['stateCounts'][branch]}}<span *ngIf="!isLast">, </span></span></span>
-              </span>
-            </div>
-            <div matListItemLine>{{pallet.name}}</div>
-          </mat-list-item>
-        </mat-nav-list>
-      </div>
-      <mat-divider></mat-divider>
-      <div class="status-card">
-        <div class="section-heading">
-          <h3>
-            Cages
-          </h3>
-          <button mat-stroked-button (click)="openCageHistory(customer)" type="button">History</button>
-        </div>
-        <mat-list>
-          <mat-list-item>
-            <div matListItemTitle>
-              <span *ngIf="cages; else loadingDots">{{ cages.count }}</span>
-            </div>
-            <div matListItemLine>Active</div>
-          </mat-list-item>
-          <mat-list-item>
-            <div matListItemTitle>
-              <span *ngIf="cages; else loadingDots">{{ cages.weight }} kg</span>
-            </div>
-            <div matListItemLine>All time weight</div>
-          </mat-list-item>
-        </mat-list>
-      </div>
-      <mat-divider></mat-divider>
-      <div class="status-card">
-        <div class="big-buttons">
-          <gcp-big-button [target]="[]" (click)="openPalletDialog(customer)">Transfer Pallets</gcp-big-button>
-          <gcp-big-button [target]="[]" (click)="openRecyclingDialog(customer)">Manage Recycling</gcp-big-button>
-        </div>
-      </div>
-      <mat-divider></mat-divider>
-      <div class="status-card">
-        <gcp-docs [subfolder]="customer.custNmbr" folder="debtors">
+    <div class="inner">
+      <div class="cards">
+        <mat-divider></mat-divider>
+        <div class="status-card">
           <div class="section-heading">
-            <h3>Attachments</h3>
+            <h3>
+              Pallets with customer
+            </h3>
+            <button mat-stroked-button (click)="openPalletHistory(customer)" type="button">History</button>
           </div>
-        </gcp-docs>
+          <mat-nav-list>
+            @for (pallet of pallets; track pallet.key) {
+              <mat-list-item (click)="openPalletHistory(customer, pallet.name)">
+                <img matListItemAvatar [src]="pallet.image">
+                <div matListItemTitle>
+                  @if (palletsOwing) {
+                    <span>
+                      <span class="pallet-total">{{ palletsOwing[pallet.name]['total'] }}</span>
+                      @if (palletsOwing[pallet.name]['states'].length > 1) {
+                        <span class="pallet-summary">
+                          @for (branch of palletsOwing[pallet.name]['states']; track branch) {
+                            {{branch}}: {{palletsOwing[pallet.name]['stateCounts'][branch]}}@if(!$last) {, }
+                          }
+                        </span>
+                      }
+                    </span>
+                  } @else {
+                    <span>Loading...</span>
+                  }
+                </div>
+                <div matListItemLine>{{pallet.name}}</div>
+              </mat-list-item>
+            }
+          </mat-nav-list>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="status-card">
+          <div class="section-heading">
+            <h3>
+              Cages
+            </h3>
+            <button mat-stroked-button (click)="openCageHistory(customer)" type="button">History</button>
+          </div>
+          <mat-list>
+            <mat-list-item>
+              <div matListItemTitle>
+                @if (cages) {
+                  <span>{{ cages.count }}</span>
+                } @else {
+                  <span>Loading...</span>
+                }
+              </div>
+              <div matListItemLine>Active</div>
+            </mat-list-item>
+            <mat-list-item>
+              <div matListItemTitle>
+                @if (cages) {
+                  <span>{{ cages.weight }} kg</span>
+                } @else {
+                  <span>Loading...</span>
+                }
+              </div>
+              <div matListItemLine>All time weight</div>
+            </mat-list-item>
+          </mat-list>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="status-card">
+          <div class="big-buttons">
+            <gcp-big-button [target]="[]" (click)="openPalletDialog(customer)">Transfer Pallets</gcp-big-button>
+            <gcp-big-button [target]="[]" (click)="openRecyclingDialog(customer)">Manage Recycling</gcp-big-button>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="status-card">
+          <gcp-docs [subfolder]="customer.custNmbr" folder="debtors">
+            <div class="section-heading">
+              <h3>Attachments</h3>
+            </div>
+          </gcp-docs>
+        </div>
       </div>
     </div>
   </div>
-</div>
+} @else {
+  <gcp-loading-page></gcp-loading-page>
+}
+
 
 <mat-menu #sitesMenu="matMenu" xPosition="before">
   <ng-template matMenuContent let-customer="customer">
     <button mat-menu-item (click)="setSite(null)" type="button">
       <span>All sites</span>
     </button>
-    <button mat-menu-item *ngFor="let site of sites" (click)="setSite(site.fields.Title)" type="button">
-      <span>{{ site.fields.Title }}</span>
-    </button>
+    @for (site of sites; track site.id) {
+      <button mat-menu-item (click)="setSite(site.fields.Title)" type="button">
+        <span>{{ site.fields.Title }}</span>
+      </button>
+    }
     <button mat-menu-item (click)="openSiteDialog(customer)" type="button">
       <mat-icon>add</mat-icon>
       <span>Add/edit sites</span>
@@ -113,13 +137,5 @@
     </button>
   </ng-template>
 </mat-menu>
-
-<ng-template #loadingPage>
-  <gcp-loading-page></gcp-loading-page>
-</ng-template>
-
-<ng-template #loadingDots>
-    Loading...
-</ng-template>
 
 <router-outlet></router-outlet>

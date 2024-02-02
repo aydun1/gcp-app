@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, OnDestroy, Renderer2, ViewChild } from '@angular/core';
-import { AsyncPipe, Location, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, Location } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 import { Router, RouterModule } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -29,7 +29,7 @@ import { DocsService } from './shared/docs/docs.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   standalone: true,
-  imports: [AsyncPipe, NgForOf, NgIf, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatSidenavModule, MatToolbarModule, MatMenuModule]
+  imports: [AsyncPipe, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatSidenavModule, MatToolbarModule, MatMenuModule]
 })
 export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('snav') public sidenav!: MatSidenavContainer;

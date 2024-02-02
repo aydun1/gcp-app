@@ -1,33 +1,39 @@
-<ng-container *ngIf="collecting">
+@if (collecting) {
   <form [formGroup]="collectorForm" (ngSubmit)="collectLooseFromCustomer()">
     <div class="buttons">
       <button mat-icon-button (click)="backToMain()" type="button"><mat-icon>arrow_back</mat-icon></button>
       <h2 mat-dialog-title>Collect uncaged plastic</h2>
     </div>
     <mat-dialog-content>
-        <mat-form-field appearance="fill" *ngIf="sites.length > 0 || site">
+      @if (sites.length > 0 || site) {
+        <mat-form-field appearance="fill">
           <mat-label>Site</mat-label>
           <mat-select formControlName="site">
-            <mat-option *ngFor="let site of sites" [value]="site">{{ site }}</mat-option>
+            @for (site of sites; track site) {
+              <mat-option [value]="site">{{ site }}</mat-option>
+            }
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Pallet weight</mat-label>
-          <input matInput type="number" formControlName="cageWeight" autocomplete="off" placeholder="The container weight">
-          <span matTextSuffix>kg</span>
-        </mat-form-field>
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Gross weight</mat-label>
-          <input matInput type="number" formControlName="grossWeight" autocomplete="off" placeholder="The total weight">
-          <span matTextSuffix>kg</span>
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Material</mat-label>
-          <mat-select formControlName="material">
-            <mat-option>--</mat-option>
-            <mat-option *ngFor="let m of materialTypes" [value]="m.code">{{ m.name }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+      }
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Pallet weight</mat-label>
+        <input matInput type="number" formControlName="cageWeight" autocomplete="off" placeholder="The container weight">
+        <span matTextSuffix>kg</span>
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Gross weight</mat-label>
+        <input matInput type="number" formControlName="grossWeight" autocomplete="off" placeholder="The total weight">
+        <span matTextSuffix>kg</span>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Material</mat-label>
+        <mat-select formControlName="material">
+          <mat-option>--</mat-option>
+          @for (m of materialTypes; track m.code) {
+            <mat-option [value]="m.code">{{ m.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <div class="buttons">
@@ -36,9 +42,7 @@
       </div>
     </mat-dialog-actions>
   </form>
-</ng-container>
-
-<ng-container *ngIf="assigning">
+} @else if (assigning) {
   <div class="buttons">
     <button mat-icon-button (click)="backToMain()" type="button"><mat-icon>arrow_back</mat-icon></button>
     <h2 mat-dialog-title>Assign a cage</h2>
@@ -49,129 +53,161 @@
   <mat-dialog-content>
     <h3>Containers</h3>
     <mat-accordion>
-      <mat-expansion-panel *ngFor="let other of others">
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ other }}</mat-panel-title>
-        </mat-expansion-panel-header>
-        <form [formGroup]="allocatorForm" (ngSubmit)="createAndAssignToCustomer(other)">
-          <mat-form-field appearance="outline" *ngIf="sites.length > 0 || site">
-            <mat-label>Site</mat-label>
-            <mat-select formControlName="site">
-              <mat-option *ngFor="let site of sites" [value]="site">{{ site }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <div class="actions">
-            <button mat-raised-button [disabled]="sending" type="submit" color="primary">Assign to {{ data.customer.name || data.customer.custNmbr }}</button>
-          </div>
-        </form>
-      </mat-expansion-panel>
-    </mat-accordion>
-    <h3>Available cages</h3>
-    <div *ngIf="availableCages$ | async as cages">
-      <mat-accordion>
-        <mat-expansion-panel *ngFor="let cage of cages;trackBy: trackByFn">
+      @for (other of others; track other) {
+        <mat-expansion-panel>
           <mat-expansion-panel-header>
-            <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> <span class="cage-type">{{ cage.fields.AssetTypeClean }}</span></mat-panel-title>
+            <mat-panel-title>{{ other }}</mat-panel-title>
           </mat-expansion-panel-header>
-          <form [formGroup]="allocatorForm">
-            <mat-form-field appearance="outline" *ngIf="sites.length > 0 || site">
-              <mat-label>Site</mat-label>
-              <mat-select formControlName="site">
-                <mat-option *ngFor="let site of sites" [value]="site">{{ site }}</mat-option>
-              </mat-select>
-            </mat-form-field>
+          <form [formGroup]="allocatorForm" (ngSubmit)="createAndAssignToCustomer(other)">
+            @if (sites.length > 0 || site) {
+              <mat-form-field appearance="outline">
+                <mat-label>Site</mat-label>
+                <mat-select formControlName="site">
+                  @for (site of sites; track site) {
+                    <mat-option [value]="site">{{ site }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            }
             <div class="actions">
-              <button mat-raised-button [disabled]="sending" type="submit" color="primary" (click)="assignToCustomer(cage.id)">Assign to {{ data.customer.name ||data.customer.custNmbr }}</button>
+              <button mat-raised-button [disabled]="sending" type="submit" color="primary">Assign to {{ data.customer.name || data.customer.custNmbr }}</button>
             </div>
           </form>
         </mat-expansion-panel>
-      </mat-accordion>
-    </div>
-    <p *ngIf="loadingAvailableCages$ | async" class="note-available">
-      Loading...
-    </p>
-  </mat-dialog-content>
-</ng-container>
-
-<ng-container *ngIf="!assigning && !collecting">
-  <div class="header">
-    <h2 mat-dialog-title>Manage recycling for {{ data.customer.name }}</h2>
-    <button *ngIf="sites && sites.length > 0 || site" mat-stroked-button type="button" [matMenuTriggerFor]="sitesMenu" class="addresses">
-      {{ site ? site : 'Site' }}
-    </button>
-  </div>
-  <mat-dialog-content>
-    <ng-container *ngIf="(cages$ | async | groupCages:[allocated, delivered]) as groups">
-      <div *ngFor="let cages of groups;let indexOfelement=index;trackBy: trackByIndex" class="section">
-        <ng-container *ngIf="indexOfelement === 0" >
-          <div class="buttons">
-            <h3 class="section-title">Allocated cages</h3>
-            <button mat-raised-button color="primary" (click)="openAssigningPage()" type="button">Assign a cage</button>
-            <button mat-icon-button type="button" [matMenuTriggerFor]="moreMenu"><mat-icon>more_vert</mat-icon></button>
-          </div>
-          <p *ngIf="noAllocatedCages$ | async" class="note">
-            No allocated cages
-          </p>
-          <p *ngIf="(loadingCages$ | async) && !cages" class="note load">
-            Loading...
-          </p>
-        </ng-container>
-        <ng-container *ngIf="indexOfelement === 1" >
-          <div class="buttons">
-            <h3 class="section-title">Delivered cages</h3>
-          </div>
-          <p *ngIf="noDeliveredCages$ | async" class="note">
-            No delivered cages
-          </p>
-          <p *ngIf="(loadingCages$ | async) && !cages" class="note load">
-            Loading...
-          </p>
-        </ng-container>
-        <ng-container *ngIf="indexOfelement === 2" >
-          <div class="buttons">
-            <h3 class="section-title">Returned cages</h3>
-          </div>
-          <p *ngIf="noReturnedCages$ | async" class="note">
-            No returned cages
-          </p>
-          <p *ngIf="(loadingCages$ | async) && !cages" class="note load">
-            Loading...
-          </p>
-        </ng-container>
-        <mat-accordion>
-          <mat-expansion-panel *ngFor="let cage of cages;trackBy: trackByFn">
+      }
+    </mat-accordion>
+    <h3>Available cages</h3>
+    @if (availableCages$ | async; as cages) {
+      <mat-accordion>
+        @for (cage of cages; track cage.id) {
+          <mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> <span class="cage-type">{{ cage.fields.AssetTypeClean }}</span></mat-panel-title>
-              <mat-panel-description>{{ cage.fields.Status }}</mat-panel-description>
-              <img *ngIf="cage.logo" class="recycle-logo" [src]="'assets/' + cage.logo">
             </mat-expansion-panel-header>
-            <gcp-action-button [cages]="[cage]" (updated)="getCagesWithCustomer()" class="actions"></gcp-action-button>
-            <mat-list>
-              <mat-list-item *ngIf="cage.fields.Site">
-                <mat-icon matListItemIcon>business</mat-icon>
-                <span matListItemTitle>{{ cage.fields.Site }}</span>
-                <span>Site</span>
-              </mat-list-item>
-              <gcp-cage-notes [cage]="cage" (updated)="getCagesWithCustomer()"></gcp-cage-notes>
-              <gcp-cage-material [cage]="cage" (updated)="getCagesWithCustomer()"></gcp-cage-material>
-              <div mat-subheader>Weights</div>
-              <gcp-cage-weights [cage]="cage" (updated)="getCagesWithCustomer()"></gcp-cage-weights>
-            </mat-list>
-            <gcp-cage-details [cage]="cage"></gcp-cage-details>
+            <form [formGroup]="allocatorForm">
+              @if (sites.length > 0 || site) {
+                <mat-form-field appearance="outline">
+                  <mat-label>Site</mat-label>
+                  <mat-select formControlName="site">
+                    @for (site of sites; track site) {
+                      <mat-option [value]="site">{{ site }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              }
+              <div class="actions">
+                <button mat-raised-button [disabled]="sending" type="submit" color="primary" (click)="assignToCustomer(cage.id)">Assign to {{ data.customer.name ||data.customer.custNmbr }}</button>
+              </div>
+            </form>
           </mat-expansion-panel>
-        </mat-accordion>
-      </div>
-    </ng-container>
+        }
+      </mat-accordion>
+    }
+    @if (loadingAvailableCages$ | async) {
+      <p class="note-available">
+        Loading...
+      </p>
+    }
   </mat-dialog-content>
-</ng-container>
+} @else {
+  <div class="header">
+    <h2 mat-dialog-title>Manage recycling for {{ data.customer.name }}</h2>
+    @if (sites && sites.length > 0 || site) {
+      <button mat-stroked-button type="button" [matMenuTriggerFor]="sitesMenu" class="addresses">{{ site ? site : 'Site' }}</button>
+    }
+  </div>
+  <mat-dialog-content>
+    @if (cages$ | async | groupCages:[allocated, delivered]; as groups) {
+      @for (cages of groups; track $index) {
+        <div class="section">
+          @if ($index === 0) {
+            <div class="buttons">
+              <h3 class="section-title">Allocated cages</h3>
+              <button mat-raised-button color="primary" (click)="openAssigningPage()" type="button">Assign a cage</button>
+              <button mat-icon-button type="button" [matMenuTriggerFor]="moreMenu"><mat-icon>more_vert</mat-icon></button>
+            </div>
+            @if (noAllocatedCages$ | async) {
+              <p class="note">
+                No allocated cages
+              </p>
+            }
+            @if ((loadingCages$ | async) && !cages) {
+              <p class="note load">
+                Loading...
+              </p>
+            }
+          } @else if ($index === 1) {
+            <div class="buttons">
+              <h3 class="section-title">Delivered cages</h3>
+            </div>
+            @if (noDeliveredCages$ | async) {
+              <p class="note">
+                No delivered cages
+              </p>
+            }
+            @if ((loadingCages$ | async) && !cages) {
+              <p class="note load">
+                Loading...
+              </p>
+            }
+          } @else if ($index === 2) {
+            <div class="buttons">
+              <h3 class="section-title">Returned cages</h3>
+            </div>
+            @if (noReturnedCages$ | async) {
+              <p class="note">
+                No returned cages
+              </p>
+            }
+            @if ((loadingCages$ | async) && !cages) {
+              <p class="note load">
+                Loading...
+              </p>
+            }
+          }
+          <mat-accordion>
+            @for (cage of cages; track cage.id) {
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title><span class="cage-number">{{ cage.fields.CageNumber }}</span> <span class="cage-type">{{ cage.fields.AssetTypeClean }}</span></mat-panel-title>
+                  <mat-panel-description>{{ cage.fields.Status }}</mat-panel-description>
+                  @if (cage.logo) {
+                    <img class="recycle-logo" [src]="'assets/' + cage.logo">
+                  }
+                </mat-expansion-panel-header>
+                <gcp-action-button [cages]="[cage]" (updated)="getCagesWithCustomer()" class="actions"></gcp-action-button>
+                <mat-list>
+                  @if (cage.fields.Site) {
+                    <mat-list-item>
+                      <mat-icon matListItemIcon>business</mat-icon>
+                      <span matListItemTitle>{{ cage.fields.Site }}</span>
+                      <span>Site</span>
+                    </mat-list-item>
+                  }
+                  <gcp-cage-notes [cage]="cage" (updated)="getCagesWithCustomer()"></gcp-cage-notes>
+                  <gcp-cage-material [cage]="cage" (updated)="getCagesWithCustomer()"></gcp-cage-material>
+                  <div mat-subheader>Weights</div>
+                  <gcp-cage-weights [cage]="cage" (updated)="getCagesWithCustomer()"></gcp-cage-weights>
+                </mat-list>
+                <gcp-cage-details [cage]="cage"></gcp-cage-details>
+              </mat-expansion-panel>
+            }
+          </mat-accordion>
+        </div>
+      }
+    }
+  </mat-dialog-content>
+}
 
 <button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>
 
 <mat-menu #sitesMenu="matMenu" xPosition="before">
   <ng-template matMenuContent>
-    <button mat-menu-item *ngFor="let site of sites" (click)="setSite(site)" type="button">
-      <span>{{ site }}</span>
-    </button>
+    @for (site of sites; track site) {
+      <button mat-menu-item (click)="setSite(site)" type="button">
+        <span>{{ site }}</span>
+      </button>
+    }
   </ng-template>
 </mat-menu>
 

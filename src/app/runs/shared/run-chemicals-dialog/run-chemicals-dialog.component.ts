@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, Renderer2 } from '@angular/core';
-import { AsyncPipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -24,7 +24,7 @@ interface Data {
   templateUrl: './run-chemicals-dialog.component.html',
   styleUrls: ['./run-chemicals-dialog.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DecimalPipe, NgForOf, NgIf, RouterModule, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule, MatProgressSpinnerModule, QrCodeModule]
+  imports: [AsyncPipe, DecimalPipe, RouterModule, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule, MatProgressSpinnerModule, QrCodeModule]
 })
 export class RunChemicalsDialogComponent implements OnInit {
   public chemicals$!: Observable<Chemical[] | undefined>;

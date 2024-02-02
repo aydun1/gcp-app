@@ -1,6 +1,6 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, ElementRef, HostBinding, Input, OnDestroy, OnInit, Optional, Self, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormControl, ValidatorFn, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -18,7 +18,7 @@ import { SuggestedItem } from '../../../pan-list/suggested-item';
     styleUrls: ['item-control.component.css'],
     providers: [{ provide: MatFormFieldControl, useExisting: ItemControlComponent }],
     standalone: true,
-    imports: [AsyncPipe, NgFor, NgIf, ReactiveFormsModule, MatAutocompleteModule, MatInputModule, MatOptionModule]
+    imports: [AsyncPipe, ReactiveFormsModule, MatAutocompleteModule, MatInputModule, MatOptionModule]
 })
 export class ItemControlComponent implements ControlValueAccessor, MatFormFieldControl<SuggestedItem>, OnDestroy, OnInit {
   @HostBinding() id = `item-input-${ItemControlComponent.nextId++}`;

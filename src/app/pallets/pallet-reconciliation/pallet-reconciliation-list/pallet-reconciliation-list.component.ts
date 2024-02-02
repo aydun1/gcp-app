@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
@@ -19,7 +19,7 @@ import { LoadingRowComponent } from '../../../shared/loading/loading-row/loading
   templateUrl: './pallet-reconciliation-list.component.html',
   styleUrls: ['./pallet-reconciliation-list.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DatePipe, NgForOf, NgIf, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatSelectModule, MatTableModule, LetterheadComponent, LoadingRowComponent]
+  imports: [AsyncPipe, DatePipe, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatSelectModule, MatTableModule, LetterheadComponent, LoadingRowComponent]
 })
 export class PalletReconciliationListComponent implements OnInit {
   private _loadList!: boolean;

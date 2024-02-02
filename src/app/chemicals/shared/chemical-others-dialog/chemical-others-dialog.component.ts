@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { AsyncPipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -19,7 +19,7 @@ import { ChemicalService } from '../chemical.service';
   templateUrl: './chemical-others-dialog.component.html',
   styleUrls: ['./chemical-others-dialog.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DecimalPipe, NgForOf, NgIf, FormsModule, ReactiveFormsModule, MatButtonModule, MatDialogModule, MatIconModule, MatInputModule, MatListModule, MatProgressSpinnerModule, MatSelectModule, MatTabsModule]
+  imports: [AsyncPipe, DecimalPipe, FormsModule, ReactiveFormsModule, MatButtonModule, MatDialogModule, MatIconModule, MatInputModule, MatListModule, MatProgressSpinnerModule, MatSelectModule, MatTabsModule]
 })
 export class ChemicalOthersDialogComponent implements OnInit {
   @ViewChild('tabs') tabGroup!: MatTabGroup;
@@ -51,15 +51,12 @@ export class ChemicalOthersDialogComponent implements OnInit {
       })
     );
 
-
-
     this.newChemicalForm = this.fb.group({
       itemNmbr: ['', [Validators.required]],
       itemDesc: ['', []],
       containerSize: ['', Validators.required],
       units: ['', [Validators.required]]
     });
-
   }
 
   setItem(e: MatSelectionListChange): void {
@@ -81,7 +78,7 @@ export class ChemicalOthersDialogComponent implements OnInit {
     ).catch(e => this.saving = false);
   }
 
-  saveQuantity(itemNmbr: string, quantity: number) {
+  saveQuantity(itemNmbr: string, quantity: number): void {
     this.chemicalService.updateNonInventoryChemicalQuantity(itemNmbr, quantity, this.data.ownBranch).then(_ => {
       this.editQuantity = '';
       this.updater.next(true)
@@ -91,9 +88,5 @@ export class ChemicalOthersDialogComponent implements OnInit {
   cancelEditQuantity(quantity: number): void {
     this.quantity = quantity;
     this.editQuantity = '';
-  }
-
-  trackByFn(index: number, item: Chemical): string {
-    return item.ItemNmbr;
   }
 }

@@ -2,115 +2,136 @@
   <button mat-icon-button (click)="goBack()" class="mobile-button">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <ng-container>
-    <div class="top-title">{{ name }}</div>
-  </ng-container>
-  <a *ngIf="getPrev() | async as n" mat-icon-button [routerLink]="['..', n]" [replaceUrl]="true" matTooltip="Previous cage"><mat-icon>chevron_left</mat-icon></a>
-  <a *ngIf="getNext() | async as n" mat-icon-button [routerLink]="['..', n]" [replaceUrl]="true" matTooltip="Next cage"><mat-icon>chevron_right</mat-icon></a>
+  <div class="top-title">{{ name }}</div>
+  @if (getPrev() | async; as n) {
+    <a mat-icon-button [routerLink]="['..', n]" [replaceUrl]="true" matTooltip="Previous cage"><mat-icon>chevron_left</mat-icon></a>
+  }
+  @if (getNext() | async; as n) {
+    <a mat-icon-button [routerLink]="['..', n]" [replaceUrl]="true" matTooltip="Next cage"><mat-icon>chevron_right</mat-icon></a>
+  }
 </mat-toolbar>
 
-<div *ngIf="cage$ | async as cage" class="content">
-  <div class="inner">
-    <div class="header">
-      <gcp-loading-page *ngIf="(loading | async) === true" class="loading-circ"></gcp-loading-page>
-      <gcp-action-button [cages]="[cage]" (updated)="getCage()" (loading)="updating($event)" (dehired)="goBack()" class="actions"></gcp-action-button>
+@if (cage$ | async; as cage) {
+  <div class="content">
+    <div class="inner">
+      <div class="header">
+        @if ((loading | async) === true) {
+          <gcp-loading-page class="loading-circ"></gcp-loading-page>
+        }
+        <gcp-action-button [cages]="[cage]" (updated)="getCage()" (loading)="updating($event)" (dehired)="goBack()" class="actions"></gcp-action-button>
+      </div>
+      <mat-card appearance="outlined">
+        @if (isCage) {
+          <mat-card-header>
+            <mat-card-title>
+              {{ cage.fields.AssetTypeClean}} {{ cage.fields.CageNumber }}
+            </mat-card-title>
+          </mat-card-header>
+        }
+        <mat-card-content>
+          @if (cage.material?.image) {
+            <img class="material invert" [src]="'assets/' + cage.material?.image">
+          }
+          <mat-list>
+            <div mat-subheader><span class="subheader">Details</span></div>
+            @if (cage.fields.Status) {
+              <mat-list-item>
+                <mat-icon matListItemIcon>timeline</mat-icon>
+                <span matListItemTitle>{{ cage.fields.Status }}</span>
+                <span>Status</span>
+              </mat-list-item>
+              <mat-list-item>
+                <mat-icon matListItemIcon>location_city</mat-icon>
+                <span matListItemTitle>{{ cage.fields.Branch }}</span>
+                <span>Branch</span>
+              </mat-list-item>
+            }
+          </mat-list>
+          <mat-nav-list>
+            @if (cage.fields.CustomerNumber) {
+              <a mat-list-item [routerLink]="['/customers', cage.fields.CustomerNumber]">
+                <mat-icon matListItemIcon>business</mat-icon>
+                <span matListItemTitle>{{ cage.fields.Customer }}
+                  <span>({{ cage.fields.CustomerNumber }})</span>
+                  @if (cage.fields.Site) {
+                    <span>({{ cage.fields.Site }})</span>
+                  }
+                </span>
+                <span>Assigned to</span>
+              </a>
+            }
+  
+          </mat-nav-list>
+          <mat-list>
+            <gcp-cage-notes [cage]="cage" (updated)="getCage()"></gcp-cage-notes>
+            <gcp-cage-material [cage]="cage" (updated)="getCage()"></gcp-cage-material>
+            <div mat-subheader>Weights</div>
+            <gcp-cage-weights [cage]="cage" (updated)="getCage()"></gcp-cage-weights>
+          </mat-list>
+          <gcp-cage-details [cage]="cage" (updated)="getCage()"></gcp-cage-details>
+        </mat-card-content>
+      </mat-card>
     </div>
-    <mat-card appearance="outlined">
-      <mat-card-header *ngIf="isCage">
-        <mat-card-title>
-          {{ cage.fields.AssetTypeClean}} {{ cage.fields.CageNumber }}
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <img *ngIf="cage.material?.image" class="material invert" [src]="'assets/' + cage.material?.image">
-        <mat-list>
-          <div mat-subheader><span class="subheader">Details</span></div>
-          <mat-list-item *ngIf="cage.fields.Status">
-            <mat-icon matListItemIcon>timeline</mat-icon>
-            <span matListItemTitle>{{ cage.fields.Status }}</span>
-            <span>Status</span>
-          </mat-list-item>
-          <mat-list-item *ngIf="cage.fields.Status">
-            <mat-icon matListItemIcon>location_city</mat-icon>
-            <span matListItemTitle>{{ cage.fields.Branch }}</span>
-            <span>Branch</span>
-          </mat-list-item>
-        </mat-list>
-        <mat-nav-list>
-          <a mat-list-item *ngIf="cage.fields.CustomerNumber" [routerLink]="['/customers', cage.fields.CustomerNumber]">
-            <mat-icon matListItemIcon>business</mat-icon>
-            <span matListItemTitle>{{ cage.fields.Customer }}
-              <span>({{ cage.fields.CustomerNumber }})</span>
-              <span *ngIf="cage.fields.Site">({{ cage.fields.Site }})</span>
-            </span>
-            <span>Assigned to</span>
-          </a>
-        </mat-nav-list>
-        <mat-list>
-          <gcp-cage-notes [cage]="cage" (updated)="getCage()"></gcp-cage-notes>
-          <gcp-cage-material [cage]="cage" (updated)="getCage()"></gcp-cage-material>
-          <div mat-subheader>Weights</div>
-          <gcp-cage-weights [cage]="cage" (updated)="getCage()"></gcp-cage-weights>
-        </mat-list>
-        <gcp-cage-details [cage]="cage" (updated)="getCage()"></gcp-cage-details>
-      </mat-card-content>
-    </mat-card>
+  
+    @if (isCage && cageNumber !== undefined) {
+      <div class="inner">
+        <h3>Cage history</h3>
+    
+        <mat-table #table [dataSource]="cageHistory$" >
+          <ng-container matColumnDef="updated">
+            <mat-header-cell *matHeaderCellDef> Last activity </mat-header-cell>
+            <mat-cell *matCellDef="let cage">
+              {{ cage.fields.Modified | date: 'dd/MM/yyyy'  }}
+            </mat-cell>
+            <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+          </ng-container>
+    
+          <ng-container matColumnDef="customer">
+            <mat-header-cell *matHeaderCellDef> Customer </mat-header-cell>
+            <mat-cell *matCellDef="let cage">
+              {{ cage.fields.Customer || 'Unallocated' }}
+            </mat-cell>
+            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+          </ng-container>
+    
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+            <mat-cell *matCellDef="let cage">
+              <div class="chip">{{ cage.fields.Status }}</div>
+            </mat-cell>
+            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+          </ng-container>
+    
+          <ng-container matColumnDef="weight">
+            <mat-header-cell *matHeaderCellDef> Net weight </mat-header-cell>
+            <mat-cell *matCellDef="let cage">
+              {{ cage.fields.NetWeight || 0 }} kg
+            </mat-cell>
+            <mat-footer-cell *matFooterCellDef> {{ totalWeight || 0 }} kg </mat-footer-cell>
+          </ng-container>
+    
+          <ng-container matColumnDef="nav">
+            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-cell *matCellDef="let cage">
+              @if (cage.id !== cageId) {
+                <a mat-icon-button [routerLink]="['..', cage.id]" class="pallet-link"><mat-icon>arrow_forward</mat-icon></a>
+              }
+            </mat-cell>
+            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+          </ng-container>
+    
+          <ng-container matColumnDef="loading">
+            <mat-footer-cell *matFooterCellDef>
+              <gcp-loading-row></gcp-loading-row>
+            </mat-footer-cell>
+          </ng-container>
+    
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;let cage" [class.active]="cage.id === cageId"></mat-row>
+          <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loadingHistory | async) ? false : true"></mat-footer-row>
+          <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+        </mat-table>
+      </div>
+    }
   </div>
-
-  <div *ngIf="isCage && cageNumber !== undefined" class="inner">
-    <h3>Cage history</h3>
-
-    <mat-table #table [dataSource]="cageHistory$" >
-      <ng-container matColumnDef="updated">
-        <mat-header-cell *matHeaderCellDef> Last activity </mat-header-cell>
-        <mat-cell *matCellDef="let cage">
-          {{ cage.fields.Modified | date: 'dd/MM/yyyy'  }}
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="customer">
-        <mat-header-cell *matHeaderCellDef> Customer </mat-header-cell>
-        <mat-cell *matCellDef="let cage">
-          {{ cage.fields.Customer || 'Unallocated' }}
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="status">
-        <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
-        <mat-cell *matCellDef="let cage">
-          <div class="chip">{{ cage.fields.Status }}</div>
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="weight">
-        <mat-header-cell *matHeaderCellDef> Net weight </mat-header-cell>
-        <mat-cell *matCellDef="let cage">
-          {{ cage.fields.NetWeight || 0 }} kg
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef> {{ totalWeight || 0 }} kg </mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="nav">
-        <mat-header-cell *matHeaderCellDef></mat-header-cell>
-        <mat-cell *matCellDef="let cage">
-          <a mat-icon-button *ngIf="cage.id !== cageId" [routerLink]="['..', cage.id]" class="pallet-link"><mat-icon>arrow_forward</mat-icon></a>
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="loading">
-        <mat-footer-cell *matFooterCellDef>
-          <gcp-loading-row></gcp-loading-row>
-        </mat-footer-cell>
-      </ng-container>
-
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;let cage" [class.active]="cage.id === cageId"></mat-row>
-      <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loadingHistory | async) ? false : true"></mat-footer-row>
-      <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
-    </mat-table>
-  </div>
-</div>
+}

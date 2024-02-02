@@ -2,117 +2,119 @@
   <button mat-icon-button (click)="goBack()" class="mobile-button" type="button">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <ng-container>
-    <div class="title">Pallet stocktake</div>
-  </ng-container>
+  <div class="title">Pallet stocktake</div>
 </mat-toolbar>
 
-<div *ngIf="loadingData | async; else loadingPage" class="outer">
-  <h2>{{id ? 'Edit' : 'New'}} pallet stocktake report</h2>
-  <form (ngSubmit)="onSubmit()" [formGroup]="palletRecForm">
-    <mat-card appearance="outlined">
-      <mat-card-content>
-        <mat-form-field appearance="fill">
-          <mat-label>Invoice/stocktake date</mat-label>
-          <input matInput [matDatepicker]="picker1" formControlName="date">
-          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-          <mat-datepicker #picker1></mat-datepicker>
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Branch</mat-label>
-          <mat-select matInput type="text" formControlName="branch">
-            <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>{{id ? 'Edited' : 'Completed'}} by</mat-label>
-          <input matInput type="text" formControlName="name" autocomplete="off">
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Pallet type</mat-label>
-          <mat-select matInput type="number" formControlName="pallet">
-            <mat-option *ngFor="let p of pallets" [value]="p">{{ p }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Current account balance</mat-label>
-          <input matInput type="number" formControlName="currentBalance" autocomplete="off">
-        </mat-form-field>
-      </mat-card-content>
-    </mat-card>
-    <mat-card appearance="outlined">
-      <mat-card-header>
-        <mat-card-title>Physical stocktake</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <mat-form-field appearance="fill">
-          <mat-label>On site</mat-label>
-          <input matInput type="number" formControlName="onSite" autocomplete="off" min="0">
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Off site</mat-label>
-          <input matInput type="number" formControlName="offSite" autocomplete="off" min="0">
-        </mat-form-field>
-      </mat-card-content>
-    </mat-card>
-    <mat-card appearance="outlined">
-      <mat-card-header>
-        <mat-card-title>Pallets elsewhere</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <mat-form-field appearance="fill">
-          <mat-label>IOUs - pallets to be collected</mat-label>
-          <mat-icon matPrefix>add</mat-icon>
-          <input matInput type="number" formControlName="toBeCollected" autocomplete="off" min="0">
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>IOUs - pallets to be repaid</mat-label>
-          <mat-icon matPrefix>remove</mat-icon>
-          <input matInput type="number" formControlName="toBeRepaid" autocomplete="off" min="0">
-        </mat-form-field>
-        <div class="spacer">
-          <mat-divider></mat-divider>
-        </div>
-        <mat-form-field appearance="fill">
-          <mat-label>Pallets in transit - off</mat-label>
-          <mat-icon matPrefix>add</mat-icon>
-          <input matInput type="number" formControlName="inTransitOff" autocomplete="off" min="0">
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Pallets in transit - on</mat-label>
-          <mat-icon matPrefix>remove</mat-icon>
-          <input matInput type="number" formControlName="inTransitOn" autocomplete="off" min="0">
-        </mat-form-field>
-        <div class="spacer">
-          <mat-divider></mat-divider>
-        </div>
-        <mat-form-field appearance="fill" class="sum">
-          <mat-label>Adjusted physical stocktake</mat-label>
-          <input matInput type="number" autocomplete="off" disabled [ngModel]="adjBalance" [ngModelOptions]="{standalone: true}">
-        </mat-form-field>
-      </mat-card-content>
-    </mat-card>
-    <mat-card appearance="outlined">
-      <mat-card-header>
-        <mat-card-title>Stocktake result</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <mat-form-field appearance="fill" class="sum">
-          <mat-label>Surplus (Physical > Invoice)</mat-label>
-          <input matInput type="number" autocomplete="off" disabled  [ngModel]="surplus" [ngModelOptions]="{standalone: true}">
-        </mat-form-field>
-        <mat-form-field appearance="fill" class="sum">
-          <mat-label>Deficit (Physical < Invoice)</mat-label>
-          <input matInput type="number" autocomplete="off" disabled  [ngModel]="deficit" [ngModelOptions]="{standalone: true}">
-        </mat-form-field>
-      </mat-card-content>
-    </mat-card>
-    <div class="buttons">
-      <button mat-raised-button color="primary" [disabled]="loading" type="submit">Confirm</button>
-    </div>
-  </form>
-</div>
-
-<ng-template #loadingPage>
+@if (loadingData | async) {
+  <div class="outer">
+    <h2>{{id ? 'Edit' : 'New'}} pallet stocktake report</h2>
+    <form (ngSubmit)="onSubmit()" [formGroup]="palletRecForm">
+      <mat-card appearance="outlined">
+        <mat-card-content>
+          <mat-form-field appearance="fill">
+            <mat-label>Invoice/stocktake date</mat-label>
+            <input matInput [matDatepicker]="picker1" formControlName="date">
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Branch</mat-label>
+            <mat-select matInput type="text" formControlName="branch">
+              @for (s of states; track s) {
+                <mat-option [value]="s">{{ s }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>{{id ? 'Edited' : 'Completed'}} by</mat-label>
+            <input matInput type="text" formControlName="name" autocomplete="off">
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Pallet type</mat-label>
+            <mat-select matInput type="number" formControlName="pallet">
+              @for (p of pallets; track p) {
+                <mat-option [value]="p">{{ p }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Current account balance</mat-label>
+            <input matInput type="number" formControlName="currentBalance" autocomplete="off">
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>Physical stocktake</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field appearance="fill">
+            <mat-label>On site</mat-label>
+            <input matInput type="number" formControlName="onSite" autocomplete="off" min="0">
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Off site</mat-label>
+            <input matInput type="number" formControlName="offSite" autocomplete="off" min="0">
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>Pallets elsewhere</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field appearance="fill">
+            <mat-label>IOUs - pallets to be collected</mat-label>
+            <mat-icon matPrefix>add</mat-icon>
+            <input matInput type="number" formControlName="toBeCollected" autocomplete="off" min="0">
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>IOUs - pallets to be repaid</mat-label>
+            <mat-icon matPrefix>remove</mat-icon>
+            <input matInput type="number" formControlName="toBeRepaid" autocomplete="off" min="0">
+          </mat-form-field>
+          <div class="spacer">
+            <mat-divider></mat-divider>
+          </div>
+          <mat-form-field appearance="fill">
+            <mat-label>Pallets in transit - off</mat-label>
+            <mat-icon matPrefix>add</mat-icon>
+            <input matInput type="number" formControlName="inTransitOff" autocomplete="off" min="0">
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Pallets in transit - on</mat-label>
+            <mat-icon matPrefix>remove</mat-icon>
+            <input matInput type="number" formControlName="inTransitOn" autocomplete="off" min="0">
+          </mat-form-field>
+          <div class="spacer">
+            <mat-divider></mat-divider>
+          </div>
+          <mat-form-field appearance="fill" class="sum">
+            <mat-label>Adjusted physical stocktake</mat-label>
+            <input matInput type="number" autocomplete="off" disabled [ngModel]="adjBalance" [ngModelOptions]="{standalone: true}">
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>Stocktake result</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field appearance="fill" class="sum">
+            <mat-label>Surplus (Physical > Invoice)</mat-label>
+            <input matInput type="number" autocomplete="off" disabled  [ngModel]="surplus" [ngModelOptions]="{standalone: true}">
+          </mat-form-field>
+          <mat-form-field appearance="fill" class="sum">
+            <mat-label>Deficit (Physical < Invoice)</mat-label>
+            <input matInput type="number" autocomplete="off" disabled  [ngModel]="deficit" [ngModelOptions]="{standalone: true}">
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+      <div class="buttons">
+        <button mat-raised-button color="primary" [disabled]="loading" type="submit">Confirm</button>
+      </div>
+    </form>
+  </div>
+} @else {
   <gcp-loading-page></gcp-loading-page>
-</ng-template>
+}

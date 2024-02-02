@@ -1,28 +1,39 @@
 <mat-nav-list>
-  <div class="doc" *ngFor="let doc of docs$ | async">
-    <a mat-list-item [href]="doc.webUrl" target="_blank">
-      <img *ngIf="doc.file" [src]="icon(doc.file.mimeType)" alt="File type icon" matListItemIcon>
-      <img *ngIf="doc.folder" [src]="icon('folder')" alt="File type icon" matListItemIcon>
-      <mat-spinner *ngIf="!doc.file && !doc.folder" matListItemIcon diameter="24"></mat-spinner>
-      <span matListItemTitle>{{ doc.name }}</span>
-      <span *ngIf="doc.createdBy else loading2">Uploaded by {{ doc.createdBy.user.displayName }} on {{ doc.createdDateTime | date: 'dd/MM/yyyy hh:mm a' }} </span>
-      <ng-template #loading2>
-        <span>{{ doc.percent || 0 }}% </span>
-      </ng-template>
-    </a>
-    <button *ngIf="doc.file" mat-icon-button class="menu-toggle" type="button" [matMenuTriggerFor]="menu" [matMenuTriggerData]="{doc: doc}">
-      <mat-icon>more_vert</mat-icon>
-    </button>
-  </div>
+  @for (doc of docs$ | async; track doc.id) {
+    <div class="doc">
+      <a mat-list-item [href]="doc.webUrl" target="_blank">
+        @if (doc.file) {
+          <img [src]="icon(doc.file.mimeType)" alt="File type icon" matListItemIcon>
+        } @else if (doc.folder) {
+          <img [src]="icon('folder')" alt="File type icon" matListItemIcon>
+        } @else {
+          <mat-spinner matListItemIcon diameter="24"></mat-spinner>
+        }
+        <span matListItemTitle>{{ doc.name }}</span>
+        @if (doc.createdBy) {
+          <span>Uploaded by {{ doc.createdBy.user.displayName }} on {{ doc.createdDateTime | date: 'dd/MM/yyyy hh:mm a' }} </span>
+        } @else {
+          <span>{{ doc.percent || 0 }}%</span>
+        }
+      </a>
+      @if (doc.file) {
+        <button mat-icon-button class="menu-toggle" type="button" [matMenuTriggerFor]="menu" [matMenuTriggerData]="{doc: doc}">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+      }
+    </div>
+  }
 </mat-nav-list>
-
-<div *ngIf="docCount === undefined" class="loading-docs">
-  <mat-spinner matListItemIcon diameter="48"></mat-spinner>
-</div>
-
-<div *ngIf="(idle | async) && docCount === 0" class="no-docs" (click)="fileSelect.click()">
-  <div>There's nothing here yet!</div>
-</div>
+@if (docCount === undefined) {
+  <div class="loading-docs">
+    <mat-spinner matListItemIcon diameter="48"></mat-spinner>
+  </div>
+}
+@if ((idle | async) && docCount === 0) {
+  <div class="no-docs" (click)="fileSelect.click()">
+    <div>There's nothing here yet!</div>
+  </div>
+}
 
 <mat-menu #menu="matMenu">
   <ng-template matMenuContent let-doc="doc">

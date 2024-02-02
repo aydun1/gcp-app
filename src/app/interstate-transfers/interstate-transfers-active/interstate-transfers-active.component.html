@@ -7,16 +7,22 @@
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
           <mat-label>From</mat-label>
           <mat-select [formControl]="fromBranchFilter" (selectionChange)="setFromBranch($event)">
-            <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
+            @for (s of states; track s) {
+              <mat-option [value]="s">{{ s }}</mat-option>
+            }
           </mat-select>
         </mat-form-field>
-        <mat-form-field *ngIf="fromBranchFilter" appearance="outline" subscriptSizing="dynamic" class="branch">
-          <mat-label>To</mat-label>
-          <mat-select [formControl]="toBranchFilter" (selectionChange)="setToBranch($event)">
-            <mat-option>Show all</mat-option>
-            <mat-option *ngFor="let s of otherBranches" [value]="s">{{ s }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+        @if (fromBranchFilter) {
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
+            <mat-label>To</mat-label>
+            <mat-select [formControl]="toBranchFilter" (selectionChange)="setToBranch($event)">
+              <mat-option>Show all</mat-option>
+              @for (s of otherBranches; track s) {
+                <mat-option [value]="s">{{ s }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
           <mat-label>View</mat-label>
           <mat-select [formControl]="viewFilter" (selectionChange)="setView($event)">
@@ -26,86 +32,96 @@
         </mat-form-field>
       </div>
     </div>
-    <div *ngIf="interstateTransfers$ | async as interstateTransfers" class="inner">
-      <div *ngFor="let t of interstateTransfers.value['lines'] | groupByProperty:(viewFilter.value === 'grouped' ? 'docId' : '');trackBy: trackByGroupsFn">
-        <div *ngIf="t.key !== 'undefined'" class="section-head">
-          <a [routerLink]="[t.key]"><h3>{{ t.key }}</h3></a>
-          <span *ngIf="!toBranchFilter.value">{{ t.value[0]['toSite'] }}</span>
-        </div>
-        <mat-card appearance="outlined">
-          <mat-table #table [dataSource]="t.value" [trackBy]="trackByFn" formArrayName="lines">
-            <ng-container matColumnDef="date">
-              <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
-              <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
-                {{ line['orderDate'] | date: 'd MMM yyyy' }}
-              </mat-cell>
-              <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="product">
-              <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
-              <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
-                <div class="details">
-                  <strong>
-                    {{ line['itemNumber'] }}
-                  </strong>
-                  <div class="description">
-                    {{ line['itemDesc'] }}
-                  </div>
-                </div>
-              </mat-cell>
-              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="quantity">
-              <mat-header-cell *matHeaderCellDef>
-                <div class="loadDetails">
-                  Qty requested
-                </div>
-              </mat-header-cell>
-              <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
-                <div class="loadDetails">
-                  {{ line['qtyFulfilled'] | number }}
-                </div>
-              </mat-cell>
-              <mat-footer-cell *matFooterCellDef>
-                <div class="loadDetails">
-                  {{ getTotalRequestedQty(t.value) | number }}
-                </div>
-              </mat-footer-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="available">
-              <mat-header-cell *matHeaderCellDef>
-                <div class="loadDetails">
-                  On hand
-                </div>
-              </mat-header-cell>
-              <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
-                <div class="loadDetails">
-                  {{ line['qtyOnHand'] | number }}
-                </div>
-              </mat-cell>
-              <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="empty">
-              <mat-footer-cell *matFooterCellDef>
-                There are no items requested from {{ fromBranchFilter.value }} by {{ toBranchFilter.value || 'other branches' }}.
-              </mat-footer-cell>
-            </ng-container>
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-            <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(t.value)"></mat-footer-row>
-            <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
-          </mat-table>
-        </mat-card>
+    @if (interstateTransfers$ | async; as interstateTransfers) {
+      <div class="inner">
+        @for (t of interstateTransfers.value['lines'] | groupByProperty:(viewFilter.value === 'grouped' ? 'docId' : ''); track t.key) {
+          <div>
+            @if (t.key !== 'undefined') {
+              <div class="section-head">
+                <a [routerLink]="[t.key]"><h3>{{ t.key }}</h3></a>
+                @if (!toBranchFilter.value) {
+                  <span>{{ t.value[0]['toSite'] }}</span>
+                }
+              </div>
+            }
+            <mat-card appearance="outlined">
+              <mat-table #table [dataSource]="t.value" [trackBy]="trackByFn" formArrayName="lines">
+                <ng-container matColumnDef="date">
+                  <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+                  <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
+                    {{ line['orderDate'] | date: 'd MMM yyyy' }}
+                  </mat-cell>
+                  <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+                </ng-container>
+    
+                <ng-container matColumnDef="product">
+                  <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
+                  <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
+                    <div class="details">
+                      <strong>
+                        {{ line['itemNumber'] }}
+                      </strong>
+                      <div class="description">
+                        {{ line['itemDesc'] }}
+                      </div>
+                    </div>
+                  </mat-cell>
+                  <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                </ng-container>
+    
+                <ng-container matColumnDef="quantity">
+                  <mat-header-cell *matHeaderCellDef>
+                    <div class="loadDetails">
+                      Qty requested
+                    </div>
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
+                    <div class="loadDetails">
+                      {{ line['qtyFulfilled'] | number }}
+                    </div>
+                  </mat-cell>
+                  <mat-footer-cell *matFooterCellDef>
+                    <div class="loadDetails">
+                      {{ getTotalRequestedQty(t.value) | number }}
+                    </div>
+                  </mat-footer-cell>
+                </ng-container>
+    
+                <ng-container matColumnDef="available">
+                  <mat-header-cell *matHeaderCellDef>
+                    <div class="loadDetails">
+                      On hand
+                    </div>
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let line" [formGroupName]="line['index']">
+                    <div class="loadDetails">
+                      {{ line['qtyOnHand'] | number }}
+                    </div>
+                  </mat-cell>
+                  <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                </ng-container>
+    
+                <ng-container matColumnDef="empty">
+                  <mat-footer-cell *matFooterCellDef>
+                    There are no items requested from {{ fromBranchFilter.value }} by {{ toBranchFilter.value || 'other branches' }}.
+                  </mat-footer-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(t.value)"></mat-footer-row>
+                <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+              </mat-table>
+            </mat-card>
+          </div>
+        }
       </div>
-    </div>
+    }
   </form>
 </div>
-<div *ngIf="loading">
-  <mat-spinner diameter="48" class="spinner"></mat-spinner>
-</div>
+@if (loading) {
+  <div>
+    <mat-spinner diameter="48" class="spinner"></mat-spinner>
+  </div>
+}
 
 <router-outlet></router-outlet>

@@ -2,111 +2,132 @@
   <button mat-icon-button (click)="goBack()" class="mobile-button" type="button">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <ng-container>
-    <div class="title">Pallet transfer</div>
-  </ng-container>
+  <div class="title">Pallet transfer</div>
 </mat-toolbar>
 
-<div class="content" *ngIf="transfer$ | async as transfer; else loadingPage">
-  <div class="header">
-    <h2>Transfer details</h2>
-    <div *ngIf="!transfer.summary.cancelled" class="actions">
-      <div *ngIf="(transport || sender) && !transfer.summary.transferred && !transfer.summary.cancelled" class="edit">
-        <button mat-raised-button *ngIf="!editQuantity" (click)="editQuantity = true" type="button">Edit transfer</button>
-        <ng-container *ngIf="editQuantity">
-          <button mat-icon-button (click)="cancelEditQuantity(transfer.summary)" [disabled]="loading" type="button"><mat-icon matListItemIcon class="last-icon">close</mat-icon></button>
-          <button mat-icon-button (click)="setQuantity(transfer.summary)" [disabled]="loading" type="submit"><mat-icon matListItemIcon class="last-icon">check</mat-icon></button>
-        </ng-container>
-      </div>
-      <button *ngIf="(transport || sender) && !transfer.summary.transferred" mat-raised-button class="action" (click)="cancel(transfer.summary.id)" [disabled]="loading || editQuantity" type="button">Cancel transfer</button>
-      <button *ngIf="(transport || receiver) && !transfer.summary.approved" mat-raised-button class="action" color="primary" (click)="approve(transfer.summary.id)" [disabled]="loading || editQuantity" type="button">Approve</button>
-      <button *ngIf="(transport || sender) && transfer.summary.approved && !transfer.summary.transferred" mat-raised-button class="action" color="primary" (click)="transferp(transfer.summary.id)" [disabled]="loading || editQuantity" type="button">Mark as transferred</button>
+@if (transfer$ | async; as transfer) {
+  <div class="content">
+    <div class="header">
+      <h2>Transfer details</h2>
+      @if (!transfer.summary.cancelled) {
+        <div class="actions">
+          @if ((transport || sender) && !transfer.summary.transferred) {
+            @if (editQuantity) {
+              <button mat-icon-button (click)="cancelEditQuantity(transfer.summary)" [disabled]="loading" type="button"><mat-icon matListItemIcon class="last-icon">close</mat-icon></button>
+              <button mat-icon-button (click)="setQuantity(transfer.summary)" [disabled]="loading" type="submit"><mat-icon matListItemIcon class="last-icon">check</mat-icon></button>
+            } @else {
+              <button mat-raised-button (click)="editQuantity = true" type="button">Edit transfer</button>
+              <button mat-raised-button class="action" (click)="cancel(transfer.summary.id)" [disabled]="loading || editQuantity" type="button">Cancel transfer</button>
+            }
+          }
+          @if ((transport || receiver) && !transfer.summary.approved) {
+            <button mat-raised-button class="action" color="primary" (click)="approve(transfer.summary.id)" [disabled]="loading || editQuantity" type="button">Approve</button>
+          }
+          @if ((transport || sender) && transfer.summary.approved && !transfer.summary.transferred) {
+            <button mat-raised-button class="action" color="primary" (click)="transferp(transfer.summary.id)" [disabled]="loading || editQuantity" type="button">Mark as transferred</button>
+          }
+        </div>
+      }
     </div>
+    <mat-card appearance="outlined" class="inner">
+      <mat-card-content>
+        <mat-list>
+          <mat-list-item>
+            <mat-icon matListItemIcon>tag</mat-icon>
+            @if (editQuantity) {
+              <span matListItemTitle><input [(ngModel)]="transferReference" [ngModelOptions]="{standalone: true}" type="text" placeholder="Reference"></span>
+            } @else {
+              <span matListItemTitle>{{ transferReference }}</span>
+            }
+            <span>Reference number</span>
+          </mat-list-item>
+        </mat-list>
+        <mat-list class="pallets">
+          @for (p of pallets; track p.key) {
+            <mat-list-item>
+              <img [src]="p.image" matListItemIcon alt="{{ p.name }} pallet">
+              @if (editQuantity) {
+                <span matListItemTitle><input [(ngModel)]="values[p.key]" [ngModelOptions]="{standalone: true}" type="number" placeholder="#"></span>
+              } @else {
+                <span matListItemTitle>{{ values[p.key] || 0 }}</span>
+              }
+              <span>{{ p.name }}</span>
+            </mat-list-item>
+          }
+        </mat-list>
+        <div class="status">
+          @if (transfer.summary.approved) {
+            <div class="approved">
+              <mat-icon>verified</mat-icon>
+              <span>Approved</span>
+            </div>
+          } 
+          @if (transfer.summary.transferred) {
+            <div class="approved">
+              <mat-icon>verified</mat-icon>
+              <span>Transferred</span>
+            </div>
+          }
+          @if (!transfer.summary.approved && !transfer.summary.cancelled) {
+            <div>
+              <span>Pending approval</span>
+            </div>
+          }
+          @if (transfer.summary.cancelled) {
+            <div>
+              <span>Cancelled</span>
+            </div>
+          }
+        </div>
+        <div class="side-by-side">
+          <mat-list>
+            <h3 matSubheader>Transferred from</h3>
+            <mat-list-item>
+              <mat-icon matListItemIcon>place</mat-icon>
+              <span matListItemTitle>{{ transfer.summary.from }}</span>
+              <span>From</span>
+            </mat-list-item>
+            <mat-list-item>
+              <mat-icon matListItemIcon>today</mat-icon>
+              <span matListItemTitle>{{ transfer.summary.innitiated | date:'dd/MM/yyyy' }}</span>
+              <span>Requested on</span>
+            </mat-list-item>
+            <mat-list-item>
+              <mat-icon matListItemIcon>person</mat-icon>
+              <span matListItemTitle>{{ transfer.summary.initiator.displayName }}</span>
+              <span>Requested by</span>
+            </mat-list-item>
+          </mat-list>
+          <mat-icon class="arrow">arrow_forward</mat-icon>
+          <mat-list>
+            <h3 matSubheader>Transferred to</h3>
+            <mat-list-item>
+              <mat-icon matListItemIcon>place</mat-icon>
+              <span matListItemTitle>{{ transfer.summary.to }}</span>
+              <span>To</span>
+            </mat-list-item>
+            <mat-list-item>
+              <mat-icon matListItemIcon>event</mat-icon>
+              <span matListItemTitle>{{ (transfer.summary.approved | date:'dd/MM/yyyy') || '-' }}</span>
+              <span>Approved on</span>
+            </mat-list-item>
+            <mat-list-item>
+              <mat-icon matListItemIcon>person</mat-icon>
+              <span matListItemTitle>{{ transfer.summary.approver?.displayName || '-' }}</span>
+              <span>Approved by</span>
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card appearance="outlined" class="inner">
+      <gcp-docs [subfolder]="transfer.summary.id" folder="transfers" (statusChanged)="markFileAttached(transfer.summary.id, $event)">
+        <mat-card-header>
+          <mat-card-title>Attachments</mat-card-title>
+        </mat-card-header>
+      </gcp-docs>
+    </mat-card>
   </div>
-  <mat-card appearance="outlined" class="inner">
-    <mat-card-content>
-      <mat-list>
-        <mat-list-item>
-          <mat-icon matListItemIcon>tag</mat-icon>
-          <span *ngIf="editQuantity" matListItemTitle><input [(ngModel)]="transferReference" [ngModelOptions]="{standalone: true}" type="text" placeholder="Reference"></span>
-          <span *ngIf="!editQuantity" matListItemTitle>{{ transferReference }}</span>
-          <span>Reference number</span>
-        </mat-list-item>
-      </mat-list>
-      <mat-list class="pallets">
-        <mat-list-item *ngFor="let p of pallets">
-          <img [src]="p.image" matListItemIcon alt="{{ p.name }} pallet">
-          <span *ngIf="editQuantity" matListItemTitle><input [(ngModel)]="values[p.key]" [ngModelOptions]="{standalone: true}" type="number" placeholder="#"></span>
-          <span *ngIf="!editQuantity" matListItemTitle>{{ values[p.key] || 0 }}</span>
-          <span>{{ p.name }}</span>
-        </mat-list-item>
-      </mat-list>
-      <div class="status">
-        <div class="approved" *ngIf="transfer.summary.approved">
-          <mat-icon>verified</mat-icon>
-          <span>Approved</span>
-        </div>
-        <div class="approved" *ngIf="transfer.summary.transferred">
-          <mat-icon>verified</mat-icon>
-          <span>Transferred</span>
-        </div>
-        <div *ngIf="!transfer.summary.approved && !transfer.summary.cancelled">
-          <span>Pending approval</span>
-        </div>
-        <div *ngIf="transfer.summary.cancelled">
-          <span>Cancelled</span>
-        </div>
-      </div>
-      <div class="side-by-side">
-        <mat-list>
-          <h3 matSubheader>Transferred from</h3>
-          <mat-list-item>
-            <mat-icon matListItemIcon>place</mat-icon>
-            <span matListItemTitle>{{ transfer.summary.from }}</span>
-            <span>From</span>
-          </mat-list-item>
-          <mat-list-item>
-            <mat-icon matListItemIcon>today</mat-icon>
-            <span matListItemTitle>{{ transfer.summary.innitiated | date:'dd/MM/yyyy' }}</span>
-            <span>Requested on</span>
-          </mat-list-item>
-          <mat-list-item>
-            <mat-icon matListItemIcon>person</mat-icon>
-            <span matListItemTitle>{{ transfer.summary.initiator.displayName }}</span>
-            <span>Requested by</span>
-          </mat-list-item>
-        </mat-list>
-        <mat-icon class="arrow">arrow_forward</mat-icon>
-        <mat-list>
-          <h3 matSubheader>Transferred to</h3>
-          <mat-list-item>
-            <mat-icon matListItemIcon>place</mat-icon>
-            <span matListItemTitle>{{ transfer.summary.to }}</span>
-            <span>To</span>
-          </mat-list-item>
-          <mat-list-item>
-            <mat-icon matListItemIcon>event</mat-icon>
-            <span matListItemTitle>{{ (transfer.summary.approved | date:'dd/MM/yyyy') || '-' }}</span>
-            <span>Approved on</span>
-          </mat-list-item>
-          <mat-list-item>
-            <mat-icon matListItemIcon>person</mat-icon>
-            <span matListItemTitle>{{ transfer.summary.approver?.displayName || '-' }}</span>
-            <span>Approved by</span>
-          </mat-list-item>
-        </mat-list>
-      </div>
-    </mat-card-content>
-  </mat-card>
-  <mat-card appearance="outlined" class="inner">
-    <gcp-docs [subfolder]="transfer.summary.id" folder="transfers" (statusChanged)="markFileAttached(transfer.summary.id, $event)">
-      <mat-card-header>
-        <mat-card-title>Attachments</mat-card-title>
-      </mat-card-header>
-    </gcp-docs>
-  </mat-card>
-</div>
-
-<ng-template #loadingPage>
+} @else {
   <gcp-loading-page></gcp-loading-page>
-</ng-template>
+}

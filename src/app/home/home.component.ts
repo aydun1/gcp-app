@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { NgIf } from '@angular/common';
 
 import { SharedService } from '../shared.service';
 import { BigButtonComponent } from '../shared/big-button/big-button.component';
@@ -9,7 +8,7 @@ import { BigButtonComponent } from '../shared/big-button/big-button.component';
   templateUrl: './home.component.html',
   styles: ['.container { max-width: 1024px; margin: 0 auto; }'],
   standalone: true,
-  imports: [NgIf, BigButtonComponent]
+  imports: [BigButtonComponent]
 })
 export class HomeComponent implements OnInit {
   public warehouse!: boolean;

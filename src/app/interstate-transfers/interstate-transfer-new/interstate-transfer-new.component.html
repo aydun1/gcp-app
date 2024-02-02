@@ -16,14 +16,18 @@
     <mat-form-field subscriptSizing="dynamic" class="ml">
       <mat-label>Branch</mat-label>
       <mat-select formControlName="fromState">
-        <mat-option *ngFor="let b of allStates" [value]="b">{{ b }}</mat-option>
+        @for (b of allStates; track b) {
+          <mat-option [value]="b">{{ b }}</mat-option>
+        }
       </mat-select>
     </mat-form-field>
     <span class="ml">to</span>
     <mat-form-field subscriptSizing="dynamic" class="ml">
       <mat-label>Branch</mat-label>
       <mat-select formControlName="toState">
-        <mat-option *ngFor="let b of otherStates" [value]="b">{{ b }}</mat-option>
+        @for (b of otherStates; track b) {
+          <mat-option [value]="b">{{ b }}</mat-option>
+        }
       </mat-select>
     </mat-form-field>
     <button mat-raised-button color="primary" class="save-button" type="submit" [disabled]="!lineCount || creating">Save to GP</button>

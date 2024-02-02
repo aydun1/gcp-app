@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AsyncPipe, DatePipe, DecimalPipe, NgClass, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe, DecimalPipe, NgClass } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { CdkDrag, CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
@@ -44,7 +44,7 @@ import { RunChemicalsDialogComponent } from '../shared/run-chemicals-dialog/run-
   templateUrl: './run-list.component.html',
   styleUrls: ['./run-list.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DatePipe, DecimalPipe, NgIf, NgClass, NgForOf, DragDropModule, MatButtonModule, MatDatepickerModule, ReactiveFormsModule, MatCheckboxModule, MatExpansionModule, MatIconModule, MatListModule, MatMenuModule, MatProgressSpinnerModule, MatTabsModule, MatTooltipModule, RouterModule, GroupByCustomerAddressPipe, PhoneLinkPipe, GroupByPropertyPipe, LetterheadComponent],
+  imports: [AsyncPipe, DatePipe, DecimalPipe, NgClass, DragDropModule, MatButtonModule, MatDatepickerModule, ReactiveFormsModule, MatCheckboxModule, MatExpansionModule, MatIconModule, MatListModule, MatMenuModule, MatProgressSpinnerModule, MatTabsModule, MatTooltipModule, RouterModule, GroupByCustomerAddressPipe, PhoneLinkPipe, GroupByPropertyPipe, LetterheadComponent],
 })
 export class RunListComponent implements OnInit {
   private _branch!: string;
@@ -384,15 +384,4 @@ export class RunListComponent implements OnInit {
     }
   }
 
-  trackByFn(index: number, item: Delivery): string {
-    return item.id;
-  }
-
-  trackByGroupsFn(index: number, item: {key: string}): string {
-    return item.key;
-  }
-
-  trackByRunsFn(index: number, item: Run): string {
-    return item.fields.Title;
-  }
 }

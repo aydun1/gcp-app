@@ -17,7 +17,6 @@ export class GroupByPipe implements PipeTransform {
         item,
       ]
     }), {});
-
     return [...prop, this.extras].map(_ => a[_]);
   }
 }

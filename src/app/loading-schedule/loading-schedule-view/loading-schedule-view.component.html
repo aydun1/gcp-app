@@ -2,125 +2,124 @@
   <button mat-icon-button (click)="goBack()" class="mobile-button" type="button">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <ng-container>
-    <div class="title">Loading schedule entry</div>
-  </ng-container>
+  <div class="title">Loading schedule entry</div>
 </mat-toolbar>
-
-<div class="content" *ngIf="loadingScheduleEntry$ | async as loadingScheduleEntry; else loadingPage">
-  <div class="print-header">
-    <gcp-letterhead>Dispatch Report</gcp-letterhead>
-    <div class="print-details">
-      <div>
-        <strong>Loading date: </strong>
-        <span>{{ loadingScheduleEntry.fields.LoadingDate | date:'dd/MM/yyyy' }}</span>
-      </div>
-      <div>
-        <strong>For site: </strong>
-        <span>{{ loadingScheduleEntry.fields.To }}</span>
-      </div>
-      <div>
-        <strong>Transport: </strong>
-        <span>{{ loadingScheduleEntry.fields.TransportCompany }}</span>
-      </div>
-      <div *ngIf="loadingScheduleEntry.fields.Driver">
-        <strong>Driver: </strong>
-        <span>{{ loadingScheduleEntry.fields.Driver }}</span>
-      </div>
-      <div *ngIf="loadingScheduleEntry.fields.Spaces">
-        <strong>Spaces: </strong>
-        <span>{{ loadingScheduleEntry.fields.Spaces }}</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="header screen-header">
-    <h2>Loading schedule entry</h2>
-    <div class="actions">
-      <div class="edit">
-        <a mat-raised-button [routerLink]="['edit']" type="button">Edit entry</a>
+@if (loadingScheduleEntry$ | async; as loadingScheduleEntry) {
+  <div class="content">
+    <div class="print-header">
+      <gcp-letterhead>Dispatch Report</gcp-letterhead>
+      <div class="print-details">
+        <div>
+          <strong>Loading date: </strong>
+          <span>{{ loadingScheduleEntry.fields.LoadingDate | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div>
+          <strong>For site: </strong>
+          <span>{{ loadingScheduleEntry.fields.To }}</span>
+        </div>
+        <div>
+          <strong>Transport: </strong>
+          <span>{{ loadingScheduleEntry.fields.TransportCompany }}</span>
+        </div>
+        @if (loadingScheduleEntry.fields.Driver) {
+          <div>
+            <strong>Driver: </strong>
+            <span>{{ loadingScheduleEntry.fields.Driver }}</span>
+          </div>
+        }
+        @if (loadingScheduleEntry.fields.Spaces) {
+          <div>
+            <strong>Spaces: </strong>
+            <span>{{ loadingScheduleEntry.fields.Spaces }}</span>
+          </div>
+        }
       </div>
     </div>
-  </div>
-
-  <mat-card appearance="outlined" class="inner details-card">
-    <mat-card-content>
-      <mat-list>
-        <h3 matSubheader>Details</h3>
-        <mat-list-item>
-          <mat-icon matListItemIcon>business</mat-icon>
-          <span matListItemTitle>{{ loadingScheduleEntry.fields.TransportCompany }}</span>
-          <span>Transport company</span>
-        </mat-list-item>
-        <mat-list-item>
-          <mat-icon matListItemIcon>person</mat-icon>
-          <span matListItemTitle>{{ loadingScheduleEntry.fields.Driver }}</span>
-          <span>Driver</span>
-        </mat-list-item>
-        <mat-list-item>
-          <mat-icon matListItemIcon>tag</mat-icon>
-          <span matListItemTitle>{{ loadingScheduleEntry.fields.Spaces }}</span>
-          <span>Spaces</span>
-        </mat-list-item>
-        <mat-list-item>
-          <mat-icon matListItemIcon>notes</mat-icon>
-          <span matListItemTitle>{{ loadingScheduleEntry.fields.Notes }}</span>
-          <span>Notes</span>
-        </mat-list-item>
-      </mat-list>
-      <div class="side-by-side">
+  
+    <div class="header screen-header">
+      <h2>Loading schedule entry</h2>
+      <div class="actions">
+        <div class="edit">
+          <a mat-raised-button [routerLink]="['edit']" type="button">Edit entry</a>
+        </div>
+      </div>
+    </div>
+  
+    <mat-card appearance="outlined" class="inner details-card">
+      <mat-card-content>
         <mat-list>
-          <h3 matSubheader>Loading</h3>
+          <h3 matSubheader>Details</h3>
           <mat-list-item>
-            <mat-icon matListItemIcon>place</mat-icon>
-            <span matListItemTitle>{{ loadingScheduleEntry.fields.From }}</span>
-            <span>From</span>
+            <mat-icon matListItemIcon>business</mat-icon>
+            <span matListItemTitle>{{ loadingScheduleEntry.fields.TransportCompany }}</span>
+            <span>Transport company</span>
           </mat-list-item>
           <mat-list-item>
-            <mat-icon matListItemIcon>today</mat-icon>
-            <span matListItemTitle>{{ loadingScheduleEntry.fields.LoadingDate | date:'dd/MM/yyyy' }}</span>
-            <span>Loading on</span>
+            <mat-icon matListItemIcon>person</mat-icon>
+            <span matListItemTitle>{{ loadingScheduleEntry.fields.Driver }}</span>
+            <span>Driver</span>
+          </mat-list-item>
+          <mat-list-item>
+            <mat-icon matListItemIcon>tag</mat-icon>
+            <span matListItemTitle>{{ loadingScheduleEntry.fields.Spaces }}</span>
+            <span>Spaces</span>
+          </mat-list-item>
+          <mat-list-item>
+            <mat-icon matListItemIcon>notes</mat-icon>
+            <span matListItemTitle>{{ loadingScheduleEntry.fields.Notes }}</span>
+            <span>Notes</span>
           </mat-list-item>
         </mat-list>
-        <mat-icon class="arrow">arrow_forward</mat-icon>
-        <mat-list>
-          <h3 matSubheader>Arriving</h3>
-          <mat-list-item>
-            <mat-icon matListItemIcon>place</mat-icon>
-            <span matListItemTitle>{{ loadingScheduleEntry.fields.To }}</span>
-            <span>To</span>
-          </mat-list-item>
-          <mat-list-item>
-            <mat-icon matListItemIcon>event</mat-icon>
-            <span matListItemTitle>{{ (loadingScheduleEntry.fields.ArrivalDate | date:'dd/MM/yyyy') || '-' }}</span>
-            <span>Arriving on</span>
-          </mat-list-item>
-        </mat-list>
+        <div class="side-by-side">
+          <mat-list>
+            <h3 matSubheader>Loading</h3>
+            <mat-list-item>
+              <mat-icon matListItemIcon>place</mat-icon>
+              <span matListItemTitle>{{ loadingScheduleEntry.fields.From }}</span>
+              <span>From</span>
+            </mat-list-item>
+            <mat-list-item>
+              <mat-icon matListItemIcon>today</mat-icon>
+              <span matListItemTitle>{{ loadingScheduleEntry.fields.LoadingDate | date:'dd/MM/yyyy' }}</span>
+              <span>Loading on</span>
+            </mat-list-item>
+          </mat-list>
+          <mat-icon class="arrow">arrow_forward</mat-icon>
+          <mat-list>
+            <h3 matSubheader>Arriving</h3>
+            <mat-list-item>
+              <mat-icon matListItemIcon>place</mat-icon>
+              <span matListItemTitle>{{ loadingScheduleEntry.fields.To }}</span>
+              <span>To</span>
+            </mat-list-item>
+            <mat-list-item>
+              <mat-icon matListItemIcon>event</mat-icon>
+              <span matListItemTitle>{{ (loadingScheduleEntry.fields.ArrivalDate | date:'dd/MM/yyyy') || '-' }}</span>
+              <span>Arriving on</span>
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </mat-card-content>
+      <div class="status">
+        <div class="approved">
+          <span>{{ loadingScheduleEntry.fields.Status }}</span>
+        </div>
       </div>
-    </mat-card-content>
-
-
-    <div class="status">
-      <div class="approved">
-        <span>{{ loadingScheduleEntry.fields.Status }}</span>
-      </div>
-    </div>
-  </mat-card>
-
-  <mat-card appearance="outlined" class="inner pan-list">
-    <mat-card-header>
-      <mat-card-title>Pan list</mat-card-title>
-    </mat-card-header>
-    <gcp-pan-list-simple [note]="panNote" [scheduleId]="loadingScheduleEntry.id" [panLists]="loadingScheduleEntry.fields.PanListsArray" (addPanList)="addPanList(loadingScheduleEntry.id)" (deletePanList)="deletePanList(loadingScheduleEntry.id, $event)" (sendPanList)="sendPanList(loadingScheduleEntry.id, $event, loadingScheduleEntry)"></gcp-pan-list-simple>
-  </mat-card>
-
-  <mat-card appearance="outlined" class="inner attachments">
-    <gcp-docs [subfolder]="loadingScheduleEntry.id" folder="loading-schedule">
-        <mat-card-title>Attachments</mat-card-title>
-    </gcp-docs>
-  </mat-card>
-</div>
-
-<ng-template #loadingPage>
+    </mat-card>
+  
+    <mat-card appearance="outlined" class="inner pan-list">
+      <mat-card-header>
+        <mat-card-title>Pan list</mat-card-title>
+      </mat-card-header>
+      <gcp-pan-list-simple [note]="panNote" [scheduleId]="loadingScheduleEntry.id" [panLists]="loadingScheduleEntry.fields.PanListsArray" (addPanList)="addPanList(loadingScheduleEntry.id)" (deletePanList)="deletePanList(loadingScheduleEntry.id, $event)" (sendPanList)="sendPanList(loadingScheduleEntry.id, $event, loadingScheduleEntry)"></gcp-pan-list-simple>
+    </mat-card>
+  
+    <mat-card appearance="outlined" class="inner attachments">
+      <gcp-docs [subfolder]="loadingScheduleEntry.id" folder="loading-schedule">
+          <mat-card-title>Attachments</mat-card-title>
+      </gcp-docs>
+    </mat-card>
+  </div>
+} @else {
   <gcp-loading-page></gcp-loading-page>
-</ng-template>
+}

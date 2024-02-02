@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -25,7 +25,7 @@ import { CageEditDialogComponent } from '../cage-edit-dialog/cage-edit-dialog.co
   templateUrl: './action-button.component.html',
   styleUrls: ['./action-button.component.css'],
   standalone: true,
-  imports: [AsyncPipe, NgForOf, NgIf, MatButtonModule, MatIconModule, MatMenuModule],
+  imports: [AsyncPipe, MatButtonModule, MatIconModule, MatMenuModule],
 })
 export class ActionButtonComponent implements OnInit {
 

@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MatRippleModule } from '@angular/material/core';
@@ -9,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './big-button.component.html',
   styleUrls: ['./big-button.component.css'],
   standalone: true,
-  imports: [NgIf, RouterModule, MatIconModule, MatRippleModule]
+  imports: [RouterModule, MatIconModule, MatRippleModule]
 })
 export class BigButtonComponent {
 

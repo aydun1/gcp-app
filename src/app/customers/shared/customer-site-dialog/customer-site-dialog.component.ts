@@ -1,5 +1,4 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { NgForOf, NgIf } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -24,7 +23,7 @@ interface SiteForm {
   templateUrl: './customer-site-dialog.component.html',
   styleUrls: ['./customer-site-dialog.component.css'],
   standalone: true,
-  imports: [NgForOf, NgIf, ReactiveFormsModule, MatButtonModule, MatDialogModule, MatIconModule, MatInputModule, MatListModule]
+  imports: [ReactiveFormsModule, MatButtonModule, MatDialogModule, MatIconModule, MatInputModule, MatListModule]
 })
 export class CustomerSiteDialogComponent implements OnInit {
   public siteForm!: FormGroup<SiteForm>;

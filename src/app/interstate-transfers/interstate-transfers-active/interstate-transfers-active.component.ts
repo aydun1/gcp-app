@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -18,7 +18,7 @@ import { GroupByPropertyPipe } from '../../shared/pipes/group-by-property';
   templateUrl: './interstate-transfers-active.component.html',
   styleUrls: ['./interstate-transfers-active.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf, ReactiveFormsModule, RouterModule, MatCardModule, MatProgressSpinnerModule, MatSelectModule, MatTableModule, LetterheadComponent, GroupByPropertyPipe]
+  imports: [AsyncPipe, DatePipe, DecimalPipe, ReactiveFormsModule, RouterModule, MatCardModule, MatProgressSpinnerModule, MatSelectModule, MatTableModule, LetterheadComponent, GroupByPropertyPipe]
 })
 export class InterstateTransfersActiveComponent implements OnInit {
   private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
@@ -164,10 +164,6 @@ export class InterstateTransfersActiveComponent implements OnInit {
 
   getTotalRequestedLines(lines: Array<any>): number {
     return lines.reduce((acc, cur) => acc + 1, 0);
-  }
-
-  trackByGroupsFn(index: number, item: any): string {
-    return item.key;
   }
 
   trackByFn(index: number, item: any): string {

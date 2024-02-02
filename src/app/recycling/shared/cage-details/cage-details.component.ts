@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { DatePipe, NgIf } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -14,7 +14,7 @@ import { RecyclingService } from '../recycling.service';
   templateUrl: './cage-details.component.html',
   styleUrls: ['./cage-details.component.css'],
   standalone: true,
-  imports: [NgIf, DatePipe, MatButtonModule, MatIconModule, MatListModule]
+  imports: [DatePipe, MatButtonModule, MatIconModule, MatListModule]
 })
 export class CageDetailsComponent {
 
@@ -26,7 +26,7 @@ export class CageDetailsComponent {
     private recyclingService: RecyclingService
   ) { }
 
-  removeDepot() {
+  removeDepot(): void {
     this.recyclingService.removeDepot(this.cage.id).pipe(
       tap(() => this.updated.next(true))
     ).subscribe();

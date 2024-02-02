@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { FormControl } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -22,7 +22,7 @@ import { LoadingRowComponent } from '../../../shared/loading/loading-row/loading
   templateUrl: './pallet-customer-list-dialog.component.html',
   styleUrls: ['./pallet-customer-list-dialog.component.css'],
   standalone: true,
-  imports: [NgForOf, NgIf, AsyncPipe, DatePipe, MatButtonModule, MatDialogModule, MatIconModule, MatMenuModule, MatTableModule, LetterheadComponent, LoadingRowComponent]
+  imports: [AsyncPipe, DatePipe, MatButtonModule, MatDialogModule, MatIconModule, MatMenuModule, MatTableModule, LetterheadComponent, LoadingRowComponent]
 })
 export class PalletCustomerListDialogComponent implements OnInit, OnDestroy {
   public pallets$!: Observable<Pallet[]>;
@@ -54,7 +54,7 @@ export class PalletCustomerListDialogComponent implements OnInit, OnDestroy {
     this.getCustomerPallets();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.renderer.removeClass(document.body, 'print-dialog');
   }
 
@@ -68,23 +68,19 @@ export class PalletCustomerListDialogComponent implements OnInit, OnDestroy {
         this.totalIn = 0;
         this.totalOut = 0;
       }),
-      map(_=>
-        _.map(pallet =>  {
-          const isSource = pallet.fields.From === this.branchFilter.value;
-          pallet.fields['In'] = this.data.customer.custNmbr ? +pallet.fields.In || 0 : isSource ? 0 : +pallet.fields.Quantity;
-          pallet.fields['Out'] = this.data.customer.custNmbr ? +pallet.fields.Out || 0 : isSource ? +pallet.fields.Quantity : 0;
-          pallet.fields['Change'] = pallet.fields['Out'] - pallet.fields['In'];
-          this.totalIn += pallet.fields['In'];
-          this.totalOut += pallet.fields['Out'];
-          return pallet;
-        })
-      ),
-      catchError(
-        _ => {
-          this.loading$.next(false);
-          return of([] as Pallet[]);
-        }
-      ),
+      map(_=> _.map(pallet =>  {
+        const isSource = pallet.fields.From === this.branchFilter.value;
+        pallet.fields['In'] = this.data.customer.custNmbr ? +pallet.fields.In || 0 : isSource ? 0 : +pallet.fields.Quantity;
+        pallet.fields['Out'] = this.data.customer.custNmbr ? +pallet.fields.Out || 0 : isSource ? +pallet.fields.Quantity : 0;
+        pallet.fields['Change'] = pallet.fields['Out'] - pallet.fields['In'];
+        this.totalIn += pallet.fields['In'];
+        this.totalOut += pallet.fields['Out'];
+        return pallet;
+      })),
+      catchError(_ => {
+        this.loading$.next(false);
+        return of([] as Pallet[]);
+      })
     );
   }
 
@@ -97,7 +93,7 @@ export class PalletCustomerListDialogComponent implements OnInit, OnDestroy {
     this.getCustomerPallets();
   }
 
-  print() {
+  print(): void {
     window.print();
   }
 

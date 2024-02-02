@@ -1,5 +1,5 @@
 import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -10,7 +10,6 @@ import { catchError, Observable, of, retry, switchMap } from 'rxjs';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
 import { NavigationService } from '../../navigation.service';
 import { InTransitTransfer } from '../shared/intransit-transfer';
-import { IntransitTransferLine } from '../shared/intransit-transfer-line';
 import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
 import { FooterComponent } from '../../shared/footer/footer.component';
 import { LoadingPageComponent } from '../../shared/loading/loading-page/loading-page.component';
@@ -20,7 +19,7 @@ import { LoadingPageComponent } from '../../shared/loading/loading-page/loading-
   templateUrl: './interstate-transfer-view.component.html',
   styleUrls: ['./interstate-transfer-view.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf, MatDividerModule, MatButtonModule, MatIconModule, MatToolbarModule, FooterComponent, LetterheadComponent, LoadingPageComponent]
+  imports: [AsyncPipe, DatePipe, DecimalPipe, MatDividerModule, MatButtonModule, MatIconModule, MatToolbarModule, FooterComponent, LetterheadComponent, LoadingPageComponent]
 })
 export class InterstateTransferViewComponent implements OnDestroy, OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';
@@ -64,10 +63,6 @@ export class InterstateTransferViewComponent implements OnDestroy, OnInit {
 
   print(): void {
     window.print();
-  }
-
-  trackByFn(index: number, item: IntransitTransferLine): string {
-    return item.Id;
   }
 
 }

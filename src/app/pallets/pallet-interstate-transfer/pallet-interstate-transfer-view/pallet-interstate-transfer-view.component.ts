@@ -1,10 +1,11 @@
 import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -16,13 +17,14 @@ import { SharedService } from '../../../shared.service';
 import { NavigationService } from '../../../navigation.service';
 import { DocsComponent } from '../../../shared/docs/docs.component';
 import { LoadingPageComponent } from '../../../shared/loading/loading-page/loading-page.component';
+import { ConfirmationDialogComponent } from '../../../shared/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'gcp-pallet-interstate-transfer-view',
   templateUrl: './pallet-interstate-transfer-view.component.html',
   styleUrls: ['./pallet-interstate-transfer-view.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DatePipe, NgForOf, NgIf, FormsModule, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatToolbarModule, DocsComponent, LoadingPageComponent]
+  imports: [AsyncPipe, DatePipe, FormsModule, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatToolbarModule, DocsComponent, LoadingPageComponent]
 })
 export class PalletInterstateTransferViewComponent implements OnDestroy, OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';
@@ -41,6 +43,7 @@ export class PalletInterstateTransferViewComponent implements OnDestroy, OnInit 
 
   constructor(
     private route: ActivatedRoute,
+    private dialog: MatDialog,
     private renderer: Renderer2,
     private snackBar: MatSnackBar,
     private sharedService: SharedService,
@@ -88,16 +91,22 @@ export class PalletInterstateTransferViewComponent implements OnDestroy, OnInit 
   }
 
   cancel(id: string): void {
-    this.loading = true;
-    this.palletsService.cancelInterstatePalletTransfer(id).pipe(
-      tap(_ => {
-        this.getTransfer(id);
-        this.snackBar.open('Cancelled interstate transfer', '', {duration: 3000});
-        this.loading = false;
-        this.goBack();
-      }),
-      catchError((err: HttpErrorResponse) => this.handleError(err))
-    ).subscribe();
+
+    const data = {title: 'Cancel transfer', content: ['Are you sure you want to cancel this pallet transfer?']};
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {width: '800px', data});
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (!result) return;
+      this.loading = true;
+      this.palletsService.cancelInterstatePalletTransfer(id).pipe(
+        tap(_ => {
+          this.getTransfer(id);
+          this.snackBar.open('Cancelled interstate transfer', '', {duration: 3000});
+          this.loading = false;
+          this.goBack();
+        }),
+        catchError((err: HttpErrorResponse) => this.handleError(err))
+      ).subscribe();
+    });
   }
 
   transferp(id: string): void {

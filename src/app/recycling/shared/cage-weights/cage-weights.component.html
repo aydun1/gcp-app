@@ -1,36 +1,49 @@
 <form (ngSubmit)="setCageWeight()">
-  <mat-list-item *ngIf="cage.fields.Status">
-    <mat-icon matListItemIcon>scale</mat-icon>
-    <span *ngIf="editCageWeight" matListItemTitle><input [(ngModel)]="cageWeight" [ngModelOptions]="{standalone: true}" type="number" placeholder="Weight in kg"></span>
-    <span *ngIf="!editCageWeight" matListItemTitle>{{ cage.fields.CageWeight || 0 | number }} kg</span>
-    <span>Cage weight</span>
-    <ng-container *ngIf="!editCageWeight" matListItemMeta>
-      <button mat-icon-button type="button" (click)="editCageWeight = true"><mat-icon class="last-icon">edit</mat-icon></button>
-    </ng-container>
-
-    <ng-container *ngIf="editCageWeight" matListItemMeta>
-      <button mat-icon-button type="button" (click)="cancelCageWeight()"><mat-icon class="last-icon">close</mat-icon></button>
-      <button mat-icon-button type="submit"><mat-icon class="last-icon">check</mat-icon></button>
-    </ng-container>
-  </mat-list-item>
+  @if (cage.fields.Status) {
+    <mat-list-item>
+      <mat-icon matListItemIcon>scale</mat-icon>
+      @if (editCageWeight) {
+        <span matListItemTitle><input [(ngModel)]="cageWeight" [ngModelOptions]="{standalone: true}" type="number" placeholder="Weight in kg"></span>
+      } @else {
+        <span matListItemTitle>{{ cage.fields.CageWeight || 0 | number }} kg</span>
+      }
+      <span>Cage weight</span>
+      <ng-container matListItemMeta>
+        @if (editCageWeight) {
+          <button mat-icon-button type="button" (click)="cancelCageWeight()"><mat-icon class="last-icon">close</mat-icon></button>
+          <button mat-icon-button type="submit"><mat-icon class="last-icon">check</mat-icon></button>
+        } @else {
+          <button mat-icon-button type="button" (click)="editCageWeight = true"><mat-icon class="last-icon">edit</mat-icon></button>
+        }
+      </ng-container>
+    </mat-list-item>
+  }
 </form>
 <form (ngSubmit)="setGrossWeight()">
-  <mat-list-item *ngIf="cage.fields.Status">
-    <mat-icon matListItemIcon>scale</mat-icon>
-    <span *ngIf="editGrossWeight" matListItemTitle><input [(ngModel)]="grossWeight" [ngModelOptions]="{standalone: true}" type="number" placeholder="Weight in kg"></span>
-    <span *ngIf="!editGrossWeight" matListItemTitle>{{ cage.fields.GrossWeight || 0 | number }} kg</span>
-    <span>Gross weight</span>
-    <ng-container *ngIf="!editGrossWeight" matListItemMeta>
-      <button mat-icon-button type="button" (click)="editGrossWeight = true"><mat-icon class="last-icon">edit</mat-icon></button>
-    </ng-container>
-    <ng-container *ngIf="editGrossWeight" matListItemMeta>
-      <button mat-icon-button type="button" (click)="cancelGrossWeight()"><mat-icon class="last-icon">close</mat-icon></button>
-      <button mat-icon-button type="submit"><mat-icon class="last-icon">check</mat-icon></button>
-    </ng-container>
-  </mat-list-item>
+  @if (cage.fields.Status) {
+    <mat-list-item>
+      <mat-icon matListItemIcon>scale</mat-icon>
+      @if (editGrossWeight) {
+        <span matListItemTitle><input [(ngModel)]="grossWeight" [ngModelOptions]="{standalone: true}" type="number" placeholder="Weight in kg"></span>
+      } @else {
+        <span matListItemTitle>{{ cage.fields.GrossWeight || 0 | number }} kg</span>
+      }
+      <span>Gross weight</span>
+      <ng-container matListItemMeta>
+        @if (editGrossWeight) {
+          <button mat-icon-button type="button" (click)="cancelGrossWeight()"><mat-icon class="last-icon">close</mat-icon></button>
+          <button mat-icon-button type="submit"><mat-icon class="last-icon">check</mat-icon></button>
+        } @else {
+          <button mat-icon-button type="button" (click)="editGrossWeight = true"><mat-icon class="last-icon">edit</mat-icon></button>
+        }
+      </ng-container>
+    </mat-list-item>
+  }
 </form>
-<mat-list-item *ngIf="cage.fields.NetWeight">
-  <mat-icon matListItemIcon>scale</mat-icon>
-  <span matListItemTitle>{{ cage.fields.NetWeight }} kg</span>
-  <span>Net weight</span>
-</mat-list-item>
+@if (cage.fields.NetWeight) {
+  <mat-list-item>
+    <mat-icon matListItemIcon>scale</mat-icon>
+    <span matListItemTitle>{{ cage.fields.NetWeight }} kg</span>
+    <span>Net weight</span>
+  </mat-list-item>
+}

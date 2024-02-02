@@ -11,37 +11,45 @@
         <strong>Date: </strong>
         <span>{{ date | date:'dd/MM/yyyy' }}</span>
       </div>
-      <div *ngIf="address" class="address">
-        <strong>Address:</strong>
-        <div>
-          <div>{{address.address}}</div>
-          <div>{{address.suburb}} {{address.state}} {{address.postalCode}}</div>
+      @if (address) {
+        <div class="address">
+          <strong>Address:</strong>
+          <div>
+            <div>{{address.address}}</div>
+            <div>{{address.suburb}} {{address.state}} {{address.postalCode}}</div>
+          </div>
         </div>
-      </div>
+      }
     </div>
   </div>
   <div class="contacts">
-    <mat-card *ngFor="let i of [1, 2]">
-      <mat-card-header>
-        <mat-card-title>Contact {{ i }}</mat-card-title>
-      </mat-card-header>
-      <mat-card-content  class="contact">
-        <label class="contact-label">Emergency contact: <input type="text"></label>
-        <label class="mobile-label">Phone: <input type="text" class="mobile"></label>
-        <label class="mobile-label">After-hours: <input type="text" class="mobile"></label>
-      </mat-card-content>
-    </mat-card>
+    @for (i of [1, 2]; track i) {
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Contact {{ i }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content  class="contact">
+          <label class="contact-label">Emergency contact: <input type="text"></label>
+          <label class="mobile-label">Phone: <input type="text" class="mobile"></label>
+          <label class="mobile-label">After-hours: <input type="text" class="mobile"></label>
+        </mat-card-content>
+      </mat-card>
+    }
   </div>
-  <div class="summary-table" *ngIf="manifest | async | keyvalue as m">
-    <div class="row-head row">
-      <div class="title">Dangerous goods class</div>
-      <div class="quantity">Solids (kg)</div>
-      <div class="quantity">Liquids (L)</div>
+  @if (manifest | async | keyvalue; as m) {
+    <div class="summary-table">
+      <div class="row-head row">
+        <div class="title">Dangerous goods class</div>
+        <div class="quantity">Solids (kg)</div>
+        <div class="quantity">Liquids (L)</div>
+      </div>
+      @for (item of m; track item.key) {
+        <div class="row">
+          <div class="title"><strong class="key">{{ item.key }}</strong> {{ classes[item.key] }}</div>
+          <div class="quantity">{{ item.value ? (item.value['kg'] | number:'1.0-0') : 0 }} kg</div>
+          <div class="quantity">{{ item.value ? (item.value['l'] | number:'1.0-0') : 0 }} L</div>
+        </div>
+      }
     </div>
-    <div *ngFor="let item of m" class="row">
-      <div class="title"><strong class="key">{{ item.key }}</strong> {{ classes[item.key] }}</div>
-      <div class="quantity">{{ item.value ? (item.value['kg'] | number:'1.0-0') : 0 }} kg</div>
-      <div class="quantity">{{ item.value ? (item.value['l'] | number:'1.0-0') : 0 }} L</div>
-    </div>
-  </div>
+  }
 </mat-dialog-content>

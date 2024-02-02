@@ -1,5 +1,5 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -19,7 +19,7 @@ import { LoadingPageComponent } from '../../../shared/loading/loading-page/loadi
   templateUrl: './pallet-reconciliation-view.component.html',
   styleUrls: ['./pallet-reconciliation-view.component.css'],
   standalone: true,
-  imports: [AsyncPipe, NgIf, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatToolbarModule, LoadingPageComponent]
+  imports: [AsyncPipe, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatToolbarModule, LoadingPageComponent]
 })
 export class PalletReconciliationViewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';

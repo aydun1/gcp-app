@@ -103,7 +103,6 @@ export class LoadingScheduleService {
   }
 
   getNextPage(): void {
-    console.log(this._nextPage);
     if (!this._nextPage || this._loadingLoadingSchedule) return;
     this._loadingScheduleListSubject$.pipe(
       take(1),

@@ -1,39 +1,54 @@
 <h2 mat-dialog-title>Chemicals</h2>
 
 <mat-dialog-content>
-  <div *ngIf="chemicals$ | async as o">
-    <div *ngIf="!share">
-      <div class="header row">
-        <div class="item-desc">Item</div>
-        <div class="class">Class</div>
-        <div class="quantity">Qty</div>
-      </div>
-      <div *ngFor="let l of o; last as last">
-        <div class="row">
-          <div class="item-desc"><a [href]="getPdfPath(l.ItemNmbr)" target="_blank">{{ l.ItemDesc }}</a></div>
-          <div class="class"><span class="mobile-show">Class: </span>{{ l.Dgc }}</div>
-          <div class="quantity"><span class="mobile-show">Qty: </span>{{ l.Quantity | number }}</div>
+  @if (chemicals$ | async; as o) {
+    @if (!share) {
+      <div>
+        <div class="header row">
+          <div class="item-desc">Item</div>
+          <div class="class">Class</div>
+          <div class="quantity">Qty</div>
         </div>
-        <mat-divider *ngIf="!last"></mat-divider>
+        @for (l of o; track l.ItemNmbr) {
+          <div class="row">
+            <div class="item-desc"><a [href]="getPdfPath(l.ItemNmbr)" target="_blank">{{ l.ItemDesc }}</a></div>
+            <div class="class"><span class="mobile-show">Class: </span>{{ l.Dgc }}</div>
+            <div class="quantity"><span class="mobile-show">Qty: </span>{{ l.quantity | number }}</div>
+          </div>
+          @if (!$last) {
+            <mat-divider></mat-divider>
+          }
+        } @empty {
+          <div class="note">
+            No chemicals
+          </div>
+        }
       </div>
-      <div class="note" *ngIf="o.length === 0">
-        No chemicals
-      </div>
+    }
+  }
+
+  @if (loading) {
+    <div class="loading">
+      <mat-spinner diameter="48" class="spinner"></mat-spinner>
     </div>
-  </div>
-  <div *ngIf="loading" class="loading">
-    <mat-spinner diameter="48" class="spinner"></mat-spinner>
-  </div>
-  <div *ngIf="share" class="share-page">
-    <h1 class="print-head">Outbound Chemical Register</h1>
-    <a [href]="url" target="_blank">
-      <qr-code [value]="url" size="300" errorCorrectionLevel="M" class="qr-code"></qr-code>
-    </a>
-    <h2>Delivery run: {{ data.run }}</h2>
-  </div>
+  }
+
+  @if (share) {
+    <div class="share-page">
+      <h1 class="print-head">Outbound Chemical Register</h1>
+      <a [href]="url" target="_blank">
+        <qr-code [value]="url" size="300" errorCorrectionLevel="M" class="qr-code"></qr-code>
+      </a>
+      <h2>Delivery run: {{ data.run }}</h2>
+    </div>
+  }
 </mat-dialog-content>
 <div class="buttons">
-  <button mat-icon-button *ngIf="share" (click)="share = false" type="button" class="close-button" tabindex="-1" ><mat-icon>arrow_back</mat-icon></button>
-  <button mat-icon-button *ngIf="!share" (click)="share = true" type="button" class="close-button" tabindex="-1" ><mat-icon>qr_code</mat-icon></button>
+  @if (share) {
+    <button mat-icon-button (click)="share = false" type="button" class="close-button" tabindex="-1" ><mat-icon>arrow_back</mat-icon></button>
+
+  } @else {
+    <button mat-icon-button (click)="share = true" type="button" class="close-button" tabindex="-1" ><mat-icon>qr_code</mat-icon></button>
+  }
   <button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>
 </div>

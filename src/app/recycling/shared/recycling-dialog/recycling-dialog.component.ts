@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -42,7 +42,7 @@ interface CollectorForm {
   templateUrl: './recycling-dialog.component.html',
   styleUrls: ['./recycling-dialog.component.css'],
   standalone: true,
-  imports: [AsyncPipe, ReactiveFormsModule, NgForOf, NgIf, MatButtonModule, MatDialogModule, MatExpansionModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, MatSelectModule, MatSlideToggleModule, ActionButtonComponent, CageDetailsComponent, CageNotesComponent, CageMaterialComponent, CageWeightsComponent, GroupCagesPipe]
+  imports: [AsyncPipe, ReactiveFormsModule, MatButtonModule, MatDialogModule, MatExpansionModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, MatSelectModule, MatSlideToggleModule, ActionButtonComponent, CageDetailsComponent, CageNotesComponent, CageMaterialComponent, CageWeightsComponent, GroupCagesPipe]
 })
 export class RecyclingDialogComponent implements OnInit {
   readonly allocated = 1;
@@ -190,13 +190,5 @@ export class RecyclingDialogComponent implements OnInit {
     this.getCagesWithCustomer();
     this.allocatorForm.patchValue({site});
     if(this.data.sites) this.router.navigate([], { queryParams: {site: this.site}, queryParamsHandling: 'merge', replaceUrl: true});
-  }
-
-  trackByIndex(index: number, item: Cage[]): number {
-    return index;
-  }
-
-  trackByFn(index: number, item: Cage): string {
-    return item.id;
   }
 }

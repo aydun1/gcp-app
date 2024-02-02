@@ -1,38 +1,59 @@
 <mat-list>
-  <div mat-subheader *ngIf="cage.fields.Date1 || cage.fields.Date2 || cage.fields.Date3 || cage.fields.Date4 || cage.fields.ToDepot">Dates</div>
-  <mat-list-item *ngIf="cage.fields.Consolidated">
-    <span matListItemTitle>{{ cage.fields.Consolidated | date: 'dd/MM/yyyy' }}</span>
-    <span>Consolidated</span>
-  </mat-list-item>
-  <mat-list-item *ngIf="cage.fields.Date4">
-    <span matListItemTitle>{{ cage.fields.Date4 | date: 'dd/MM/yyyy' }}</span>
-    <span>Collected from Polymer</span>
-  </mat-list-item>
-  <mat-list-item *ngIf="cage.fields.Date3">
-    <span matListItemTitle>{{ cage.fields.Date3 | date: 'dd/MM/yyyy' }}</span>
-    <span>Delivered to Polymer</span>
-  </mat-list-item>
-  <mat-list-item *ngIf="cage.fields.FromLocalProcessing">
-    <span matListItemTitle>{{ cage.fields.FromLocalProcessing | date: 'dd/MM/yyyy' }}</span>
-    <span>Collected from local processing</span>
-  </mat-list-item>
-  <mat-list-item *ngIf="cage.fields.ToLocalProcessing">
-    <span matListItemTitle>{{ cage.fields.ToLocalProcessing | date: 'dd/MM/yyyy' }}</span>
-    <span>Delivered to local processing</span>
-  </mat-list-item>
-  <mat-list-item *ngIf="cage.fields.Date2">
-    <span matListItemTitle>{{ cage.fields.Date2 | date: 'dd/MM/yyyy' }}</span>
-    <span>Collected from customer</span>
-  </mat-list-item>
-  <mat-list-item *ngIf="cage.fields.Date1">
-    <span matListItemTitle>{{ cage.fields.Date1 | date: 'dd/MM/yyyy' }}</span>
-    <span>Delivered to customer</span>
-  </mat-list-item>
-  <mat-list-item *ngIf="cage.fields.ToDepot">
-    <span matListItemTitle>{{ cage.fields.ToDepot | date: 'dd/MM/yyyy' }}</span>
-    <span>Delivered to depot ({{ cage.fields.Depot }})</span>
-    <ng-container *ngIf="!cage.statusId || cage.statusId < 2" matListItemMeta>
-      <button mat-icon-button type="button" (click)="removeDepot()"><mat-icon class="last-icon">close</mat-icon></button>
-    </ng-container>
-  </mat-list-item>
+  @if (cage.fields.Date1 || cage.fields.Date2 || cage.fields.Date3 || cage.fields.Date4 || cage.fields.ToDepot) {
+    <div mat-subheader>Dates</div>
+  }
+  @if (cage.fields.Consolidated) {
+    <mat-list-item>
+      <span matListItemTitle>{{ cage.fields.Consolidated | date: 'dd/MM/yyyy' }}</span>
+      <span>Consolidated</span>
+    </mat-list-item>
+  }
+  @if (cage.fields.Date4) {
+    <mat-list-item>
+      <span matListItemTitle>{{ cage.fields.Date4 | date: 'dd/MM/yyyy' }}</span>
+      <span>Collected from Polymer</span>
+    </mat-list-item>
+  }
+  @if (cage.fields.Date3) {
+    <mat-list-item>
+      <span matListItemTitle>{{ cage.fields.Date3 | date: 'dd/MM/yyyy' }}</span>
+      <span>Delivered to Polymer</span>
+    </mat-list-item>
+  }
+  @if (cage.fields.FromLocalProcessing) {
+    <mat-list-item>
+      <span matListItemTitle>{{ cage.fields.FromLocalProcessing | date: 'dd/MM/yyyy' }}</span>
+      <span>Collected from local processing</span>
+    </mat-list-item>
+  }
+  @if (cage.fields.ToLocalProcessing) {
+    <mat-list-item>
+      <span matListItemTitle>{{ cage.fields.ToLocalProcessing | date: 'dd/MM/yyyy' }}</span>
+      <span>Delivered to local processing</span>
+    </mat-list-item>
+  }
+  @if (cage.fields.Date2) {
+    <mat-list-item>
+      <span matListItemTitle>{{ cage.fields.Date2 | date: 'dd/MM/yyyy' }}</span>
+      <span>Collected from customer</span>
+    </mat-list-item>
+  }
+  @if (cage.fields.Date1) {
+    <mat-list-item>
+      <span matListItemTitle>{{ cage.fields.Date1 | date: 'dd/MM/yyyy' }}</span>
+      <span>Delivered to customer</span>
+    </mat-list-item>
+  }
+  @if (cage.fields.ToDepot) {
+    <mat-list-item>
+      <span matListItemTitle>{{ cage.fields.ToDepot | date: 'dd/MM/yyyy' }}</span>
+      <span>Delivered to depot ({{ cage.fields.Depot }})</span>
+      @if (!cage.statusId || cage.statusId < 2) {
+        <ng-container matListItemMeta>
+          <button mat-icon-button type="button" (click)="removeDepot()"><mat-icon class="last-icon">close</mat-icon></button>
+        </ng-container>
+      }
+    </mat-list-item>
+  }
+
 </mat-list>

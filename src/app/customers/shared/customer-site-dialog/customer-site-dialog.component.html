@@ -2,29 +2,33 @@
 <form (ngSubmit)="siteId ? editSite() : addSite()" [formGroup]="siteForm">
   <mat-dialog-content class="mat-typography">
     <p>Use this when you wish to keep track of pallets for customers with more than one physical location, but only one debtor ID. The address is optional.</p>
-    <ng-container *ngIf="data.sites as sites">
+    @if (data.sites; as sites) {
       <h3>Sites</h3>
       <mat-list>
-        <mat-list-item *ngFor="let site of sites" (click)="openEditor(site.id, site.fields.Title, site.fields.Address)" [class.active] = "site.id === siteId">
-          <span matListItemTitle>{{ site.fields.Title }}</span>
-          <ng-container *ngIf="site.id === siteId" matListItemMeta>
-            <button color="warn" type="button" mat-raised-button class="icon" (click)="deleteSite()" [disabled]="loading" class="delete">Delete site</button>
-          </ng-container>
-          <ng-container matListItemMeta>
-            <button type="button" mat-icon-button class="icon"><mat-icon>edit</mat-icon></button>
-          </ng-container>
-        </mat-list-item>
+        @for (site of sites; track site.id) {
+          <mat-list-item (click)="openEditor(site.id, site.fields.Title, site.fields.Address)" [class.active] = "site.id === siteId">
+            <span matListItemTitle>{{ site.fields.Title }}</span>
+            <ng-container matListItemMeta>
+              @if (site.id === siteId) {
+                <button color="warn" type="button" mat-raised-button class="icon" (click)="deleteSite()" [disabled]="loading" class="delete">Delete site</button>
+              }
+              <button type="button" mat-icon-button class="icon"><mat-icon>edit</mat-icon></button>
+            </ng-container>
+          </mat-list-item>
+        }
       </mat-list>
-    </ng-container>
-
-    <h3 *ngIf="!siteId">Add a site</h3>
-    <h3 *ngIf="siteId">Edit site</h3>
+    }
+    @if (siteId) {
+      <h3>Edit site</h3>
+    } @else {
+      <h3>Add a site</h3>
+    }
     <mat-form-field appearance="outline" class="name">
       <mat-label>Site name (i.e. suburb)</mat-label>
       <input matInput type="text" formControlName="site" autocomplete="off" placeholder="Site name (i.e. suburb)">
-      <mat-error *ngIf="siteForm.get('site')?.hasError('forbiddenName')">
-        A site by this name already exists.
-      </mat-error>
+      @if (siteForm.get('site')?.hasError('forbiddenName')) {
+        <mat-error>A site by this name already exists.</mat-error>
+      }
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Address</mat-label>

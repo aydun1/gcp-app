@@ -2,88 +2,91 @@
   <button mat-icon-button (click)="goBack()" class="mobile-button" type="button">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <ng-container>
-    <div class="title">Requested items</div>
-    <button mat-icon-button class="print-button" (click)="print()"><mat-icon>print</mat-icon></button>
-  </ng-container>
+  <div class="title">Requested items</div>
+  <button mat-icon-button class="print-button" (click)="print()"><mat-icon>print</mat-icon></button>
 </mat-toolbar>
 
-<div class="outer" *ngIf="interstateTransfer$ | async as s; else loadingPage">
-  <div class="inner header-wrap">
-    <gcp-letterhead class="print-header">Interstate Transfer</gcp-letterhead>
-    <h2 class="header">Interstate Transfer</h2>
-    <div class="print-details">
-      <div>
-        <strong>Document Id: </strong>
-        <span>{{ s.docId }}</span>
-      </div>
-      <div>
-        <strong>Order date: </strong>
-        <span>{{ s.orderDate | date:'dd/MM/yyyy' }}</span>
-      </div>
-      <div>
-        <strong>From: </strong>
-        <span>{{ s.fromSite }}</span>
-      </div>
-      <div>
-        <strong>For: </strong>
-        <span>{{ s.toSite }}</span>
-      </div>
-    </div>
-  </div>
-  <div class="table-heading inner">
-    <div class="line">
-      <div class="bin">
-        Bin
-      </div>
-      <div class="product-details">
-        Item
-      </div>
-      <div class="quantities">
-        U of M
-      </div>
-      <div class="quantities">
-        On hand
-      </div>
-      <div class="quantities">
-        Ordered
-      </div>
-      <div class="quantities product-sending">
-        Picked
+@if (interstateTransfer$ | async; as s) {
+  <div class="outer">
+    <div class="inner header-wrap">
+      <gcp-letterhead class="print-header">Interstate Transfer</gcp-letterhead>
+      <h2 class="header">Interstate Transfer</h2>
+      <div class="print-details">
+        <div>
+          <strong>Document Id: </strong>
+          <span>{{ s.docId }}</span>
+        </div>
+        <div>
+          <strong>Order date: </strong>
+          <span>{{ s.orderDate | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div>
+          <strong>From: </strong>
+          <span>{{ s.fromSite }}</span>
+        </div>
+        <div>
+          <strong>For: </strong>
+          <span>{{ s.toSite }}</span>
+        </div>
       </div>
     </div>
-  </div>
-  <mat-divider></mat-divider>
-  <div class="inner content">
-    <div *ngFor="let line of s.lines; trackBy:trackByFn" class="line">
-      <div class="bin">
-        {{ line.Bin || '-' }}
-      </div>
-      <div class="product-details">
-        <strong>{{ line.ItemNmbr }}</strong>
-        <div class="small description">{{ line.ItemDesc }}</div>
-      </div>
-      <div class="small quantities">
-        {{ line.UOFM }}
-      </div>
-      <div class="small quantities">
-        {{ line.QtyOnHand | number }}
-      </div>
-      <div class="quantities">
-        <strong>{{ line.QtyRemaining | number }}</strong>
-      </div>
-      <div class="quantities product-sending">
-        <div class="underline"></div>
+    <div class="table-heading inner">
+      <div class="line">
+        <div class="bin">
+          Bin
+        </div>
+        <div class="product-details">
+          Item
+        </div>
+        <div class="quantities">
+          U of M
+        </div>
+        <div class="quantities">
+          On hand
+        </div>
+        <div class="quantities">
+          Ordered
+        </div>
+        <div class="quantities product-sending">
+          Picked
+        </div>
       </div>
     </div>
+    <mat-divider></mat-divider>
+    <div class="inner content">
+      @for (line of s.lines; track line.Id) {
+        <div class="line">
+          <div class="bin">
+            {{ line.Bin || '-' }}
+          </div>
+          <div class="product-details">
+            <strong>{{ line.ItemNmbr }}</strong>
+            <div class="small description">{{ line.ItemDesc }}</div>
+          </div>
+          <div class="small quantities">
+            {{ line.UOFM }}
+          </div>
+          <div class="small quantities">
+            {{ line.QtyOnHand | number }}
+          </div>
+          <div class="quantities">
+            <strong>{{ line.QtyRemaining | number }}</strong>
+          </div>
+          <div class="quantities product-sending">
+            <div class="underline"></div>
+          </div>
+        </div>
+      }
+    </div>
+    <div class="footer inner">
+      <mat-divider class="bottom-divider"></mat-divider>
+      <gcp-footer></gcp-footer>
+    </div>
   </div>
-  <div class="footer inner">
-    <mat-divider class="bottom-divider"></mat-divider>
-    <gcp-footer></gcp-footer>
-  </div>
-</div>
-
-<ng-template #loadingPage>
-  <gcp-loading-page *ngIf="!error"></gcp-loading-page>
-  <div *ngIf="error">{{ error }}</div>
-</ng-template>
+} @else {
+  @if (error) {
+    <div>{{ error }}</div>
+  } @else {
+    <gcp-loading-page></gcp-loading-page>
+  }
+}

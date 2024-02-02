@@ -1,30 +1,41 @@
 <form [formGroup]="transferForm" (ngSubmit)="submitForm()">
   <div class="options">
     <div class="buttons">
-      <ng-container *ngIf="suggestions">
+      @if (suggestions) {
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
           <mat-label>Branch</mat-label>
           <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
-            <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
+            @for (s of states; track s) {
+              <mat-option [value]="s">{{ s }}</mat-option>
+            }
           </mat-select>
         </mat-form-field>
-        <mat-form-field *ngIf="showSuppliers" subscriptSizing="dynamic" appearance="outline">
-          <mat-label>Suppliers</mat-label>
-          <mat-select [(ngModel)]="chosenVendors" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setVendors($event)">
-            <mat-option *ngFor="let b of otherVendors" [value]="b.branch">{{ b.branch }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+        @if (showSuppliers) {
+          <mat-form-field subscriptSizing="dynamic" appearance="outline">
+            <mat-label>Suppliers</mat-label>
+            <mat-select [(ngModel)]="chosenVendors" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setVendors($event)">
+              @for (b of otherVendors; track b.branch) {
+                <mat-option [value]="b.branch">{{ b.branch }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
+
         <mat-form-field subscriptSizing="dynamic" appearance="outline">
           <mat-label>Categories</mat-label>
           <mat-select [(ngModel)]="categories" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setCategories($event)">
-            <mat-option *ngFor="let c of categoryOptions" [value]="c.value">{{ c.name }}</mat-option>
+            @for (c of categoryOptions; track c.value) {
+              <mat-option [value]="c.value">{{ c.name }}</mat-option>
+            }
           </mat-select>
         </mat-form-field>
-      </ng-container>
+      }
       <mat-form-field subscriptSizing="dynamic" appearance="outline">
         <mat-label>Show columns</mat-label>
         <mat-select [(ngModel)]="chosenColumns" [ngModelOptions]="{standalone: true}" multiple (selectionChange)="setColumns($event)">
-          <mat-option *ngFor="let s of otherStates" [value]="s">{{ s }}</mat-option>
+          @for (s of otherStates; track s) {
+            <mat-option [value]="s">{{ s }}</mat-option>
+          }
         </mat-select>
       </mat-form-field>
       <mat-form-field subscriptSizing="dynamic" appearance="outline">
@@ -37,7 +48,9 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div *ngIf="autosave && (saving | async) as s" class="autosave">Autosave: {{ s }}</div>
+    @if (autosave && (saving | async); as s) {
+      <div class="autosave">Autosave: {{ s }}</div>
+    }
   </div>
   <mat-card appearance="outlined">
     <mat-table #table [dataSource]="lines.controls" [trackBy]="trackByFn" formArrayName="lines">
@@ -266,9 +279,13 @@
         </mat-header-cell>
         <mat-cell *matCellDef="let line" [formGroup]="line">
           <input formControlName="ToTransfer" class="transfer-input" type="number" placeholder="0" min="0">
-          <div *ngIf="estimatePallets" class="pallet-count">
-            <span *ngIf="line.value['Spaces']">({{ line.value['Spaces'] | number: '1.0-1' }})</span>
-          </div>
+          @if (estimatePallets) {
+            <div class="pallet-count">
+              @if (line.value['Spaces']) {
+                <span>({{ line.value['Spaces'] | number: '1.0-1' }})</span>
+              }
+            </div>
+          }
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
           <div class="transferTotal">
@@ -330,11 +347,13 @@
       <mat-footer-row *matFooterRowDef="['empty']" [class.hidden]="loading || getTotalRequestedLines(lines.controls) || !suggestions"></mat-footer-row>
       <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
     </mat-table>
-    <mat-card appearance="raised" *ngIf="showNotes" class="notes">
-      <mat-form-field class="search-form" subscriptSizing="dynamic">
-        <mat-label>Notes</mat-label>
-        <textarea matInput class="main-notes" type="text" [formControl]="notes" autocomplete="off"></textarea>
-      </mat-form-field>
-    </mat-card>
+    @if (showNotes) {
+      <mat-card appearance="raised" class="notes">
+        <mat-form-field class="search-form" subscriptSizing="dynamic">
+          <mat-label>Notes</mat-label>
+          <textarea matInput class="main-notes" type="text" [formControl]="notes" autocomplete="off"></textarea>
+        </mat-form-field>
+      </mat-card>
+    }
   </mat-card>
 </form>

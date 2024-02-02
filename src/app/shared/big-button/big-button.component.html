@@ -1,5 +1,7 @@
 <a matRipple [routerLink]="target.length ? target : null" class="link">
-  <mat-icon *ngIf="icon">{{ icon }}</mat-icon>
+  @if (icon) {
+    <mat-icon>{{ icon }}</mat-icon>
+  }
   <h2>
     <ng-content></ng-content>
   </h2>

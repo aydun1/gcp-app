@@ -6,104 +6,110 @@
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
         <mat-label>Branch</mat-label>
         <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
-          <mat-option *ngFor="let s of states" value="{{ s }}">{{ s }}</mat-option>
+          @for (s of states; track s) {
+            <mat-option [value]="s">{{ s }}</mat-option>
+          }
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="pallet">
         <mat-label>Pallet</mat-label>
         <mat-select [formControl]="palletFilter" (selectionChange)="setPallet($event)">
           <mat-option>All</mat-option>
-          <mat-option *ngFor="let s of pallets" value="{{ s }}">{{ s }}</mat-option>
+          @for (p of pallets; track p) {
+            <mat-option [value]="p">{{ p }}</mat-option>
+          }
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="name-filter">
         <mat-label>Customer</mat-label>
         <input matInput [formControl]="nameFilter" type="text" autocomplete="off" placeholder="Type to search...">
-        <button *ngIf="!nameFilter.value" matSuffix mat-icon-button disabled type="button">
-          <mat-icon>search</mat-icon>
-        </button>
-        <button *ngIf="nameFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearNameFilter()" type="button">
-          <mat-icon>close</mat-icon>
-        </button>
+        @if (nameFilter.value) {
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="clearNameFilter()" type="button"><mat-icon>close</mat-icon></button>
+        } @else {
+          <button matSuffix mat-icon-button disabled type="button"><mat-icon>search</mat-icon></button>
+        }
       </mat-form-field>
     </div>
   </div>
-
-  <mat-card appearance="outlined" *ngIf="(pallets$ | async) as pallets" class="inner">
-    <mat-table #table [dataSource]="pallets" [trackBy]="trackByFn">
-
-      <ng-container matColumnDef="date">
-        <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
-        <mat-cell *matCellDef="let pallet">
-          {{ pallet.fields.Date | date: 'dd/MM/yyyy' }}
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="notes">
-        <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
-        <mat-cell *matCellDef="let pallet">
-        {{ (pallet.fields.Title ? pallet.fields.Notes : pallet.fields.Reference) || '-' }}
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="docket">
-        <mat-header-cell *matHeaderCellDef> Docket </mat-header-cell>
-        <mat-cell *matCellDef="let pallet">
-          <button mat-icon-button (click)="openRecyclingDocketDialog(pallet.id)" *ngIf="pallet.fields.Title" type="button"><mat-icon class="link">receipt</mat-icon></button>
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef>{{ totalOut - totalIn }}</mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="from">
-        <mat-header-cell *matHeaderCellDef> From </mat-header-cell>
-        <mat-cell *matCellDef="let pallet">
-          {{ pallet.fields.From }}
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="recepient">
-        <mat-header-cell *matHeaderCellDef> Recepient </mat-header-cell>
-        <mat-cell *matCellDef="let pallet">
-          {{ pallet.fields.Title ? pallet.fields.Title + (pallet.fields.Site ? ', ' + pallet.fields.Site : '') + ' (' + pallet.fields.To + ')' : pallet.fields.To }}
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="pallet">
-        <mat-header-cell *matHeaderCellDef> Pallet </mat-header-cell>
-        <mat-cell *matCellDef="let pallet">
-          {{ pallet.fields.Pallet }}
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="in">
-        <mat-header-cell *matHeaderCellDef> In </mat-header-cell>
-        <mat-cell *matCellDef="let pallet">{{ pallet.fields.In }}</mat-cell>
-        <mat-footer-cell *matFooterCellDef>{{ totalIn }}</mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="out">
-        <mat-header-cell *matHeaderCellDef> Out </mat-header-cell>
-        <mat-cell *matCellDef="let pallet">{{ pallet.fields.Out }}</mat-cell>
-        <mat-footer-cell *matFooterCellDef>{{ totalOut }}</mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="loading">
-        <mat-footer-cell *matFooterCellDef>
-          <gcp-loading-row></gcp-loading-row>
-        </mat-footer-cell>
-      </ng-container>
-
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) ? false : true"></mat-footer-row>
-      <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
-    </mat-table>
-  </mat-card>
+  @if (pallets$ | async; as pallets) {
+    <mat-card appearance="outlined" class="inner">
+      <mat-table #table [dataSource]="pallets" [trackBy]="trackByFn">
+  
+        <ng-container matColumnDef="date">
+          <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+          <mat-cell *matCellDef="let pallet">
+            {{ pallet.fields.Date | date: 'dd/MM/yyyy' }}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="notes">
+          <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
+          <mat-cell *matCellDef="let pallet">
+          {{ (pallet.fields.Title ? pallet.fields.Notes : pallet.fields.Reference) || '-' }}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="docket">
+          <mat-header-cell *matHeaderCellDef> Docket </mat-header-cell>
+          <mat-cell *matCellDef="let pallet">
+            @if (pallet.fields.Title) {
+              <button mat-icon-button (click)="openRecyclingDocketDialog(pallet.id)" type="button"><mat-icon class="link">receipt</mat-icon></button>
+            }
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>{{ totalOut - totalIn }}</mat-footer-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="from">
+          <mat-header-cell *matHeaderCellDef> From </mat-header-cell>
+          <mat-cell *matCellDef="let pallet">
+            {{ pallet.fields.From }}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="recepient">
+          <mat-header-cell *matHeaderCellDef> Recepient </mat-header-cell>
+          <mat-cell *matCellDef="let pallet">
+            {{ pallet.fields.Title ? pallet.fields.Title + (pallet.fields.Site ? ', ' + pallet.fields.Site : '') + ' (' + pallet.fields.To + ')' : pallet.fields.To }}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="pallet">
+          <mat-header-cell *matHeaderCellDef> Pallet </mat-header-cell>
+          <mat-cell *matCellDef="let pallet">
+            {{ pallet.fields.Pallet }}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="in">
+          <mat-header-cell *matHeaderCellDef> In </mat-header-cell>
+          <mat-cell *matCellDef="let pallet">{{ pallet.fields.In }}</mat-cell>
+          <mat-footer-cell *matFooterCellDef>{{ totalIn }}</mat-footer-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="out">
+          <mat-header-cell *matHeaderCellDef> Out </mat-header-cell>
+          <mat-cell *matCellDef="let pallet">{{ pallet.fields.Out }}</mat-cell>
+          <mat-footer-cell *matFooterCellDef>{{ totalOut }}</mat-footer-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="loading">
+          <mat-footer-cell *matFooterCellDef>
+            <gcp-loading-row></gcp-loading-row>
+          </mat-footer-cell>
+        </ng-container>
+  
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) ? false : true"></mat-footer-row>
+        <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+      </mat-table>
+    </mat-card>
+  }
 </div>
 
 <router-outlet></router-outlet>

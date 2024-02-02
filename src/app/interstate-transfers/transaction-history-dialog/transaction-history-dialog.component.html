@@ -4,8 +4,10 @@
     {{ data.item.ItemDesc }}
   </div>
   <h3>National quantities</h3>
-  <p *ngIf="stockChanged" class="stock-changed">Stock for this item has been updated since you loaded the page.<br>
-  The latest values are below.<br>Refresh the page to see the lastest values on the list.</p>
+  @if (stockChanged) {
+    <p class="stock-changed">Stock for this item has been updated since you loaded the page.<br>
+      The latest values are below.<br>Refresh the page to see the lastest values on the list.</p>
+  }
   <div class="availability-grid {{ data.branch }}">
     <div></div>
     <div class="grid-heading cell-top cell-vic">MAIN</div>
@@ -29,23 +31,21 @@
     <div class="cell-wa">{{ item.AllocWA || 0 | number }}</div>
     <div class="cell-hea">{{ item.AllocHEA || 0 | number }}</div>
     <div class="grid-heading">Sold per month</div>
-    <ng-container *ngIf="averages | async as a; else notyet">
+    @if (averages | async; as a) {
       <div class="cell-vic cell-bottom">{{ a.MAIN || 0 | number: '1.0-0' }}</div>
       <div class="cell-nsw cell-bottom">{{ a.NSW || 0 | number: '1.0-0' }}</div>
       <div class="cell-qld cell-bottom">{{ a.QLD || 0 | number: '1.0-0' }}</div>
       <div class="cell-sa cell-bottom">{{ a.SA || 0 | number: '1.0-0' }}</div>
       <div class="cell-wa cell-bottom">{{ a.WA || 0 | number: '1.0-0' }}</div>
       <div class="cell-hea cell-bottom">{{ a.HEA || 0 | number: '1.0-0'}}</div>
-    </ng-container>
-    <ng-template #notyet>
+    } @else {
       <div class="cell-vic cell-bottom">...</div>
       <div class="cell-nsw cell-bottom">...</div>
       <div class="cell-qld cell-bottom">...</div>
       <div class="cell-sa cell-bottom">...</div>
       <div class="cell-wa cell-bottom">...</div>
       <div class="cell-hea cell-bottom">...</div>
-    </ng-template>
-    <ng-template #notyet><mat-spinner diameter="24"></mat-spinner></ng-template>
+    }
   </div>
 
   <h3> {{data.branch}} limits</h3>
@@ -68,23 +68,29 @@
     <div class="customer">Customer</div>
     <div class="quantity">Qty</div>
   </div>
-  <div *ngIf="previousOrders | async as orders;else loading">
-    <div *ngFor="let o of orders; last as last">
-      <div class="row">
-        <div class="date">{{ o.date | date: 'd MMM yyyy' }}</div>
-        <div class="date">{{ o.reqShipDate | date: 'd MMM yyyy' }}</div>
-        <div class="invoice-number">{{ o.sopNmbr }}</div>
-        <div class="customer">{{ o.customer }}</div>
-        <div class="quantity">{{ o.quantity | number }}</div>
-      </div>
-      <div *ngIf="o.notes" class="notes">
-        {{ o.notes }}
-      </div>
-      <mat-divider *ngIf="!last"></mat-divider>
+  @if (previousOrders | async; as orders) {
+    <div>
+      @for (o of orders; track o.sopNmbr) {
+        <div>
+          <div class="row">
+            <div class="date">{{ o.date | date: 'd MMM yyyy' }}</div>
+            <div class="date">{{ o.reqShipDate | date: 'd MMM yyyy' }}</div>
+            <div class="invoice-number">{{ o.sopNmbr }}</div>
+            <div class="customer">{{ o.customer }}</div>
+            <div class="quantity">{{ o.quantity | number }}</div>
+          </div>
+          @if (o.notes) {
+            <div class="notes">{{ o.notes }}</div>
+          }
+          @if (!$last) {
+            <mat-divider></mat-divider>
+          }
+        </div>
+      } @empty {
+        <div class="note">No allocations</div>
+      }
     </div>
-    <div class="note" *ngIf="orders.length === 0">
-      No allocations
-    </div>
-  </div>
-  <ng-template #loading><mat-spinner diameter="24"></mat-spinner></ng-template>
+  } @else {
+    <mat-spinner diameter="24"></mat-spinner>
+  }
 </mat-dialog-content>

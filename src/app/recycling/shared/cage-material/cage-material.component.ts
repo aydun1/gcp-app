@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { NgForOf, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,7 +14,7 @@ import { RecyclingService } from '../recycling.service';
   templateUrl: './cage-material.component.html',
   styleUrls: ['./cage-material.component.css'],
   standalone: true,
-  imports: [NgForOf, NgIf, FormsModule, MatButtonModule, MatIconModule, MatListModule, MatSelectModule]
+  imports: [FormsModule, MatButtonModule, MatIconModule, MatListModule, MatSelectModule]
 })
 export class CageMaterialComponent {
   public canEdit = true;
