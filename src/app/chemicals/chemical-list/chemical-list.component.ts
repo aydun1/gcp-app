@@ -23,6 +23,7 @@ import { ChemicalService } from '../shared/chemical.service';
 import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
 import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-row.component';
 import { GroupByPropertyPipe } from '../../shared/pipes/group-by-property';
+import { SumPipe } from '../../shared/pipes/sum.pipe';
 
 @Component({
   selector: 'gcp-chemical-list',
@@ -30,7 +31,7 @@ import { GroupByPropertyPipe } from '../../shared/pipes/group-by-property';
   styleUrls: ['./chemical-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [AsyncPipe, DatePipe, DecimalPipe, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatInputModule, MatMenuModule, MatSelectModule, MatSortModule, MatTableModule, MatTooltipModule, GroupByPropertyPipe, LetterheadComponent, LoadingRowComponent]
+  imports: [AsyncPipe, DatePipe, DecimalPipe, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatInputModule, MatMenuModule, MatSelectModule, MatSortModule, MatTableModule, MatTooltipModule, GroupByPropertyPipe, SumPipe, LetterheadComponent, LoadingRowComponent]
 })
 export class ChemicalListComponent implements OnInit {
   private loadList!: boolean;
@@ -43,8 +44,6 @@ export class ChemicalListComponent implements OnInit {
   public loading = this.chemicalService.loading;
   public displayedColumns = [...this.defaultColumns];
   public chemicals$!: Observable<Chemical[]>;
-  public totalVolume!: number;
-  public totalWeight!: number;
   public branchFilter = new FormControl({value: '', disabled: false});
   public ownState!: string;
   public states = this.shared.branches;
@@ -97,11 +96,7 @@ export class ChemicalListComponent implements OnInit {
       )),
       tap(_ => this.parseParams(_)),
       switchMap(_ => this.loadList ? this.getChemicals(_['search'], _['branch'], _['category'], _['sort'], _['order']) : []),
-      tap(_ => {
-        this.totalVolume = _.filter(_ => _.uofm === 'L').reduce((acc, cur) => acc + cur.quantity, 0);
-        this.totalWeight = _.filter(_ => _.uofm === 'kg').reduce((acc, cur) => acc + cur.quantity, 0);
-        this.chemicals = _;
-      })
+      tap(_ => this.chemicals = _)
     );
 
     this.textFilter.valueChanges.pipe(
@@ -175,10 +170,6 @@ export class ChemicalListComponent implements OnInit {
     this.displayedColumns = this.defaultColumns.filter( _ => _ !==  name);
   }
 
-  getTotalRequestedLines(lines: Array<number>): number {
-    return lines.reduce((acc, cur) => acc + 1, 0);
-  }
-
   getChemicals(search: string, branch: string, category: string, sort: string, order: string): Observable<Chemical[]> {
     search = (search || '').toLowerCase();
     return this.chemicalService.getOnHandChemicals(branch, category, sort, order).pipe(
@@ -188,10 +179,6 @@ export class ChemicalListComponent implements OnInit {
 
   clearTextFilter(): void {
     this.textFilter.patchValue('');
-  }
-
-  getTotalRequestedQty(lines: Array<any>, key: string): number {
-    return lines.reduce((acc, cur) => acc + cur[key], 0);
   }
 
   exportChemicals(): void {
