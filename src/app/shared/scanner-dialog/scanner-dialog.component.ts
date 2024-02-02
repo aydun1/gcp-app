@@ -124,7 +124,6 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
   }
 
   openReceipt(orderNumber: string): void {
-    this.dialogRef.close();
     const data = {
       sopType: 2,
       sopNumber: orderNumber
