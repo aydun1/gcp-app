@@ -7,6 +7,10 @@
         <div class="deets"><strong>Customer: </strong><span class="deets-inner">{{ o.custName }}</span></div>
         <div class="deets"><strong>Order no.: </strong><span class="deets-inner">{{ o.sopNumber }}</span></div>
         <div class="deets"><strong>Req. delivery date: </strong><span class="deets-inner">{{ o.reqShipDate | date: 'd MMM yyyy' }}</span></div>
+        @if (o.deliveryStatus) {
+          <div class="deets"><strong>Delivery status: </strong><span class="deets-inner">{{ o.deliveryStatus }}</span></div>
+          <div class="deets"><strong>On delivery run: </strong><span class="deets-inner">{{ o.deliveryRun }}</span></div>
+        }
         <div class="deets"><strong>Address: </strong><div class="deets-inner address">{{ tidyAddress }}</div></div>
         @if (o.note) {
           <div class="deets notes"><div class="notes-inner">{{ o.note }}</div></div>

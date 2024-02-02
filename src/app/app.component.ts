@@ -175,7 +175,8 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   openScannerDialog() {
-    this.dialog.open(ScannerDialogComponent, {width: '800px', autoFocus: false});
+    const data = {camera: this.isMobile};
+    this.dialog.open(ScannerDialogComponent, {data, width: '800px', autoFocus: !this.isMobile});
   }
 
   ngOnDestroy(): void {

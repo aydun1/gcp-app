@@ -20,4 +20,6 @@ export interface Order {
   reqShipDate: Date;
   palletSpaces: number;
   orderWeight: number;
+  deliveryStatus: string;
+  deliveryRun: string;
 }

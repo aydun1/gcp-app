@@ -1,33 +1,35 @@
-<h2 mat-dialog-title>Barcode scanner</h2>
-@if ((isScanner | async) === false && hasPermission !== false) {
-  <button mat-icon-button [matMenuTriggerFor]="appMenu" class="action-button">
-    <mat-icon>more_vert</mat-icon>
-  </button>
-}
-@if ((isScanner | async) === false) {
-  <mat-dialog-content>
-    <div [hidden]="!hasPermission">
-      <zxing-scanner [enable]="enabled" [torch]="torchEnabled" [(device)]="currentDevice" (scanSuccess)="onCodeResult($event)"
-        [formats]="formatsEnabled" [tryHarder]="tryHarder" (permissionResponse)="onHasPermission($event)" (scanError)="onScanError($event)"
-        (camerasFound)="onCamerasFound($event)" (torchCompatible)="onTorchCompatible($event)">
-      </zxing-scanner>
-    </div>
-    @if (hasPermission === undefined) {
-      <div class="message">
-        <h3>Waiting for permissions.</h3>
-        <p>
-          If your device does not have cameras, no permissions will be asked.
-        </p>
+<h2 mat-dialog-title>Order lookup</h2>
+@if (data.camera) {
+  @if ((isScanner | async) === false && hasPermission !== false) {
+    <button mat-icon-button [matMenuTriggerFor]="appMenu" class="action-button">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+  }
+  @if ((isScanner | async) === false) {
+    <mat-dialog-content>
+      <div [hidden]="!hasPermission">
+        <zxing-scanner [enable]="enabled" [torch]="torchEnabled" [(device)]="currentDevice" (scanSuccess)="onCodeResult($event)"
+          [formats]="formatsEnabled" [tryHarder]="tryHarder" (permissionResponse)="onHasPermission($event)" (scanError)="onScanError($event)"
+          (camerasFound)="onCamerasFound($event)" (torchCompatible)="onTorchCompatible($event)">
+        </zxing-scanner>
       </div>
-    }
-    @if (hasDevices === false) {
-      <div class="message">
-        <h3>No devices were found.</h3>
-        <p>It seems your device has no camera.
-        </p>
-      </div>
-    }
-  </mat-dialog-content>
+      @if (hasPermission === undefined) {
+        <div class="message">
+          <h3>Waiting for permissions.</h3>
+          <p>
+            If your device does not have cameras, no permissions will be asked.
+          </p>
+        </div>
+      }
+      @if (hasDevices === false) {
+        <div class="message">
+          <h3>No devices were found.</h3>
+          <p>It seems your device has no camera.
+          </p>
+        </div>
+      }
+    </mat-dialog-content>
+  }
 }
 <form (submit)="processCode(scannedText)">
   <mat-dialog-actions>

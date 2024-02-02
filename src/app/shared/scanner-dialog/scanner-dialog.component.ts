@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { FormControl, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -13,6 +13,10 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { BehaviorSubject, tap } from 'rxjs';
 
 import { OrderLinesDialogComponent } from '../../runs/shared/order-lines-dialog/order-lines-dialog.component';
+
+interface Data {
+  camera: boolean;
+}
 
 @Component({
   selector: 'gcp-scanner-dialog',
@@ -46,7 +50,8 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private dialogRef: MatDialogRef<ScannerDialogComponent>
+    private dialogRef: MatDialogRef<ScannerDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: Data
   ) { }
 
   @HostListener('document:visibilitychange', ['$event'])

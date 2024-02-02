@@ -5,11 +5,9 @@
     }
     <a class="title" [routerLink]="['/']">Inventory Management System</a>
     <div class="toolbar-spacer"></div>
-    @if (isMobile) {
-      <button mat-icon-button (click)="openScannerDialog()" type="button">
-        <mat-icon>barcode_scanner</mat-icon>
-      </button>
-    }
+    <button mat-icon-button (click)="openScannerDialog()" type="button">
+      <mat-icon>barcode_scanner</mat-icon>
+    </button>
     @if (photo$ | async; as photo) {
       <div class="photo-button" mat-button [matMenuTriggerFor]="menu"><img [src]="photo" [alt]="accounts[0].name" alt="Avatar"></div>
     } @else {
