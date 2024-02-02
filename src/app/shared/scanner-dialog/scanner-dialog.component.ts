@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { FormControl, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -19,7 +19,7 @@ import { OrderLinesDialogComponent } from '../../runs/shared/order-lines-dialog/
   templateUrl: 'scanner-dialog.component.html',
   styleUrls: ['./scanner-dialog.component.css'],
   standalone: true,
-  imports: [AsyncPipe, NgFor, NgIf, FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, ZXingScannerModule]
+  imports: [AsyncPipe, FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, ZXingScannerModule]
 })
 export class ScannerDialogComponent implements AfterViewInit, OnInit {
   @ViewChild('search') searchElement!: ElementRef;

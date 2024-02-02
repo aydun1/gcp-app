@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { NgForOf, NgIf, TitleCasePipe } from '@angular/common';
+import { TitleCasePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -26,11 +26,11 @@ interface PalletQuantities {
   templateUrl: './pallet-docket-dialog.component.html',
   styleUrls: ['./pallet-docket-dialog.component.css'],
   standalone: true,
-  imports: [NgForOf, NgIf, TitleCasePipe, MatButtonModule, MatDialogModule, MatIconModule, MatListModule, MatProgressSpinnerModule, LetterheadComponent]
+  imports: [TitleCasePipe, MatButtonModule, MatDialogModule, MatIconModule, MatListModule, MatProgressSpinnerModule, LetterheadComponent]
 })
 export class PalletDocketDialogComponent implements OnInit, OnDestroy {
 
-  public transfer!: Pallet;
+  public transfer: Pallet | undefined;
   public quantities!: PalletQuantities;
   public loading = true;
 
@@ -54,11 +54,11 @@ export class PalletDocketDialogComponent implements OnInit, OnDestroy {
     ).subscribe()
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.renderer.removeClass(document.body, 'print');
   }
 
-  print() {
+  print(): void {
     window.print();
   }
 

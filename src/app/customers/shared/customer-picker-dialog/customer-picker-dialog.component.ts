@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -31,7 +31,7 @@ interface CustomerForm {
   templateUrl: './customer-picker-dialog.component.html',
   styleUrls: ['./customer-picker-dialog.component.css'],
   standalone: true,
-  imports: [AsyncPipe, NgForOf, NgIf, ReactiveFormsModule, MatButtonModule, MatDialogModule, MatInputModule, MatSelectModule, MatIconModule, MatMenuModule, CustomerControlComponent, VendorControlComponent]
+  imports: [AsyncPipe, ReactiveFormsModule, MatButtonModule, MatDialogModule, MatInputModule, MatSelectModule, MatIconModule, MatMenuModule, CustomerControlComponent, VendorControlComponent]
 })
 export class CustomerPickerDialogComponent implements OnInit {
   public loading = false;

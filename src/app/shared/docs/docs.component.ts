@@ -1,5 +1,4 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
-import { NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 
 import { DocsService } from './docs.service';
@@ -10,7 +9,7 @@ import { DocListComponent } from './doc-list/doc-list.component';
   templateUrl: './docs.component.html',
   styleUrls: ['./docs.component.css'],
   standalone: true,
-  imports: [NgIf, MatButtonModule, DocListComponent]
+  imports: [MatButtonModule, DocListComponent]
 })
 export class DocsComponent implements OnInit {
   @Input() folder!: string;

@@ -1,5 +1,5 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -38,7 +38,7 @@ interface LoadingScheduleForm {
   templateUrl: './loading-schedule-new.component.html',
   styleUrls: ['./loading-schedule-new.component.css'],
   standalone: true,
-  imports: [AsyncPipe, NgForOf, NgIf, ReactiveFormsModule, MatAutocompleteModule, MatButtonModule, MatCardModule, MatDatepickerModule, MatDividerModule, MatIconModule, MatInputModule, MatSelectModule, MatToolbarModule, LoadingPageComponent]
+  imports: [AsyncPipe, ReactiveFormsModule, MatAutocompleteModule, MatButtonModule, MatCardModule, MatDatepickerModule, MatDividerModule, MatIconModule, MatInputModule, MatSelectModule, MatToolbarModule, LoadingPageComponent]
 })
 export class LoadingScheduleNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';
@@ -49,7 +49,7 @@ export class LoadingScheduleNewComponent implements OnInit {
   public loadingScheduleForm!: FormGroup<LoadingScheduleForm>;
   public states = [...this.sharedService.branches, 'International'];
   public state!: string;
-  public choices!: {TransportCompany: Choice, Driver: Choice, AssetType: Choice, Branch: Choice, Status: Choice};
+  public choices: {TransportCompany: Choice, Driver: Choice, AssetType: Choice, Branch: Choice, Status: Choice} | undefined;
   public id: string | null = null;
 
   get targetStates(): Array<string> {

@@ -1,167 +1,186 @@
-<div *ngIf="(cages$ | async) as cages"  class="outer">
-  <gcp-letterhead class="print-heading">Recycling cages</gcp-letterhead>
-  <div *ngIf="selection.isEmpty() && (choices$ | async) as choices"class="options inner">
-    <div class="selectors">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
-        <mat-label>{{ choices.Branch.name }}</mat-label>
-        <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
-          <mat-option value="">All</mat-option>
-          <mat-option *ngFor="let s of choices.Branch.choice.choices" value="{{ s }}">{{ s }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="status">
-        <mat-label>{{ choices.Status.name }}</mat-label>
-        <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event, choices.Status.choice.choices)" panelClass="wide-select">
-          <mat-option>All</mat-option>
-          <mat-option *ngFor="let s of choices.Status.choice.choices" [value]="s">{{ s }}</mat-option>
-          <mat-optgroup label="Cage history">
-            <mat-option value="Complete">All complete cages</mat-option>
-            <mat-option value="Local processing">Local processing</mat-option>
-            <mat-option value="Polymer">Polymer</mat-option>
-          </mat-optgroup>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
-        <mat-label>Month</mat-label>
-        <mat-select [formControl]="monthFilter" (selectionChange)="setMonth($event)">
-          <mat-option>All</mat-option>
-          <mat-option *ngFor="let d of monthDates" value="{{ d.year }}-{{ d.month }}">{{ d.monthName }} {{ d.year }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="asset-type">
-        <mat-label>{{ choices.AssetType.name }}</mat-label>
-        <mat-select [formControl]="assetTypeFilter" (selectionChange)="setAssetType($event)" panelClass="wide-select">
-          <mat-option>All</mat-option>
-          <mat-option value="Cage">Cage</mat-option>
-          <mat-option value="Cage - Solid (2.5m³)">Cage - Solid</mat-option>
-          <mat-option value="Cage - Folding (2.5m³)">Cage - Folding</mat-option>
-          <mat-option value="Other">Other</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="material">
-        <mat-label>Material</mat-label>
-        <mat-select [formControl]="materialFilter" (selectionChange)="setMaterial($event)" panelClass="wide-select">
-          <mat-option>All</mat-option>
-          <mat-option *ngFor="let m of materials" [value]="m['code']">{{ m['name'] }}{{ m['code'] }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="cage-filter">
-        <mat-label>Cage Number</mat-label>
-        <input matInput [formControl]="cageFilter" min="0" type="number" autocomplete="off" placeholder="Type to search...">
-        <button *ngIf="!cageFilter.value" matSuffix mat-icon-button disabled type="button">
-          <mat-icon>search</mat-icon>
-        </button>
-        <button *ngIf="cageFilter.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearCageFilter()" type="button">
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
-    </div>
-    <div class="new-holder">
-      <a mat-raised-button [routerLink]="['new']" color="primary">Add New Cage</a>
-    </div>
-  </div>
-  <div *ngIf="0">
-    <div *ngIf="branchQuantities | async as branchQtys">
-      <div *ngFor="let bq of branchQtys">
-        {{ bq.fields.Material }}: {{ bq.fields.Quantity }}
+@if (cages$ | async; as cages) {
+  <div class="outer">
+    <gcp-letterhead class="print-heading">Recycling cages</gcp-letterhead>
+    @if (selection.isEmpty() && (choices$ | async); as choices) {
+      <div class="options inner">
+        <div class="selectors">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
+            <mat-label>{{ choices.Branch.name }}</mat-label>
+            <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
+              <mat-option value="">All</mat-option>
+              @for (s of choices.Branch.choice.choices; track s) {
+                <mat-option [value]="s">{{ s }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="status">
+            <mat-label>{{ choices.Status.name }}</mat-label>
+            <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event, choices.Status.choice.choices)" panelClass="wide-select">
+              <mat-option>All</mat-option>
+              @for (s of choices.Status.choice.choices; track s) {
+                <mat-option [value]="s">{{ s }}</mat-option>
+              }
+              <mat-optgroup label="Cage history">
+                <mat-option value="Complete">All complete cages</mat-option>
+                <mat-option value="Local processing">Local processing</mat-option>
+                <mat-option value="Polymer">Polymer</mat-option>
+              </mat-optgroup>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
+            <mat-label>Month</mat-label>
+            <mat-select [formControl]="monthFilter" (selectionChange)="setMonth($event)">
+              <mat-option>All</mat-option>
+              @for (d of monthDates; track d.key ) {
+                <mat-option [value]="d.key">{{ d.monthName }} {{ d.year }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="asset-type">
+            <mat-label>{{ choices.AssetType.name }}</mat-label>
+            <mat-select [formControl]="assetTypeFilter" (selectionChange)="setAssetType($event)" panelClass="wide-select">
+              <mat-option>All</mat-option>
+              <mat-option value="Cage">Cage</mat-option>
+              <mat-option value="Cage - Solid (2.5m³)">Cage - Solid</mat-option>
+              <mat-option value="Cage - Folding (2.5m³)">Cage - Folding</mat-option>
+              <mat-option value="Other">Other</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="material">
+            <mat-label>Material</mat-label>
+            <mat-select [formControl]="materialFilter" (selectionChange)="setMaterial($event)" panelClass="wide-select">
+              <mat-option>All</mat-option>
+              @for (m of materials; track m.code) {
+                <mat-option [value]="m.code">{{ m.name }}{{ m.code }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="cage-filter">
+            <mat-label>Cage Number</mat-label>
+            <input matInput [formControl]="cageFilter" min="0" type="number" autocomplete="off" placeholder="Type to search...">
+            @if (cageFilter.value) {
+              <button matSuffix mat-icon-button aria-label="Clear" (click)="clearCageFilter()" type="button">
+                <mat-icon>close</mat-icon>
+              </button>
+            } @else {
+              <button matSuffix mat-icon-button disabled type="button">
+                <mat-icon>search</mat-icon>
+              </button>
+            }
+          </mat-form-field>
+        </div>
+        <div class="new-holder">
+          <a mat-raised-button [routerLink]="['new']" color="primary">Add New Cage</a>
+        </div>
       </div>
+    }
+    @if (0) {
+      @if (branchQuantities | async; as branchQtys) {
+        @for (bq of branchQtys; track bq.id) {
+          <div>{{ bq.fields.Material }}: {{ bq.fields.Quantity }}</div>
+        }
+      }
+    }
+    @if (!selection.isEmpty()) {
+      <div class="inner multi-action">
+        <div class="cage-count mat-app-background">
+          <div>{{ selection.selected.length }} cages</div>
+          <button mat-icon-button (click)="selection.clear()" type="button" title="Clear selection">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        <gcp-action-button [cages]="selection.selected" class="actions"></gcp-action-button>
+      </div>
+    }
+  
+    <div class="status-header inner">
+      <div><strong>Date:</strong> {{ date | date: 'dd/MM/yyyy' }}</div>
+      @if (statusFilter.value) {
+        <div><strong>Status:</strong> {{ statusFilter.value }}</div>
+      }
     </div>
+  
+    <mat-card appearance="outlined" class="inner table-container">
+      <mat-table #table [dataSource]="cages" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
+  
+        <ng-container matColumnDef="checked">
+          <mat-header-cell *matHeaderCellDef></mat-header-cell>
+          <mat-cell *matCellDef="let cage; let i = index">
+            <mat-checkbox color="accent" (change)="toggleSelection(i, cages, $event)"
+            [checked]="selection.isSelected(cage)"></mat-checkbox>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="fields/CageNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Number </mat-header-cell>
+          <mat-cell *matCellDef="let cage" [routerLink]="[cage.id]">
+            <a [routerLink]="[cage.id]" class="cage-link">{{ cage.fields.CageNumber !== undefined ?  cage.fields.CageNumber : '-' }}</a>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="assetType">
+          <mat-header-cell *matHeaderCellDef> Asset type </mat-header-cell>
+          <mat-cell *matCellDef="let cage">
+            {{ cage.fields.AssetTypeClean }}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef> {{ count || 0 }} </mat-footer-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="fields/Modified">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Updated </mat-header-cell>
+          <mat-cell *matCellDef="let cage">{{ cage.Date | date: 'dd/MM/yyyy' }}</mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="weight">
+          <mat-header-cell *matHeaderCellDef> Net weight </mat-header-cell>
+          <mat-cell *matCellDef="let cage">
+            {{ cage.fields.NetWeight || 0 }} kg
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef> {{ weight || 0 | number }} kg </mat-footer-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="loading">
+          <mat-footer-cell *matFooterCellDef>
+            <gcp-loading-row></gcp-loading-row>
+          </mat-footer-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+          <mat-cell *matCellDef="let cage">
+            <div [class]="'chip' + cage.statusId">
+              {{ cage.fields.Status }}
+            </div>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="location">
+          <mat-header-cell *matHeaderCellDef> Location </mat-header-cell>
+          <mat-cell *matCellDef="let cage">
+            {{ cage.location }}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="material">
+          <mat-header-cell *matHeaderCellDef> Material </mat-header-cell>
+          <mat-cell *matCellDef="let cage">
+            {{ cage.material?.name }}
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+  
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) ? false : true"></mat-footer-row>
+        <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+      </mat-table>
+    </mat-card>
   </div>
-  <div *ngIf="!selection.isEmpty()" class="inner multi-action">
-    <div class="cage-count mat-app-background">
-      <div>{{ selection.selected.length }} cages</div>
-      <button mat-icon-button (click)="selection.clear()" type="button" title="Clear selection">
-        <mat-icon>close</mat-icon>
-      </button>
-    </div>
-    <gcp-action-button [cages]="selection.selected" class="actions"></gcp-action-button>
-  </div>
-
-  <div class="status-header inner">
-    <div><strong>Date:</strong> {{ date | date: 'dd/MM/yyyy' }}</div>
-    <div *ngIf="statusFilter.value"><strong>Status:</strong> {{ statusFilter.value }}</div>
-  </div>
-
-  <mat-card appearance="outlined" class="inner table-container">
-    <mat-table #table [dataSource]="cages" [trackBy]="trackByFn" matSort [matSortActive]="sortSort" [matSortDirection]="sortOrder" (matSortChange)="announceSortChange($event)">
-
-      <ng-container matColumnDef="checked">
-        <mat-header-cell *matHeaderCellDef></mat-header-cell>
-        <mat-cell *matCellDef="let cage; let i = index">
-          <mat-checkbox color="accent" (change)="toggleSelection(i, cages, $event)"
-          [checked]="selection.isSelected(cage)"></mat-checkbox>
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="fields/CageNumber">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Number </mat-header-cell>
-        <mat-cell *matCellDef="let cage" [routerLink]="[cage.id]">
-          <a [routerLink]="[cage.id]" class="cage-link">{{ cage.fields.CageNumber !== undefined ?  cage.fields.CageNumber : '-' }}</a>
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="assetType">
-        <mat-header-cell *matHeaderCellDef> Asset type </mat-header-cell>
-        <mat-cell *matCellDef="let cage">
-          {{ cage.fields.AssetTypeClean }}
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef> {{ count || 0 }} </mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="fields/Modified">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Updated </mat-header-cell>
-        <mat-cell *matCellDef="let cage">{{ cage.Date | date: 'dd/MM/yyyy' }}</mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="weight">
-        <mat-header-cell *matHeaderCellDef> Net weight </mat-header-cell>
-        <mat-cell *matCellDef="let cage">
-          {{ cage.fields.NetWeight || 0 }} kg
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef> {{ weight || 0 | number }} kg </mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="loading">
-        <mat-footer-cell *matFooterCellDef>
-          <gcp-loading-row></gcp-loading-row>
-        </mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="status">
-        <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
-        <mat-cell *matCellDef="let cage">
-          <div [class]="'chip' + cage.statusId">
-            {{ cage.fields.Status }}
-          </div>
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="location">
-        <mat-header-cell *matHeaderCellDef> Location </mat-header-cell>
-        <mat-cell *matCellDef="let cage">
-          {{ cage.location }}
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="material">
-        <mat-header-cell *matHeaderCellDef> Material </mat-header-cell>
-        <mat-cell *matCellDef="let cage">
-          {{ cage.material?.name }}
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
-
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      <mat-footer-row *matFooterRowDef="['loading']" [class.hidden]="(loading | async) ? false : true"></mat-footer-row>
-      <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
-    </mat-table>
-  </mat-card>
-</div>
+}
 
 <router-outlet></router-outlet>

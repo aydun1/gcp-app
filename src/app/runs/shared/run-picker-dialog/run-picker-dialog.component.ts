@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -16,7 +16,7 @@ import { Run } from '../run';
   templateUrl: './run-picker-dialog.component.html',
   styleUrls: ['./run-picker-dialog.component.css'],
   standalone: true,
-  imports: [AsyncPipe, NgForOf, NgIf, MatDialogModule, MatIconModule, MatListModule, MatProgressSpinnerModule]
+  imports: [AsyncPipe, MatDialogModule, MatIconModule, MatListModule, MatProgressSpinnerModule]
 })
 export class RunPickerDialogComponent implements OnInit {
   public loading = true;

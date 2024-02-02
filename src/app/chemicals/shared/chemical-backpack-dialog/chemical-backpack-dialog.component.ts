@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -18,7 +18,7 @@ import { ChemicalService } from '../chemical.service';
   templateUrl: './chemical-backpack-dialog.component.html',
   styleUrls: ['./chemical-backpack-dialog.component.css'],
   standalone: true,
-  imports: [AsyncPipe, NgForOf, NgIf, ReactiveFormsModule, MatButtonModule, MatDialogModule, MatIconModule, MatInputModule, MatListModule, MatProgressSpinnerModule]
+  imports: [AsyncPipe, ReactiveFormsModule, MatButtonModule, MatDialogModule, MatIconModule, MatInputModule, MatListModule, MatProgressSpinnerModule]
 })
 export class ChemicalBackpackDialogComponent implements OnInit {
   private _subject = new Subject<boolean>();
@@ -87,7 +87,4 @@ export class ChemicalBackpackDialogComponent implements OnInit {
     this.searchControl.reset();
   }
 
-  trackByFn(index: number, item: Chemical): string {
-    return item.CwNo;
-  }
 }

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { DecimalPipe, NgIf } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,7 +14,7 @@ import { RecyclingService } from '../recycling.service';
   templateUrl: './cage-weights.component.html',
   styleUrls: ['./cage-weights.component.css'],
   standalone: true,
-  imports: [DecimalPipe, NgIf, FormsModule, MatButtonModule, MatIconModule, MatListModule]
+  imports: [DecimalPipe, FormsModule, MatButtonModule, MatIconModule, MatListModule]
 })
 export class CageWeightsComponent {
   @Input()

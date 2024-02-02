@@ -1,5 +1,4 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { NgForOf, NgIf } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -32,7 +31,7 @@ interface PalletTransferForm {
   templateUrl: './pallet-interstate-transfer-new.component.html',
   styleUrls: ['./pallet-interstate-transfer-new.component.css'],
   standalone: true,
-  imports: [NgForOf, NgIf, ReactiveFormsModule, MatButtonModule, MatCardModule, MatDatepickerModule, MatIconModule, MatInputModule, MatSelectModule, MatToolbarModule]
+  imports: [ReactiveFormsModule, MatButtonModule, MatCardModule, MatDatepickerModule, MatIconModule, MatInputModule, MatSelectModule, MatToolbarModule]
 })
 export class PalletInterstateTransferNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';

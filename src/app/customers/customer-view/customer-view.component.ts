@@ -1,7 +1,7 @@
 import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -45,7 +45,7 @@ interface PalletQuantities {
   templateUrl: './customer-view.component.html',
   styleUrls: ['./customer-view.component.css'],
   standalone: true,
-  imports: [AsyncPipe, NgForOf, NgIf, RouterModule, MatButtonModule, MatIconModule, MatListModule, MatMenuModule, MatToolbarModule, BigButtonComponent, DocsComponent, LoadingPageComponent]
+  imports: [AsyncPipe, RouterModule, MatButtonModule, MatIconModule, MatListModule, MatMenuModule, MatToolbarModule, BigButtonComponent, DocsComponent, LoadingPageComponent]
 })
 export class CustomerViewComponent implements OnInit, OnDestroy {
   @HostBinding('class') class = 'app-component mat-app-background';

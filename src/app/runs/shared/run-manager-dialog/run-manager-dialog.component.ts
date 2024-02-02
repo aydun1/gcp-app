@@ -1,10 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { NgForOf, NgIf } from '@angular/common';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { Observable } from 'rxjs';
 
@@ -21,7 +22,7 @@ interface RunForm {
   templateUrl: './run-manager-dialog.component.html',
   styleUrls: ['./run-manager-dialog.component.css'],
   standalone: true,
-  imports: [NgForOf, NgIf, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatListModule]
+  imports: [ReactiveFormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule]
 })
 export class RunManagerDialogComponent implements OnInit {
   public loading = true;

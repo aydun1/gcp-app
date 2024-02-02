@@ -1,14 +1,37 @@
-
-<button mat-raised-button type="button" color="primary" *ngIf="statusId === 0" (click)="openCustomerPicker(cages)" [disabled]="loading | async" class="action">Assign to customer</button>
-<button mat-raised-button type="button" color="primary" *ngIf="statusId === 1" (click)="markWithCustomer(cages)" [disabled]="loading | async" class="action">Deliver to customer</button>
-<button mat-raised-button type="button" color="primary" *ngIf="statusId === 2" (click)="markAsCollected(cages)" [disabled]="loading | async" class="action">Collect from customer</button>
-<button mat-raised-button type="button" color="primary" *ngIf="statusId === 3 && !areCages && status !== 'Ready for delivery to Polymer' && status !== 'Ready for delivery to local processing'" (click)="consolidateMaterial(cages)" [disabled]="loading | async" class="action">Consolidate</button>
-<button mat-raised-button type="button" color="primary" *ngIf="statusId === 3 && status !== 'Ready for delivery to Polymer'" (click)="markWithProcessing(cages)" [disabled]="loading | async" class="action">Send to local processing</button>
-<button mat-raised-button type="button" color="primary" *ngIf="statusId === 3 && status !== 'Ready for delivery to local processing'" (click)="markWithPolymer(cages)" [disabled]="loading | async" class="action">Send to Polymer</button>
-<button mat-raised-button type="button" color="primary" *ngIf="statusId === 4" (click)="collectFromProcessing(cages)" [disabled]="loading | async" class="action">Return from local processing</button>
-<button mat-raised-button type="button" color="primary" *ngIf="statusId === 5" (click)="collectFromPolymer(cages)" [disabled]="loading | async" class="action">Return from Polymer</button>
-<button mat-raised-button type="button" color="primary" *ngIf="statusId === 6" (click)="markAvailable(cages)" [disabled]="loading | async" class="action">Set cage as available</button>
-<button mat-icon-button type="button" [matMenuTriggerFor]="menu" class="menu" *ngIf="cages.length > 0 && !hasComplete"><mat-icon>more_vert</mat-icon></button>
+@switch (statusId) {
+  @case (0) {
+    <button mat-raised-button type="button" color="primary" (click)="openCustomerPicker(cages)" [disabled]="loading | async" class="action">Assign to customer</button>
+  }
+  @case (1) {
+    <button mat-raised-button type="button" color="primary" (click)="markWithCustomer(cages)" [disabled]="loading | async" class="action">Deliver to customer</button>
+  }
+  @case (2) {
+    <button mat-raised-button type="button" color="primary" (click)="markAsCollected(cages)" [disabled]="loading | async" class="action">Collect from customer</button>
+  }
+  @case (3) {
+    @if (!areCages && status !== 'Ready for delivery to Polymer' && status !== 'Ready for delivery to local processing') {
+      <button mat-raised-button type="button" color="primary" (click)="consolidateMaterial(cages)" [disabled]="loading | async" class="action">Consolidate</button>
+    }
+    @if (status !== 'Ready for delivery to Polymer') {
+      <button mat-raised-button type="button" color="primary" (click)="markWithProcessing(cages)" [disabled]="loading | async" class="action">Send to local processing</button>
+    }
+    @if (status !== 'Ready for delivery to local processing') {
+      <button mat-raised-button type="button" color="primary" (click)="markWithPolymer(cages)" [disabled]="loading | async" class="action">Send to Polymer</button>
+    }
+  }
+  @case (4) {
+    <button mat-raised-button type="button" color="primary" (click)="collectFromProcessing(cages)" [disabled]="loading | async" class="action">Return from local processing</button>
+  }
+  @case (5) {
+    <button mat-raised-button type="button" color="primary" (click)="collectFromPolymer(cages)" [disabled]="loading | async" class="action">Return from Polymer</button>
+  }
+  @case (6) {
+    <button mat-raised-button type="button" color="primary" (click)="markAvailable(cages)" [disabled]="loading | async" class="action">Set cage as available</button>
+  }
+}
+@if (cages.length > 0 && !hasComplete) {
+  <button mat-icon-button type="button" [matMenuTriggerFor]="menu" class="menu"><mat-icon>more_vert</mat-icon></button>
+}
 <mat-menu #menu="matMenu" xPosition="before">
   <ng-template matMenuContent>
     <button type="button" mat-menu-item (click)="openEditDialog(cages)" [disabled]="cages.length > 1">
@@ -27,14 +50,17 @@
       <mat-icon>assignment_return</mat-icon>
       <span>Dehire</span>
     </button>
-    <button type="button" mat-menu-item (click)="readyForCollection(cages)" *ngIf="statusId === 2">
-      <mat-icon>flag</mat-icon>
-      <span>Ready for collection</span>
-    </button>
-    <button type="button" mat-menu-item [matMenuTriggerFor]="readyMenu" *ngIf="statusId === 3">
-      <mat-icon>flag</mat-icon>
-      <span>Ready for processing</span>
-    </button>
+    @if (statusId === 2) {
+      <button type="button" mat-menu-item (click)="readyForCollection(cages)">
+        <mat-icon>flag</mat-icon>
+        <span>Ready for collection</span>
+      </button>
+    } @else if (statusId === 3) {
+      <button type="button" mat-menu-item [matMenuTriggerFor]="readyMenu">
+        <mat-icon>flag</mat-icon>
+        <span>Ready for processing</span>
+      </button>
+    }
     <button type="button" mat-menu-item [matMenuTriggerFor]="branchesMenu">
       <mat-icon>location_city</mat-icon>
       <span>Change branch</span>
@@ -51,11 +77,17 @@
 </mat-menu>
 
 <mat-menu #materialsMenu="matMenu">
-  <button type="button" *ngFor="let material of materials" mat-menu-item (click)="setMaterial(cages, material)" [disabled]="material['code'] === cageMaterial" [value]="material['code']">{{ material['name'] }}</button>
+  @for (material of materials; track material.code) {
+    <button type="button" mat-menu-item (click)="setMaterial(cages, material)" [disabled]="material.code === cageMaterial" [value]="material.code">{{ material.name }}</button>
+
+  }
 </mat-menu>
 
 <mat-menu #branchesMenu="matMenu">
-  <button type="button" *ngFor="let branch of branches" mat-menu-item (click)="setBranch(cages, branch)" [disabled]="branch === cageBranch">{{ branch }}</button>
+  @for (branch of branches; track branch) {
+    <button type="button" mat-menu-item (click)="setBranch(cages, branch)" [disabled]="branch === cageBranch">{{ branch }}</button>
+
+  }
 </mat-menu>
 
 <mat-menu #readyMenu="matMenu">
@@ -64,7 +96,9 @@
 </mat-menu>
 
 <mat-menu #depotMenu="matMenu">
-  <button type="button" *ngFor="let depot of depots" mat-menu-item (click)="setDepot(cages, depot.fields.Title)">{{ depot.fields.Title }}</button>
+  @for (depot of depots; track depot.id) {
+    <button type="button" mat-menu-item (click)="setDepot(cages, depot.fields.Title)">{{ depot.fields.Title }}</button>
+  }
   <button type="button" mat-menu-item (click)="openSiteDialog()">
     <mat-icon>add</mat-icon>
     <span>Add/edit depots</span>

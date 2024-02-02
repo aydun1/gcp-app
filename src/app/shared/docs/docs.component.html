@@ -7,7 +7,9 @@
     </label>
   </div>
   <gcp-doc-list [folder]="folder" [subfolder]="subfolder"></gcp-doc-list>
-  <div *ngIf="dragOver" class="blocker mat-app-background" (dragleave)="removeClass($event)">
-    <h3>Drop file here to upload!</h3>
-  </div>
+  @if (dragOver) {
+    <div class="blocker mat-app-background" (dragleave)="removeClass($event)">
+      <h3>Drop file here to upload!</h3>
+    </div>
+  }
 </div>

@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { AsyncPipe, DatePipe, DecimalPipe, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -20,7 +20,7 @@ import { LoadingRowComponent } from '../../../shared/loading/loading-row/loading
   templateUrl: './recycling-customer-list-dialog.component.html',
   styleUrls: ['./recycling-customer-list-dialog.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DatePipe, DecimalPipe, NgIf, RouterModule, MatButtonModule, MatDialogModule, MatIconModule, MatTableModule, LetterheadComponent, LoadingRowComponent]
+  imports: [AsyncPipe, DatePipe, DecimalPipe, RouterModule, MatButtonModule, MatDialogModule, MatIconModule, MatTableModule, LetterheadComponent, LoadingRowComponent]
 })
 export class RecyclingCustomerListDialogComponent implements OnInit, OnDestroy {
   public cages$!: Observable<Cage[]>;

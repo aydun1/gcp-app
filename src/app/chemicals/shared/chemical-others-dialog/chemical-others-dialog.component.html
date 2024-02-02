@@ -9,27 +9,35 @@
       </ng-template>
       <ng-template matTabContent>
         <mat-dialog-content>
-          <mat-list *ngIf="chemicals$ | async as chemicals">
-            <mat-list-item *ngFor="let c of chemicals;trackBy: trackByFn">
-              <span>{{ c.ItemDesc }}</span> x
-              <span *ngIf="editQuantity === c.ItemNmbr"><input [(ngModel)]="quantity" [ngModelOptions]="{standalone: true}" type="number" placeholder="Quantity"></span>
-              <span *ngIf="editQuantity !== c.ItemNmbr">{{ c.Quantity || 0 | number }}</span>
-
-              <ng-container *ngIf="editQuantity !== c.ItemNmbr" matListItemMeta>
-                <button mat-icon-button type="button" (click)="quantity = c.Quantity; editQuantity = c.ItemNmbr"><mat-icon class="last-icon">edit</mat-icon></button>
-              </ng-container>
-
-              <ng-container *ngIf="editQuantity === c.ItemNmbr" matListItemMeta>
-                <button mat-icon-button type="button" (click)="cancelEditQuantity(c.Quantity)"><mat-icon class="last-icon">close</mat-icon></button>
-                <button mat-icon-button type="submit" (click)="saveQuantity(c.ItemNmbr, quantity)"><mat-icon class="last-icon">check</mat-icon></button>
-              </ng-container>
-            </mat-list-item>
-
-            <mat-list-item *ngIf="chemicals.length === 0">
-              No safety data sheets to show...
-            </mat-list-item>
-          </mat-list>
-          <mat-spinner *ngIf="loading" class="list-loader" diameter="24"></mat-spinner>
+          @if (chemicals$ | async; as chemicals) {
+            <mat-list>
+              @for (c of chemicals; track c.ItemNmbr) {
+                <mat-list-item>
+                  <span>{{ c.ItemDesc }}</span> x
+                  @if (editQuantity === c.ItemNmbr) {
+                    <span><input [(ngModel)]="quantity" [ngModelOptions]="{standalone: true}" type="number" placeholder="Quantity"></span>
+                  } @else {
+                    <span>{{ c.quantity || 0 | number }}</span>
+                  }
+                  <ng-container matListItemMeta>
+                    @if (editQuantity === c.ItemNmbr) {
+                      <button mat-icon-button type="button" (click)="cancelEditQuantity(c.quantity)"><mat-icon class="last-icon">close</mat-icon></button>
+                      <button mat-icon-button type="submit" (click)="saveQuantity(c.ItemNmbr, quantity)"><mat-icon class="last-icon">check</mat-icon></button>
+                    } @else {
+                      <button mat-icon-button type="button" (click)="quantity = c.quantity; editQuantity = c.ItemNmbr"><mat-icon class="last-icon">edit</mat-icon></button>
+                    }
+                  </ng-container>
+                </mat-list-item>
+              } @empty {
+                <mat-list-item>
+                  No safety data sheets to show...
+                </mat-list-item>
+              }
+            </mat-list>
+          }
+          @if (loading) {
+            <mat-spinner class="list-loader" diameter="24"></mat-spinner>
+          }
         </mat-dialog-content>
       </ng-template>
     </mat-tab>

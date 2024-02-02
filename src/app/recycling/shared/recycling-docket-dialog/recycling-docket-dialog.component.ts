@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -20,7 +20,7 @@ import { LetterheadComponent } from '../../../shared/letterhead/letterhead.compo
   templateUrl: './recycling-docket-dialog.component.html',
   styleUrls: ['./recycling-docket-dialog.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DatePipe, NgForOf, NgIf, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule, MatMenuModule, LetterheadComponent]
+  imports: [AsyncPipe, DatePipe, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule, MatMenuModule, LetterheadComponent]
 })
 export class RecyclingDocketDialogComponent implements OnDestroy, OnInit {
   public address!: Address | undefined;

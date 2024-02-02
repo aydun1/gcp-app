@@ -2,11 +2,11 @@
   <input matInput #itemInput [placeholder]="placeholder" type="search" aria-label="Item" [formControl]="myControl"
     [matAutocomplete]="auto" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autocomplete="chrome-off">
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="addItem()" [displayWith]="itemDisplayFn">
-    <mat-option *ngIf="loading" [disabled]="true">
-      Loading
-    </mat-option>
-    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-      {{ option.ItemNmbr }}
-    </mat-option>
+    @if (loading) {
+      <mat-option [disabled]="true">Loading</mat-option>
+    }
+    @for (option of filteredOptions | async; track option.ItemNmbr) {
+      <mat-option [value]="option">{{ option.ItemNmbr }}</mat-option>
+    }
   </mat-autocomplete>
 </div>

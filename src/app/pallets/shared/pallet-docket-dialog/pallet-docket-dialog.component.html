@@ -1,43 +1,49 @@
 <div class="header main-header">
   <gcp-letterhead>Inventory Management System</gcp-letterhead>
   <div class="buttons">
-    <mat-spinner diameter="24" *ngIf="loading"></mat-spinner>
-    <button mat-icon-button type="button" (click)="print()" [disabled]="loading">
-      <mat-icon>print</mat-icon>
-    </button>
+    @if (loading) {
+      <mat-spinner diameter="24"></mat-spinner>
+    }
+    <button mat-icon-button type="button" (click)="print()" [disabled]="loading"><mat-icon>print</mat-icon></button>
   </div>
 </div>
 
 <mat-dialog-content>
-<div class="docket docket{{ i }}" *ngFor="let i of [1, 2]">
-  <gcp-letterhead class="sub-header"></gcp-letterhead>
-  <div class="list-container">
-    <mat-list *ngIf="transfer?.fields as docket">
-      <mat-list-item>
-        <span matListItemTitle><strong>{{ docket.Title | titlecase }}</strong></span>
-      </mat-list-item>
-      <mat-list-item *ngIf="docket.Notes">
-        <span matListItemTitle>{{ docket.Notes }}</span>
-        <span>Reference number</span>
-      </mat-list-item>
-      <mat-list-item>
-        <span matListItemTitle>{{ docket.Pallet }}</span>
-        <span>Pallet type</span>
-      </mat-list-item>
-      <mat-list-item>
-        <span matListItemTitle>{{ docket.Out}}</span>
-        <span>{{ docket.Pallet }} pallets delivered</span>
-      </mat-list-item>
-      <mat-list-item>
-        <span matListItemTitle>{{ quantities ? quantities[docket.Pallet]['total'] : '...'}}</span>
-        <span>Total {{ docket.Pallet }} pallets owed</span>
-      </mat-list-item>
-    </mat-list>
-  </div>
-  <div class="signs">Qty for exchange: <div class="underline"></div></div>
-  <div class="signs">
-    <div class="sender">Sent by: <div class="underline wider"></div></div>
-    <div class="receiver">Received by: <div class="underline wider"></div></div>
-  </div>
-</div>
+  @for (i of [1, 2]; track i) {
+    <div class="docket docket{{ i }}">
+      <gcp-letterhead class="sub-header"></gcp-letterhead>
+      <div class="list-container">
+        @if (transfer?.fields; as docket) {
+          <mat-list>
+            <mat-list-item>
+              <span matListItemTitle><strong>{{ docket.Title | titlecase }}</strong></span>
+            </mat-list-item>
+            @if (docket.Notes) {
+              <mat-list-item>
+                <span matListItemTitle>{{ docket.Notes }}</span>
+                <span>Reference number</span>
+              </mat-list-item>
+            }
+            <mat-list-item>
+              <span matListItemTitle>{{ docket.Pallet }}</span>
+              <span>Pallet type</span>
+            </mat-list-item>
+            <mat-list-item>
+              <span matListItemTitle>{{ docket.Out}}</span>
+              <span>{{ docket.Pallet }} pallets delivered</span>
+            </mat-list-item>
+            <mat-list-item>
+              <span matListItemTitle>{{ quantities ? quantities[docket.Pallet]['total'] : '...'}}</span>
+              <span>Total {{ docket.Pallet }} pallets owed</span>
+            </mat-list-item>
+          </mat-list>
+        }
+      </div>
+      <div class="signs">Qty for exchange: <div class="underline"></div></div>
+      <div class="signs">
+        <div class="sender">Sent by: <div class="underline wider"></div></div>
+        <div class="receiver">Received by: <div class="underline wider"></div></div>
+      </div>
+    </div>
+  }
 </mat-dialog-content>

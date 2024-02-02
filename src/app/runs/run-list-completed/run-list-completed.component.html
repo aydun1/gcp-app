@@ -7,7 +7,9 @@
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
           <mat-label>Branch</mat-label>
           <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
-            <mat-option *ngFor="let s of states" value="{{ s }}">{{ s }}</mat-option>
+            @for (s of states; track s) {
+              <mat-option [value]="s">{{ s }}</mat-option>
+            }
           </mat-select>
         </mat-form-field>
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
@@ -24,55 +26,61 @@
         </mat-form-field>
       </div>
     </div>
-    <mat-card appearance="outlined" *ngIf="deliveries$ | async as groupedDeliveries" class="inner table-container">
-      <mat-table #table [dataSource]="groupedDeliveries" [trackBy]="trackByGroupsFn">
-        <ng-container matColumnDef="date">
-          <mat-header-cell *matHeaderCellDef> Delivery date </mat-header-cell>
-          <mat-cell *matCellDef="let order">
-            <span>{{ order.fields.DeliveryDate | date:'dd/MM/yyy' }}</span>
-          </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="run">
-          <mat-header-cell *matHeaderCellDef> Run </mat-header-cell>
-          <mat-cell *matCellDef="let order">
-            <span>{{ order.fields.Run || 'Default' }}</span>
-          </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="order">
-          <mat-header-cell *matHeaderCellDef> Order no. </mat-header-cell>
-          <mat-cell *matCellDef="let order">
-            <span class="link" *ngIf="order.fields.OrderNumber; else noNumber" (click)="openReceipt(order.fields.OrderNumber)">{{ order.fields.OrderNumber }}</span>
-            <ng-template #noNumber>
-              <span *ngIf="typeFilter.value === 'Pickups'">{{ order.fields.CustomerType === 'Vendor' ? 'Purchase' : 'Return' || order.fields.DeliveryType }}</span>
-              <span *ngIf="typeFilter.value === 'Recycling'">{{ order.fields.DeliveryType }}</span>
-            </ng-template>
-          </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="customer">
-          <mat-header-cell *matHeaderCellDef> Customer </mat-header-cell>
-          <mat-cell *matCellDef="let order">
-            <span>{{ order.fields.CustomerName }}</span>
-          </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="notes">
-          <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
-          <mat-cell *matCellDef="let order">
-            <span [title]="order.fields.Notes" class="order-notes">{{ order.fields.Notes }}</span>
-          </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="checked">
-          <mat-header-cell *matHeaderCellDef>  </mat-header-cell>
-          <mat-cell *matCellDef="let order">
-              <mat-checkbox color="accent" [checked]="order.fields.PickStatus === 1" (click)="markComplete(order, order.fields.PickStatus)"></mat-checkbox>
-          </mat-cell>
-        </ng-container>
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      </mat-table>
-      <div *ngIf="(loadingList$ | async) ? true : false">
-        <mat-spinner diameter="36" class="loading-page"></mat-spinner>
-      </div>
-    </mat-card>
+    @if (deliveries$ | async; as groupedDeliveries) {
+      <mat-card appearance="outlined" class="inner table-container">
+        <mat-table #table [dataSource]="groupedDeliveries" [trackBy]="trackByGroupsFn">
+          <ng-container matColumnDef="date">
+            <mat-header-cell *matHeaderCellDef> Delivery date </mat-header-cell>
+            <mat-cell *matCellDef="let order">
+              <span>{{ order.fields.DeliveryDate | date:'dd/MM/yyy' }}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="run">
+            <mat-header-cell *matHeaderCellDef> Run </mat-header-cell>
+            <mat-cell *matCellDef="let order">
+              <span>{{ order.fields.Run || 'Default' }}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="order">
+            <mat-header-cell *matHeaderCellDef> Order no. </mat-header-cell>
+            <mat-cell *matCellDef="let order">
+              @if (order.fields.OrderNumber) {
+                <span class="link" (click)="openReceipt(order.fields.OrderNumber)">{{ order.fields.OrderNumber }}</span>
+              } @else {
+                @if (typeFilter.value === 'Pickups') {
+                  <span>{{ order.fields.CustomerType === 'Vendor' ? 'Purchase' : 'Return' || order.fields.DeliveryType }}</span>
+                } @else if (typeFilter.value === 'Recycling') {
+                  <span>{{ order.fields.DeliveryType }}</span>
+                }
+              }
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="customer">
+            <mat-header-cell *matHeaderCellDef> Customer </mat-header-cell>
+            <mat-cell *matCellDef="let order">
+              <span>{{ order.fields.CustomerName }}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="notes">
+            <mat-header-cell *matHeaderCellDef> Notes </mat-header-cell>
+            <mat-cell *matCellDef="let order">
+              <span [title]="order.fields.Notes" class="order-notes">{{ order.fields.Notes }}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="checked">
+            <mat-header-cell *matHeaderCellDef>  </mat-header-cell>
+            <mat-cell *matCellDef="let order">
+                <mat-checkbox color="accent" [checked]="order.fields.PickStatus === 1" (click)="markComplete(order, order.fields.PickStatus)"></mat-checkbox>
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+        @if (loadingList$ | async) {
+          <mat-spinner diameter="36" class="loading-page"></mat-spinner>
+        }
+      </mat-card>
+    }
   </div>
 </div>
 

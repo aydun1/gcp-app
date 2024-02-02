@@ -1,56 +1,68 @@
 <h2 mat-dialog-title>Pallet transfer entry</h2>
-<form *ngIf="palletsOwed | async as o" (ngSubmit)="addPallets()" [formGroup]="palletForm">
-  <mat-dialog-content>
-    <div><strong>Customer name:</strong> {{ data.customer.name }}</div>
-    <div><strong>Customer number:</strong> {{ data.customer.custNmbr }}</div>
-    <div *ngIf="data.orderNmbr"><strong>Order number:</strong> {{ data.orderNmbr }}</div>
-    <mat-divider class="section-divider"></mat-divider>
-    <div class="vertical pallet-grid" [ngClass]="{ vertical: vertical }" formArrayName="quantities">
-      <div class="pallet-column heading">
-        <div class="pallet-cell head">
-          <div class="direction-title pallet-word">Pallet</div>
+@if (palletsOwed | async; as o) {
+  <form (ngSubmit)="addPallets()" [formGroup]="palletForm">
+    <mat-dialog-content>
+      <div><strong>Customer name:</strong> {{ data.customer.name }}</div>
+      <div><strong>Customer number:</strong> {{ data.customer.custNmbr }}</div>
+      @if (data.orderNmbr) {
+        <div><strong>Order number:</strong> {{ data.orderNmbr }}</div>
+      }
+      <mat-divider class="section-divider"></mat-divider>
+      <div class="vertical pallet-grid" [ngClass]="{ vertical: vertical }" formArrayName="quantities">
+        <div class="pallet-column heading">
+          <div class="pallet-cell head">
+            <div class="direction-title pallet-word">Pallet</div>
+          </div>
+          <div class="pallet-cell owing-cell">
+          </div>
+          <div class="pallet-cell">
+            <div class="direction-title">Sent</div>
+          </div>
+          <div class="pallet-cell">
+            <div class="direction-title">Returned</div>
+          </div>
         </div>
-        <div class="pallet-cell owing-cell">
-        </div>
-        <div class="pallet-cell">
-          <div class="direction-title">Sent</div>
-        </div>
-        <div class="pallet-cell">
-          <div class="direction-title">Returned</div>
-        </div>
+        @for (pallet of palletTypes; track pallet.key) {
+          <div class="pallet-column" [formGroupName]="$index">
+            <div class="pallet-cell head">
+              <img [src]="pallet.image" alt="{{ pallet.name }} pallet"><span class="name">{{ pallet.name }}</span>
+            </div>
+            <div class="pallet-cell owing-cell">
+              <span>{{o[pallet.name]?.total}}</span>
+            </div>
+            @for (d of direction; track d.controlName) {
+              <div class="pallet-cell">
+                <input class="pallet-input" type="number" [formControlName]="d.controlName" autocomplete="off" [placeholder]="0" min="0" max="1000">
+              </div>
+            }
+          </div>
+        }
       </div>
-      <div *ngFor="let pallet of palletTypes; index as i" class="pallet-column" [formGroupName]="i">
-        <div class="pallet-cell head">
-          <img [src]="pallet.image" alt="{{ pallet.name }} pallet"><span class="name">{{ pallet.name }}</span>
-        </div>
-        <div class="pallet-cell owing-cell">
-          <span>{{o[pallet.name]?.total}}</span>
-        </div>
-        <div *ngFor="let d of direction" class="pallet-cell">
-          <input class="pallet-input" type="number" [formControlName]="d.controlName" autocomplete="off" [placeholder]="0" min="0" max="1000">
-        </div>
-      </div>
-    </div>
-    <mat-form-field appearance="outline">
-      <mat-label>Date</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="date" placeholder="Pallet delivery/collection date">
-      <mat-datepicker-toggle matSuffix [for]="picker" tabindex="-1"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
-    <mat-form-field appearance="outline" *ngIf="siteNames.length">
-      <mat-label>Site</mat-label>
-      <mat-select formControlName="site">
-        <mat-option *ngFor="let site of siteNames" [value]="site">{{ site }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline" subscriptSizing="dynamic">
-      <mat-label>Notes</mat-label>
-      <input matInput type="text" formControlName="notes" autocomplete="off" placeholder="Optional">
-    </mat-form-field>
-  </mat-dialog-content>
-  <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close tabindex=-1>Cancel</button>
-    <button mat-raised-button color="primary" [disabled]="loading">Confirm transfer</button>
-  </mat-dialog-actions>
-</form>
+      <mat-form-field appearance="outline">
+        <mat-label>Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date" placeholder="Pallet delivery/collection date">
+        <mat-datepicker-toggle matSuffix [for]="picker" tabindex="-1"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      @if (siteNames.length > 0) {
+        <mat-form-field appearance="outline">
+          <mat-label>Site</mat-label>
+          <mat-select formControlName="site">
+            @for (s of siteNames; track s) {
+              <mat-option [value]="s">{{ s }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Notes</mat-label>
+        <input matInput type="text" formControlName="notes" autocomplete="off" placeholder="Optional">
+      </mat-form-field>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close tabindex=-1>Cancel</button>
+      <button mat-raised-button color="primary" [disabled]="loading">Confirm transfer</button>
+    </mat-dialog-actions>
+  </form>  
+}
 <button mat-icon-button (click)="closeDialog()" type="button" class="close-button" tabindex="-1" ><mat-icon>close</mat-icon></button>

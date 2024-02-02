@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AsyncPipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,7 +18,7 @@ import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-ro
   templateUrl: './pan-list-simple.component.html',
   styleUrls: ['./pan-list-simple.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DecimalPipe, NgForOf, NgIf, FormsModule, ReactiveFormsModule, RouterModule, MatButtonToggleModule, MatButtonModule, MatIconModule, MatMenuModule, MatTableModule, LoadingRowComponent]
+  imports: [AsyncPipe, DecimalPipe, FormsModule, ReactiveFormsModule, RouterModule, MatButtonToggleModule, MatButtonModule, MatIconModule, MatMenuModule, MatTableModule, LoadingRowComponent]
 })
 export class PanListSimpleComponent implements OnInit {
   @Input() panLists!: Array<string[]>;
@@ -159,9 +159,4 @@ export class PanListSimpleComponent implements OnInit {
   trackByFn(index: number, item: any): string {
     return item.id;
   }
-
-  trackByFn2(index: number, item: any): string {
-    return item[0];
-  }
-
 }

@@ -1,32 +1,39 @@
 <h2 mat-dialog-title>Add a run</h2>
 <form (ngSubmit)="runId ? renameRun() : addRun()" [formGroup]="runForm">
   <mat-dialog-content class="mat-typography">
-    <ng-container *ngIf="data.runs as runs">
+    @if (data.runs; as runs) {
       <h3>Runs</h3>
       <mat-list>
-        <mat-list-item *ngFor="let run of runs" [class.active] = "run.id === runId" class="active">
-          <span>{{ run.fields.Title }}</span>
-          <ng-container *ngIf="run.id === runId" matListItemMeta>
-            <button color="warn" type="button" mat-raised-button class="icon" (click)="deleteRun()" [disabled]="loading" class="delete">Delete run</button>
-          </ng-container>
-          <ng-container matListItemMeta>
-            <button type="button" mat-icon-button (click)="openEditor(run.id, run.fields.Title, run.fields.Owner)" class="icon"><mat-icon>edit</mat-icon></button>
-          </ng-container>
-        </mat-list-item>
-        <mat-list-item *ngIf="!runs || !runs.length">
-          <span>No additional runs yet</span>
-        </mat-list-item>
+        @for (run of runs; track run.id) {
+          <mat-list-item [class.active] = "run.id === runId" class="active">
+            <span>{{ run.fields.Title }}</span>
+            <ng-container matListItemMeta>
+              @if (run.id === runId) {
+                <button color="warn" type="button" mat-raised-button class="icon" (click)="deleteRun()" [disabled]="loading" class="delete">Delete run</button>
+              }
+              <button type="button" mat-icon-button (click)="openEditor(run.id, run.fields.Title, run.fields.Owner)" class="icon"><mat-icon>edit</mat-icon></button>
+            </ng-container>
+          </mat-list-item>
+        } @empty {
+          <mat-list-item>
+            <span>No additional runs yet</span>
+          </mat-list-item>
+        }
       </mat-list>
-    </ng-container>
-
-    <h3 *ngIf="!runId">Add a run</h3>
-    <h3 *ngIf="runId">Edit run details</h3>
+    }
+    @if (runId) {
+      <h3>Edit run details</h3>
+    } @else {
+      <h3>Add a run</h3>
+    }
     <mat-form-field appearance="outline" class="name">
       <mat-label>Run name (i.e. Deliveries)</mat-label>
       <input matInput type="text" formControlName="run" autocomplete="off" placeholder="Run name (i.e. delivery)">
-      <mat-error *ngIf="runForm.get('run')?.hasError('forbiddenName')">
-        A run by this name already exists.
-      </mat-error>
+      @if (runForm.get('run')?.hasError('forbiddenName')) {
+        <mat-error>
+          A run by this name already exists.
+        </mat-error>
+      }
     </mat-form-field>
     <mat-form-field appearance="outline" class="name">
       <mat-label>Owner</mat-label>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -24,7 +24,7 @@ import { LetterheadComponent } from '../../shared/letterhead/letterhead.componen
   templateUrl: './run-list-completed.component.html',
   styleUrls: ['./run-list-completed.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DatePipe, NgForOf, NgIf, RouterModule, MatCardModule, MatCheckboxModule, MatInputModule, MatProgressSpinnerModule, MatSelectModule, MatTableModule, ReactiveFormsModule, LetterheadComponent]
+  imports: [AsyncPipe, DatePipe, RouterModule, MatCardModule, MatCheckboxModule, MatInputModule, MatProgressSpinnerModule, MatSelectModule, MatTableModule, ReactiveFormsModule, LetterheadComponent]
 })
 export class RunListCompletedComponent implements OnInit {
   private _loadList = false;
@@ -152,10 +152,6 @@ export class RunListCompletedComponent implements OnInit {
 
   setType(type: MatSelectChange): void {
     this.router.navigate([], { queryParams: {type: type.value}, queryParamsHandling: 'merge', replaceUrl: true});
-  }
-
-  trackByFn(index: number, item: Delivery): string {
-    return item.id;
   }
 
   trackByGroupsFn(index: number, item: {id: string}): string {

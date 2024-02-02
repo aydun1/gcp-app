@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { AsyncPipe, DecimalPipe, NgClass, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DecimalPipe, NgClass } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -36,7 +36,7 @@ interface LineForm {
   templateUrl: './pan-list.component.html',
   styleUrls: ['./pan-list.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DecimalPipe, NgClass, NgForOf, NgIf, FormsModule, ReactiveFormsModule, MatButtonToggleModule, MatCardModule, MatInputModule, MatSelectModule, MatSlideToggleModule, MatTableModule, ItemControlComponent, LoadingRowComponent]
+  imports: [AsyncPipe, DecimalPipe, NgClass, FormsModule, ReactiveFormsModule, MatButtonToggleModule, MatCardModule, MatInputModule, MatSelectModule, MatSlideToggleModule, MatTableModule, ItemControlComponent, LoadingRowComponent]
 })
 export class PanListComponent implements OnInit {
 

@@ -8,6 +8,10 @@
   padding: 2px 0;
 }
 
+.note {
+  text-align: center;
+}
+
 .item-number {
   flex: 0 1 130px;
 }
@@ -16,7 +20,8 @@
   flex: 1;
 }
 
-.class, .quantity {
+.class,
+.quantity {
   flex: 0 0 80px;
   text-align: right;
 }
@@ -50,7 +55,7 @@
 
 @media print {
   @page {
-    size: portrait
+    size: portrait;
   }
 
   .share-page {

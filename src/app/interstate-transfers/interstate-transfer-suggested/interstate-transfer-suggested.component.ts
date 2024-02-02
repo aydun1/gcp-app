@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { NgForOf } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,7 +24,7 @@ interface NewTransferForm {
   templateUrl: './interstate-transfer-suggested.component.html',
   styleUrls: ['./interstate-transfer-suggested.component.css'],
   standalone: true,
-  imports: [NgForOf, ReactiveFormsModule, MatButtonModule, MatInputModule, MatSelectModule, PanListComponent, LetterheadComponent]
+  imports: [ReactiveFormsModule, MatButtonModule, MatInputModule, MatSelectModule, PanListComponent, LetterheadComponent]
 })
 export class InterstateTransferSuggestedComponent implements OnInit {
   private _ownState!: string;

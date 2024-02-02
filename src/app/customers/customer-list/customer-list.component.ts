@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -27,7 +27,7 @@ type Territory = {
   templateUrl: './customer-list.component.html',
   styleUrls: ['./customer-list.component.css'],
   standalone: true,
-  imports: [AsyncPipe, NgForOf, NgIf, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatInputModule, MatSelectModule, MatSortModule, MatTableModule, LetterheadComponent, LoadingRowComponent]
+  imports: [AsyncPipe, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatInputModule, MatSelectModule, MatSortModule, MatTableModule, LetterheadComponent, LoadingRowComponent]
 })
 export class CustomerListComponent implements OnInit {
   private loadList!: boolean;

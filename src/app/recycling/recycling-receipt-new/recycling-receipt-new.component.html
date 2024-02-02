@@ -2,9 +2,7 @@
   <button mat-icon-button (click)="goBack()" class="mobile-button">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <ng-container>
-    <div class="title">New receipt</div>
-  </ng-container>
+  <div class="title">New receipt</div>
 </mat-toolbar>
 
 <div class="outer">
@@ -15,7 +13,9 @@
         <mat-form-field appearance="fill">
           <mat-label>Branch</mat-label>
           <mat-select matInput type="text" formControlName="branch">
-            <mat-option *ngFor="let s of states" [value]="s">{{ s }}</mat-option>
+            @for (s of states; track s) {
+              <mat-option [value]="s">{{ s }}</mat-option>
+            }
           </mat-select>
         </mat-form-field>
         <mat-form-field appearance="fill">

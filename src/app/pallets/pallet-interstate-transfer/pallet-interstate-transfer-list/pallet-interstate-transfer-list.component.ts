@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
-import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,7 +20,7 @@ import { LoadingRowComponent } from '../../../shared/loading/loading-row/loading
   templateUrl: './pallet-interstate-transfer-list.component.html',
   styleUrls: ['./pallet-interstate-transfer-list.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DatePipe, NgForOf, NgIf, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatSelectModule, MatTableModule, LetterheadComponent, LoadingRowComponent]
+  imports: [AsyncPipe, DatePipe, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatSelectModule, MatTableModule, LetterheadComponent, LoadingRowComponent]
 })
 export class PalletInterstateTransferListComponent implements OnInit {
   private _loadList!: boolean;

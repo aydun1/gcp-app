@@ -1,17 +1,21 @@
 <form (ngSubmit)="setCageNotes(cage.id)">
   <mat-list-item>
     <mat-icon matListItemIcon>tag</mat-icon>
-    <span *ngIf="editCageNotes" matListItemTitle>
-      <input [(ngModel)]="cageNotes" [ngModelOptions]="{standalone: true}" type="text" placeholder="Reference number or cage notes">
-    </span>
-    <span *ngIf="!editCageNotes" matListItemTitle>{{ cageNotes }}</span>
+    @if (editCageNotes) {
+      <span matListItemTitle>
+        <input [(ngModel)]="cageNotes" [ngModelOptions]="{standalone: true}" type="text" placeholder="Reference number or cage notes">
+      </span>
+    } @else {
+      <span matListItemTitle>{{ cageNotes }}</span>
+    }
     <span>Reference</span>
-    <ng-container matListItemMeta *ngIf="!editCageNotes">
-      <button mat-icon-button type="button" (click)="editCageNotes = true"><mat-icon>edit</mat-icon></button>
-    </ng-container>
-    <ng-container matListItemMeta *ngIf="editCageNotes">
-      <button mat-icon-button type="button" (click)="cancelEditCageNotes(cage.fields.Notes)"><mat-icon>close</mat-icon></button>
-      <button mat-icon-button type="submit"><mat-icon>check</mat-icon></button>
+    <ng-container matListItemMeta>
+      @if (editCageNotes) {
+        <button mat-icon-button type="button" (click)="cancelEditCageNotes()"><mat-icon>close</mat-icon></button>
+        <button mat-icon-button type="submit"><mat-icon>check</mat-icon></button>
+      } @else {
+        <button mat-icon-button type="button" (click)="editCageNotes = true"><mat-icon>edit</mat-icon></button>
+      }
     </ng-container>
   </mat-list-item>
 </form>

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,7 +30,7 @@ import { GroupByPropertyPipe } from '../../shared/pipes/group-by-property';
   styleUrls: ['./chemical-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatInputModule, MatMenuModule, MatSelectModule, MatSortModule, MatTableModule, MatTooltipModule, GroupByPropertyPipe, LetterheadComponent, LoadingRowComponent]
+  imports: [AsyncPipe, DatePipe, DecimalPipe, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatInputModule, MatMenuModule, MatSelectModule, MatSortModule, MatTableModule, MatTooltipModule, GroupByPropertyPipe, LetterheadComponent, LoadingRowComponent]
 })
 export class ChemicalListComponent implements OnInit {
   private loadList!: boolean;
@@ -43,6 +43,8 @@ export class ChemicalListComponent implements OnInit {
   public loading = this.chemicalService.loading;
   public displayedColumns = [...this.defaultColumns];
   public chemicals$!: Observable<Chemical[]>;
+  public totalVolume!: number;
+  public totalWeight!: number;
   public branchFilter = new FormControl({value: '', disabled: false});
   public ownState!: string;
   public states = this.shared.branches;
@@ -95,7 +97,11 @@ export class ChemicalListComponent implements OnInit {
       )),
       tap(_ => this.parseParams(_)),
       switchMap(_ => this.loadList ? this.getChemicals(_['search'], _['branch'], _['category'], _['sort'], _['order']) : []),
-      tap(_ => this.chemicals = _)
+      tap(_ => {
+        this.totalVolume = _.filter(_ => _.uofm === 'L').reduce((acc, cur) => acc + cur.quantity, 0);
+        this.totalWeight = _.filter(_ => _.uofm === 'kg').reduce((acc, cur) => acc + cur.quantity, 0);
+        this.chemicals = _;
+      })
     );
 
     this.textFilter.valueChanges.pipe(
@@ -188,10 +194,6 @@ export class ChemicalListComponent implements OnInit {
     return lines.reduce((acc, cur) => acc + cur[key], 0);
   }
 
-  getTotalWeight(lines: Array<any>, key: string, uofm: string): number {
-    return lines.filter(_ => _['uofm'] === uofm).reduce((acc, cur) => acc + cur[key], 0);
-  }
-
   exportChemicals(): void {
     if (!this.chemicals || this.chemicals.length === 0) this.snackBar.open('Nothing to export', '', {duration: 3000})
     const now = new Date();
@@ -214,10 +216,6 @@ export class ChemicalListComponent implements OnInit {
   openOtherChemicals(): void {
     const data = {ownBranch: this.ownState};
     this.dialog.open(ChemicalOthersDialogComponent, {width: '600px', autoFocus: false, data});
-  }
-
-  trackByGroupsFn(index: number, item: any): string {
-    return item.key;
   }
 
   trackByFn(index: number, item: Chemical): string {

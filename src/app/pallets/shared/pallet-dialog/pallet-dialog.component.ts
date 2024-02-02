@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AsyncPipe, NgClass, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -34,7 +34,7 @@ interface PalletForm {
   templateUrl: './pallet-dialog.component.html',
   styleUrls: ['./pallet-dialog.component.css'],
   standalone: true,
-  imports: [NgClass, NgForOf, NgIf, AsyncPipe, ReactiveFormsModule, MatButtonModule, MatDatepickerModule, MatDialogModule, MatDividerModule, MatIconModule, MatInputModule, MatSelectModule]
+  imports: [NgClass, AsyncPipe, ReactiveFormsModule, MatButtonModule, MatDatepickerModule, MatDialogModule, MatDividerModule, MatIconModule, MatInputModule, MatSelectModule]
 })
 export class PalletDialogComponent implements OnInit {
   private _state!: string;

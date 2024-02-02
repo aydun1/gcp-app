@@ -2,9 +2,7 @@
   <button mat-icon-button (click)="goBack()" class="mobile-button">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <ng-container>
-    <div class="title">Pallet transfer</div>
-  </ng-container>
+  <div class="title">Pallet transfer</div>
 </mat-toolbar>
 
 <div class="outer">
@@ -26,7 +24,9 @@
           <mat-form-field appearance="fill">
             <mat-label>From</mat-label>
             <mat-select matInput type="text" formControlName="from">
-              <mat-option *ngFor="let s of ownState" [value]="s">{{ s }}</mat-option>
+              @for (s of ownState; track s) {
+                <mat-option [value]="s">{{ s }}</mat-option>
+              }
               <mat-option value="Transport">External transport company</mat-option>
             </mat-select>
           </mat-form-field>
@@ -34,17 +34,23 @@
           <mat-form-field appearance="fill">
             <mat-label>To</mat-label>
             <mat-select matInput type="text" formControlName="to">
-              <mat-option *ngFor="let s of targetStates" [value]="s">{{ s }}</mat-option>
-              <mat-option *ngIf="!fromTrans" value="Transport">External transport company</mat-option>
+              @for (s of targetStates; track s) {
+                <mat-option [value]="s">{{ s }}</mat-option>
+              }
+              @if (!fromTrans) {
+                <mat-option value="Transport">External transport company</mat-option>
+              }
             </mat-select>
           </mat-form-field>
         </div>
         <div class="field-container pallets">
-          <mat-form-field *ngFor="let p of pallets" appearance="fill">
-            <mat-label>{{ p.name }}</mat-label>
-            <input matInput type="number" [formControlName]="p.key" autocomplete="off" min="0" [title]="p.name">
-            <img matSuffix [src]="p.image" alt="{{ p.name }} pallet">
-          </mat-form-field>
+          @for (p of pallets; track p.key) {
+            <mat-form-field appearance="fill">
+              <mat-label>{{ p.name }}</mat-label>
+              <input matInput type="number" [formControlName]="p.key" autocomplete="off" min="0" [title]="p.name">
+              <img matSuffix [src]="p.image" alt="{{ p.name }} pallet">
+            </mat-form-field>
+          }
         </div>
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Reference no.</mat-label>

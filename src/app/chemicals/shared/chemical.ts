@@ -8,7 +8,8 @@ export interface Chemical {
   sdsExists: number;
   DocNo: string;
   hCodes: Array<string>;
-  Quantity: number;
+  quantity: number;
+  uofm: string;
   Bin?: string;
   QtyOnHand?: number;
   key: string;

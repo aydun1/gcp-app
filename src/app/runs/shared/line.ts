@@ -1,4 +1,5 @@
 export interface Line {
+  lineNumber: number;
   itemNmbr: string;
   itemDesc: string;
   palletSpaces: number;

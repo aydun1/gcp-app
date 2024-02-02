@@ -1,5 +1,5 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -21,7 +21,7 @@ import { ChemicalBackpackDialogComponent } from '../shared/chemical-backpack-dia
   templateUrl: './chemical-view.component.html',
   styleUrls: ['./chemical-view.component.css'],
   standalone: true,
-  imports: [AsyncPipe, NgForOf, NgIf, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatToolbarModule]
+  imports: [AsyncPipe, MatButtonModule, MatCardModule, MatIconModule, MatListModule, MatToolbarModule]
 })
 export class ChemicalViewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';

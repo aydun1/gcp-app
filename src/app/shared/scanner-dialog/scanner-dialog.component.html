@@ -1,35 +1,44 @@
 <h2 mat-dialog-title>Barcode scanner</h2>
-<button  *ngIf="(isScanner | async) === false && hasPermission !== false" mat-icon-button [matMenuTriggerFor]="appMenu" class="action-button">
-  <mat-icon>more_vert</mat-icon>
-</button>
-
-<mat-dialog-content *ngIf="(isScanner | async) === false">
-  <div [hidden]="!hasPermission">
-    <zxing-scanner [enable]="enabled" [torch]="torchEnabled" [(device)]="currentDevice" (scanSuccess)="onCodeResult($event)"
-      [formats]="formatsEnabled" [tryHarder]="tryHarder" (permissionResponse)="onHasPermission($event)" (scanError)="onScanError($event)"
-      (camerasFound)="onCamerasFound($event)" (torchCompatible)="onTorchCompatible($event)">
-    </zxing-scanner>
-  </div>
-  <div *ngIf="hasPermission === undefined" class="message">
-    <h3>Waiting for permissions.</h3>
-    <p>
-      If your device does not have cameras, no permissions will be asked.
-    </p>
-  </div>
-  <div *ngIf="hasDevices === false" class="message">
-    <h3>No devices were found.</h3>
-    <p>It seems your device has no camera.
-    </p>
-  </div>
-</mat-dialog-content>
+@if ((isScanner | async) === false && hasPermission !== false) {
+  <button mat-icon-button [matMenuTriggerFor]="appMenu" class="action-button">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+}
+@if ((isScanner | async) === false) {
+  <mat-dialog-content>
+    <div [hidden]="!hasPermission">
+      <zxing-scanner [enable]="enabled" [torch]="torchEnabled" [(device)]="currentDevice" (scanSuccess)="onCodeResult($event)"
+        [formats]="formatsEnabled" [tryHarder]="tryHarder" (permissionResponse)="onHasPermission($event)" (scanError)="onScanError($event)"
+        (camerasFound)="onCamerasFound($event)" (torchCompatible)="onTorchCompatible($event)">
+      </zxing-scanner>
+    </div>
+    @if (hasPermission === undefined) {
+      <div class="message">
+        <h3>Waiting for permissions.</h3>
+        <p>
+          If your device does not have cameras, no permissions will be asked.
+        </p>
+      </div>
+    }
+    @if (hasDevices === false) {
+      <div class="message">
+        <h3>No devices were found.</h3>
+        <p>It seems your device has no camera.
+        </p>
+      </div>
+    }
+  </mat-dialog-content>
+}
 <form (submit)="processCode(scannedText)">
   <mat-dialog-actions>
     <mat-form-field subscriptSizing="dynamic" class="name-filter">
       <mat-label>Scan data</mat-label>
       <input matInput [ngModel]="scannedText" (ngModelChange)="fieldUpdated($event)" [ngModelOptions]="{standalone: true}" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autocomplete="chrome-off" placeholder="" #search>
-      <button *ngIf="scannedText" matSuffix mat-icon-button aria-label="Clear" (click)="clearResult()" type="button">
-        <mat-icon>close</mat-icon>
-      </button>
+      @if (scannedText) {
+        <button matSuffix mat-icon-button aria-label="Clear" (click)="clearResult()" type="button">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
       <button [disabled]="!scannedText" matSuffix mat-icon-button type="submit">
         <mat-icon>arrow_forward</mat-icon>
       </button>
@@ -41,14 +50,15 @@
     <mat-list-option (click)="toggleTryHarder()" [selected]="tryHarder">
       Enable Try-harder
     </mat-list-option>
-    <mat-list-option (click)="toggleTorch()" [selected]="torchEnabled"
-      *ngIf="torchAvailable$ | async">
-      Enable Torch
-    </mat-list-option>
+    @if (torchAvailable$ | async) {
+      <mat-list-option (click)="toggleTorch()" [selected]="torchEnabled">Enable Torch</mat-list-option>
+    }
   </mat-selection-list>
   <button mat-menu-item [matMenuTriggerFor]="cameras">Cameras</button>
 </mat-menu>
 
 <mat-menu #cameras="matMenu">
-  <button mat-menu-item *ngFor="let device of availableDevices" (click)="setCamera(device.deviceId)">{{device.label}}</button>
+  @for (device of availableDevices; track device.deviceId) {
+    <button mat-menu-item (click)="setCamera(device.deviceId)">{{device.label}}</button>
+  }
 </mat-menu>

@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -37,7 +37,7 @@ interface PalletQuantities {
   templateUrl: './order-lines-dialog.component.html',
   styleUrls: ['./order-lines-dialog.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DatePipe, DecimalPipe, NgForOf, NgIf, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule, MatProgressSpinnerModule, DocsComponent]
+  imports: [AsyncPipe, DatePipe, DecimalPipe, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule, MatProgressSpinnerModule, DocsComponent]
 })
 export class OrderLinesDialogComponent implements OnInit {
   private _palletsSubject$ = new Subject<string>();
