@@ -27,6 +27,9 @@
               <mat-icon>refresh</mat-icon>
             </button>
           </div>
+          <div class="specs2">
+            {{ totalSpaces | number:'1.1-1' }} spaces | {{ percentPicked | number:'1.0-0' }}% picked
+          </div>
           <div class="order-list">
             @if (loadingOrders) {
               <mat-spinner diameter="36" class="loading-orders"></mat-spinner>
@@ -39,7 +42,12 @@
                 <mat-nav-list #orderList="cdkDropList" cdkDropList [cdkDropListConnectedTo]="['delivery-list']" [cdkDropListSortingDisabled]="true">
                   @for (section of orders | groupByProperty:'shipMethod'; track section.key) {
                     <div>
-                      <div matSubheader><strong>{{ section.key !== 'undefined' ? section.key : '' }}</strong></div>
+                      <div matSubheader>
+                        <strong>{{ section.key !== 'undefined' ? section.key : '' }}</strong>
+                      </div>
+                      <div class="specs2 specs-orders">
+                        {{ section.value | sum:'palletSpaces'| number:'1.1-1' }} spaces | {{ section.value | sum:'pickedPercent'| number:'1.1-1' }}% picked
+                      </div>
                       @for (order of section.value; track order.sopNumber) {
                         <mat-list-item (click)="openReceipt(order.sopNumber)" class="drag-list-item" cdkDrag [cdkDragData]="order">
                           <div class="custom-placeholder" *cdkDragPlaceholder></div>
@@ -68,8 +76,8 @@
                             | {{ order.batchNumber }}
                           </div>
                           <div matListItemLine>
-                            <span>{{ order.palletSpaces | number: '1.1-1' }} spaces</span> |
-                            <span>{{ order.orderWeight | number: '1.1-1' }} kg</span>
+                            <span>{{ order.fulfilledSpaces | number:'1.1-1' }}/{{ order.palletSpaces | number:'1.1-1' }} spaces</span> |
+                            <span>{{ order.orderWeight | number:'1.1-1' }} kg</span>
                           </div>
                           <ng-container matListItemMeta>
                             <button type="button" [disabled]="loading" mat-icon-button matTooltip="Add to run" (click)="addOrderDelivery(order, runName, undefined).subscribe();$event.stopPropagation();"><mat-icon>add</mat-icon></button>

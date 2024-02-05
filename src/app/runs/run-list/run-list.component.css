@@ -19,6 +19,15 @@ h2 {
   justify-content: space-between;
 }
 
+.specs2 {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.specs-orders {
+  margin-top: -10px;
+}
+
 .options {
   align-items: center;
   display: flex;
@@ -70,6 +79,8 @@ h2 {
 
 .specs {
   margin: 10px 10px 10px 0;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 .expansion-controls {

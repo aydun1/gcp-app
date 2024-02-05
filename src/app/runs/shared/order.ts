@@ -18,7 +18,9 @@ export interface Order {
   note: string;
   lines: Array<Line>;
   reqShipDate: Date;
+  LinesTotal: number;
   palletSpaces: number;
+  fulfilledSpaces: number;
   orderWeight: number;
   deliveryStatus: string;
   deliveryRun: string;

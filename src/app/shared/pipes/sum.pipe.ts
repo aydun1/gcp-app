@@ -11,6 +11,12 @@ export class SumPipe implements PipeTransform {
         return collection.filter(_ => _.uofm === property).reduce((previous, current) => previous += current.quantity, 0)
       } else if (property === 'onHand') {
         return collection.reduce((previous, current) => previous += current.onHand, 0);
+      } else if (property === 'palletSpaces') {
+        return collection.reduce((previous, current) => previous += current.palletSpaces, 0);
+      } else if (property === 'linesTotal') {
+        return collection.reduce((previous, current) => previous += current.linesTotal, 0);
+      } else if (property === 'pickedPercent') {
+        return collection.reduce((previous, current) => previous += current.fulfilledSpaces, 0) / collection.reduce((previous, current) => previous += current.palletSpaces, 0) * 100;
       } else if (property === 'Spaces') {
         return collection.reduce((previous, current) => previous += current.value.Spaces, 0);
       } else if (property === 'ToTransfer') {

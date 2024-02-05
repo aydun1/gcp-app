@@ -36,6 +36,8 @@ import { Address } from '../../customers/shared/address';
 import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
 import { GroupByPropertyPipe } from '../../shared/pipes/group-by-property';
 import { GroupByCustomerAddressPipe } from '../../shared/pipes/group-by-customer-address';
+import { SumPipe } from '../../shared/pipes/sum.pipe';
+
 import { PhoneLinkPipe } from '../../shared/pipes/phone-link';
 import { RunChemicalsDialogComponent } from '../shared/run-chemicals-dialog/run-chemicals-dialog.component';
 
@@ -44,7 +46,7 @@ import { RunChemicalsDialogComponent } from '../shared/run-chemicals-dialog/run-
   templateUrl: './run-list.component.html',
   styleUrls: ['./run-list.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DatePipe, DecimalPipe, NgClass, DragDropModule, MatButtonModule, MatDatepickerModule, ReactiveFormsModule, MatCheckboxModule, MatExpansionModule, MatIconModule, MatListModule, MatMenuModule, MatProgressSpinnerModule, MatTabsModule, MatTooltipModule, RouterModule, GroupByCustomerAddressPipe, PhoneLinkPipe, GroupByPropertyPipe, LetterheadComponent],
+  imports: [AsyncPipe, DatePipe, DecimalPipe, NgClass, DragDropModule, MatButtonModule, MatDatepickerModule, ReactiveFormsModule, MatCheckboxModule, MatExpansionModule, MatIconModule, MatListModule, MatMenuModule, MatProgressSpinnerModule, MatTabsModule, MatTooltipModule, RouterModule, GroupByCustomerAddressPipe, PhoneLinkPipe, GroupByPropertyPipe, SumPipe, LetterheadComponent],
 })
 export class RunListComponent implements OnInit {
   private _branch!: string;
@@ -69,6 +71,9 @@ export class RunListComponent implements OnInit {
   public currentCategory = this.route.snapshot.queryParamMap.get('opened');
   public openedTab = this.firstTab();
   public populatedRuns: Set<string> = new Set();
+  public totalSpaces = 0;
+  public fulfilledSpaces = 0;
+  public percentPicked = 0;
 
   get runName(): string {
     return this.openedTab ? this.runs[this.openedTab]?.fields['Title'] : '';
@@ -118,7 +123,12 @@ export class RunListComponent implements OnInit {
     this.orders$ = combineLatest([state$, date$, this._orderRefreshTrigger$]).pipe(
       tap(() => this.loadingOrders = true),
       switchMap(([state, date, _]) => this.deliveryService.syncOrders(state, date || this.deliveryService.getDate())),
-      tap(() => this.loadingOrders = false)
+      tap(_ => {
+        this.totalSpaces = _.reduce((acc, cur) => acc += cur.palletSpaces, 0);
+        this.fulfilledSpaces = _.reduce((acc, cur) => acc += cur.fulfilledSpaces, 0)
+        this.percentPicked = this.totalSpaces ? this.fulfilledSpaces / this.totalSpaces * 100 : 100;
+        this.loadingOrders = false;
+      })
     );
 
     this.deliveries$ = this.route.queryParams.pipe(
