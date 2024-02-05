@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AsyncPipe, DecimalPipe, NgClass } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
@@ -19,6 +19,7 @@ import { RequestLine } from '../request-line';
 import { SuggestedItem } from '../suggested-item';
 import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-row.component';
 import { ItemControlComponent } from '../../shared/controls/item-control/item-control.component';
+import { SumPipe } from '../../shared/pipes/sum.pipe';
 
 interface TransferForm {
   lines: FormArray<FormGroup<LineForm>>;
@@ -36,7 +37,7 @@ interface LineForm {
   templateUrl: './pan-list.component.html',
   styleUrls: ['./pan-list.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DecimalPipe, NgClass, FormsModule, ReactiveFormsModule, MatButtonToggleModule, MatCardModule, MatInputModule, MatSelectModule, MatSlideToggleModule, MatTableModule, ItemControlComponent, LoadingRowComponent]
+  imports: [AsyncPipe, DecimalPipe, NgClass, FormsModule, ReactiveFormsModule, MatButtonToggleModule, MatCardModule, MatInputModule, MatSelectModule, MatSlideToggleModule, MatTableModule, ItemControlComponent, LoadingRowComponent, SumPipe]
 })
 export class PanListComponent implements OnInit {
 
@@ -62,6 +63,7 @@ export class PanListComponent implements OnInit {
   private _panId!: number;
   private _loadList!: boolean;
 
+  public update = 0;
   public itemSearch = new FormControl<SuggestedItem | null>(null);
   public notes = new FormControl<string>(this.panNote);
   public branchFilter = new FormControl({value: '', disabled: true});
@@ -191,9 +193,10 @@ export class PanListComponent implements OnInit {
     });
     this.transferForm.valueChanges.pipe(
       tap(_ => {
-        const line = _.lines as SuggestedItem[];
-        this.activeLines.emit(line.filter(l => l.ToTransfer > 0));
-        this.lineCount.emit(this.getLinesToTransfer(line));
+        this.update = Math.random();
+        const lines = _.lines as SuggestedItem[];
+        this.activeLines.emit(lines.filter(l => l.ToTransfer > 0));
+        this.lineCount.emit(lines.filter(_ => _.ToTransfer > 0).length);
       })
     ).subscribe();
   }
@@ -379,30 +382,10 @@ export class PanListComponent implements OnInit {
     this.router.navigate([], { queryParams: {[label]: a.checked || null}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
-  getTotalQtyOnHand(lines: Array<SuggestedItem>): number {
-    return lines.reduce((acc, cur) => acc + cur.QtyOnHand, 0);
-  }
-
-  getTotalRequiredQty(lines: Array<SuggestedItem>): number {
-    return lines.reduce((acc, cur) => acc + (cur.QtyRequired || 0), 0);
-  }
-
   getTotalRequestedLines(lines: FormGroup<TransferForm>[]): number {
     if (!lines) return 0;
     const l: Array<FormGroup<TransferForm>> = lines;
     return l.reduce((acc, cur) => acc + 1, 0);
-  }
-
-  getLinesToTransfer(lines: Array<SuggestedItem>): number {
-    return lines.filter(_ => _.ToTransfer > 0).length;
-  }
-
-  getTotalToTransfer(lines: Array<{value: SuggestedItem}>): number {
-    return lines?.reduce((acc, cur) => acc + cur.value.ToTransfer, 0);
-  }
-
-  getTotalPalletCount(lines: Array<{value: SuggestedItem}>): number {
-    return lines.reduce((acc, cur) => acc + cur.value.Spaces, 0);
   }
 
   submitForm(): void {

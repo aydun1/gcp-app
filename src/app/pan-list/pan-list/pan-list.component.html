@@ -289,10 +289,10 @@
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
           <div class="transferTotal">
-            {{ getTotalToTransfer(lines.controls) | number }}
+            {{ lines.controls | sum:'ToTransfer':update | number }}
           </div>
           <div class="transferTotal">
-            ({{ getTotalPalletCount(lines.controls) | number: '1.0-1' }})
+            ({{ lines.controls | sum:'Spaces':update | number: '1.0-1' }})
           </div>
         </mat-footer-cell>
       </ng-container>
