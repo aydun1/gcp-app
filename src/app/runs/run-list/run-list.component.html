@@ -319,7 +319,7 @@
     }
     @for (s of otherRuns; track s.id) {
       <button mat-menu-item (click)="moveToOtherRun(delivery, s.fields.Title)" type="button">
-        {{ s.id }}
+        {{ s.fields.Title }}
       </button>
     }
   </ng-template>
