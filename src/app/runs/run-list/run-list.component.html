@@ -255,8 +255,10 @@
                               <input #photoCapture class="file-select" type="file" accept="image/*" capture (change)="fileChangeEvent('debtors', delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, $event)">
                               <input #videoCapture class="file-select" type="file" accept="video/*" capture (change)="fileChangeEvent('debtors', delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, $event)">
                               <div class="left-icons">
-                                <button mat-icon-button type="button" (click)="photoCapture.click()" matTooltip="Take photo" class="file-select-label"><mat-icon>photo_camera</mat-icon></button>
-                                <button mat-icon-button type="button" (click)="videoCapture.click()" matTooltip="Take video" class="file-select-label"><mat-icon>videocam</mat-icon></button>
+                                @if (canCapture) {
+                                  <button mat-icon-button type="button" (click)="photoCapture.click()" matTooltip="Take photo" class="file-select-label"><mat-icon>photo_camera</mat-icon></button>
+                                  <button mat-icon-button type="button" (click)="videoCapture.click()" matTooltip="Take video" class="file-select-label"><mat-icon>videocam</mat-icon></button>  
+                                }
                                 <button mat-icon-button type="button" (click)="fileSelect.click()" matTooltip="Upload from gallery" class="file-select-label"><mat-icon>photo_library</mat-icon></button>
                               </div>
 

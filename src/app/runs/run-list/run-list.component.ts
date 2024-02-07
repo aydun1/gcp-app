@@ -74,6 +74,7 @@ export class RunListComponent implements OnInit {
   public totalSpaces = 0;
   public fulfilledSpaces = 0;
   public percentPicked = 0;
+  public canCapture = document.createElement('input').capture !== undefined;
 
   get runName(): string {
     return this.openedTab ? this.runs[this.openedTab]?.fields['Title'] : '';
@@ -369,8 +370,8 @@ export class RunListComponent implements OnInit {
     this._orderRefreshTrigger$.next(true);
   }
 
-  fileChangeEvent(folder: string, custNmbr: string, orderNmbr: string, e: Event): void {
-    const subfolder = [custNmbr.trimEnd(), orderNmbr.trimEnd()].filter(_ => _).join('/');
+  fileChangeEvent(folder: string, custNmbr: string, orderNmbr: string | undefined, e: Event): void {
+    const subfolder = [custNmbr?.trimEnd(), orderNmbr?.trimEnd()].filter(_ => _).join('/');
     this.docsService.fileChangeEvent(folder, subfolder, e);
   }
 
