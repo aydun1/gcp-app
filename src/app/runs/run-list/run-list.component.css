@@ -30,7 +30,7 @@ h2 {
 }
 
 .subheader {
-  background: white;
+  background: var(--mat-sidenav-container-background-color);
   position: sticky;
   top: 0;
   width: auto;
