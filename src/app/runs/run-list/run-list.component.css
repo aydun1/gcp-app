@@ -25,7 +25,16 @@ h2 {
 }
 
 .specs-orders {
-  margin-top: -10px;
+  margin-left: 16px;
+  margin-top: -16px;
+}
+
+.subheader {
+  background: white;
+  position: sticky;
+  top: 0;
+  width: auto;
+  z-index: 5;
 }
 
 .options {
@@ -90,6 +99,16 @@ h2 {
 .run {
   margin-right: 10px;
   width: 200px;
+}
+
+.mat-action-row {
+  align-items: center;
+  margin: 0;
+  padding: 12px 0 0 0;
+}
+
+.left-icons {
+  margin-right: auto;
 }
 
 .cdk-drag-preview {
@@ -272,7 +291,8 @@ h2 {
 }
 
 .file-select-label {
-  margin: -6px auto -6px -24px;
+  margin: -6px 0;
+  margin-left: 0!important;
 }
 
 .deliveries-card {

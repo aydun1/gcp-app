@@ -42,11 +42,13 @@
                 <mat-nav-list #orderList="cdkDropList" cdkDropList [cdkDropListConnectedTo]="['delivery-list']" [cdkDropListSortingDisabled]="true">
                   @for (section of orders | groupByProperty:'shipMethod'; track section.key) {
                     <div>
-                      <div matSubheader>
-                        <strong>{{ section.key !== 'undefined' ? section.key : '' }}</strong>
-                      </div>
-                      <div class="specs2 specs-orders">
-                        {{ section.value | sum:'palletSpaces'| number:'1.1-1' }} spaces | {{ section.value | sum:'pickedPercent'| number:'1.1-1' }}% picked
+                      <div class="subheader">
+                        <div matSubheader>
+                          <strong>{{ section.key !== 'undefined' ? section.key : '' }}</strong>
+                        </div>
+                        <div class="specs2 specs-orders">
+                          {{ section.value | sum:'palletSpaces'| number:'1.1-1' }} spaces | {{ section.value | sum:'pickedPercent'| number:'1.1-1' }}% picked
+                        </div>
                       </div>
                       @for (order of section.value; track order.sopNumber) {
                         <mat-list-item (click)="openReceipt(order.sopNumber)" class="drag-list-item" cdkDrag [cdkDragData]="order">
@@ -249,11 +251,15 @@
                               {{ delivery.weight | number: '1.1-1' }} kg
                             </div>
                             <mat-action-row>
-                              <input #fileSelect class="file-select" multiple="multiple" type="file" (change)="fileChangeEvent('debtors', delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, $event)" placeholder="File">
-                              <label class="file-select-label" for="file">
-                                <button mat-icon-button type="button" (click)="fileSelect.click()"><mat-icon>photo_camera</mat-icon></button>
-                              </label>
-                              <a mat-button color="primary" [routerLink]="['/customers', delivery.fields.CustomerNumber]" [queryParams]="{site:delivery.fields.Site}" class="customer-link">Customer</a>
+                              <input #fileSelect class="file-select" type="file" accept="image/*,video/*" multiple (change)="fileChangeEvent('debtors', delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, $event)" placeholder="File">
+                              <input #photoCapture class="file-select" type="file" accept="image/*" capture (change)="fileChangeEvent('debtors', delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, $event)">
+                              <input #videoCapture class="file-select" type="file" accept="video/*" capture (change)="fileChangeEvent('debtors', delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, $event)">
+                              <div class="left-icons">
+                                <button mat-icon-button type="button" (click)="photoCapture.click()" matTooltip="Take photo" class="file-select-label"><mat-icon>photo_camera</mat-icon></button>
+                                <button mat-icon-button type="button" (click)="videoCapture.click()" matTooltip="Take video" class="file-select-label"><mat-icon>videocam</mat-icon></button>
+                                <button mat-icon-button type="button" (click)="fileSelect.click()" matTooltip="Upload from gallery" class="file-select-label"><mat-icon>photo_library</mat-icon></button>
+                              </div>
+
                               <button mat-raised-button color="primary" (click)="openPalletDialog(delivery.fields.CustomerName, delivery.fields.CustomerNumber, delivery.value[0].fields.OrderNumber, delivery.fields.Site)">Pallets</button>
                               <button mat-raised-button color="primary" (click)="openRecyclingDialog(delivery.fields.CustomerName, delivery.fields.CustomerNumber, delivery.fields.Site)">Recycling</button>
                             </mat-action-row>
@@ -311,6 +317,10 @@
 
 <mat-menu #dropMenu="matMenu" xPosition="before">
   <ng-template matMenuContent let-delivery="delivery">
+    <a mat-menu-item [routerLink]="['/customers', delivery.fields.CustomerNumber]" [queryParams]="{site:delivery.fields.Site}">
+      <mat-icon>person</mat-icon>View customer
+    </a>
+    <mat-divider></mat-divider>
     <button mat-menu-item [matMenuTriggerFor]="runMenu" [matMenuTriggerData]="{delivery}" [disabled]="loading" type="button">
       <mat-icon>move_down</mat-icon>Move to run
     </button>
