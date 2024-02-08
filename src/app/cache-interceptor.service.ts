@@ -21,7 +21,8 @@ export class CacheInterceptor implements HttpInterceptor {
     const badKeys = Object.keys(localStorage).filter(key => key.startsWith('/gp')).filter(key =>this.urls.map(u => (!key.match(u))).every(_ => _));
     badKeys.forEach(_ => localStorage.removeItem(_));
   }
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>>{
+
+  intercept(req: HttpRequest<Response>, next: HttpHandler): Observable<HttpEvent<any>>{
     const trimmedUrl = req.url.replace(/^https?:\/\/[a-z\.]+:?[0-9]*/, '');
     const shouldCache = this.urls.map(_ => trimmedUrl.match(_)).some(_ => _);
     if(!shouldCache || req.method !== 'GET') return next.handle(req);
@@ -36,7 +37,7 @@ export class CacheInterceptor implements HttpInterceptor {
         }
       }),
       catchError(stateEvent => {
-        if (stateEvent.status === 0) {
+        if (stateEvent.status === 0 || stateEvent.status === 504) {
           const data = localStorage.getItem(trimmedUrl);
           if (data) {
             this.messages$.next('Using offline data.');
