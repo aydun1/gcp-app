@@ -210,7 +210,7 @@ export class RunListComponent implements OnInit {
     const data = {showDate: true, showNotes: true, showAddress: true, title: 'Delivery details'};
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().pipe(
-      map(_ => this.deliveryService.createDropPartial(this.runName, _.customer, _.site, _.address, _.notes, _.customerType, _.requestedDate)),
+      map(_ => _ ? this.deliveryService.createDropPartial(this.runName, _.customer, _.site, _.address, _.notes, _.customerType, _.requestedDate) : null),
       switchMap(_ => _ ? this.deliveryService.addDelivery(_, undefined) : of()),
     ).subscribe(() => {
       this.loading = false;
@@ -226,8 +226,7 @@ export class RunListComponent implements OnInit {
     const data = {showDate: true, showNotes: true, showAddress: true, title: 'Edit delivery', delivery};
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().pipe(
-      map(_ => this.deliveryService.createDropPartial(this.runName, _.customer, _.site, _.address, _.notes, _.customerType, _.requestedDate)),
-      tap(_ => console.log(_)),
+      map(_ => _ ? this.deliveryService.createDropPartial(this.runName, _.customer, _.site, _.address, _.notes, _.customerType, _.requestedDate) : null),
       switchMap(_ => _ ? this.deliveryService.updateDelivery(delivery.id, _) : of()),
     ).subscribe(() => {
       this.loading = false;
