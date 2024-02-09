@@ -205,7 +205,7 @@
                                   <div class="order-note">
                                     <div class="delivery-edit">
                                       @if (!d.fields.OrderNumber) {
-                                        <button mat-icon-button (click)="editDelivery(d)" [disabled]="loading">
+                                        <button mat-icon-button (click)="openDeliveryEditor(d)" [disabled]="loading">
                                           <mat-icon>edit</mat-icon>
                                         </button>
                                       }

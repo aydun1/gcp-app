@@ -1,6 +1,3 @@
-import { Observable } from "rxjs";
-import { Order } from "./order";
-
 export interface Delivery {
   id: string;
   lastModifiedDateTime: string | Date;
@@ -11,7 +8,6 @@ export interface Delivery {
       id: string;
     }
   }
-  order: Observable<Order>;
   fields: {
     id: string;
     Run: string;
@@ -22,8 +18,9 @@ export interface Delivery {
     Branch: string;
     CustomerName: string;
     CustomerNumber: string;
+    CustomerType: 'Debtor' | 'Vendor';
     DeliveryDate: Date;
-    RequestedDate: Date;
+    RequestedDate: Date | null;
     OrderNumber: string;
     Notes: string;
     Site: string;

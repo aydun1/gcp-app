@@ -62,7 +62,7 @@ export class GroupByCustomerAddressPipe implements PipeTransform {
       const hasOrderNumbers = groups.filter(_ => _.fields.OrderNumber).length;
       const spaces = groups.filter(_ => _.fields.Spaces).reduce((acc, cur) => acc + +cur.fields.Spaces, 0);
       const weight = groups.filter(_ => _.fields.Weight).reduce((acc, cur) => acc + +cur.fields.Weight, 0);
-      const requestedDate = groups.filter(_ => _.fields.RequestedDate).reduce((acc, cur) => acc = !acc ? cur.fields.RequestedDate : cur.fields.RequestedDate < acc ? cur.fields.RequestedDate : acc, null as null | Date);
+      const requestedDate = groups.filter(_ => _.fields.RequestedDate).reduce((acc, cur) => acc = !acc ? cur.fields.RequestedDate : (cur.fields.RequestedDate || new Date()) < acc ? cur.fields.RequestedDate : acc, null as null | Date);
       const id = groups[0]['id'];
       const fields = {
         CustomerNumber: groups[0]['fields']['CustomerNumber'],

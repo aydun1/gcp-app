@@ -1,5 +1,5 @@
 <div class="header">
-  <h2 mat-dialog-title>{{ data?.title || 'Pick a customer' }}</h2>
+  <h2 mat-dialog-title>{{ data.title || 'Pick a customer' }}</h2>
   <div>
     <button mat-stroked-button [matMenuTriggerFor]="listMenu" tabindex="-1" class="type-picker" type="button">
       {{ searchType }}
@@ -36,7 +36,7 @@
         }
       </mat-form-field>
     }
-    @if (data?.address && !this.customerForm.value.site) {
+    @if (data.showAddress && !this.customerForm.value.site) {
       <mat-form-field color="primary" appearance="outline">
         <mat-label>Address</mat-label>
         <mat-select formControlName="address">
@@ -58,13 +58,21 @@
         </mat-form-field>
       }
     }
-    @if (data?.notes) {
+    @if (data.showDate) {
+      <mat-form-field color="primary" appearance="outline">
+        <mat-label>Requested date</mat-label>
+        <input matInput [matDatepicker]="picker1" formControlName="requestedDate" title="Requested delivery date">
+        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker  #picker1></mat-datepicker>
+      </mat-form-field>
+    }
+    @if (data.showNotes) {
       <mat-form-field color="primary" appearance="outline" subscriptSizing="dynamic">
         <mat-label>Notes</mat-label>
         <textarea matInput formControlName="notes" autocomplete="off" placeholder="Optional notes"></textarea>
       </mat-form-field>
     }
-    @if (data?.address) {
+    @if (data.showAddress) {
       <pre>{{ tidyAddress || customerForm.value.customer?.address1_composite }}</pre>
 
     }

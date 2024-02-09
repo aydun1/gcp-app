@@ -27,7 +27,6 @@ import { SharedService } from '../../shared.service';
 import { CustomerPickerDialogComponent } from '../../customers/shared/customer-picker-dialog/customer-picker-dialog.component';
 import { PalletDialogComponent } from '../../pallets/shared/pallet-dialog/pallet-dialog.component';
 import { RecyclingDialogComponent } from '../../recycling/shared/recycling-dialog/recycling-dialog.component';
-import { DeliveryEditorDialogComponent } from '../shared/delivery-editor-dialog/delivery-editor-dialog.component';
 import { RunManagerDialogComponent } from '../shared/run-manager-dialog/run-manager-dialog.component';
 import { OrderLinesDialogComponent } from '../shared/order-lines-dialog/order-lines-dialog.component';
 import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog.component';
@@ -208,20 +207,28 @@ export class RunListComponent implements OnInit {
   }
 
   openCustomerPicker(): void {
-    const data = {notes: true, address: true, title: 'Delivery details'};
+    const data = {showDate: true, showNotes: true, showAddress: true, title: 'Delivery details'};
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().pipe(
-      switchMap(_ => _ ? this.addCustomerDelivery(_.customer, _.site, _.address, _.notes, _.customerType) : of()),
+      map(_ => this.deliveryService.createDropPartial(this.runName, _.customer, _.site, _.address, _.notes, _.customerType, _.requestedDate)),
+      switchMap(_ => _ ? this.deliveryService.addDelivery(_, undefined) : of()),
     ).subscribe(() => {
       this.loading = false;
     });
   }
 
-  openSdsDialog(run: string) {
+  openSdsDialog(run: string): void {
     const data = {run, branch: this._branch};
-    const dialogRef = this.dialog.open(RunChemicalsDialogComponent, {width: '600px', data});
+    this.dialog.open(RunChemicalsDialogComponent, {width: '600px', data});
+  }
+
+  openDeliveryEditor(delivery: Delivery): void {
+    const data = {showDate: true, showNotes: true, showAddress: true, title: 'Edit delivery', delivery};
+    const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px', data});
     dialogRef.afterClosed().pipe(
-      switchMap(_ => _ ? this.addCustomerDelivery(_.customer, _.site, _.address, _.notes, _.customerType) : of()),
+      map(_ => this.deliveryService.createDropPartial(this.runName, _.customer, _.site, _.address, _.notes, _.customerType, _.requestedDate)),
+      tap(_ => console.log(_)),
+      switchMap(_ => _ ? this.deliveryService.updateDelivery(delivery.id, _) : of()),
     ).subscribe(() => {
       this.loading = false;
     });
@@ -261,8 +268,8 @@ export class RunListComponent implements OnInit {
   addOrderDelivery(order: Order, run: string, index?: number): Observable<Delivery[]> {
     this.loading = true;
     const customer = {name: order.custName, custNmbr: order.custNumber} as Customer;
-    const delivery = this.deliveryService.createDropPartial(run, customer, null, null, '', 'Debtor', order);
-    return this.deliveryService.addDrop(delivery, index).pipe(
+    const delivery = this.deliveryService.createDropPartial(run, customer, null, null, '', 'Debtor', null, order);
+    return this.deliveryService.addDelivery(delivery, index).pipe(
       tap(_ => this.loading = false),
       catchError(_ => {
         this.loading = false;
@@ -272,21 +279,10 @@ export class RunListComponent implements OnInit {
     )
   }
 
-  addCustomerDelivery(customer: Customer, site: Site, address: Address, notes: string, customerType: string): Observable<Delivery[]> {
-    const run = this.runName;
-    const delivery = this.deliveryService.createDropPartial(run, customer, site, address, notes, customerType);
-    return this.deliveryService.addDrop(delivery, undefined);
-  }
-
   markComplete(e: Event, deliveries: Array<Delivery>, currentStatus: string): void {
     e.stopPropagation();
     const ids = deliveries.map(_ => _.id);
     this.deliveryService.changeStatuses(ids, currentStatus);
-  }
-
-  editDelivery(delivery: Delivery): void {
-    const data = {delivery};
-    this.dialog.open(DeliveryEditorDialogComponent, {width: '600px', data});
   }
 
   deleteDeliveries(deliveries: Array<Delivery>, runName: string): void {

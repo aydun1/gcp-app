@@ -263,7 +263,7 @@ export class DeliveryService {
     return lastValueFrom(req);
   }
 
-  createDropPartial(run: string | null, customer: Customer, site: Site | null, address: Address | null, notes: string, customerType: string, order: Partial<Order> = {}): Partial<Delivery['fields']> {
+  createDropPartial(run: string | null, customer: Customer, site: Site | null, address: Address | null, notes: string, customerType: string, requestedDate: Date | null, order: Partial<Order> = {}): Partial<Delivery['fields']> {
     const runName = run || undefined;
     const fields: Partial<Delivery['fields']> = {
       Run: runName as string,
@@ -274,8 +274,15 @@ export class DeliveryService {
       Postcode: order?.postCode || address?.postcode,
       Address: this.shared.addressFormatter(address || order as Order) || site?.fields.Address || customer.address1_composite
     };
+    if (requestedDate) {
+      requestedDate = new Date(requestedDate);
+      fields['RequestedDate'] = new Date(requestedDate.getFullYear(), requestedDate.getMonth(), requestedDate.getDate());
+      fields['RequestedDate'].setHours(-fields['RequestedDate'].getTimezoneOffset() / 60);
+    } else {
+      fields['RequestedDate'] = null;
+    }
     if (customerType) fields['CustomerType'] = customerType === 'Vendors' ? 'Vendor' : 'Debtor';
-    if (notes) fields['Notes'] = notes;
+    if (notes !== undefined) fields['Notes'] = notes;
     if (site?.fields.Title) fields['Site'] = site.fields.Title;
     if (order.cntPrsn || address?.contact) fields['ContactPerson'] = order.cntPrsn || address?.contact;
     //if (order.reqShipDate) fields['DeliveryDate'] = order.reqShipDate;
@@ -284,11 +291,10 @@ export class DeliveryService {
     if (order.orderWeight) fields['Weight'] = order.orderWeight;
     if (order.phoneNumber1 || order.phoneNumber2 || address?.phoneNumber1 || address?.phoneNumber2) fields['PhoneNumber'] = [order.phoneNumber1, order.phoneNumber2, address?.phoneNumber1, address?.phoneNumber2].filter(_ => _).join(',');
     if (order.note) fields['Notes'] = order.note;
-
     return fields;
   }
 
-  addDrop(deliveryFields: Partial<Delivery['fields']>, targetIndex: number | undefined): Observable<Delivery[]> {
+  addDelivery(deliveryFields: Partial<Delivery['fields']>, targetIndex: number | undefined): Observable<Delivery[]> {
     deliveryFields['Run'] = deliveryFields['Run'] || '';
     deliveryFields['Created'] = new Date();
     deliveryFields['Creator'] = this.shared.getName();
@@ -322,6 +328,32 @@ export class DeliveryService {
       }),
       switchMap(_ => this.updateRunDeliveries(deliveryFields.Run))
     );
+  }
+
+  updateDelivery(id: string, deliveryFields: Partial<Delivery['fields']>): Promise<Delivery[]> {
+    const run = deliveryFields.Run;
+    Object.keys(deliveryFields).forEach(_ => {if (!deliveryFields[_]) deliveryFields[_] = null});
+    deliveryFields['Run'] = run;
+    const requests = [id].map(id => {
+      return {id, method: 'PATCH', body: {fields: deliveryFields}};
+    });
+    const req = this.http.post<BatchRes>(this._batchUrl, {requests}).pipe(
+      map(_ => _.responses.map(r => r['body'])),
+      tap(_ => this.recentlyArchived.push(..._.map(r => r.fields.OrderNumber))),
+      switchMap(_ => this.updateListMulti(_))
+    );
+    return lastValueFrom(req);
+  }
+
+  deleteDeliveries(ids: Array<string>, run: string): Promise<Delivery[]> {
+    const requests = ids.map(id => {
+      return {id, method: 'DELETE'};
+    });
+    const req = this.http.post<BatchRes>(this._batchUrl, {requests}).pipe(
+      switchMap(_ => this.removeItemsFromList(ids)),
+      switchMap(_ => this.updateRunDeliveries(run))
+    );
+    return lastValueFrom(req);
   }
 
   moveItem(previousIndex: number, currentIndex: number, run: string): Observable<Delivery[]> {
@@ -361,30 +393,6 @@ export class DeliveryService {
         console.log(_.error?.result || 'An error occured')
       }
     );
-  }
-
-  updateDelivery(id: string, notes: string, requestedDate: Date | null | undefined): Promise<Delivery[]> {
-    const requests = [id].map(id => {
-      const payload = {fields: {Notes: notes, RequestedDate: requestedDate || null}};
-      return {id, method: 'PATCH', body: payload};
-    });
-    const req = this.http.post<BatchRes>(this._batchUrl, {requests}).pipe(
-      map(_ => _.responses.map(r => r['body'])),
-      tap(_ => this.recentlyArchived.push(..._.map(r => r.fields.OrderNumber))),
-      switchMap(_ => this.updateListMulti(_))
-    );
-    return lastValueFrom(req);
-  }
-
-  deleteDeliveries(ids: Array<string>, run: string): Promise<Delivery[]> {
-    const requests = ids.map(id => {
-      return {id, method: 'DELETE'};
-    });
-    const req = this.http.post<BatchRes>(this._batchUrl, {requests}).pipe(
-      switchMap(_ => this.removeItemsFromList(ids)),
-      switchMap(_ => this.updateRunDeliveries(run))
-    );
-    return lastValueFrom(req);
   }
 
   archiveDeliveries(ids: Array<string>, run: string): Promise<Delivery[]> {
@@ -454,11 +462,11 @@ export class DeliveryService {
       switchMap(([delivery, customer]) => {
         const site = {fields: {Title: siteName}} as Site;
         if (delivery) {
-          const notes = delivery.fields.Notes ? `${delivery.fields.Notes}<br>${message}` : message;
-          return this.updateDelivery(delivery.id, notes, null);
+          delivery.fields['notes'] = delivery.fields.Notes ? `${delivery.fields.Notes}<br>${message}` : message;
+          return this.updateDelivery(delivery.id, delivery);
          } else {
-          const delivery = this.createDropPartial(runName, customer, site, null, message, 'Debtor');
-          return this.addDrop(delivery, 0);
+          const delivery = this.createDropPartial(runName, customer, site, null, message, 'Debtor', null);
+          return this.addDelivery(delivery, 0);
          }
       }),
       tap(_ =>this.snackBar.open('Added to run list', '', {duration: 3000})
