@@ -269,9 +269,9 @@ export class ActionButtonComponent implements OnInit {
   openCustomerPicker(cages: Array<Cage>): void {
     const dialogRef = this.dialog.open(CustomerPickerDialogComponent, {width: '600px'});
     dialogRef.afterClosed().pipe(
-      tap(() => this.loading.next(true)),
       switchMap(_ => {
         if (!_) return of(1);
+        this.loading.next(true);
         const tasks = cages.map(cage => this.recyclingService.allocateToCustomer(cage.id, _.customer.custNmbr, _.customer.name, _.site).pipe(take(1)));
         return forkJoin(tasks);
       })

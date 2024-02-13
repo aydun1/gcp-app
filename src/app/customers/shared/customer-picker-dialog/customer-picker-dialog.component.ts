@@ -63,6 +63,7 @@ export class CustomerPickerDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.data = this.data || {} as Data;
     this.shared.getBranch().subscribe(_ => this.branch = _);
     this.customerForm.get('customer')?.valueChanges.subscribe(_ => {
       this.customerForm.get('address')?.reset();
