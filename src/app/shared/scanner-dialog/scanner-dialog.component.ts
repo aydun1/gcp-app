@@ -38,7 +38,7 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
   public tryHarder = false;
   public enabled = true;
   public scannedText = '';
-  public isScanner: Promise<boolean> = navigator['userAgentData'] ? navigator['userAgentData'].getHighEntropyValues(['model']).then((ua: {model: string}) => ua['model'] === 'CK65') : false;
+  public isScanner: Promise<boolean> = navigator['userAgentData'] ? navigator['userAgentData'].getHighEntropyValues(['model']).then((ua: {model: string}) => ua['model'] === 'CK65') : new Promise(() => false);
 
   public formatsEnabled: BarcodeFormat[] = [
     BarcodeFormat.CODE_39,
