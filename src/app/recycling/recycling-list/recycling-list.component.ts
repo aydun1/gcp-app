@@ -209,12 +209,15 @@ export class RecyclingListComponent implements OnInit {
   }
 
   setStatus(status: MatSelectChange, choices: Array<string>): void {
-    this.hideStatus(choices.includes(status.value));
-    this.router.navigate([], { queryParams: {status: status.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    const ignored = ['Local processing', 'Polymer'];
+    const queryParams = {status: status.value};
+    this.hideStatus(status.value && !ignored.includes(status.value));
+    if (status.value === 'Complete') queryParams['month'] = '2024-1';
+    this.router.navigate([], {queryParams, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setMonth(month: MatSelectChange): void {
-    this.router.navigate([], { queryParams: {month: month.value}, queryParamsHandling: 'merge', replaceUrl: true});
+    this.router.navigate([], {queryParams: {month: month.value}, queryParamsHandling: 'merge', replaceUrl: true});
   }
 
   setAssetType(assetType: MatSelectChange): void {
