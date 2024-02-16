@@ -5,7 +5,7 @@
     <div class="buttons">
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
         <mat-label>Branch</mat-label>
-        <mat-select [formControl]="branchFilter" (selectionChange)="setBranch($event)">
+        <mat-select [value]="branch" (selectionChange)="setBranch($event)">
           @for (s of states; track s) {
             <mat-option [value]="s">{{ s }}</mat-option>
           }
@@ -13,14 +13,14 @@
       </mat-form-field>
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
         <mat-label>Status</mat-label>
-        <mat-select [formControl]="statusFilter" (selectionChange)="setStatus($event)">
+        <mat-select [value]="status" (selectionChange)="setStatus($event)">
           <mat-option value="active">Active</mat-option>
           <mat-option value="delivered">Delivered</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="branch">
         <mat-label>View</mat-label>
-        <mat-select [formControl]="viewFilter" (selectionChange)="setView($event)">
+        <mat-select [value]="view" (selectionChange)="setView($event)">
           <mat-option value="ungrouped">Ungrouped</mat-option>
           <mat-option value="grouped">Grouped</mat-option>
         </mat-select>
@@ -149,6 +149,8 @@
         }
       }
     </div>
+  } @else {
+    <gcp-loading-page></gcp-loading-page>
   }
 </div>
 

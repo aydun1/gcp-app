@@ -1,6 +1,5 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { AsyncPipe, DatePipe } from '@angular/common';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Params, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -8,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
-import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
+import { distinctUntilChanged, filter, map, Observable, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { LoadingSchedule } from '../shared/loading-schedule';
@@ -16,6 +15,7 @@ import { LoadingScheduleService } from '../shared/loading-schedule.service';
 import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
 import { StringColourPipe } from '../../shared/pipes/string-colour.pipe';
 import { GroupByPipe } from '../../shared/pipes/group-by.pipe';
+import { LoadingPageComponent } from '../../shared/loading/loading-page/loading-page.component';
 import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-row.component';
 
 @Component({
@@ -23,14 +23,14 @@ import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-ro
   templateUrl: './loading-schedule-list.component.html',
   styleUrls: ['./loading-schedule-list.component.css'],
   standalone: true,
-  imports: [AsyncPipe, DatePipe, ReactiveFormsModule, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatMenuModule, MatSelectModule, MatTableModule, LetterheadComponent, GroupByPipe, StringColourPipe, LoadingRowComponent]
+  imports: [AsyncPipe, DatePipe, RouterModule, MatButtonModule, MatCardModule, MatIconModule, MatMenuModule, MatSelectModule, MatTableModule, LetterheadComponent, GroupByPipe, StringColourPipe, LoadingPageComponent, LoadingRowComponent]
 })
 export class LoadingScheduleListComponent implements OnInit {
-  private _loadingScheduleSubject$ = new BehaviorSubject<LoadingSchedule[]>([]);
   private _loadList!: boolean;
-  public branchFilter = new FormControl('');
-  public statusFilter = new FormControl('');
-  public viewFilter = new FormControl('');
+  private state = '';
+  public branch = '';
+  public status = '';
+  public view = '';
   public loadingSchedules$!: Observable<LoadingSchedule[]>;
   public deliveries!: LoadingSchedule[];
   public loadingList$ = this.loadingScheduleService.loading;
@@ -41,7 +41,6 @@ export class LoadingScheduleListComponent implements OnInit {
   public grouped!: boolean;
   public totals!: any;
   public states = this.shared.branches;
-  public state = '';
 
   constructor(
     private el: ElementRef,
@@ -59,9 +58,8 @@ export class LoadingScheduleListComponent implements OnInit {
 
   ngOnInit(): void {
     const state$ = this.shared.getBranch();
-
     this.loadingSchedules$ = this.route.queryParams.pipe(
-      startWith({} as any),
+      startWith({} as Params),
       switchMap(_ => this.router.events.pipe(
         startWith(new NavigationEnd(1, '', '')),
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
@@ -81,38 +79,32 @@ export class LoadingScheduleListComponent implements OnInit {
           ['reference', 'loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'notes', 'menu'] :
           ['reference', 'loadingDate', 'arrivalDate', 'transportCompany', 'spaces', 'status', 'notes', 'menu'];
       }),
-      switchMap(_ => this._loadList ? this.getFirstPage(_) : []),
-      tap(_ => this._loadingScheduleSubject$.next(_)),
+      switchMap(_ => this._loadList ? this.loadingScheduleService.getFirstPage(_) : []),
       tap(_ => {
         this.totals = this.groups.reduce((acc, curr) =>
           (acc[curr] = _.filter(res => res.fields?.Status === curr).reduce((a, b) =>  a + (b.fields?.Spaces || 0), 0), acc), {} as any
         );
         this.totals['total'] = _.reduce((a, b) =>  a + (b.fields?.Spaces || 0), 0);
       }),
-      switchMap(_ => this._loadingScheduleSubject$)
     )
-  }
-
-  getFirstPage(params: Params): Observable<LoadingSchedule[]> {
-    return this.loadingScheduleService.getFirstPage(params);
   }
 
   parseParams(params: Params): void {
     if (!params) return;
     if ('branch' in params) {
-      this.branchFilter.patchValue(params['branch']);
+      this.branch = params['branch'];
     } else {
-      this.branchFilter.patchValue('');
+      this.branch = '';
     }
     if ('status' in params) {
-      this.statusFilter.patchValue(params['status']);
+      this.status = params['status'];
     } else {
-      this.statusFilter.patchValue('');
+      this.status = '';
     }
     if ('view' in params) {
-      this.viewFilter.patchValue(params['view']);
+      this.view = 'view';
     } else {
-      this.viewFilter.patchValue('');
+      this.view = '';
     }
   }
 
