@@ -1,4 +1,4 @@
-@if (loginDisplay && checkedTeams) {
+@if (loginDisplay) {
   <mat-toolbar class="site-toolbar">
     @if (snav) {
       <button mat-icon-button (click)="snav.toggle()" type="button"><mat-icon>menu</mat-icon></button>
@@ -104,7 +104,9 @@
       <div class="token">{{ token }}</div>
     </mat-sidenav>
     <mat-sidenav-content>
-      <router-outlet></router-outlet>
+      @if (!isIframe) {
+        <router-outlet></router-outlet>
+      }
     </mat-sidenav-content>
   </mat-sidenav-container>
 } @else {

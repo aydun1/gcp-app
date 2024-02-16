@@ -7,7 +7,7 @@ export const environment = {
   production: false,
   baseUri,
   apiUrl,
-  redirectUri: `${baseUri}/auth`,
+  redirectUri: `${baseUri}/`,
   gpEndpoint: `${apiUrl}/gp`,
   cwEndpoint: `${apiUrl}/cw`,
   sdsEndpoint: `${apiUrl}/public`,
