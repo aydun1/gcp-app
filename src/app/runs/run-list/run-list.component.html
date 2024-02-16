@@ -38,71 +38,64 @@
               <div>
                 @if (orders.length === 0) {
                   <p class="no-orders">No orders to show for this date</p>
-                }
-                <mat-nav-list #orderList="cdkDropList" cdkDropList [cdkDropListConnectedTo]="['delivery-list']" [cdkDropListSortingDisabled]="true">
-                  @for (section of orders | groupByProperty:'shipMethod'; track section.key) {
-                    <div>
-                      <div class="subheader">
-                        <div matSubheader>
-                          <strong>{{ section.key !== 'undefined' ? section.key : '' }}</strong>
+                } @else {
+                  <mat-nav-list #orderList="cdkDropList" cdkDropList [cdkDropListConnectedTo]="['delivery-list']" [cdkDropListSortingDisabled]="true">
+                    @for (section of orders | groupByProperty:'shipMethod'; track section.key) {
+                      <div>
+                        <div class="subheader">
+                          <div matSubheader>
+                            <strong>{{ section.key !== 'undefined' ? section.key : '' }}</strong>
+                          </div>
+                          <div class="specs2 specs-orders">
+                            {{ section.value | sum:'palletSpaces'| number:'1.1-1' }} spaces | {{ section.value | sum:'pickedPercent'| number:'1.1-1' }}% picked
+                          </div>
                         </div>
-                        <div class="specs2 specs-orders">
-                          {{ section.value | sum:'palletSpaces'| number:'1.1-1' }} spaces | {{ section.value | sum:'pickedPercent'| number:'1.1-1' }}% picked
-                        </div>
+                        @for (order of section.value; track order.sopNumber) {
+                          <mat-list-item (click)="openReceipt(order.sopNumber)" class="drag-list-item" cdkDrag [cdkDragData]="order">
+                            <div class="custom-placeholder" *cdkDragPlaceholder></div>
+                            <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
+                            <span matListItemTitle>
+                              @if (order.pickStatus === 2) {
+                                <span class="green">✔</span>
+                              } @else if (order.pickStatus === 1) {
+                                <span class="orange">?</span>
+                              } @else if (order.pickStatus === 0) {
+                                <span class="red">✘</span>
+                              }
+                              @if (order.note) {
+                                <span class="note">📝</span>
+                              }
+                              {{ order.custName }}
+                            </span>
+                            <div matListItemLine>
+                              <span>{{ order.sopNumber }}</span>
+                              @if (order.city) {
+                                <span> | {{ order.city }}</span>
+                              }
+                              @if (order.posted) {
+                                <span> | POSTED</span>
+                              }
+                              | {{ order.batchNumber }}
+                            </div>
+                            <div matListItemLine>
+                              <span>{{ order.fulfilledSpaces | number:'1.1-1' }}/{{ order.palletSpaces | number:'1.1-1' }} spaces</span> |
+                              <span>{{ order.orderWeight | number:'1.1-1' }} kg</span>
+                            </div>
+                            <ng-container matListItemMeta>
+                              <button type="button" [disabled]="loading" mat-icon-button matTooltip="Add to run" (click)="addOrderDelivery(order, runName, undefined).subscribe();$event.stopPropagation();"><mat-icon>add</mat-icon></button>
+                            </ng-container>
+                          </mat-list-item>
+                        }
                       </div>
-                      @for (order of section.value; track order.sopNumber) {
-                        <mat-list-item (click)="openReceipt(order.sopNumber)" class="drag-list-item" cdkDrag [cdkDragData]="order">
-                          <div class="custom-placeholder" *cdkDragPlaceholder></div>
-                          <mat-icon matListItemIcon cdkDragHandle>drag_indicator</mat-icon>
-                          <span matListItemTitle>
-                            @if (order.pickStatus === 2) {
-                              <span class="green">✔</span>
-                            } @else if (order.pickStatus === 1) {
-                              <span class="orange">?</span>
-                            } @else if (order.pickStatus === 0) {
-                              <span class="red">✘</span>
-                            }
-                            @if (order.note) {
-                              <span class="note">📝</span>
-                            }
-                            {{ order.custName }}
-                          </span>
-                          <div matListItemLine>
-                            <span>{{ order.sopNumber }}</span>
-                            @if (order.city) {
-                              <span> | {{ order.city }}</span>
-                            }
-                            @if (order.posted) {
-                              <span> | POSTED</span>
-                            }
-                            | {{ order.batchNumber }}
-                          </div>
-                          <div matListItemLine>
-                            <span>{{ order.fulfilledSpaces | number:'1.1-1' }}/{{ order.palletSpaces | number:'1.1-1' }} spaces</span> |
-                            <span>{{ order.orderWeight | number:'1.1-1' }} kg</span>
-                          </div>
-                          <ng-container matListItemMeta>
-                            <button type="button" [disabled]="loading" mat-icon-button matTooltip="Add to run" (click)="addOrderDelivery(order, runName, undefined).subscribe();$event.stopPropagation();"><mat-icon>add</mat-icon></button>
-                          </ng-container>
-                        </mat-list-item>
-                      }
-                    </div>
-                  }
-                </mat-nav-list>
+                    }
+                  </mat-nav-list>
+                }
               </div>
             }
           </div>
         </mat-expansion-panel>
       </mat-accordion>
     </div>
-    @if (isVic === true) {
-      <div class="page-header">
-        <h2>Local deliveries</h2>
-        <div class="options">
-          <button type="button" mat-raised-button color="primary" (click)="openCustomerPicker()" [disabled]="loading" class="action">Add delivery</button>
-        </div>
-      </div>
-    }
     @if (deliveries$ | async | groupByCustomerAddress; as groupedDeliveries) {
       <div class="deliveries-card">
         @if (runs.length > 0) {

@@ -14,11 +14,6 @@ h2 {
   margin-left: 10px;
 }
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-}
-
 .specs2 {
   font-size: 12px;
   font-weight: bold;
@@ -35,13 +30,6 @@ h2 {
   top: 0;
   width: auto;
   z-index: 5;
-}
-
-.options {
-  align-items: center;
-  display: flex;
-  margin-left: auto;
-  margin-right: 10px;
 }
 
 .buttons {
@@ -249,6 +237,7 @@ h2 {
   left: 0;
   position: absolute;
   right: 0;
+  z-index: 6;
 }
 
 .loading-page {

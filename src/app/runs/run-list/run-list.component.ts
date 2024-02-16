@@ -61,12 +61,11 @@ export class RunListComponent implements OnInit {
   public runs: Array<Run> = [];
   public changedRuns!: boolean;
   public otherRuns: Array<Run> | undefined = [{fields: {Title: 'Default'}} as Run];
-  public isVic!: boolean;
   public loading = false;
   public loadingOrders = true;
   public loadingPage = true;
   public empty = true;
-  public locked = this.route.snapshot.queryParamMap.get('tab') !== '0';
+  public locked = true;
   public currentCategory = this.route.snapshot.queryParamMap.get('opened');
   public openedTab = this.firstTab();
   public populatedRuns: Set<string> = new Set();
@@ -116,7 +115,6 @@ export class RunListComponent implements OnInit {
       map(_ => this.route.snapshot.queryParamMap.get('branch')?.toLocaleUpperCase() || _),
       tap(_ => {
         this._branch = _;
-        this.isVic = _ === 'VIC';
       })
     );
 
@@ -166,7 +164,7 @@ export class RunListComponent implements OnInit {
   selectTab(tab: number | null): void {
     if (tab === null) return;
     this.openedTab = tab;
-    this.locked = tab !== 0;
+    this.locked = true;
     const queryParams = {tab};
     this.router.navigate([], {queryParams, replaceUrl: true, queryParamsHandling: 'merge'});
   }
