@@ -9,7 +9,7 @@
         <div class="deets"><strong>Req. delivery date: </strong><span class="deets-inner">{{ o.reqShipDate | date: 'd MMM yyyy' }}</span></div>
         @if (o.deliveryStatus) {
           <div class="deets"><strong>Delivery status: </strong><span class="deets-inner">{{ o.deliveryStatus }}</span></div>
-          <div class="deets"><strong>On delivery run: </strong><span class="deets-inner">{{ o.deliveryRun }}</span></div>
+          <div class="deets"><strong>On delivery run: </strong><span class="deets-inner">{{ o.deliveryRun || 'Default' }}</span></div>
         }
         <div class="deets"><strong>Address: </strong><div class="deets-inner address">{{ tidyAddress }}</div></div>
         @if (o.note) {
