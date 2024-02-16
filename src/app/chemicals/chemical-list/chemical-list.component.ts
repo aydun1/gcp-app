@@ -37,6 +37,7 @@ export class ChemicalListComponent implements OnInit {
   private loadList!: boolean;
   private chemicals!: Chemical[];
   private defaultColumns = ['sds', 'bin', 'product', 'issueDate', 'onHand', 'quantity', 'packingGroup', 'class', 'hazardRating'];
+  private ownState!: string;
 
   public textFilter = new FormControl(this.route.snapshot.paramMap.get('search'));
   public groupFilter = new FormControl(this.route.snapshot.paramMap.get('groupby'));
@@ -45,9 +46,7 @@ export class ChemicalListComponent implements OnInit {
   public displayedColumns = [...this.defaultColumns];
   public chemicals$!: Observable<Chemical[]>;
   public branchFilter = new FormControl({value: '', disabled: false});
-  public ownState!: string;
   public states = this.shared.branches;
-  public address$ = this.shared.getOwnAddress();
   public date = new Date();
   public sortSort = this.route.snapshot.queryParamMap.get('sort') || '';
   public sortOrder = this.route.snapshot.queryParamMap.get('order') as SortDirection;
