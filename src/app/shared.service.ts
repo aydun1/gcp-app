@@ -37,7 +37,6 @@ export class SharedService {
   ];
   private _warehouseStaff = ['michael.johnson@gardencityplastics.com'];
   private _state$ = new BehaviorSubject<string>('');
-  private _address$ = new BehaviorSubject<string>('');
   public branches = Object.keys(this.territories);
   public territoryNames = this.branches.concat(['INT', 'NATIONAL']);
   public isWarehouse!: boolean;
@@ -108,16 +107,6 @@ export class SharedService {
 
   getBranchAddress(branch: string): userAddress {
     return this.offices.find(o => o.state === branch) || {} as userAddress;
-  }
-
-  getOwnAddress(): Observable<{street: string, city: string, state: string, postalCode: string}> {
-    const url = `${environment.betaEndpoint}/me/profile/positions`;
-    return this._address$.pipe(
-      switchMap(cur => cur ? of(cur) : this.http.get<{value: unknown}>(url).pipe(
-        map(_ => _['value'] ? _['value'][0]?.detail?.company?.address || {} : {}),
-        tap(_ => this._address$.next(_))
-      ))
-    )
   }
 
   getName(): string {

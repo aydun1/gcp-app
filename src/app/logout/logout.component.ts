@@ -17,6 +17,6 @@ export class LogoutComponent implements OnInit {
 
   ngOnInit(): void {
     const account = this.sharedService.getAccount();
-    this.authService.logoutRedirect({onRedirectNavigate: () => {return false;}, account});
+    this.authService.instance.initialize().then(() => this.authService.logoutRedirect({onRedirectNavigate: () => {return false;}, account}));
   }
 }
