@@ -15,17 +15,18 @@
       </div>
       @if (hasPermission === undefined) {
         <div class="message">
-          <h3>Waiting for permissions.</h3>
+          <h3>Checking camera permissions</h3>
+        </div>
+      } @else if (hasPermission === false) {
+        <div class="message">
           <p>
-            If your device does not have cameras, no permissions will be asked.
+            Enter an order number below:
           </p>
         </div>
       }
       @if (hasDevices === false) {
         <div class="message">
-          <h3>No devices were found.</h3>
-          <p>It seems your device has no camera.
-          </p>
+          <h3>No devices were found</h3>
         </div>
       }
     </mat-dialog-content>
