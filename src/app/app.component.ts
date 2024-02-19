@@ -13,7 +13,7 @@ import { MatSidenavContainer, MatSidenavModule } from '@angular/material/sidenav
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
-import { InteractionStatus, EventMessage, EventType, AccountInfo, RedirectRequest } from '@azure/msal-browser';
+import { InteractionStatus, EventType, AccountInfo, RedirectRequest, AuthenticationResult } from '@azure/msal-browser';
 import { SwUpdate, VersionEvent } from '@angular/service-worker';
 import { authentication } from '@microsoft/teams-js';
 import { distinctUntilChanged, filter, interval, Observable, Subject, takeUntil, tap } from 'rxjs';
@@ -36,7 +36,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private readonly _destroying$ = new Subject<void>();
   private _checkInterval = 1000 * 60 * 60 * 6;  // 6 hours
   private _darkClass = 'dark-theme';
-  public loginDisplay!: boolean;
+  public isIframe = false;
+  public loginDisplay = true;
   public accounts: AccountInfo[] = [];
   public photo$!: Observable<SafeUrl>;
   public isMobile = false;
@@ -68,7 +69,13 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit(): Promise<void> {
+    this.isIframe = window !== window.parent && !window.opener;
+    this.authService.handleRedirectObservable().subscribe(_ => {
+      console.log('Handling redirect.');
+      console.log(_)
+    });
     await this.authService.instance.initialize();
+    this.login();
     this.docsService.uploads$.pipe(
       distinctUntilChanged((a, b) => {
         if (b > a) {
@@ -78,7 +85,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
         return a.length === b.length;
       })
-    ).subscribe(_ => console.log(_));
+    ).subscribe(_ => console.log('Uploads: ', _));
 
     this.themingService.theme.subscribe(_ => {
       _ ? this.renderer.addClass(document.body, this._darkClass) : this.renderer.removeClass(document.body, this._darkClass)
@@ -142,11 +149,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.sharedService.checkIfWarehouse(this.accounts);
     this.warehouse = this.sharedService.isWarehouse;
     if (!isLoggedIn && this.location.path() === '/logout') this.router.navigate(['/']);
-    if (isLoggedIn) this.getPhoto();
-  }
-
-  getPhoto(): void {
-    this.photo$ = this.sharedService.getPhoto();
+    if (isLoggedIn && !this.photo$) this.photo$ = this.sharedService.getPhoto();
   }
 
   checkAndSetActiveAccount(): void {
@@ -159,9 +162,19 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   login(): void {
-    if (this.msalGuardConfig.authRequest){
-      this.authService.ssoSilent({...this.msalGuardConfig.authRequest} as RedirectRequest);
+    if (this.msalGuardConfig.authRequest) {
+    this.authService.ssoSilent({...this.msalGuardConfig.authRequest} as RedirectRequest).subscribe({
+      next: (result: AuthenticationResult) => {
+        console.log('SsoSilent succeeded!');
+      },
+      error: (error) => {
+        console.log(error);
+        console.log('SsoSilent failed. Redirecting to login page.');
+        this.authService.loginRedirect();
+      }
+    });
     } else {
+      console.log('Redirecting to login page.');
       this.authService.loginRedirect();
     }
   }

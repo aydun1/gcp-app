@@ -2,14 +2,14 @@ import { Injectable, enableProdMode, importProvidersFrom, isDevMode } from '@ang
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import {Title, bootstrapApplication} from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterStateSnapshot, TitleStrategy, provideRouter, withRouterConfig } from '@angular/router';
+import { RouterStateSnapshot, TitleStrategy, provideRouter, withDisabledInitialNavigation, withEnabledBlockingInitialNavigation, withRouterConfig } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { Platform } from '@angular/cdk/platform';
 import { DateAdapter, MAT_DATE_LOCALE, MatNativeDateModule, NativeDateAdapter } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalBroadcastService, MsalGuard, MsalGuardConfiguration, MsalInterceptor, MsalInterceptorConfiguration, MsalRedirectComponent, MsalService } from '@azure/msal-angular';
-import { BrowserCacheLocation, IPublicClientApplication, InteractionType, PublicClientApplication } from '@azure/msal-browser';
+import { BrowserCacheLocation, BrowserUtils, IPublicClientApplication, InteractionType, PublicClientApplication } from '@azure/msal-browser';
 
 import { environment } from './environments/environment';
 import { AppComponent } from './app/app.component';
@@ -58,13 +58,13 @@ function MSALInstanceFactory(): IPublicClientApplication {
       clientId: environment.msalConfig.auth.clientId,
       authority: environment.msalConfig.auth.authority,
       redirectUri: environment.redirectUri,
-      postLogoutRedirectUri: environment.redirectUri
+      postLogoutRedirectUri: '/'
     },
     cache: {
       cacheLocation: BrowserCacheLocation.LocalStorage
     },
     system: {
-      allowNativeBroker: false
+      allowNativeBroker: true
     }
   });
 }
@@ -72,11 +72,10 @@ function MSALInstanceFactory(): IPublicClientApplication {
 function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
   protectedResourceMap.set(`${environment.endpoint}/sites`, ['Sites.ReadWrite.All']);
-  protectedResourceMap.set(`${environment.endpoint}/`, ['Sites.ReadWrite.All']);//$batch
-  protectedResourceMap.set(`${environment.endpoint}/me`, ['user.read', 'mail.send']);
-  protectedResourceMap.set(`${environment.betaEndpoint}/me/profile/positions`, ['Sites.ReadWrite.All']);
+  protectedResourceMap.set(`${environment.endpoint}/`, ['Sites.ReadWrite.All']);//Bad and overlypermissive, but needed for $batch
+  protectedResourceMap.set(`${environment.endpoint}/me`, ['mail.send']);
+  protectedResourceMap.set(`${environment.endpoint}/me/profile/positions`, ['Sites.ReadWrite.All']);
   protectedResourceMap.set(`${environment.gpEndpoint}/`, ['api://117fb891-acba-4e2f-b60a-9f95fc0680ff/GCP.API.Access']);
-  protectedResourceMap.set('https://gardencityplastics.crm6.dynamics.com/api/data/v9.2', ['https://gardencityplastics.crm6.dynamics.com//user_impersonation']);
   return {
     interactionType: InteractionType.Redirect,
     protectedResourceMap
@@ -92,10 +91,14 @@ function MSALGuardConfigFactory(): MsalGuardConfiguration {
     loginFailedRoute: '/'
   };
 }
+const initialNavigation = !BrowserUtils.isInIframe() && !BrowserUtils.isInPopup()
+  ? withEnabledBlockingInitialNavigation()
+  : withDisabledInitialNavigation();
 
+  
 bootstrapApplication(AppComponent, {
   providers: [
-    provideRouter(routes, withRouterConfig({ paramsInheritanceStrategy: 'always' })),
+    provideRouter(routes, initialNavigation, withRouterConfig({ paramsInheritanceStrategy: 'always' })),
     importProvidersFrom(BrowserAnimationsModule),
     importProvidersFrom(HttpClientModule),
     importProvidersFrom(MatSnackBarModule),
@@ -118,4 +121,4 @@ bootstrapApplication(AppComponent, {
       registrationStrategy: 'registerWhenStable:30000'
     })
   ]
-}).then(_ => _.bootstrap(MsalRedirectComponent)).catch(err => console.error(err));
+}).catch(err => console.error(err));
