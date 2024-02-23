@@ -38,7 +38,7 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
   public tryHarder = false;
   public enabled = true;
   public scannedText = '';
-  public isScanner: Promise<boolean> = navigator['userAgentData'].getHighEntropyValues(['model']).then((ua: {model: string}) => ua['model'] === 'CK65');
+  public isScanner: Promise<boolean> = navigator['userAgentData'] ? navigator['userAgentData'].getHighEntropyValues(['model']).then((ua: {model: string}) => ua['model'] === 'CK65') : new Promise(() => false);
 
   public formatsEnabled: BarcodeFormat[] = [
     BarcodeFormat.CODE_39,
@@ -50,7 +50,6 @@ export class ScannerDialogComponent implements AfterViewInit, OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private dialogRef: MatDialogRef<ScannerDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Data
   ) { }
 
