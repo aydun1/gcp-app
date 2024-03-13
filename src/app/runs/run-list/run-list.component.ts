@@ -18,7 +18,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 import { Customer } from '../../customers/shared/customer';
-import { Site } from '../../customers/shared/site';
 import { Delivery } from '../shared/delivery';
 import { DeliveryService } from '../shared/delivery.service';
 import { Order } from '../shared/order';
@@ -31,12 +30,10 @@ import { RunManagerDialogComponent } from '../shared/run-manager-dialog/run-mana
 import { OrderLinesDialogComponent } from '../shared/order-lines-dialog/order-lines-dialog.component';
 import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog.component';
 import { DocsService } from '../../shared/docs/docs.service';
-import { Address } from '../../customers/shared/address';
 import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
 import { GroupByPropertyPipe } from '../../shared/pipes/group-by-property';
 import { GroupByCustomerAddressPipe } from '../../shared/pipes/group-by-customer-address';
 import { SumPipe } from '../../shared/pipes/sum.pipe';
-
 import { PhoneLinkPipe } from '../../shared/pipes/phone-link';
 import { RunChemicalsDialogComponent } from '../shared/run-chemicals-dialog/run-chemicals-dialog.component';
 
@@ -66,7 +63,7 @@ export class RunListComponent implements OnInit {
   public loadingOrders = true;
   public loadingPage = true;
   public empty = true;
-  public locked = this.route.snapshot.queryParamMap.get('tab') !== '0';
+  public locked = true;
   public currentCategory = this.route.snapshot.queryParamMap.get('opened');
   public openedTab = this.firstTab();
   public populatedRuns: Set<string> = new Set();
@@ -79,7 +76,7 @@ export class RunListComponent implements OnInit {
     return this.openedTab ? this.runs[this.openedTab]?.fields['Title'] : '';
   }
 
-  firstTab(): number | null {
+  private firstTab(): number | null {
     const tab = this.route.snapshot.queryParamMap.get('tab');
     return tab === null ? null : parseInt(tab);
   }
@@ -166,7 +163,7 @@ export class RunListComponent implements OnInit {
   selectTab(tab: number | null): void {
     if (tab === null) return;
     this.openedTab = tab;
-    this.locked = tab !== 0;
+    this.locked = true;
     const queryParams = {tab};
     this.router.navigate([], {queryParams, replaceUrl: true, queryParamsHandling: 'merge'});
   }
