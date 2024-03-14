@@ -1,19 +1,19 @@
 import { Route } from '@angular/router';
 
 import { InterstateTransferViewComponent } from './interstate-transfer-view/interstate-transfer-view.component';
-import { InterstateTransferSuggestedComponent } from './interstate-transfer-suggested/interstate-transfer-suggested.component';
-import { InterstateTransfersComponent } from './interstate-transfers.component';
-import { InterstateTransferNewComponent } from './interstate-transfer-new/interstate-transfer-new.component';
+import { InterstateTransferSuggestedComponent } from './inventory-suggested/inventory-suggested.component';
+import { InventoryComponent } from './inventory.component';
+import { InterstateTransferNewComponent } from './inventory-transfer-new/interstate-transfer-new.component';
 import { InterstateTransfersActiveComponent } from './interstate-transfers-active/interstate-transfers-active.component';
 
 export default [
   {
     path: '',
-    component: InterstateTransfersComponent,
-    title: 'Inventory Transfers'
+    component: InventoryComponent,
+    title: 'Inventory'
   },
   {
-    path: 'suggested-items',
+    path: 'suggested',
     component: InterstateTransferSuggestedComponent,
     title: 'Suggested Items'
   },
@@ -23,7 +23,7 @@ export default [
     title: 'Quick Transfer'
   },
   {
-    path: 'active',
+    path: 'requested',
     title: 'Requested Items',
     component: InterstateTransfersActiveComponent,
     children: [{

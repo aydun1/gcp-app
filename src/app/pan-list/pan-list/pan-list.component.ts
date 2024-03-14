@@ -11,7 +11,7 @@ import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/sl
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { BehaviorSubject, catchError, debounceTime, distinctUntilChanged, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
-import { TransactionHistoryDialogComponent } from '../../interstate-transfers/transaction-history-dialog/transaction-history-dialog.component';
+import { TransactionHistoryDialogComponent } from '../../inventory/transaction-history-dialog/transaction-history-dialog.component';
 import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
 import { PanListService } from '../pan-list.service';

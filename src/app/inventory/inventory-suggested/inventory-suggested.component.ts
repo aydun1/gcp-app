@@ -8,16 +8,16 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { of } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
-import { InterstateTransfersService } from '../shared/interstate-transfers.service';
+import { InterstateTransfersService } from '../shared/inventory.service';
 import { SuggestedItem } from '../../pan-list/suggested-item';
 import { PanListComponent } from '../../pan-list/pan-list/pan-list.component';
 import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
 
 @Component({
-  selector: 'gcp-interstate-transfer-suggested',
+  selector: 'gcp-inventory-suggested',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './interstate-transfer-suggested.component.html',
-  styleUrls: ['./interstate-transfer-suggested.component.css'],
+  templateUrl: './inventory-suggested.component.html',
+  styleUrls: ['./inventory-suggested.component.css'],
   standalone: true,
   imports: [ReactiveFormsModule, MatButtonModule, MatInputModule, MatSelectModule, PanListComponent, LetterheadComponent]
 })
@@ -58,7 +58,7 @@ export class InterstateTransferSuggestedComponent implements OnInit {
     const lines = this.activeLines.filter(_ => _.ToTransfer);
     this.interstateTransfersService.createInTransitTransfer(fromState, toState, lines).then(_ => {
       this.snackBar.open('Successfully created ITT.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
-      this.router.navigate(['transfers/active', _.docId]);
+      this.router.navigate(['inventory/active', _.docId]);
       this.interstateTransfersService.sendIttRequestEmail(fromState, toState, lines, _.docId, notes);
       this.creating = false;
     }).catch(err => {

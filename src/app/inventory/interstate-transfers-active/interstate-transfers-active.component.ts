@@ -9,7 +9,7 @@ import { MatTableModule } from '@angular/material/table';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
-import { InterstateTransfersService } from '../shared/interstate-transfers.service';
+import { InterstateTransfersService } from '../shared/inventory.service';
 import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
 import { GroupByPropertyPipe } from '../../shared/pipes/group-by-property';
 

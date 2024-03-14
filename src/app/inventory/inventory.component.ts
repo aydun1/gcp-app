@@ -4,12 +4,12 @@ import { RouterModule } from '@angular/router';
 import { BigButtonComponent } from '../shared/big-button/big-button.component';
 
 @Component({
-  selector: 'gcp-interstate-transfers',
-  templateUrl: './interstate-transfers.component.html',
-  styleUrls: ['./interstate-transfers.component.css'],
+  selector: 'gcp-inventory',
+  templateUrl: './inventory.component.html',
+  styleUrls: ['./inventory.component.css'],
   standalone: true,
   imports: [RouterModule, BigButtonComponent]
 })
-export class InterstateTransfersComponent {
+export class InventoryComponent {
 
 }

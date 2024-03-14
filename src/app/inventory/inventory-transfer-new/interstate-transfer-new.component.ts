@@ -8,7 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { of } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
-import { InterstateTransfersService } from '../shared/interstate-transfers.service';
+import { InterstateTransfersService } from '../shared/inventory.service';
 import { SuggestedItem } from '../../pan-list/suggested-item';
 import { PanListComponent } from '../../pan-list/pan-list/pan-list.component';
 
@@ -66,7 +66,7 @@ export class InterstateTransferNewComponent implements OnInit {
     const lines = this.activeLines.filter(_ => _.ToTransfer);
     this.interstateTransfersService.createInTransitTransfer(fromState, toState, lines).then(_ => {
       this.snackBar.open('Successfully created ITT.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
-      this.router.navigate(['transfers/active', _.docId]);
+      this.router.navigate(['inventory/active', _.docId]);
       this.interstateTransfersService.sendQuickRequestEmail(fromState, toState, this._ownState, lines, _.docId, notes)
       this.creating = false;
     }).catch(err => {

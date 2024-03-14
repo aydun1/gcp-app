@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, lastValueFrom } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { InTransitTransfer } from './intransit-transfer';
+import { InTransitTransfer } from './inventory-transfer';
 import { SuggestedItem } from '../../pan-list/suggested-item';
 import { SharedService } from '../../shared.service';
 
@@ -50,7 +50,7 @@ export class InterstateTransfersService {
     const rows = lines.map(_ => `<tr><td>${_.ItemNmbr}</td><td>${_.ToTransfer}</td></tr>`).join('');
     return `
     <p>
-      <strong>Order no.:</strong> <a href="${environment.baseUri}/transfers/active/${docId}">${docId}</a>
+      <strong>Order no.:</strong> <a href="${environment.baseUri}/inventory/requested/${docId}">${docId}</a>
     </p>
     <table>
       <tr><th>Item number</th><th>Qty Requested</th></tr>

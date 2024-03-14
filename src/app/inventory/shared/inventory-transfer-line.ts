@@ -1,4 +1,4 @@
-export interface IntransitTransferLine {
+export interface InventoryTransferLine {
   Id: string;
   DocId: string;
   LineNumber: number;

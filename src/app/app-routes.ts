@@ -13,6 +13,6 @@ export const routes: Route[] = [
   { path: 'pallets', canActivate: [MsalGuard], loadChildren: () => import('./pallets/routes') },
   { path: 'runs', canActivate: [MsalGuard], loadChildren: () => import('./runs/routes') },
   { path: 'chemicals', canActivate: [MsalGuard], loadChildren: () => import('./chemicals/routes') },
-  { path: 'transfers', canActivate: [MsalGuard], loadChildren: () => import('./interstate-transfers/routes') },
+  { path: 'inventory', canActivate: [MsalGuard], loadChildren: () => import('./inventory/routes') },
   { path: 'loading-schedule', canActivate: [MsalGuard], loadChildren: () => import('./loading-schedule/routes') },
 ];

@@ -57,20 +57,20 @@
           <mat-divider></mat-divider>
         }
         @if (canSee.all) {
-          <a mat-list-item routerLink="/transfers" routerLinkActive="active">
+          <a mat-list-item routerLink="/inventory" routerLinkActive="active">
             <mat-icon matListItemIcon class="menu-icon">trolley</mat-icon>
             <span class="menu-label">Inventory</span>
             <mat-icon class="chevron">expand_more</mat-icon>
           </a>
         }
-        @if (urlActive('/transfers')) {
-          <a mat-list-item (click)="closeMenu()" routerLink="/transfers/suggested-items" routerLinkActive="active">
+        @if (urlActive('/inventory')) {
+          <a mat-list-item (click)="closeMenu()" routerLink="/inventory/suggested" routerLinkActive="active">
             <span class="menu-label">Suggested items</span>
           </a>
-          <a mat-list-item (click)="closeMenu()" routerLink="/transfers/active" routerLinkActive="active">
+          <a mat-list-item (click)="closeMenu()" routerLink="/inventory/requested" routerLinkActive="active">
             <span class="menu-label">Requested items</span>
           </a>
-          <a mat-list-item (click)="closeMenu()" routerLink="/transfers/new" routerLinkActive="active">
+          <a mat-list-item (click)="closeMenu()" routerLink="/inventory/new" routerLinkActive="active">
             <span class="menu-label">Quick transfer</span>
           </a>
           <mat-divider></mat-divider>

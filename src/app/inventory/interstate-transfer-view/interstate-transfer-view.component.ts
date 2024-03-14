@@ -7,9 +7,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { catchError, Observable, of, retry, switchMap } from 'rxjs';
 
-import { InterstateTransfersService } from '../shared/interstate-transfers.service';
+import { InterstateTransfersService } from '../shared/inventory.service';
 import { NavigationService } from '../../navigation.service';
-import { InTransitTransfer } from '../shared/intransit-transfer';
+import { InTransitTransfer } from '../shared/inventory-transfer';
 import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
 import { FooterComponent } from '../../shared/footer/footer.component';
 import { LoadingPageComponent } from '../../shared/loading/loading-page/loading-page.component';
