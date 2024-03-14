@@ -41,10 +41,10 @@ export class ChemicalListComponent implements OnInit {
   public textFilter = new FormControl(this.route.snapshot.paramMap.get('search'));
   public groupFilter = new FormControl(this.route.snapshot.paramMap.get('groupby'));
   public categoryFilter = new FormControl(this.route.snapshot.paramMap.get('category'));
+  public branchFilter = new FormControl({value: '', disabled: false});
   public loading = this.chemicalService.loading;
   public displayedColumns = [...this.defaultColumns];
   public chemicals$!: Observable<Chemical[]>;
-  public branchFilter = new FormControl({value: '', disabled: false});
   public ownState!: string;
   public states = this.shared.branches;
   public address$ = this.shared.getOwnAddress();

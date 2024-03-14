@@ -1,6 +1,6 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -19,20 +19,6 @@ import { SharedService } from '../../../shared.service';
 import { NavigationService } from '../../../navigation.service';
 import { LoadingPageComponent } from '../../../shared/loading/loading-page/loading-page.component';
 
-interface PalletRecForm {
-  date: FormControl<Date | null>;
-  branch: FormControl<string | null>;
-  name: FormControl<string | null>;
-  pallet: FormControl<string | null>;
-  currentBalance: FormControl<string | null>;
-  onSite: FormControl<string | null>;
-  offSite: FormControl<string | null>;
-  toBeCollected: FormControl<number | null>;
-  toBeRepaid: FormControl<number | null>;
-  inTransitOff: FormControl<number | null>;
-  inTransitOn: FormControl<number | null>;
-}
-
 @Component({
   selector: 'gcp-pallet-reconciliation-new',
   templateUrl: './pallet-reconciliation-new.component.html',
@@ -42,10 +28,21 @@ interface PalletRecForm {
 })
 export class PalletReconciliationNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';
-
   private _stocktakeResult = 0;
   public loadingData = new BehaviorSubject<boolean>(false);
-  public palletRecForm!: FormGroup<PalletRecForm>;
+  public palletRecForm = this.fb.group({
+    date: [new Date(), [Validators.required]],
+    branch: new FormControl({value: '', disabled: true}, [Validators.required]),
+    name: new FormControl({value: this.sharedService.getName(), disabled: true}, [Validators.required]),
+    pallet: ['', [Validators.required]],
+    currentBalance: ['', [Validators.required, Validators.min(0)]],
+    onSite: ['', [Validators.required, Validators.min(0)]],
+    offSite: ['', [Validators.required, Validators.min(0)]],
+    toBeCollected: new FormControl({value: 0, disabled: true}),
+    toBeRepaid: new FormControl({value: 0, disabled: true}),
+    inTransitOff: new FormControl({value: 0, disabled: true}),
+    inTransitOn: new FormControl({value: 0, disabled: true}),
+  });
   public adjBalance = 0;
   public pallets = this.sharedService.pallets;
   public states = this.sharedService.branches;
@@ -72,44 +69,25 @@ export class PalletReconciliationNewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const name = this.sharedService.getName();
-    const date = new Date();
-    this.palletRecForm = this.fb.group({
-      date: [date, [Validators.required]],
-      branch: new FormControl({value: '', disabled: true}, [Validators.required]),
-      name: new FormControl({value: name, disabled: true}, [Validators.required]),
-      pallet: ['', [Validators.required]],
-      currentBalance: ['', [Validators.required, Validators.min(0)]],
-      onSite: ['', [Validators.required, Validators.min(0)]],
-      offSite: ['', [Validators.required, Validators.min(0)]],
-      toBeCollected: new FormControl({value: 0, disabled: true}),
-      toBeRepaid: new FormControl({value: 0, disabled: true}),
-      inTransitOff: new FormControl({value: 0, disabled: true}),
-      inTransitOn: new FormControl({value: 0, disabled: true}),
-    });
-
     this.id = this.route.snapshot.paramMap.get('id');
-
     if (this.id) {
-      lastValueFrom(this.palletsReconciliationService.getReconciliation(this.id)).then(
-        _ => {
-          const data = {} as any;
-          data['date'] = new Date(_.fields['Date'] || _.fields['Created']);
-          data['pallet'] = _.fields['Pallet'];
-          data['branch'] = _.fields['Branch'];
-          data['currentBalance'] = _.fields['CurrentBalance'];
-          data['onSite'] = _.fields['OnSite'];
-          data['offSite'] = _.fields['OffSite'];
-          data['toBeCollected'] = _.fields['ToBeCollected'];
-          data['toBeRepaid'] = _.fields['ToBeRepaid'];
-          data['inTransitOff'] = _.fields['InTransitOff'];
-          data['inTransitOn'] = _.fields['InTransitOn'];
-          this.palletRecForm.patchValue(data);
-          this.palletRecForm.get('date')?.disable();
-          this.palletRecForm.get('pallet')?.disable();
-          this.loadingData.next(true);
-        }
-      )
+      lastValueFrom(this.palletsReconciliationService.getReconciliation(this.id)).then(_ => {
+        const data = {} as any;
+        data['date'] = new Date(_.fields['Date'] || _.fields['Created']);
+        data['pallet'] = _.fields['Pallet'];
+        data['branch'] = _.fields['Branch'];
+        data['currentBalance'] = _.fields['CurrentBalance'];
+        data['onSite'] = _.fields['OnSite'];
+        data['offSite'] = _.fields['OffSite'];
+        data['toBeCollected'] = _.fields['ToBeCollected'];
+        data['toBeRepaid'] = _.fields['ToBeRepaid'];
+        data['inTransitOff'] = _.fields['InTransitOff'];
+        data['inTransitOn'] = _.fields['InTransitOn'];
+        this.palletRecForm.patchValue(data);
+        this.palletRecForm.get('date')?.disable();
+        this.palletRecForm.get('pallet')?.disable();
+        this.loadingData.next(true);
+      })
     } else {
       this.sharedService.getBranch().pipe(
         tap(_ => {
@@ -128,7 +106,6 @@ export class PalletReconciliationNewComponent implements OnInit {
         this._stocktakeResult = this.adjBalance - +(v.currentBalance || 0);
       })
     ).subscribe();
-
   }
 
   updateTransits(): void {

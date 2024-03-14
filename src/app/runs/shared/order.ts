@@ -1,4 +1,4 @@
-import { Line } from "./line";
+import { Line } from './line';
 
 export interface Order {
   sopType: number;

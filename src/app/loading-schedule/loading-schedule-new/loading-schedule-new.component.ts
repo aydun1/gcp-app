@@ -1,6 +1,6 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,18 +21,6 @@ import { LoadingScheduleService } from '../shared/loading-schedule.service';
 import { TransportCompany } from '../shared/transport-company';
 import { LoadingPageComponent } from '../../shared/loading/loading-page/loading-page.component';
 
-interface LoadingScheduleForm {
-  status: FormControl<string | null>;
-  loadingDate: FormControl<string | null>;
-  arrivalDate: FormControl<string | null>;
-  from: FormControl<string | null>;
-  to: FormControl<string | null>;
-  transportCompany: FormControl<TransportCompany | null>;
-  driver: FormControl<string | null>;
-  spaces: FormControl<string | null>;
-  notes: FormControl<string | null>;
-}
-
 @Component({
   selector: 'gcp-loading-schedule-new',
   templateUrl: './loading-schedule-new.component.html',
@@ -46,11 +34,21 @@ export class LoadingScheduleNewComponent implements OnInit {
   public loadingData = new BehaviorSubject<boolean>(false);
   public savingData = false;
   public transportCompanies$!: Observable<TransportCompany[] | null>;
-  public loadingScheduleForm!: FormGroup<LoadingScheduleForm>;
   public states = [...this.sharedService.branches, 'International'];
   public state!: string;
   public choices: {TransportCompany: Choice, Driver: Choice, AssetType: Choice, Branch: Choice, Status: Choice} | undefined;
   public id: string | null = null;
+  public loadingScheduleForm = this.fb.group({
+    status: ['', [Validators.required]],
+    loadingDate: ['', [Validators.required]],
+    arrivalDate: ['', [Validators.required]],
+    from: ['VIC', [Validators.required]],
+    to: [this.state !== 'VIC' ? this.state : '', [Validators.required]],
+    transportCompany: new FormControl(),
+    driver: new FormControl(),
+    spaces: ['', [Validators.min(0)]],
+    notes: new FormControl()
+  });
 
   get targetStates(): Array<string> {
     const from = this.loadingScheduleForm.get('from')?.value;
@@ -74,20 +72,7 @@ export class LoadingScheduleNewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadingScheduleForm = this.fb.group({
-      status: ['', [Validators.required]],
-      loadingDate: ['', [Validators.required]],
-      arrivalDate: ['', [Validators.required]],
-      from: ['VIC', [Validators.required]],
-      to: [this.state !== 'VIC' ? this.state : '', [Validators.required]],
-      transportCompany: new FormControl(),
-      driver: new FormControl(),
-      spaces: ['', [Validators.min(0)]],
-      notes: new FormControl()
-    });
-
     this.id = this.route.snapshot.paramMap.get('id');
-
     this.transportCompanies$ = this.sharedService.getBranch().pipe(
       tap(branch => this.state = branch),
       switchMap(state => this.loadingScheduleService.getTransportCompanies(state)),
@@ -100,23 +85,21 @@ export class LoadingScheduleNewComponent implements OnInit {
     );
 
     if (this.id) {
-      firstValueFrom(this.loadingScheduleService.getLoadingScheduleEntry(this.id)).then(
-        _ => {
-          const data = {} as any;
-          data['status'] = _.fields['Status'];
-          data['arrivalDate'] = _.fields['ArrivalDate'];
-          data['loadingDate'] = _.fields['LoadingDate'];
-          data['destination'] = _.fields['Destination'];
-          data['transportCompany'] = _.fields['TransportCompany'];
-          data['driver'] = _.fields['Driver'];
-          data['spaces'] = _.fields['Spaces'];
-          data['notes'] = _.fields['Notes'];
-          data['from'] = _.fields['From'];
-          data['to'] = _.fields['To'];
-          this.loadingScheduleForm.patchValue(data);
-          this.loadingData.next(true);
-        }
-      )
+      firstValueFrom(this.loadingScheduleService.getLoadingScheduleEntry(this.id)).then(_ => {
+        const data = {} as any;
+        data['status'] = _.fields['Status'];
+        data['arrivalDate'] = _.fields['ArrivalDate'];
+        data['loadingDate'] = _.fields['LoadingDate'];
+        data['destination'] = _.fields['Destination'];
+        data['transportCompany'] = _.fields['TransportCompany'];
+        data['driver'] = _.fields['Driver'];
+        data['spaces'] = _.fields['Spaces'];
+        data['notes'] = _.fields['Notes'];
+        data['from'] = _.fields['From'];
+        data['to'] = _.fields['To'];
+        this.loadingScheduleForm.patchValue(data);
+        this.loadingData.next(true);
+      })
     } else {
       const data = {status: 'Scheduled', from: 'VIC', to: this.state !== 'VIC' ? this.state : ''};
       this.loadingScheduleForm.patchValue(data);

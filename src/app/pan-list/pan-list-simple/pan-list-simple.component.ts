@@ -29,13 +29,14 @@ export class PanListSimpleComponent implements OnInit {
   @Output() deletePanList = new EventEmitter<string>();
   @Output() sendPanList = new EventEmitter<number>();
 
-
   private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
   private _loadList!: boolean;
   public loading = this.panListService.loading;
   public interstateTransfers$!: Observable<FormGroup<any>>;
   public totals!: object;
-  public transferForm!: FormGroup;
+  public transferForm = this.fb.group({
+    lines: this.fb.array([])
+  });
   public columns = ['product', 'notes', 'transfer'];
   public panList: number | null = null;
   public selectedPanId: string = this.route.snapshot.queryParams['pan'] || '';
@@ -50,8 +51,7 @@ export class PanListSimpleComponent implements OnInit {
   }
 
   public get transferQty(): number {
-    return this.lines.value.reduce((acc, cur) => acc + cur['toTransfer']
-  , 0);
+    return this.lines.value.reduce((acc, cur) => acc + cur['toTransfer'], 0);
   }
 
   get sent(): string {
@@ -68,10 +68,6 @@ export class PanListSimpleComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.transferForm = this.fb.group({
-      lines: this.fb.array([]),
-    });
-
     this.interstateTransfers$ = this.route.queryParams.pipe(
       startWith({}),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),

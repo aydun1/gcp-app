@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, Inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -13,11 +13,6 @@ import { Site } from '../site';
 import { Customer } from '../customer';
 import { CustomersService } from '../customers.service';
 
-interface SiteForm {
-  address: FormControl<string | null>;
-  site: FormControl<string | null>;
-}
-
 @Component({
   selector: 'gcp-customer-site-dialog',
   templateUrl: './customer-site-dialog.component.html',
@@ -25,11 +20,14 @@ interface SiteForm {
   standalone: true,
   imports: [ReactiveFormsModule, MatButtonModule, MatDialogModule, MatIconModule, MatInputModule, MatListModule]
 })
-export class CustomerSiteDialogComponent implements OnInit {
-  public siteForm!: FormGroup<SiteForm>;
+export class CustomerSiteDialogComponent {
   public loading = false;
   public siteId!: string;
   public oldName!: string;
+  public siteForm = this.fb.group({
+    site: ['', [Validators.required, this.customerService.uniqueSiteValidator(this.data.sites)]],
+    address: ['']
+  });
 
   constructor(
     private dialogRef: MatDialogRef<CustomerSiteDialogComponent>,
@@ -39,13 +37,6 @@ export class CustomerSiteDialogComponent implements OnInit {
     private customerService: CustomersService,
     @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>}
   ) { }
-
-  ngOnInit(): void {
-    this.siteForm = this.fb.group({
-      site: ['', [Validators.required, this.customerService.uniqueSiteValidator(this.data.sites)]],
-      address: ['']
-    });
-  }
 
   openEditor(siteId: string, name: string, address: string): void {
     this.siteId = siteId;

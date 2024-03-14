@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -11,12 +11,6 @@ import { SharedService } from '../../shared.service';
 import { InterstateTransfersService } from '../shared/interstate-transfers.service';
 import { SuggestedItem } from '../../pan-list/suggested-item';
 import { PanListComponent } from '../../pan-list/pan-list/pan-list.component';
-
-interface NewTransferForm {
-  fromState: FormControl<string | null>;
-  toState: FormControl<string | null>;
-  notes: FormControl<string | null>;
-}
 
 @Component({
   selector: 'gcp-interstate-transfer-new',
@@ -33,7 +27,11 @@ export class InterstateTransferNewComponent implements OnInit {
   public lineCount!: number;
   public activeLines!: Array<SuggestedItem>;
   public creating!: boolean;
-  public newTransferForm!: FormGroup<NewTransferForm>;
+  public newTransferForm = this.fb.group({
+    fromState: ['', Validators.required],
+    toState: ['', [Validators.required]],
+    notes: [''],
+  });
 
   public get allStates(): Array<string> {
     return this._states;
@@ -57,11 +55,6 @@ export class InterstateTransferNewComponent implements OnInit {
   ngOnInit(): void {
     const state$ = this.shared.getBranch();
     state$.subscribe(_ => this._ownState = _);
-    this.newTransferForm = this.fb.group({
-      fromState: ['', Validators.required],
-      toState: ['', [Validators.required]],
-      notes: [''],
-    });
   }
 
   createTransfer(): void {

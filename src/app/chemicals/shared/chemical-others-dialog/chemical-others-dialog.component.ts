@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { AsyncPipe, DecimalPipe } from '@angular/common';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -30,7 +30,12 @@ export class ChemicalOthersDialogComponent implements OnInit {
   public selected: Chemical | undefined;
   public loading = true;
   public searchControl = new FormControl('');
-  public newChemicalForm!: FormGroup<any>;
+  public newChemicalForm = this.fb.group({
+    itemNmbr: ['', [Validators.required]],
+    itemDesc: ['', []],
+    containerSize: [null, Validators.required],
+    units: ['', [Validators.required]]
+  });
   public editQuantity = '';
   public quantity!: number;
   public updater = new Subject<boolean>();
@@ -50,13 +55,6 @@ export class ChemicalOthersDialogComponent implements OnInit {
         this.loading = false;
       })
     );
-
-    this.newChemicalForm = this.fb.group({
-      itemNmbr: ['', [Validators.required]],
-      itemDesc: ['', []],
-      containerSize: ['', Validators.required],
-      units: ['', [Validators.required]]
-    });
   }
 
   setItem(e: MatSelectionListChange): void {
@@ -64,8 +62,8 @@ export class ChemicalOthersDialogComponent implements OnInit {
   }
 
   addChemical(): void {
-    if (!this.newChemicalForm.valid) return;
     const v = this.newChemicalForm.value;
+    if (!this.newChemicalForm.valid || !v.itemNmbr || !v.itemDesc || !v.containerSize || !v.units) return;
     this.saving = true;
     this.newChemicalForm.disable();
     this.chemicalService.addNonInventoryChemicals(v.itemNmbr, v.itemDesc, v.containerSize, v.units).then(

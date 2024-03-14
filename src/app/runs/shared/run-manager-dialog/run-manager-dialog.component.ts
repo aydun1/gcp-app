@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, Inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -12,11 +12,6 @@ import { Observable } from 'rxjs';
 import { DeliveryService } from '../delivery.service';
 import { Run } from '../run';
 
-interface RunForm {
-  run: FormControl<string | null>;
-  owner: FormControl<string | null>;
-}
-
 @Component({
   selector: 'gcp-run-manager-dialog',
   templateUrl: './run-manager-dialog.component.html',
@@ -24,10 +19,13 @@ interface RunForm {
   standalone: true,
   imports: [ReactiveFormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule]
 })
-export class RunManagerDialogComponent implements OnInit {
-  public loading = true;
+export class RunManagerDialogComponent {
+  public loading = false;
   public runs$!: Observable<Run[]>;
-  public runForm!: FormGroup<RunForm>;
+  public runForm = this.fb.group({
+    run: ['', [Validators.required, this.deliveryService.uniqueRunValidator(this.data.runs)]],
+    owner: ['', []]
+  });
   public runId!: string;
   public oldName!: string;
   public oldOwner!: string;
@@ -39,14 +37,6 @@ export class RunManagerDialogComponent implements OnInit {
     private router: Router,
     private deliveryService: DeliveryService
   ) { }
-
-  ngOnInit(): void {
-    this.loading = false;
-    this.runForm = this.fb.group({
-      run: ['', [Validators.required, this.deliveryService.uniqueRunValidator(this.data.runs)]],
-      owner: ['', []]
-    });
-  }
 
   openEditor(runId: string, name: string, owner: string): void {
     this.runId = runId;

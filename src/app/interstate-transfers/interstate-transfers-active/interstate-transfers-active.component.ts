@@ -30,8 +30,9 @@ export class InterstateTransfersActiveComponent implements OnInit {
   public loading = false;
   public displayedColumns = [ 'date', 'product', 'available', 'quantity'];
   public states = this.shared.branches;
-  public transferForm!: FormGroup;
-
+  public transferForm = this.fb.group({
+    lines: this.fb.array([])
+  });
   public get otherBranches(): Array<string> {
     return this.states.filter(_ => _ !== this.fromBranchFilter.value);
   }
@@ -54,10 +55,6 @@ export class InterstateTransfersActiveComponent implements OnInit {
 
   ngOnInit(): void {
     const state$ = this.shared.getBranch();
-    this.transferForm = this.fb.group({
-      lines: this.fb.array([]),
-    });
-
     this.interstateTransfers$ = this.route.queryParams.pipe(
       startWith({} as Params),
       switchMap(_ => this.router.events.pipe(

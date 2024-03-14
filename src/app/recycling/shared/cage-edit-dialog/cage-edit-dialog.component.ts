@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Component, Inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,14 +10,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { RecyclingService } from '../../shared/recycling.service';
 import { Cage } from '../../shared/cage';
 
-
-interface CollectorForm {
-  reference: FormControl<string | null>;
-  cageWeight: FormControl<number | null>;
-  grossWeight: FormControl<number | null>;
-  material: FormControl<number | null>;
-}
-
 @Component({
   selector: 'gcp-cage-edit-dialog',
   templateUrl: './cage-edit-dialog.component.html',
@@ -25,9 +17,14 @@ interface CollectorForm {
   standalone: true,
   imports: [MatDialogModule, ReactiveFormsModule, MatButtonModule, MatIconModule, MatInputModule, MatSelectModule]
 })
-export class CageEditDialogComponent implements OnInit {
-
-  public collectorForm!: FormGroup<CollectorForm>;
+export class CageEditDialogComponent {
+  public cage = this.data.cages[0];
+  public collectorForm = this.fb.group({
+    reference: [this.cage.fields.Notes, []],
+    cageWeight: [this.cage.fields.CageWeight, []],
+    grossWeight: [this.cage.fields.GrossWeight, []],
+    material: [this.cage.fields.Material, []],
+  });
   public materialTypes = this.recyclingService.materials;
   public sending = false;
 
@@ -38,16 +35,6 @@ export class CageEditDialogComponent implements OnInit {
       private recyclingService: RecyclingService,
       private fb: FormBuilder
   ) { }
-
-  ngOnInit(): void {
-    const cage = this.data.cages[0];
-    this.collectorForm = this.fb.group({
-      reference: new FormControl(cage.fields.Notes, []),
-      cageWeight: new FormControl(cage.fields.CageWeight, []),
-      grossWeight: new FormControl(cage.fields.GrossWeight, []),
-      material: new FormControl(cage.fields.Material, []),
-    });
-  }
 
   updateCage(): void {
     if (!this.collectorForm.valid) return;

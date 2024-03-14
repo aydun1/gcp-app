@@ -1,5 +1,5 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -14,13 +14,6 @@ import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
 import { RecyclingReceiptsService } from '../shared/recycling-receipts.service';
 
-interface NewReceiptForm {
-  date: FormControl<Date | null>;
-  branch: FormControl<string | null>;
-  weight: FormControl<string | null>;
-  reference: FormControl<string | null>;
-}
-
 @Component({
   selector: 'gcp-recycling-receipt-new',
   templateUrl: './recycling-receipt-new.component.html',
@@ -30,11 +23,15 @@ interface NewReceiptForm {
 })
 export class RecyclingReceiptNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component mat-app-background';
-
-  public newReceiptForm!: FormGroup<NewReceiptForm>;
   public loading!: boolean;
-  public state!: string;
   public states = this.sharedService.branches;
+  public state!: string;
+  public newReceiptForm = this.fb.group({
+    date: [{value: new Date(), disabled: false}, [Validators.required]],
+    branch: [{value: this.state, disabled: false}, [Validators.required]],
+    weight: ['', [Validators.required, Validators.min(0)]],
+    reference: ['', [Validators.required]]
+  });
 
   constructor(
     private fb: FormBuilder,
@@ -45,18 +42,9 @@ export class RecyclingReceiptNewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const date = new Date();
-
     this.sharedService.getBranch().subscribe(state => {
       this.state = state;
       if (this.newReceiptForm) this.newReceiptForm.patchValue({branch: state});
-    });
-
-    this.newReceiptForm = this.fb.group({
-      date: new FormControl({value: date, disabled: false}, [Validators.required]),
-      branch: new FormControl({value: this.state, disabled: false}, [Validators.required]),
-      weight: new FormControl('', [Validators.required, Validators.min(0)]),
-      reference: new FormControl('', [Validators.required])
     });
   }
 
@@ -82,5 +70,4 @@ export class RecyclingReceiptNewComponent implements OnInit {
   goBack(): void {
     this.navService.back();
   }
-
 }

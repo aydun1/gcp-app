@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AsyncPipe, DecimalPipe, NgClass } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
@@ -40,9 +40,7 @@ interface LineForm {
   imports: [AsyncPipe, DecimalPipe, NgClass, FormsModule, ReactiveFormsModule, MatButtonToggleModule, MatCardModule, MatInputModule, MatSelectModule, MatSlideToggleModule, MatTableModule, ItemControlComponent, LoadingRowComponent, SumPipe]
 })
 export class PanListComponent implements OnInit {
-
   @ViewChild(MatTable) _matTable!:MatTable<any>;
-
   @Input() suggestions = true;
   @Input() includeUnsent = false;
   @Input() autosave!: boolean;
@@ -76,7 +74,9 @@ export class PanListComponent implements OnInit {
   public categories: Array<string> = [];
   public totals!: object;
   public states = this.shared.branches;
-  public transferForm!: FormGroup<TransferForm>;
+  public transferForm = this.fb.group({
+    lines: this.fb.array([] as FormGroup<LineForm>[])
+  });  
   public hideNoStockHea = false;
   public hideNoStockVic = false;
   public hideNoStockNsw = false;
@@ -143,12 +143,10 @@ export class PanListComponent implements OnInit {
     this.saving.next('saved');
     this._scheduleId = this.route.snapshot.paramMap.get('id') || '';
     const state$ = this.shared.getBranch();
-    this.initForm([]);
     this.notes.valueChanges.pipe(
       debounceTime(500),
       tap(_ => this.note.next(_))
     ).subscribe();
-
     this.route.queryParams.pipe(
       startWith({} as {branch: string}),
       distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),

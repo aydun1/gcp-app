@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, ElementRef, HostBinding, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -16,13 +16,6 @@ import { NavigationService } from '../../navigation.service';
 import { SharedService } from '../../shared.service';
 import { Choice } from '../../shared/choice';
 
-interface CageForm {
-  assetType: FormControl<string | null>;
-  cageNumber: FormControl<string | null>;
-  cageWeight: FormControl<string | null>;
-  branch: FormControl<string | null>;
-}
-
 @Component({
   selector: 'gcp-recycling-new',
   templateUrl: './recycling-new.component.html',
@@ -33,13 +26,20 @@ interface CageForm {
 export class RecyclingNewComponent implements OnInit {
   @HostBinding('class') class = 'app-component  mat-app-background';
   @ViewChild('cageNumberInput') cageNumber!: ElementRef;
-  private state!: string;
   private defaultWeights = {
     'Cage - Folding (2.5m³)': '190',
     'Cage - Solid (2.5m³)': '170'
   };
   public multi!: number;
-  public cageForm!: FormGroup<CageForm>;
+  public assetType = new FormControl('', Validators.required);
+  public cageForm = this.fb.group({
+    assetType: this.assetType,
+    cageNumber: ['', Validators.required, this.recyclingService.uniqueCageValidator(this.assetType)],
+    cageWeight: ['', Validators.required],
+    branch: ['', Validators.required]
+  });
+
+
   public loading!: boolean;
   public choices$!: BehaviorSubject<{Branch: Choice, AssetType: Choice}>;
 
@@ -62,14 +62,7 @@ export class RecyclingNewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getOptions();
-    const assetType = new FormControl('', Validators.required);
-    this.cageForm = this.fb.group({
-      assetType,
-      cageNumber: ['', Validators.required, this.recyclingService.uniqueCageValidator(assetType)],
-      cageWeight: ['', Validators.required],
-      branch: ['', Validators.required]
-    });
+    this.choices$ = this.recyclingService.getColumns();
     this.shared.getBranch().subscribe(branch => this.cageForm.patchValue({branch}));
     this.cageForm.get('assetType')?.valueChanges.subscribe(val => {
       const v = val as 'Cage - Folding (2.5m³)' | 'Cage - Solid (2.5m³)';
@@ -83,10 +76,6 @@ export class RecyclingNewComponent implements OnInit {
       // Set default cage weights
       this.cageForm.get('cageWeight')?.patchValue(this.defaultWeights[v]);
     });
-  }
-
-  getOptions(): void {
-    this.choices$ = this.recyclingService.getColumns();
   }
 
   addCage(): void {

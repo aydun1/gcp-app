@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { AsyncPipe, NgClass } from '@angular/common';
-import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -16,19 +16,6 @@ import { SharedService } from '../../../shared.service';
 import { Site } from '../../../customers/shared/site';
 import { Customer } from '../../../customers/shared/customer';
 
-interface PalletQty {
-  pallet: FormControl<string | null>;
-  inQty: FormControl<number | null>;
-  outQty: FormControl<number | null>;
-}
-
-interface PalletForm {
-  date: FormControl<Date | null>;
-  notes: FormControl<string | null>;
-  site: FormControl<string | null>;
-  quantities: FormArray<FormGroup<PalletQty>>
-}
-
 @Component({
   selector: 'gcp-pallet-dialog',
   templateUrl: './pallet-dialog.component.html',
@@ -38,8 +25,19 @@ interface PalletForm {
 })
 export class PalletDialogComponent implements OnInit {
   private _state!: string;
+  private _requireSite = this.data.site || this.data.sites?.length;
+
   public palletTypes = this.sharedService.palletDetails;
-  public palletForm!: FormGroup<PalletForm>;
+  public palletForm = this.fb.group({
+    site: [this.data.site, this._requireSite ? Validators.required : ''],
+    date: [new Date(), Validators.required],
+    notes: [''],
+    quantities: this.fb.array(this.palletTypes.map(_ => this.fb.group({
+      pallet: [_.name, [Validators.required]],
+      outQty: [null, [Validators.min(0), Validators.max(1000)]],
+      inQty: [null, [Validators.min(0), Validators.max(1000)]]
+    })))
+  });
   public loading = false;
   public siteNames!: Array<string>;
   public direction = [{name: 'Sent', controlName: 'outQty'}, {name: 'Returned', controlName: 'inQty'}];
@@ -49,28 +47,17 @@ export class PalletDialogComponent implements OnInit {
   );
 
   constructor(
-      public dialogRef: MatDialogRef<PalletDialogComponent>,
-      @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>, site: string, orderNmbr: string},
-      private snackBar: MatSnackBar,
-      private fb: FormBuilder,
-      private sharedService: SharedService,
-      private palletsService: PalletsService,
+    public dialogRef: MatDialogRef<PalletDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>, site: string, orderNmbr: string},
+    private snackBar: MatSnackBar,
+    private fb: FormBuilder,
+    private sharedService: SharedService,
+    private palletsService: PalletsService,
   ) { }
 
   ngOnInit(): void {
     this.sharedService.getBranch().subscribe(state => this._state = state);
-    const requireSite = this.data.site || this.data.sites?.length;
     this.siteNames = this.data.sites ? this.data.sites.map(_ => _.fields.Title) : [this.data.site].filter(_ => _);
-    this.palletForm = this.fb.group({
-      site: [this.data.site, requireSite ? Validators.required : ''],
-      date: [new Date(), Validators.required],
-      notes: [''],
-      quantities: this.fb.array(this.palletTypes.map(_ => this.fb.group<PalletQty>({
-        pallet: new FormControl(_.name, [Validators.required]),
-        outQty: new FormControl(null, [Validators.min(0), Validators.max(1000)]),
-        inQty: new FormControl(null, [Validators.min(0), Validators.max(1000)])
-      })))
-    });
   }
 
   addPallets(): void {

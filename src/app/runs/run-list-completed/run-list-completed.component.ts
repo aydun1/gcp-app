@@ -33,7 +33,6 @@ export class RunListCompletedComponent implements OnInit {
   public branchFilter = new FormControl('');
   public typeFilter = new FormControl('');
   public orderNumberFilter = new FormControl('');
-  public dateFilter = new FormControl(this.getDate());
   public orders$!: Observable<Order[]>;
   public deliveries$!: Observable<Delivery[]>;
   public loadingList$ = this.deliveryCompletedService.loading;
@@ -54,18 +53,8 @@ export class RunListCompletedComponent implements OnInit {
     private deliveryCompletedService: DeliveryCompletedService,
   ) { }
 
-  private getDate(): Date {
-    const date = new Date();
-    const day = date.getDay();
-    const nextDay = day > 4 ? 8 - day : 1;
-    date.setDate(date.getDate() + nextDay);
-    date.setHours(0,0,0,0);
-    return date;
-  }
-
   ngOnInit(): void {
     const state$ = this.sharedService.getBranch();
-
     this.deliveries$ = this.route.queryParams.pipe(
       startWith({} as Params),
       switchMap(_ => this.router.events.pipe(
@@ -104,7 +93,6 @@ export class RunListCompletedComponent implements OnInit {
       sopType: 2,
       sopNumber: orderNumber.trimEnd(),
     };
-
     this.dialog.open(OrderLinesDialogComponent, {width: '800px', data, autoFocus: false});
   }
 

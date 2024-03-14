@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -26,17 +26,6 @@ import { CageWeightsComponent } from '../cage-weights/cage-weights.component';
 import { CageDetailsComponent } from '../cage-details/cage-details.component';
 import { GroupCagesPipe } from '../../../shared/pipes/group-cages';
 
-interface AllocatorForm {
-  site: FormControl<string | null>;
-}
-
-interface CollectorForm {
-  site: FormControl<string | null>;
-  cageWeight: FormControl<number | null>;
-  grossWeight: FormControl<string | null>;
-  material: FormControl<string | null>;
-}
-
 @Component({
   selector: 'gcp-recycling-dialog',
   templateUrl: './recycling-dialog.component.html',
@@ -48,47 +37,43 @@ export class RecyclingDialogComponent implements OnInit {
   readonly allocated = 1;
   readonly delivered = 2;
   readonly returned = 3;
+  private requireSite = this.data.site || this.data.sites?.length > 0;
   public others = ['Bulka Bag', 'Pallet', 'Other'];
   public noAllocatedCages$ = new BehaviorSubject<boolean>(false);
   public noDeliveredCages$ = new BehaviorSubject<boolean>(false);
   public noReturnedCages$ = new BehaviorSubject<boolean>(false);
   public cages$ = new BehaviorSubject<Cage[]>([]);
-  public allocatorForm!: FormGroup<AllocatorForm>;
-  public collectorForm!: FormGroup<CollectorForm>;
+  public site = this.data.site;
+  public sites = this.data.sites ? this.data.sites.map(_ => _.fields.Title) : [this.site].filter(_ => _);
+  public allocatorForm = this.fb.group({
+    site: [this.site, this.requireSite ? [Validators.required] : []]
+  });
+  public collectorForm = this.fb.group({
+    site: [this.site, this.requireSite ? [Validators.required] : []],
+    cageWeight: [30, [Validators.required]],
+    grossWeight: ['', [Validators.required]],
+    material: ['', []],
+  });
   public assigning!: boolean;
   public collecting!: boolean;
   public availableCages$!: Observable<Cage[]>;
   public loadingCages$ = new BehaviorSubject<boolean>(true);
   public loadingAvailableCages$ = new BehaviorSubject<boolean>(true);
-  public sites!: Array<string>;
-  public site!: string | undefined;
   public get branches(): Array<string> {return this.shared.branches}
   public materialTypes = this.recyclingService.materials;
   public sending = false;
 
   constructor(
-      public dialogRef: MatDialogRef<RecyclingDialogComponent>,
-      @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>, site: string, branch: string},
-      private router: Router,
-      private snackBar: MatSnackBar,
-      private shared: SharedService,
-      private recyclingService: RecyclingService,
-      private fb: FormBuilder
+    public dialogRef: MatDialogRef<RecyclingDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: {customer: Customer, sites: Array<Site>, site: string, branch: string},
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private shared: SharedService,
+    private recyclingService: RecyclingService,
+    private fb: FormBuilder
   ) { }
 
   ngOnInit(): void {
-    const requireSite = this.data.site || this.data.sites?.length > 0;
-    this.site = this.data.site;
-    this.sites = this.data.sites ? this.data.sites.map(_ => _.fields.Title) : [this.site].filter(_ => _);
-    this.allocatorForm = this.fb.group({
-      site: new FormControl(this.site, requireSite ? [Validators.required] : [])
-    });
-    this.collectorForm = this.fb.group({
-      site: new FormControl(this.site, requireSite ? [Validators.required] : []),
-      cageWeight: new FormControl(30, [Validators.required]),
-      grossWeight: new FormControl('', [Validators.required]),
-      material: new FormControl('', []),
-    });
     this.getCagesWithCustomer();
     this.getAvailableCages(false);
   }
