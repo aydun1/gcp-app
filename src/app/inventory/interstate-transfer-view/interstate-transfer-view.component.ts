@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { catchError, Observable, of, retry, switchMap } from 'rxjs';
 
-import { InterstateTransfersService } from '../shared/inventory.service';
+import { InventoryService } from '../shared/inventory.service';
 import { NavigationService } from '../../navigation.service';
 import { InTransitTransfer } from '../shared/inventory-transfer';
 import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
@@ -31,7 +31,7 @@ export class InterstateTransferViewComponent implements OnDestroy, OnInit {
     private route: ActivatedRoute,
     private renderer: Renderer2,
     private navService: NavigationService,
-    private interstateTransfersService: InterstateTransfersService
+    private inventoryService: InventoryService
   ) { }
 
   ngOnInit(): void {
@@ -47,7 +47,7 @@ export class InterstateTransferViewComponent implements OnDestroy, OnInit {
 
   getInterstateTransfer(id: string | null): Observable<InTransitTransfer> {
     if (!id) return of();
-    return this.interstateTransfersService.getInTransitTransfer(id).pipe(
+    return this.inventoryService.getInTransitTransfer(id).pipe(
       retry({count: 10, delay: 2000}),
       catchError(_ => {
         console.log(_);

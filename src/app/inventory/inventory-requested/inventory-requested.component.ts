@@ -9,18 +9,18 @@ import { MatTableModule } from '@angular/material/table';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
-import { InterstateTransfersService } from '../shared/inventory.service';
+import { InventoryService } from '../shared/inventory.service';
 import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
 import { GroupByPropertyPipe } from '../../shared/pipes/group-by-property';
 
 @Component({
-  selector: 'gcp-interstate-transfers-active',
-  templateUrl: './interstate-transfers-active.component.html',
-  styleUrls: ['./interstate-transfers-active.component.css'],
+  selector: 'gcp-inventory-requested',
+  templateUrl: './inventory-requested.component.html',
+  styleUrls: ['./inventory-requested.component.css'],
   standalone: true,
   imports: [AsyncPipe, DatePipe, DecimalPipe, ReactiveFormsModule, RouterModule, MatCardModule, MatProgressSpinnerModule, MatSelectModule, MatTableModule, LetterheadComponent, GroupByPropertyPipe]
 })
-export class InterstateTransfersActiveComponent implements OnInit {
+export class InventoryRequestedComponent implements OnInit {
   private _InterstateTransferSubject$ = new BehaviorSubject<FormGroup>(this.fb.group({}));
   private _loadList!: boolean;
   public fromBranchFilter = new FormControl({value: '', disabled: true});
@@ -50,7 +50,7 @@ export class InterstateTransfersActiveComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private shared: SharedService,
-    private interstateTransfersService: InterstateTransfersService
+    private inventoryService: InventoryService
   ) { }
 
   ngOnInit(): void {
@@ -102,7 +102,7 @@ export class InterstateTransfersActiveComponent implements OnInit {
     const from = params['from'] || '';
     const to = params['to'] || '';
     if (!from) return of([]);
-    return this.interstateTransfersService.getInterstateTransfers(from, to);
+    return this.inventoryService.getInterstateTransfers(from, to);
   }
 
   parseParams(params: Params): void {

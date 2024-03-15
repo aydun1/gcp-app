@@ -4,8 +4,8 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { SharedService } from '../../../app/shared.service';
-import { SuggestedItem } from '../../pan-list/suggested-item';
+import { SharedService } from '../../../shared.service';
+import { SuggestedItem } from '../../../pan-list/suggested-item';
 
 interface Data {
   branch: string;

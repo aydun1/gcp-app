@@ -73,6 +73,9 @@
           <a mat-list-item (click)="closeMenu()" routerLink="/inventory/new" routerLinkActive="active">
             <span class="menu-label">Quick transfer</span>
           </a>
+          <a mat-list-item (click)="closeMenu()" routerLink="/inventory/required" routerLinkActive="active">
+            <span class="menu-label">Production required</span>
+          </a>
           <mat-divider></mat-divider>
         }
         @if (canSee.all) {

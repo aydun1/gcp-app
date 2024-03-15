@@ -1,0 +1,83 @@
+.outer {
+  margin: 0 auto;
+  max-width: 1024px;
+}
+
+.buttons {
+  border-top: 1px solid #7a7a7a96;
+  padding: 0 10px;
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+}
+
+.save-button {
+  margin-left: auto;
+}
+
+.ml {
+  margin-left: 10px;
+}
+
+.notes-form {
+  width: 100%;
+}
+
+.head {
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+}
+
+.row {
+  align-items: center;
+  display: flex;
+  min-height: 50px;
+}
+
+.locations {
+  flex: 0 1 554px;
+  margin: 8px 0;
+}
+
+.location {
+  display: flex;
+  font-size: 14px;
+  margin: 2px 0;
+}
+
+.site-name {
+  flex: 0 1 54px;
+}
+
+.qty-min, .qty-max, .qty-onhand, .qty-avail, .qty-alloc, .qty-required {
+  flex: 0 1 80px;
+  text-align: right;
+}
+
+.item-number {
+  font-weight: bold;
+  flex: 0 0 200px;
+}
+
+.locn {
+  display: inline-block;
+  width: 36px;
+}
+
+.qty-required {
+  flex: 0 1 100px;
+  margin-left: auto;
+  text-align: right;
+}
+
+@media print {
+  .inner {
+    margin: 0;
+  }
+
+  h2, .buttons {
+    display: none;
+  }
+}

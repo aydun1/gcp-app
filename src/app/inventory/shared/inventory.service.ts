@@ -6,12 +6,12 @@ import { environment } from '../../../environments/environment';
 import { InTransitTransfer } from './inventory-transfer';
 import { SuggestedItem } from '../../pan-list/suggested-item';
 import { SharedService } from '../../shared.service';
+import { RequiredLine } from './required-line';
 
 @Injectable({
   providedIn: 'root'
 })
-export class InterstateTransfersService {
-
+export class InventoryService {
   public loading = new BehaviorSubject<boolean>(false);
 
   constructor(
@@ -21,6 +21,12 @@ export class InterstateTransfersService {
 
   getInterstateTransfers(from: string, to: string): Observable<SuggestedItem[]> {
     return this.http.get<{lines: SuggestedItem[]}>(`${environment.gpEndpoint}/itt?from=${from}&to=${to}`).pipe(
+      map(_ => _.lines)
+    );
+  }
+
+  getProductionRequired(): Observable<RequiredLine[]> {
+    return this.http.get<{lines: RequiredLine[]}>(`${environment.gpEndpoint}/inventory/required`).pipe(
       map(_ => _.lines)
     );
   }

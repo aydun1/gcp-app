@@ -1,0 +1,46 @@
+<div class="outer">
+  <div class="inner">
+    <h2>Production required</h2>
+    <gcp-letterhead class="print-heading">Suggested items</gcp-letterhead>
+    <div class="table">
+      <div class="head row mat-app-background">
+        <div class="item-number">Item</div>
+        <div class="locations">
+            <div class="location">
+              <div class="site-name">Location</div>
+              <div class="qty-min">Min</div>
+              <div class="qty-max">Max</div>
+              <div class="qty-onhand">On hand</div>
+              <div class="qty-alloc">Allocated</div>
+              <div class="qty-avail">Available</div>
+              <div class="qty-required">Required</div>
+            </div>
+        </div>
+        <div class="qty-required">Total Required</div>
+      </div>
+      @for (p of productionRequired | async | groupByItem; track p.itemNumber) {
+        <div class="row">
+          <div class="item-number">{{ p.itemNumber }}</div>
+            <div class="locations">
+              @for (s of p.sites; track s.LOCNCODE) {
+                <div class="location">
+                  <div class="site-name">{{ s.LOCNCODE }}</div>
+                  <div class="qty-min">{{ s.MIN | number }}</div>
+                  <div class="qty-max">{{ s.MAX | number }}</div>
+                  <div class="qty-onhand">{{ s.QTYONHND | number }}</div>
+                  <div class="qty-alloc">{{ s.QTYREMAI | number }}</div>
+                  <div class="qty-avail">{{ s.QTYAVAIL | number }}</div>
+                  <div class="qty-required">{{ s.QTYREQUIRED | number }}</div>
+                </div>
+                @if (!$last) {
+                  <mat-divider></mat-divider>
+                }
+              }
+            </div>
+          <div class="qty-required">{{ p.qtyRequired | number }}</div>
+        </div>
+        <mat-divider></mat-divider>
+      }
+    </div>
+  </div>
+</div>

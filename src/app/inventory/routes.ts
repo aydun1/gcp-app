@@ -1,10 +1,11 @@
 import { Route } from '@angular/router';
 
 import { InterstateTransferViewComponent } from './interstate-transfer-view/interstate-transfer-view.component';
-import { InterstateTransferSuggestedComponent } from './inventory-suggested/inventory-suggested.component';
+import { InventorySuggestedComponent } from './inventory-suggested/inventory-suggested.component';
 import { InventoryComponent } from './inventory.component';
 import { InterstateTransferNewComponent } from './inventory-transfer-new/interstate-transfer-new.component';
-import { InterstateTransfersActiveComponent } from './interstate-transfers-active/interstate-transfers-active.component';
+import { InventoryRequestedComponent } from './inventory-requested/inventory-requested.component';
+import { InventoryRequiredComponent } from './inventory-required/inventory-required.component';
 
 export default [
   {
@@ -14,7 +15,7 @@ export default [
   },
   {
     path: 'suggested',
-    component: InterstateTransferSuggestedComponent,
+    component: InventorySuggestedComponent,
     title: 'Suggested Items'
   },
   {
@@ -25,10 +26,15 @@ export default [
   {
     path: 'requested',
     title: 'Requested Items',
-    component: InterstateTransfersActiveComponent,
+    component: InventoryRequestedComponent,
     children: [{
       path: ':ittId',
       component: InterstateTransferViewComponent
     }]
+  },
+  {
+    path: 'required',
+    component: InventoryRequiredComponent,
+    title: 'Required'
   },
 ] satisfies Route[];

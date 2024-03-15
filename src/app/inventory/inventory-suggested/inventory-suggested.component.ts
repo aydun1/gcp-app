@@ -8,7 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { of } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
-import { InterstateTransfersService } from '../shared/inventory.service';
+import { InventoryService } from '../shared/inventory.service';
 import { SuggestedItem } from '../../pan-list/suggested-item';
 import { PanListComponent } from '../../pan-list/pan-list/pan-list.component';
 import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
@@ -21,7 +21,7 @@ import { LetterheadComponent } from '../../shared/letterhead/letterhead.componen
   standalone: true,
   imports: [ReactiveFormsModule, MatButtonModule, MatInputModule, MatSelectModule, PanListComponent, LetterheadComponent]
 })
-export class InterstateTransferSuggestedComponent implements OnInit {
+export class InventorySuggestedComponent implements OnInit {
   private _ownState!: string;
   private _states = this.shared.branches;
 
@@ -42,7 +42,7 @@ export class InterstateTransferSuggestedComponent implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar,
     private shared: SharedService,
-    private interstateTransfersService: InterstateTransfersService
+    private inventoryService: InventoryService
   ) { }
 
   ngOnInit(): void {
@@ -56,10 +56,10 @@ export class InterstateTransferSuggestedComponent implements OnInit {
     if (!this.activeLines || this.activeLines.length === 0 || !toState || !this.newTransferForm.valid) return;
     this.creating = true;
     const lines = this.activeLines.filter(_ => _.ToTransfer);
-    this.interstateTransfersService.createInTransitTransfer(fromState, toState, lines).then(_ => {
+    this.inventoryService.createInTransitTransfer(fromState, toState, lines).then(_ => {
       this.snackBar.open('Successfully created ITT.', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-primary']});
       this.router.navigate(['inventory/active', _.docId]);
-      this.interstateTransfersService.sendIttRequestEmail(fromState, toState, lines, _.docId, notes);
+      this.inventoryService.sendIttRequestEmail(fromState, toState, lines, _.docId, notes);
       this.creating = false;
     }).catch(err => {
       this.snackBar.open(err.error?.error?.message || 'Unknown error', '', {duration: 3000, panelClass: ['mat-toolbar', 'mat-warn']});
