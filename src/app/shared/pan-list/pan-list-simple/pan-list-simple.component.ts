@@ -11,7 +11,7 @@ import { BehaviorSubject, distinctUntilChanged, Observable, of, startWith, switc
 
 import { PanListService } from '../pan-list.service';
 import { RequestLine } from '../request-line';
-import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-row.component';
+import { LoadingRowComponent } from '../../loading/loading-row/loading-row.component';
 
 @Component({
   selector: 'gcp-pan-list-simple',

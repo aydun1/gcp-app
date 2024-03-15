@@ -9,8 +9,8 @@ import { of } from 'rxjs';
 
 import { SharedService } from '../../shared.service';
 import { InventoryService } from '../shared/inventory.service';
-import { SuggestedItem } from '../../pan-list/suggested-item';
-import { PanListComponent } from '../../pan-list/pan-list/pan-list.component';
+import { SuggestedItem } from '../../shared/pan-list/suggested-item';
+import { PanListComponent } from '../../shared/pan-list/pan-list/pan-list.component';
 import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
 
 @Component({

@@ -4,8 +4,8 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { SharedService } from '../../../shared.service';
-import { SuggestedItem } from '../../../pan-list/suggested-item';
+import { InventoryService } from '../inventory.service';
+import { SuggestedItem } from '../../../shared/pan-list/suggested-item';
 
 interface Data {
   branch: string;
@@ -28,15 +28,15 @@ export class TransactionHistoryDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<TransactionHistoryDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Data,
-    private sharedService: SharedService
+    private inventoryService: InventoryService
   ) { }
 
   ngOnInit(): void {
     this.item = {...this.data.item};
-    this.previousOrders = this.sharedService.getTransactions(this.data.branch, this.data.itemNmbr);
-    this.sharedService.getStock(this.data.itemNmbr);
-    this.averages = this.sharedService.getHistory(this.data.itemNmbr);
-    this.sharedService.getStock(this.data.itemNmbr).then(_ => {
+    this.previousOrders = this.inventoryService.getTransactions(this.data.branch, this.data.itemNmbr);
+    this.inventoryService.getStock(this.data.itemNmbr);
+    this.averages = this.inventoryService.getHistory(this.data.itemNmbr);
+    this.inventoryService.getStock(this.data.itemNmbr).then(_ => {
       if (
         this.item.OnHandVIC !== _.OnHandVIC ||
         this.item.OnHandNSW !== _.OnHandNSW ||

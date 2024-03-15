@@ -14,7 +14,7 @@ import { catchError, Observable, tap, throwError } from 'rxjs';
 import { NavigationService } from '../../navigation.service';
 import { LoadingScheduleService } from '../shared/loading-schedule.service';
 import { LoadingSchedule } from '../shared/loading-schedule';
-import { PanListSimpleComponent } from '../../pan-list/pan-list-simple/pan-list-simple.component';
+import { PanListSimpleComponent } from '../../shared/pan-list/pan-list-simple/pan-list-simple.component';
 import { DocsComponent } from '../../shared/docs/docs.component';
 import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
 import { LoadingPageComponent } from '../../shared/loading/loading-page/loading-page.component';

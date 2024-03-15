@@ -4,7 +4,7 @@
     <gcp-letterhead class="print-heading">Suggested items</gcp-letterhead>
     <div class="table">
       <div class="head row mat-app-background">
-        <div class="item-number">Item</div>
+        <div class="item">Item</div>
         <div class="locations">
             <div class="location">
               <div class="site-name">Location</div>
@@ -20,7 +20,10 @@
       </div>
       @for (p of productionRequired | async | groupByItem; track p.itemNumber) {
         <div class="row">
-          <div class="item-number">{{ p.itemNumber }}</div>
+          <div class="item">
+            <div class="item-number">{{ p.itemNumber }}</div>
+            <div class="item-desc">{{ p.description }}</div>
+          </div>
             <div class="locations">
               @for (s of p.sites; track s.LOCNCODE) {
                 <div class="location">

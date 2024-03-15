@@ -4,6 +4,7 @@ import { RequiredLine } from '../../inventory/shared/required-line';
 
 interface groupedItem {
   itemNumber: string;
+  description: string;
   qtyOnHand: number;
   qtyRemaining: number;
   qtyAvailable: number;
@@ -29,11 +30,12 @@ export class GroupByItemPipe implements PipeTransform {
 
     const drops = Object.keys(groupedCollection).map(key => {
       const sites = groupedCollection[key] as RequiredLine[];
+      const description = sites[0].ITEMDESC;
       const qtyAvailable = sites.reduce((a, b) => a + b.QTYAVAIL, 0);
       const qtyOnHand = sites.reduce((a, b) => a + b.QTYONHND, 0);
       const qtyRemaining = sites.reduce((a, b) => a + b.QTYREMAI, 0);
       const qtyRequired = sites.reduce((a, b) => a + b.QTYREQUIRED, 0);
-      return {itemNumber: key, qtyOnHand, qtyRemaining, qtyAvailable, qtyRequired, sites};
+      return {itemNumber: key, description, qtyOnHand, qtyRemaining, qtyAvailable, qtyRequired, sites};
     });
     return drops;
   }

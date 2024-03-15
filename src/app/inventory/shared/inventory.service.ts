@@ -4,7 +4,7 @@ import { BehaviorSubject, map, Observable, lastValueFrom } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { InTransitTransfer } from './inventory-transfer';
-import { SuggestedItem } from '../../pan-list/suggested-item';
+import { SuggestedItem } from '../../shared/pan-list/suggested-item';
 import { SharedService } from '../../shared.service';
 import { RequiredLine } from './required-line';
 
@@ -84,5 +84,24 @@ export class InventoryService {
     const cc = this.shared.panMap.get(toState || '') || [];
     console.log(body);
     if (environment.production) this.shared.sendMail(to, subject, body, 'HTML', cc);
+  }
+
+  getHistory(itemNmbr: string | undefined): Promise<unknown[]> {
+    const request = this.http.get<{history: unknown[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/history`).pipe(
+      map(_ => _.history)
+    );
+    return lastValueFrom(request);
+  }
+
+  getStock(itemNmbr: string | undefined): Promise<SuggestedItem> {
+    const request = this.http.get<SuggestedItem>(`${environment.gpEndpoint}/inventory/${itemNmbr}/stock`);
+    return lastValueFrom(request);
+  }
+
+  getTransactions(branch: string | null, itemNmbr: string | undefined): Promise<unknown[]> {
+    const request = this.http.get<{invoices: unknown[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/current?branch=${branch}`).pipe(
+      map(_ => _.invoices)
+    );
+    return lastValueFrom(request);
   }
 }

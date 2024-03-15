@@ -56,9 +56,21 @@
   text-align: right;
 }
 
+.item {
+  flex: 0 0 250px;
+  margin-right: 8px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .item-number {
   font-weight: bold;
-  flex: 0 0 200px;
+}
+
+.item-desc {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .locn {

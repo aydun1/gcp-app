@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, catchError, combineLatest, firstValueFrom, forkJoin, lastValueFrom, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 import { RequestLine } from './request-line';
 import { SuggestedItem } from './suggested-item';
 

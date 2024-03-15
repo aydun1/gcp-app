@@ -6,7 +6,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { NavigationService } from '../../navigation.service';
 import { LoadingScheduleService } from '../shared/loading-schedule.service';
-import { PanListComponent } from '../../pan-list/pan-list/pan-list.component';
+import { PanListComponent } from '../../shared/pan-list/pan-list/pan-list.component';
 
 @Component({
   selector: 'gcp-loading-schedule-pan',

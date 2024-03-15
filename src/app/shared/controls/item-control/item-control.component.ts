@@ -9,8 +9,8 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject, switchMap, tap } from 'rxjs';
 
-import { PanListService } from '../../../pan-list/pan-list.service';
-import { SuggestedItem } from '../../../pan-list/suggested-item';
+import { PanListService } from '../../pan-list/pan-list.service';
+import { SuggestedItem } from '../../pan-list/suggested-item';
 
 @Component({
     selector: 'gcp-item-control',

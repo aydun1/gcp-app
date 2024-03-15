@@ -11,15 +11,15 @@ import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/sl
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { BehaviorSubject, catchError, debounceTime, distinctUntilChanged, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
 
-import { TransactionHistoryDialogComponent } from '../../inventory/shared/transaction-history-dialog/transaction-history-dialog.component';
-import { NavigationService } from '../../navigation.service';
-import { SharedService } from '../../shared.service';
+import { TransactionHistoryDialogComponent } from '../../../inventory/shared/transaction-history-dialog/transaction-history-dialog.component';
+import { NavigationService } from '../../../navigation.service';
+import { SharedService } from '../../../shared.service';
 import { PanListService } from '../pan-list.service';
 import { RequestLine } from '../request-line';
 import { SuggestedItem } from '../suggested-item';
-import { LoadingRowComponent } from '../../shared/loading/loading-row/loading-row.component';
-import { ItemControlComponent } from '../../shared/controls/item-control/item-control.component';
-import { SumPipe } from '../../shared/pipes/sum.pipe';
+import { LoadingRowComponent } from '../../loading/loading-row/loading-row.component';
+import { ItemControlComponent } from '../../controls/item-control/item-control.component';
+import { SumPipe } from '../../pipes/sum.pipe';
 
 interface TransferForm {
   lines: FormArray<FormGroup<LineForm>>;

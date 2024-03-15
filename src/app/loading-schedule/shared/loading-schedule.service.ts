@@ -7,7 +7,7 @@ import { SharedService } from '../../shared.service';
 import { environment } from '../../../environments/environment';
 import { LoadingSchedule } from './loading-schedule';
 import { TransportCompany } from './transport-company';
-import { PanListService } from '../../pan-list/pan-list.service';
+import { PanListService } from '../../shared/pan-list/pan-list.service';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +30,6 @@ export class LoadingScheduleService {
     private http: HttpClient,
     private shared: SharedService,
     private panListService: PanListService
-
   ) { }
 
   private htmlEncode(text: string | null): string {

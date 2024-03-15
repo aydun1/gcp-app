@@ -8,7 +8,6 @@ import { BehaviorSubject, lastValueFrom, map, Observable, of, switchMap, tap } f
 import { environment } from '../environments/environment';
 import { Address } from './customers/shared/address';
 import { Order } from './runs/shared/order';
-import { SuggestedItem } from './pan-list/suggested-item';
 
 interface userAddress {
   state: string;
@@ -156,24 +155,6 @@ export class SharedService {
     this.titleService.setTitle(title);
   }
 
-  getHistory(itemNmbr: string | undefined): Promise<unknown[]> {
-    const request = this.http.get<{history: unknown[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/history`).pipe(
-      map(_ => _.history)
-    );
-    return lastValueFrom(request);
-  }
-
-  getTransactions(branch: string | null, itemNmbr: string | undefined): Promise<unknown[]> {
-    const request = this.http.get<{invoices: unknown[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/current?branch=${branch}`).pipe(
-      map(_ => _.invoices)
-    );
-    return lastValueFrom(request);
-  }
-
-  getStock(itemNmbr: string | undefined): Promise<SuggestedItem> {
-    const request = this.http.get<SuggestedItem>(`${environment.gpEndpoint}/inventory/${itemNmbr}/stock`);
-    return lastValueFrom(request);
-  }
 
   sendMail(to: Array<string>, subject: string, body: string, contentType: 'Text' | 'HTML', cc: Array<string> = []): Promise<null> {
     const url = `${environment.endpoint}/me/sendMail`;
