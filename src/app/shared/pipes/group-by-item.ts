@@ -3,7 +3,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { RequiredLine } from '../../inventory/shared/required-line';
 
 interface groupedItem {
-  itemNumber: string;
+  itemNmbr: string;
   description: string;
   qtyOnHand: number;
   qtyRemaining: number;
@@ -35,7 +35,7 @@ export class GroupByItemPipe implements PipeTransform {
       const qtyOnHand = sites.reduce((a, b) => a + b.QTYONHND, 0);
       const qtyRemaining = sites.reduce((a, b) => a + b.QTYREMAI, 0);
       const qtyRequired = sites.reduce((a, b) => a + b.QTYREQUIRED, 0);
-      return {itemNumber: key, description, qtyOnHand, qtyRemaining, qtyAvailable, qtyRequired, sites};
+      return {itemNmbr: key, description, qtyOnHand, qtyRemaining, qtyAvailable, qtyRequired, sites};
     });
     return drops;
   }

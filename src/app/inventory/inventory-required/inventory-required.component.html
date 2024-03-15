@@ -18,16 +18,16 @@
         </div>
         <div class="qty-required">Total Required</div>
       </div>
-      @for (p of productionRequired | async | groupByItem; track p.itemNumber) {
+      @for (p of productionRequired | async | groupByItem; track p.itemNmbr) {
         <div class="row">
           <div class="item">
-            <div class="item-number">{{ p.itemNumber }}</div>
-            <div class="item-desc">{{ p.description }}</div>
+            <div class="item-number" (click)="openDialog(p)">{{ p.itemNmbr }}</div>
+            <div class="item-desc" [title]="p.description">{{ p.description }}</div>
           </div>
             <div class="locations">
               @for (s of p.sites; track s.LOCNCODE) {
                 <div class="location">
-                  <div class="site-name">{{ s.LOCNCODE }}</div>
+                  <div class="site-name" (click)="openDialog(s)">{{ s.LOCNCODE }}</div>
                   <div class="qty-min">{{ s.MIN | number }}</div>
                   <div class="qty-max">{{ s.MAX | number }}</div>
                   <div class="qty-onhand">{{ s.QTYONHND | number }}</div>
@@ -47,3 +47,8 @@
     </div>
   </div>
 </div>
+@if (loading) {
+  <div>
+    <mat-spinner diameter="48" class="spinner"></mat-spinner>
+  </div>
+}

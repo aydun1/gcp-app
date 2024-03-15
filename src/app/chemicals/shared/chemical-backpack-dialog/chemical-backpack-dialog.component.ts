@@ -29,7 +29,7 @@ export class ChemicalBackpackDialogComponent implements OnInit {
   public loading = true;
   public searchControl = new FormControl('');
 
-  constructor (
+  constructor(
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<ChemicalBackpackDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {chemical: Chemical},

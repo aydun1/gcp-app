@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, lastValueFrom } from 'rxjs';
+import { BehaviorSubject, map, Observable, lastValueFrom, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { InTransitTransfer } from './inventory-transfer';
@@ -100,7 +100,8 @@ export class InventoryService {
 
   getTransactions(branch: string | null, itemNmbr: string | undefined): Promise<unknown[]> {
     const request = this.http.get<{invoices: unknown[]}>(`${environment.gpEndpoint}/inventory/${itemNmbr}/current?branch=${branch}`).pipe(
-      map(_ => _.invoices)
+      map(_ => _.invoices),
+      tap(_ => console.log(_))
     );
     return lastValueFrom(request);
   }

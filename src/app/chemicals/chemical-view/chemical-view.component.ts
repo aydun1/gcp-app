@@ -32,7 +32,7 @@ export class ChemicalViewComponent implements OnInit {
   public refresh = new BehaviorSubject<boolean>(true);
   public definitions = this.chemicalService.defs;
 
-  constructor (
+  constructor(
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private sharedService: SharedService,

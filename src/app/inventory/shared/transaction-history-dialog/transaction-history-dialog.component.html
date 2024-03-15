@@ -47,20 +47,21 @@
       <div class="cell-hea cell-bottom">...</div>
     }
   </div>
-
-  <h3> {{data.branch}} limits</h3>
-  <div class="limits">
-    <div class="limit">
-      <div>Minimum: {{ data.item.MinOrderQty | number }}</div>
-      <div>Maximum: {{ data.item.MaxOrderQty | number }}</div>
+  @if (data.branch) {
+    <h3> {{data.branch }} limits</h3>
+    <div class="limits">
+      <div class="limit">
+        <div>Minimum: {{ data.item.MinOrderQty || 0 | number }}</div>
+        <div>Maximum: {{ data.item.MaxOrderQty || 0 | number }}</div>
+      </div>
+      <div class="limit">
+        <div>Order point qty: {{ data.item.OrderPointQty || 0 | number }}</div>
+        <div>Order up to lvl: {{ data.item.OrderUpToLvl || 0 | number }}</div>
+      </div>
     </div>
-    <div class="limit">
-      <div>Order point qty: {{ data.item.OrderPointQty | number }}</div>
-      <div>Order up to lvl: {{ data.item.OrderUpToLvl | number }}</div>
-    </div>
-  </div>
+  }
 
-  <h3>{{data.branch}} allocations</h3>
+  <h3>{{data.branch || 'National'}} allocations</h3>
   <div class="header row">
     <div class="date">Doc date</div>
     <div class="date">Req ship date</div>

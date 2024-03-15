@@ -40,7 +40,7 @@ export class ChemicalOthersDialogComponent implements OnInit {
   public quantity!: number;
   public updater = new Subject<boolean>();
 
-  constructor (
+  constructor(
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: {ownBranch: string},
     private chemicalService: ChemicalService
