@@ -70,23 +70,12 @@
   padding: 0 10px;
 }
 
-.MAIN > .cell-vic {
-  background-color: #9595953b;
-}
-
-.QLD > .cell-qld {
-  background-color: #9595953b;
-}
-
-.NSW > .cell-nsw {
-  background-color: #9595953b;
-}
-
-.SA > .cell-sa {
-  background-color: #9595953b;
-}
-
-.WA > .cell-wa {
+.MAIN > .cell-vic,
+.QLD > .cell-qld,
+.NSW > .cell-nsw,
+.SA > .cell-sa,
+.WA > .cell-wa,
+.HEA > .cell-hea {
   background-color: #9595953b;
 }
 

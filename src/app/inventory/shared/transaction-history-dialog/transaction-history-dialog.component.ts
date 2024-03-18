@@ -50,33 +50,12 @@ export class TransactionHistoryDialogComponent implements OnInit {
     this.inventoryService.getStock(this.data.itemNmbr).then(_ => {
       if (
         this.data.warn !== false && (
-          this.item.OnHandVIC !== _.OnHandVIC ||
-          this.item.OnHandNSW !== _.OnHandNSW ||
-          this.item.OnHandQLD !== _.OnHandQLD ||
-          this.item.OnHandSA !== _.OnHandSA ||
-          this.item.OnHandWA !== _.OnHandWA ||
-          this.item.OnHandHEA !== _.OnHandHEA ||
-          this.item.AllocVIC !== _.AllocVIC ||
-          this.item.AllocNSW !== _.AllocNSW ||
-          this.item.AllocQLD !== _.AllocQLD ||
-          this.item.AllocSA !== _.AllocSA ||
-          this.item.AllocWA !== _.AllocWA ||
-          this.item.AllocHEA !== _.AllocHEA
+          this.sites.map(s => this.item[s.onHand] !== _[s.onHand]).some(v => v === true) ||
+          this.sites.map(s => this.item[s.alloc] !== _[s.alloc]).some(v => v === true)
         )
       ) this.stockChanged = true;
-
-      this.item['OnHandVIC'] = _.OnHandVIC;
-      this.item['OnHandNSW'] = _.OnHandNSW;
-      this.item['OnHandQLD'] = _.OnHandQLD;
-      this.item['OnHandSA'] = _.OnHandSA;
-      this.item['OnHandWA'] = _.OnHandWA;
-      this.item['OnHandHEA'] = _.OnHandHEA;
-      this.item['AllocVIC'] = _.AllocVIC;
-      this.item['AllocNSW'] = _.AllocNSW;
-      this.item['AllocQLD'] = _.AllocQLD;
-      this.item['AllocSA'] = _.AllocSA;
-      this.item['AllocWA'] = _.AllocWA;
-      this.item['AllocHEA'] = _.AllocHEA;
+      this.sites.forEach(s => this.item[s.onHand] = _[s.onHand]);
+      this.sites.forEach(s => this.item[s.alloc] = _[s.alloc]);
     });
   }
 

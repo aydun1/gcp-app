@@ -39,7 +39,7 @@
 }
 
 .site-name {
-  flex: 0 1 54px;
+  flex: 0 1 90px;
 }
 
 .qty-min, .qty-max, .qty-onhand, .qty-avail, .qty-alloc, .qty-required {
