@@ -49,7 +49,7 @@ export class TransactionHistoryDialogComponent implements OnInit {
     this.averages = this.inventoryService.getHistory(this.data.itemNmbr);
     this.inventoryService.getStock(this.data.itemNmbr).then(_ => {
       if (
-        this.data.warn !== false && (
+        this.data.warn && (
           this.sites.map(s => this.item[s.onHand] !== _[s.onHand]).some(v => v === true) ||
           this.sites.map(s => this.item[s.alloc] !== _[s.alloc]).some(v => v === true)
         )

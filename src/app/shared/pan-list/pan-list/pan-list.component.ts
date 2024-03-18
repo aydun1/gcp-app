@@ -356,7 +356,7 @@ export class PanListComponent implements OnInit {
     this.dialog.open(TransactionHistoryDialogComponent, {
       autoFocus: false,
       width: '800px',
-      data: {itemNmbr: item.ItemNmbr, branch: this.branchFilter.value, item: item}
+      data: {itemNmbr: item.ItemNmbr, branch: this.branchFilter.value, item: item, warn: true}
     });
   }
 
