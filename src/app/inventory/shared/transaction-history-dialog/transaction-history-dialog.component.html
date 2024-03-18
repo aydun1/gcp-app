@@ -8,47 +8,32 @@
     <p class="stock-changed">Stock for this item has been updated since you loaded the page.<br>
       The latest values are below.<br>Refresh the page to see the lastest values on the list.</p>
   }
-  <div class="availability-grid {{ data.branch }}">
+  <div class="availability-grid {{ branch }}">
     <div></div>
-    <div class="grid-heading cell-top cell-vic">MAIN</div>
-    <div class="grid-heading cell-top cell-nsw">NSW</div>
-    <div class="grid-heading cell-top cell-qld">QLD</div>
-    <div class="grid-heading cell-top cell-sa">SA</div>
-    <div class="grid-heading cell-top cell-wa">WA</div>
-    <div class="grid-heading cell-top cell-hea">HEA</div>
+    @for (site of sites; track site.id) {
+      <div class="grid-heading cell-top {{ site.class }} link" (click)="getPreviousOrders(site.id)">{{ site.id }}</div>
+    }
     <div class="grid-heading">On hand</div>
-    <div class="cell-vic">{{ item.OnHandVIC || 0 | number }}</div>
-    <div class="cell-nsw">{{ item.OnHandNSW || 0 | number }}</div>
-    <div class="cell-qld">{{ item.OnHandQLD || 0 | number }}</div>
-    <div class="cell-sa">{{ item.OnHandSA || 0 | number }}</div>
-    <div class="cell-wa">{{ item.OnHandWA || 0 | number }}</div>
-    <div class="cell-hea">{{ item.OnHandHEA || 0 | number }}</div>
+    @for (site of sites; track site.id) {
+      <div class="{{ site.class }}">{{ item[site.onHand] || 0 | number }}</div>
+    }
     <div class="grid-heading">Allocated</div>
-    <div class="cell-vic">{{ item.AllocVIC || 0 | number }}</div>
-    <div class="cell-nsw">{{ item.AllocNSW || 0 | number }}</div>
-    <div class="cell-qld">{{ item.AllocQLD || 0 | number }}</div>
-    <div class="cell-sa">{{ item.AllocSA || 0 | number }}</div>
-    <div class="cell-wa">{{ item.AllocWA || 0 | number }}</div>
-    <div class="cell-hea">{{ item.AllocHEA || 0 | number }}</div>
+    @for (site of sites; track site.id) {
+      <div class="{{ site.class }}">{{ item[site.alloc] || 0 | number }}</div>
+    }
     <div class="grid-heading">Sold per month</div>
     @if (averages | async; as a) {
-      <div class="cell-vic cell-bottom">{{ a.MAIN || 0 | number: '1.0-0' }}</div>
-      <div class="cell-nsw cell-bottom">{{ a.NSW || 0 | number: '1.0-0' }}</div>
-      <div class="cell-qld cell-bottom">{{ a.QLD || 0 | number: '1.0-0' }}</div>
-      <div class="cell-sa cell-bottom">{{ a.SA || 0 | number: '1.0-0' }}</div>
-      <div class="cell-wa cell-bottom">{{ a.WA || 0 | number: '1.0-0' }}</div>
-      <div class="cell-hea cell-bottom">{{ a.HEA || 0 | number: '1.0-0'}}</div>
+      @for (site of sites; track site.id) {
+        <div class="{{ site.class }} cell-bottom">{{ a[site.id] || 0 | number: '1.0-0' }}</div>
+      }
     } @else {
-      <div class="cell-vic cell-bottom">...</div>
-      <div class="cell-nsw cell-bottom">...</div>
-      <div class="cell-qld cell-bottom">...</div>
-      <div class="cell-sa cell-bottom">...</div>
-      <div class="cell-wa cell-bottom">...</div>
-      <div class="cell-hea cell-bottom">...</div>
+      @for (site of sites; track site.id) {
+        <div class="{{ site.class }} cell-bottom">...</div>
+      }
     }
   </div>
-  @if (data.branch) {
-    <h3> {{data.branch }} limits</h3>
+  @if (branch && this.data.warn) {
+    <h3> {{ branch }} limits</h3>
     <div class="limits">
       <div class="limit">
         <div>Minimum: {{ data.item.MinOrderQty || 0 | number }}</div>
@@ -61,7 +46,7 @@
     </div>
   }
 
-  <h3>{{data.branch || 'National'}} allocations</h3>
+  <h3>{{ branch || 'National'}} allocations</h3>
   <div class="header row">
     <div class="date">Doc date</div>
     <div class="date">Req ship date</div>

@@ -3,6 +3,14 @@
   max-width: 1024px;
 }
 
+.doc-header > h2 {
+  margin-left: 10px;
+}
+
+.link {
+  cursor: pointer;
+}
+
 .spinner {
   margin: 0 auto;
 }
@@ -68,11 +76,7 @@
 }
 
 @media print {
-  .inner {
-    margin: 0;
-  }
-
-  h2, .buttons {
+  .doc-header {
     display: none;
   }
 }

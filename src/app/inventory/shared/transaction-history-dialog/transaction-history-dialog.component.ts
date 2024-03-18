@@ -26,6 +26,16 @@ export class TransactionHistoryDialogComponent implements OnInit {
   public averages!: Promise<any>;
   public item: SuggestedItem = {} as SuggestedItem;
   public stockChanged!: boolean;
+  public branch!: string;
+  public sites = [
+    {id: 'MAIN', class: 'cell-vic', onHand: 'OnHandVIC', alloc: 'AllocVIC'},
+    {id: 'NSW', class: 'cell-nsw', onHand: 'OnHandNSW', alloc: 'AllocNSW'},
+    {id: 'QLD', class: 'cell-qld', onHand: 'OnHandQLD', alloc: 'AllocQLD'},
+    {id: 'SA', class: 'cell-sa', onHand: 'OnHandSA', alloc: 'AllocSA'},
+    {id: 'WA', class: 'cell-wa', onHand: 'OnHandWA', alloc: 'AllocWA'},
+    {id: 'HEA', class: 'cell-hea', onHand: 'OnHandHEA', alloc: 'AllocHEA'}
+  ];
+
   constructor(
     public dialogRef: MatDialogRef<TransactionHistoryDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Data,
@@ -34,7 +44,7 @@ export class TransactionHistoryDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.item = {...this.data.item};
-    this.previousOrders = this.inventoryService.getTransactions(this.data.branch, this.data.itemNmbr);
+    this.getPreviousOrders(this.data.branch);
     this.inventoryService.getStock(this.data.itemNmbr);
     this.averages = this.inventoryService.getHistory(this.data.itemNmbr);
     this.inventoryService.getStock(this.data.itemNmbr).then(_ => {
@@ -68,5 +78,11 @@ export class TransactionHistoryDialogComponent implements OnInit {
       this.item['AllocWA'] = _.AllocWA;
       this.item['AllocHEA'] = _.AllocHEA;
     });
+  }
+
+  getPreviousOrders(branch: string) {
+    console.log(this.branch)
+    this.branch = this.branch && this.branch === branch ? '' : branch;
+    this.previousOrders = this.inventoryService.getTransactions(this.branch, this.data.itemNmbr);
   }
 }

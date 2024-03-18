@@ -1,7 +1,24 @@
 <div class="outer">
-  <div class="inner">
+  <div class="doc-header">
     <h2>Production required</h2>
-    <gcp-letterhead class="print-heading">Suggested items</gcp-letterhead>
+    <div class="options inner">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="name-filter">
+        <mat-label>Search</mat-label>
+        <input matInput [formControl]="textFilter" type="text" autocomplete="off" placeholder="Type to search...">
+        @if (!textFilter.value) {
+          <button matSuffix mat-icon-button type="button" disabled>
+            <mat-icon>search</mat-icon>
+          </button>
+        } @else {
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="clearTextFilter()" type="button">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="inner">
+    <gcp-letterhead class="print-heading">Production required</gcp-letterhead>
     <div class="table">
       <div class="head row mat-app-background">
         <div class="item">Item</div>
@@ -21,13 +38,13 @@
       @for (p of productionRequired | async | groupByItem; track p.itemNmbr) {
         <div class="row">
           <div class="item">
-            <div class="item-number" (click)="openDialog(p)">{{ p.itemNmbr }}</div>
+            <div class="item-number link" (click)="openDialog(p)">{{ p.itemNmbr }}</div>
             <div class="item-desc" [title]="p.description">{{ p.description }}</div>
           </div>
             <div class="locations">
               @for (s of p.sites; track s.LOCNCODE) {
                 <div class="location">
-                  <div class="site-name" (click)="openDialog(s)">{{ s.LOCNCODE }}</div>
+                  <div class="site-name link" (click)="openDialog(s)">{{ s.LOCNCODE }}</div>
                   <div class="qty-min">{{ s.MIN | number }}</div>
                   <div class="qty-max">{{ s.MAX | number }}</div>
                   <div class="qty-onhand">{{ s.QTYONHND | number }}</div>
