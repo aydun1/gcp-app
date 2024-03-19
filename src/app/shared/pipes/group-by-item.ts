@@ -28,7 +28,7 @@ export class GroupByItemPipe implements PipeTransform {
       return previous;
     }, {});
 
-    const drops = Object.keys(groupedCollection).map(key => {
+    const drops = Object.keys(groupedCollection).sort().map(key => {
       const sites = groupedCollection[key] as RequiredLine[];
       const description = sites[0].ITEMDESC;
       const qtyAvailable = sites.reduce((a, b) => a + b.QTYAVAIL, 0);
