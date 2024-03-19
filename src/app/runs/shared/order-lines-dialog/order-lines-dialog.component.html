@@ -27,10 +27,22 @@
           <div class="item-number">{{ l.itemNmbr }}</div>
           <div class="item-desc">{{ l.itemDesc }}</div>
           <div class="quantity">
-            <span class="mobile-show">Quantity: </span>{{ l.qtyPrInv | number }}
-            @if (l.qtyToInv) {
-              <span>({{ l.qtyToInv | number }} uninvoiced)</span>
-            }
+            <span class="mobile-show">Quantity: </span>
+            <div>
+              @if (l.qtyToInv === 0 || l.packQty > 0) {
+                <div class="main-qty">
+                  {{l.packQty | number }} <strong class="uom">{{ l.uom }}</strong>
+                </div>
+                @if (l.packQty !== l.qtyPrInv) {
+                  <div class="eaches">
+                    {{ l.qtyPrInv | number }} Each
+                  </div>
+                }
+              }
+              @if (l.qtyToInv) {
+                <span>({{ l.qtyToInv | number }} uninvoiced)</span>
+              }
+            </div>
           </div>
         </div>
         @if (!$last) {

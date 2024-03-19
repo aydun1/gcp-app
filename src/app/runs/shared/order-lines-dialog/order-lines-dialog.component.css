@@ -46,6 +46,22 @@
 .quantity {
   flex: 0 0 60px;
   text-align: right;
+  white-space: nowrap;
+}
+
+.main-qty {
+  font-size: 20px;
+}
+
+.uom {
+  font-size: 12px;
+  text-align: left;
+  display: inline-block;
+}
+
+.eaches {
+  font-size: 10px;
+  line-height: 10px;
 }
 
 .section-divider {
@@ -105,5 +121,11 @@
 
   .mobile-show {
     display: initial;
+  }
+
+  .quantity {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
   }
 }
