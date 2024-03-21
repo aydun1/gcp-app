@@ -73,8 +73,6 @@ export class PalletsService {
 
     const parsed = filterKeys.map(key => {
       switch (key) {
-        case 'to':
-          return `fields/To eq '${filters['to']}'`;
         case 'status':
           if (filters['status'] === 'Pending') return `(fields/Status eq 'Pending' or fields/Status eq 'Edited')`
           return `fields/Status eq '${filters['status']}'`;
@@ -92,6 +90,7 @@ export class PalletsService {
     }
 
     if (filterKeys.includes('from')) parsed.push(`fields/From eq '${filters['from']}'`);
+    if (filterKeys.includes('to')) parsed.push(`fields/To eq '${filters['to']}'`);
     if (filterKeys.includes('branch')) parsed.unshift(`fields/Branch eq '${filters['branch']}'`);
     if (!filterKeys.includes('status')) parsed.push(`fields/Status ne 'Cancelled'`);
     if (limit) {
