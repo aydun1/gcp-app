@@ -35,6 +35,6 @@ export default [
   {
     path: 'required',
     component: InventoryRequiredComponent,
-    title: 'Required'
+    title: 'Production Required'
   },
 ] satisfies Route[];
