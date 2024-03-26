@@ -7,4 +7,6 @@ export interface Line {
   quantity: number;
   qtyToInv: number;
   qtyPrInv: number;
+  packQty: number;
+  uom: string;
 }
