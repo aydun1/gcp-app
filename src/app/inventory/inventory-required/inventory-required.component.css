@@ -1,10 +1,29 @@
+.parent {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
 .outer {
   margin: 0 auto;
   max-width: 1024px;
 }
 
-.doc-header > h2 {
-  margin-left: 10px;
+.table-inner {
+  margin: 0 10px;
+}
+
+h2 {
+  margin: 10px 0;
+}
+
+.scroller {
+  flex: 1;
+  overflow-y: scroll;
+}
+
+.doc-header {
+  width: 100%;
 }
 
 .link {
@@ -21,8 +40,15 @@
   top: 0;
 }
 
+.head-in {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
 .row {
   align-items: center;
+  break-inside: avoid;
   display: flex;
   min-height: 50px;
 }
@@ -69,14 +95,22 @@
   width: 36px;
 }
 
-.qty-required {
+.total-required {
   flex: 0 1 100px;
   margin-left: auto;
   text-align: right;
 }
 
 @media print {
+  .parent {
+    display: block;
+  }
+
   .doc-header {
     display: none;
+  }
+
+  .scroller {
+    overflow-y: auto;
   }
 }

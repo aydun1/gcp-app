@@ -1,71 +1,75 @@
-<div class="outer">
-  <div class="doc-header">
-    <h2>Production required</h2>
-    <div class="options inner">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="name-filter">
-        <mat-label>Search</mat-label>
-        <input matInput [formControl]="textFilter" type="text" autocomplete="off" placeholder="Type to search...">
-        @if (!textFilter.value) {
-          <button matSuffix mat-icon-button type="button" disabled>
-            <mat-icon>search</mat-icon>
-          </button>
-        } @else {
-          <button matSuffix mat-icon-button aria-label="Clear" (click)="clearTextFilter()" type="button">
-            <mat-icon>close</mat-icon>
-          </button>
-        }
-      </mat-form-field>
+<div class="parent">
+  <gcp-letterhead class="print-heading">Production required</gcp-letterhead>
+  <div class="doc-header outer">
+    <div class="inner head-in">
+      <h2>Production required</h2>
+      <div class="options">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="name-filter">
+          <mat-label>Search</mat-label>
+          <input matInput [formControl]="textFilter" type="text" autocomplete="off" placeholder="Type to search...">
+          @if (!textFilter.value) {
+            <button matSuffix mat-icon-button type="button" disabled>
+              <mat-icon>search</mat-icon>
+            </button>
+          } @else {
+            <button matSuffix mat-icon-button aria-label="Clear" (click)="clearTextFilter()" type="button">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+      </div>
     </div>
   </div>
-  <div class="inner">
-    <gcp-letterhead class="print-heading">Production required</gcp-letterhead>
-    <div class="table">
-      <div class="head row mat-app-background">
-        <div class="item">Item</div>
-        <div class="locations">
-            <div class="location">
-              <div class="site-name">Location</div>
-              <div class="qty-min">Min</div>
-              <div class="qty-max">Max</div>
-              <div class="qty-onhand">On hand</div>
-              <div class="qty-alloc">Allocated</div>
-              <div class="qty-avail">Available</div>
-              <div class="qty-required">Required</div>
-            </div>
-        </div>
-        <div class="qty-required">Total Required</div>
-      </div>
-      @for (p of productionRequired | async | groupByItem; track p.itemNmbr) {
-        <div class="row">
-          <div class="item">
-            <div class="item-number link" (click)="openDialog(p)">{{ p.itemNmbr }}</div>
-            <div class="item-desc" [title]="p.description">{{ p.description }}</div>
+  <div class="scroller">
+    <div class="outer">
+      <div class="table-inner">
+        <div class="head row mat-app-background">
+          <div class="item">Item</div>
+          <div class="locations">
+              <div class="location">
+                <div class="site-name">Location</div>
+                <div class="qty-min">Min</div>
+                <div class="qty-max">Max</div>
+                <div class="qty-onhand">On hand</div>
+                <div class="qty-alloc">Allocated</div>
+                <div class="qty-avail">Available</div>
+                <div class="qty-required">Required</div>
+              </div>
           </div>
-            <div class="locations">
-              @for (s of p.sites; track s.LOCNCODE) {
-                <div class="location">
-                  <div class="site-name link" (click)="openDialog(s)">{{ s.LOCNCODE }}</div>
-                  <div class="qty-min">{{ s.MIN | number }}</div>
-                  <div class="qty-max">{{ s.MAX | number }}</div>
-                  <div class="qty-onhand">{{ s.QTYONHND | number }}</div>
-                  <div class="qty-alloc">{{ s.QTYREMAI | number }}</div>
-                  <div class="qty-avail">{{ s.QTYAVAIL | number }}</div>
-                  <div class="qty-required">{{ s.QTYREQUIRED | number }}</div>
-                </div>
-                @if (!$last) {
-                  <mat-divider></mat-divider>
-                }
-              }
-            </div>
-          <div class="qty-required">{{ p.qtyRequired | number }}</div>
+          <div class="total-required">Total Required</div>
         </div>
-        <mat-divider></mat-divider>
+        @for (p of productionRequired | async | groupByItem; track p.itemNmbr) {
+          <div class="row">
+            <div class="item">
+              <div class="item-number link" (click)="openDialog(p)">{{ p.itemNmbr }}</div>
+              <div class="item-desc" [title]="p.description">{{ p.description }}</div>
+            </div>
+              <div class="locations">
+                @for (s of p.sites; track s.LOCNCODE) {
+                  <div class="location">
+                    <div class="site-name link" (click)="openDialog(s)">{{ s.LOCNCODE }}</div>
+                    <div class="qty-min">{{ s.MIN | number }}</div>
+                    <div class="qty-max">{{ s.MAX | number }}</div>
+                    <div class="qty-onhand">{{ s.QTYONHND | number }}</div>
+                    <div class="qty-alloc">{{ s.QTYREMAI | number }}</div>
+                    <div class="qty-avail">{{ s.QTYAVAIL | number }}</div>
+                    <div class="qty-required">{{ s.QTYREQUIRED | number }}</div>
+                  </div>
+                  @if (!$last) {
+                    <mat-divider></mat-divider>
+                  }
+                }
+              </div>
+            <div class="total-required">{{ p.qtyRequired | number }}</div>
+          </div>
+          <mat-divider></mat-divider>
+        }
+      </div>
+      @if (loading) {
+        <div>
+          <mat-spinner diameter="48" class="spinner"></mat-spinner>
+        </div>
       }
     </div>
   </div>
 </div>
-@if (loading) {
-  <div>
-    <mat-spinner diameter="48" class="spinner"></mat-spinner>
-  </div>
-}
