@@ -44,7 +44,7 @@ export class InventoryRequiredComponent implements OnInit {
     this.loading = true;
     this.productionRequired = this.inventoryService.getProductionRequired().pipe(
       switchMap(_ => this.route.queryParams.pipe(
-        map(p => _.filter(i => i.ITEMNMBR.startsWith((p['search'] || '').toLocaleUpperCase())))
+        map(p => _.filter(i => i.ITEMNMBR.includes((p['search'] || '').toLocaleUpperCase())))
       )),
       tap(() => this.loading = false)
     );
