@@ -9,6 +9,7 @@ interface groupedItem {
   qtyRemaining: number;
   qtyAvailable: number;
   qtyRequired: number;
+  newQtyRequired: number;
   sites: RequiredLine[];
 }
 
@@ -35,8 +36,15 @@ export class GroupByItemPipe implements PipeTransform {
       const qtyOnHand = sites.reduce((a, b) => a + b.QTYONHND, 0);
       const qtyRemaining = sites.reduce((a, b) => a + b.QTYREMAI, 0);
       const qtyRequired = sites.reduce((a, b) => a + b.QTYREQUIRED, 0);
-      return {itemNmbr: key, description, qtyOnHand, qtyRemaining, qtyAvailable, qtyRequired, sites};
+      const main = sites.find(_ => _.LOCNCODE === 'MAIN');
+      const otherSites = sites.filter(_ => _.LOCNCODE !== 'MAIN');
+      const mainRequired = main?.QTYREQUIRED || 0;
+      const mainAvail = Math.max(main?.QTYAVAIL || 0, 0);
+      const otherSitesRequired = otherSites.reduce((a, b) => a + b.QTYREQUIRED, 0);
+      const newQtyRequired = Math.max(otherSitesRequired - mainAvail, 0) + mainRequired;
+      return {itemNmbr: key, description, qtyOnHand, qtyRemaining, qtyAvailable, qtyRequired, newQtyRequired, sites};
     });
-    return drops;
+    return [...drops.filter(_ => _.newQtyRequired > 0), ...drops.filter(_ => _.newQtyRequired === 0)]
+
   }
 }

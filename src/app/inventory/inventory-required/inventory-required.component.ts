@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { BehaviorSubject, Observable, debounceTime, map, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs';
 
 import { InventoryService } from '../shared/inventory.service';
 import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
@@ -45,6 +45,7 @@ export class InventoryRequiredComponent implements OnInit {
     this.loading = true;
     const productionRequired = this.inventoryService.getProductionRequired().pipe(
       switchMap(_ => this.route.queryParams.pipe(
+        distinctUntilChanged((prev, curr) => this.compareQueryStrings(prev, curr)),
         map(p => _.filter(i => i.ITEMNMBR.includes((p['search'] || '').toLocaleUpperCase())))
       )),
       tap(() => this.loading = false)
