@@ -3,7 +3,15 @@
   <div class="doc-header outer">
     <div class="inner head-in">
       <h2>Production required</h2>
+      @if (loading) {
+        <div>
+          <mat-spinner diameter="48" class="spinner"></mat-spinner>
+        </div>
+      }
       <div class="options">
+        <button mat-icon-button (click)="refreshLines()" matTooltip="Reload list" [disabled]="loading">
+          <mat-icon>refresh</mat-icon>
+        </button>
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="name-filter">
           <mat-label>Search</mat-label>
           <input matInput [formControl]="textFilter" type="text" autocomplete="off" placeholder="Type to search...">
@@ -65,11 +73,6 @@
           <mat-divider></mat-divider>
         }
       </div>
-      @if (loading) {
-        <div>
-          <mat-spinner diameter="48" class="spinner"></mat-spinner>
-        </div>
-      }
     </div>
   </div>
 </div>

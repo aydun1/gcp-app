@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Observable, debounceTime, map, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, debounceTime, map, switchMap, tap } from 'rxjs';
 
 import { InventoryService } from '../shared/inventory.service';
 import { LetterheadComponent } from '../../shared/letterhead/letterhead.component';
@@ -28,6 +28,7 @@ import { SuggestedItem } from '../../shared/pan-list/suggested-item';
 })
 export class InventoryRequiredComponent implements OnInit {
   private loadList!: boolean;
+  private _orderRefreshTrigger$ = new BehaviorSubject<boolean>(true);
   public lineCount!: number;
   public productionRequired!: Observable<RequiredLine[]>;
   public loading = false;
@@ -42,12 +43,19 @@ export class InventoryRequiredComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-    this.productionRequired = this.inventoryService.getProductionRequired().pipe(
+    const productionRequired = this.inventoryService.getProductionRequired().pipe(
       switchMap(_ => this.route.queryParams.pipe(
         map(p => _.filter(i => i.ITEMNMBR.includes((p['search'] || '').toLocaleUpperCase())))
       )),
       tap(() => this.loading = false)
     );
+
+    this.productionRequired = this._orderRefreshTrigger$.pipe(
+      tap(() => this.loading = true),
+      switchMap(() => productionRequired)
+    )
+
+
 
     this.textFilter.valueChanges.pipe(
       debounceTime(200),
@@ -88,6 +96,10 @@ export class InventoryRequiredComponent implements OnInit {
       width: '800px',
       data: {itemNmbr: item.ItemNmbr, branch: line.LOCNCODE || '', item, warn: false}
     });
+  }
+
+  refreshLines(): void {
+    this._orderRefreshTrigger$.next(true);
   }
 
   clearTextFilter(): void {
